@@ -5,6 +5,11 @@
 #include "textureManager.h"
 #include "constants.h"
 
+namespace imageNS
+{
+	enum MODE { HORIZONTAL, VERTICAL };
+}
+
 class Image
 {
 protected:
@@ -25,6 +30,8 @@ protected:
 	bool visible;							// 画像が可視な場合、true
 	bool initialized;						// 初期化が成功した場合は、true
 	bool animComplete;						// ループしないアニメーションシーケンスが完了したときにtrueとなる
+	imageNS::MODE mode;						// 読み込んだ画像に対して横にアニメーションが流れる場合はHORIZONTAL、縦の場合はVERTICAL
+
 public:
 	// コンストラクタ
 	Image();
@@ -219,6 +226,12 @@ public:
 	virtual void setTextureManager(TextureManager *textureM)
 	{
 		textureManager = textureM;
+	}
+
+	// MODEを設定
+	virtual void setMode(imageNS::MODE m)
+	{
+		mode = m;
 	}
 
 

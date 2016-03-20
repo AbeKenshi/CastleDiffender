@@ -24,7 +24,7 @@ const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1ƒtƒŒ[ƒ€‚É—v‚·‚éÅ‘å‚Ì
 
 // ‰æ‘œ
 const char MENU_IMAGE[] = "pictures\\menu.png";				// ƒƒjƒ…[‰æ‘œ
-const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\move.png";	// —EÒ‚Ì•às‰æ‘œ
+const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\move_atack.png";	// —EÒ‚Ì•às‰æ‘œ
 
 // ‰¹º
 // WAVE_BANK must be location of .xwb file.
@@ -43,6 +43,7 @@ const UCHAR BRAVE_LEFT_KEY = VK_LEFT;	// ¶ˆÚ“®ƒL[
 const UCHAR BRAVE_RIGHT_KEY = VK_RIGHT;	// ‰EˆÚ“®ƒL[
 const UCHAR BRAVE_UP_KEY = VK_UP;		// ãˆÚ“®ƒL[
 const UCHAR BRAVE_DOWN_KEY = VK_DOWN;	// ‰ºˆÚ“®ƒL[
+const UCHAR BRAVE_ATTACK_KEY = VK_RETURN;// UŒ‚ƒL[
 
 // weapon types
 enum WEAPON { TORPEDO, SHIP, PLANET };
