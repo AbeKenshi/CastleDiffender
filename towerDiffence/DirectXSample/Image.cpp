@@ -31,6 +31,7 @@ Image::Image()
 	animComplete = false;
 	graphics = NULL;                // link to graphics system
 	colorFilter = graphicsNS::WHITE; // WHITE for no change
+	mode = imageNS::MODE::HORIZONTAL;		// 通常は水平でアニメーションが進む
 }
 
 //=============================================================================
@@ -128,25 +129,52 @@ void Image::draw(SpriteData sd, COLOR_ARGB color, UINT textureN)
 //=============================================================================
 void Image::update(float frameTime)
 {
-	if (endFrame - startFrame > 0)          // if animated sprite
+	switch (mode)
 	{
-		animTimer += frameTime;             // total elapsed time
-		if (animTimer > frameDelay)
+	case imageNS::HORIZONTAL:
+		if (endFrame - startFrame > 0)          // if animated sprite
 		{
-			animTimer -= frameDelay;
-			currentFrame++;
-			if (currentFrame < startFrame || currentFrame > endFrame)
+			animTimer += frameTime;             // total elapsed time
+			if (animTimer > frameDelay)
 			{
-				if (loop == true)            // if looping animation
-					currentFrame = startFrame;
-				else                        // not looping animation
+				animTimer -= frameDelay;
+				currentFrame++;
+				if (currentFrame < startFrame || currentFrame > endFrame)
 				{
-					currentFrame = endFrame;
-					animComplete = true;    // animation complete
+					if (loop == true)            // if looping animation
+						currentFrame = startFrame;
+					else                        // not looping animation
+					{
+						currentFrame = endFrame;
+						animComplete = true;    // animation complete
+					}
 				}
+				setRect();                      // set spriteData.rect
 			}
-			setRect();                      // set spriteData.rect
 		}
+		break;
+	case imageNS::VERTICAL:
+		if (endFrame - startFrame > 0)          // if animated sprite
+		{
+			animTimer += frameTime;             // total elapsed time
+			if (animTimer > frameDelay)
+			{
+				animTimer -= frameDelay;
+				currentFrame += cols;
+				if (currentFrame < startFrame || currentFrame > endFrame)
+				{
+					if (loop == true)            // if looping animation
+						currentFrame = startFrame;
+					else                        // not looping animation
+					{
+						currentFrame = endFrame;
+						animComplete = true;    // animation complete
+					}
+				}
+				setRect();                      // set spriteData.rect
+			}
+		}
+		break;
 	}
 }
 
