@@ -150,6 +150,7 @@
     <ClInclude Include="input.h" />
     <ClInclude Include="inputDialog.h" />
     <ClInclude Include="messageDialog.h" />
+    <ClInclude Include="rect.h" />
     <ClInclude Include="textDX.h" />
     <ClInclude Include="textureManager.h" />
     <ClInclude Include="towerDiffence.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="inputDialog.cpp" />
     <ClCompile Include="messageDialog.cpp" />
+    <ClCompile Include="rect.cpp" />
     <ClCompile Include="textDX.cpp" />
     <ClCompile Include="textureManager.cpp" />
     <ClCompile Include="towerDiffence.cpp" />

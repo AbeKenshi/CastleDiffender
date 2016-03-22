@@ -8,6 +8,7 @@ TowerDiffence::TowerDiffence()
 {
 	initialized = false;
 	menuOn = true;
+	rect = NULL;
 }
 
 //==========================================================
@@ -15,6 +16,7 @@ TowerDiffence::TowerDiffence()
 //==========================================================
 TowerDiffence::~TowerDiffence()
 {
+	safeDelete(rect);
 	releaseAll();	// すべてのグラフィックスアイテムについて、onLostDevice()を呼び出す
 }
 
@@ -25,6 +27,8 @@ TowerDiffence::~TowerDiffence()
 void TowerDiffence::initialize(HWND hwnd)
 {
 	Game::initialize(hwnd);	// GameErrorをスロー
+	rect = new Rect();
+	rect->initialize(graphics);
 
 	// メニューのテクスチャ
 	if (!menuTexture.initialize(graphics, MENU_IMAGE))
@@ -50,6 +54,12 @@ void TowerDiffence::initialize(HWND hwnd)
 	brave.setScale(2);
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
+
+	// ダッシュボード
+	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing dashboard textures"));
+	barGraph.initialize(graphics, &dashboardTextures, towerDiffenceNS::BAR_GRAPH_X, towerDiffenceNS::BAR_GRAPH_Y, 0.5f, 20, graphicsNS::RED);
+	barGraph.set(100);
 
 	return;
 }
@@ -100,13 +110,16 @@ void TowerDiffence::collisions()
 
 //==========================================================
 // ゲームアイテムをレンダー
+// プレイ中のレイヤー：マップ→黒背景→その他アイテムの順
 //==========================================================
 void TowerDiffence::render()
 {
 	graphics->spriteBegin();	// スプライトの描画を開始
 
 	if (menuOn)
+	{
 		menu.draw();
+	}
 	else
 	{
 		// ステージの描画
@@ -124,10 +137,12 @@ void TowerDiffence::render()
 				}
 			}
 		}
-
+		graphics->spriteEnd();		// スプライトの描画を開始
+		rect->draw();
+		graphics->spriteBegin();	// スプライトの描画を開始
 		brave.draw();
+		barGraph.draw(graphicsNS::FILTER);	// 体力バーを描画
 	}
-
 	graphics->spriteEnd();		// スプライトの描画を開始
 }
 
@@ -140,7 +155,8 @@ void TowerDiffence::releaseAll()
 {
 	menuTexture.onLostDevice();
 	braveTexture.onLostDevice();
-
+	dashboardTextures.onLostDevice();
+	safeOnLostDevice(rect);
 	Game::releaseAll();
 	return;
 }
@@ -151,9 +167,10 @@ void TowerDiffence::releaseAll()
 //==========================================================
 void TowerDiffence::resetAll()
 {
+	dashboardTextures.onLostDevice();
 	braveTexture.onResetDevice();
 	menuTexture.onResetDevice();
-
+	safeOnResetDevice(rect);
 	Game::resetAll();
 	return;
 }

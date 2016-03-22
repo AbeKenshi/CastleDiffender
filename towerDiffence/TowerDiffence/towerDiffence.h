@@ -6,6 +6,8 @@
 #include "textureManager.h"
 #include "image.h"
 #include "brave.h"
+#include "dashboard.h"
+#include "rect.h"
 
 namespace towerDiffenceNS
 {
@@ -14,7 +16,7 @@ namespace towerDiffenceNS
 	const int MAP_HEIGHT = 23;  // マップの高さ
 	const int MAP_WIDTH = 40;  // マップの幅
 
-							   // マップデータ　数字の詳細はpictureフォルダのground_num.pngを参照
+	// マップデータ　数字の詳細はpictureフォルダのground_num.pngを参照
 	const int tileMap[MAP_HEIGHT][MAP_WIDTH] =
 	{
 		//                 5                  10                  15                  20                  25                  30                  35                  40
@@ -42,6 +44,11 @@ namespace towerDiffenceNS
 		0,  0, 64,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
 	};
+	// 体力バーの位置
+	const int BAR_GRAPH_X = 0;	
+	const int BAR_GRAPH_Y = 0;
+	const int HBAR_X = 0;
+	const int HBAR_Y = 0;
 }
 
 //==========================================================
@@ -57,6 +64,9 @@ private:
 	Brave brave;					// 勇者
 	TextureManager tileTexture;     // タイルのテクスチャ
 	Image tile;                     // タイル画像
+	TextureManager dashboardTextures;	// ダッシュボードテクスチャ
+	BarGraph barGraph;				// 体力バー
+	Rect *rect;						// Rectへのポインター
 	float mapX;                     // 初期X座標
 	bool menuOn;					// メニューフラグ
 
