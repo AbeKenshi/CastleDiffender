@@ -34,6 +34,13 @@ void TowerDiffence::initialize(HWND hwnd)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing menu"));
 	menu.setScale(2);
 
+	// マップのテクスチャ
+	if (!tileTexture.initialize(graphics, TILE_IMAGES))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing map texture"));
+	// マップの画像
+	if (!tile.initialize(graphics, towerDiffenceNS::TEXTURE_SIZE, towerDiffenceNS::TEXTURE_SIZE, towerDiffenceNS::TEXTURE_COLS, &tileTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing tile"));
+
 	// 勇者のテクスチャ
 	if (!braveTexture.initialize(graphics, BRAVE_MOVE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave_move texture"));
@@ -102,6 +109,22 @@ void TowerDiffence::render()
 		menu.draw();
 	else
 	{
+		// ステージの描画
+		for (int row = 0; row<towerDiffenceNS::MAP_HEIGHT; row++)       // マップの各行を処理
+		{
+			tile.setY((float)(row*towerDiffenceNS::TEXTURE_SIZE));      // タイルのYを設定
+			for (int col = 0; col<towerDiffenceNS::MAP_WIDTH; col++)    // マップの各列を処理
+			{
+				if (towerDiffenceNS::tileMap[row][col] >= 0)            // タイルが存在する場合
+				{
+					tile.setCurrentFrame(towerDiffenceNS::tileMap[row][col]);                       // タイルのテクスチャを設定
+					tile.setX((float)(col*towerDiffenceNS::TEXTURE_SIZE) + mapX);                   // タイルのXを設定
+					if (tile.getX() > -towerDiffenceNS::TEXTURE_SIZE && tile.getX() < GAME_WIDTH)   // タイルが画面上にあるかどうか
+						tile.draw();    // タイルを描画
+				}
+			}
+		}
+
 		brave.draw();
 	}
 
