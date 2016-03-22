@@ -1,5 +1,5 @@
-#ifndef _FILE_H		// このファイルが複数の箇所でインクルードされる場合に、
-#define _FILE_H		// 多重に定義されることを防ぎます。
+#ifndef _FIRE_H		// このファイルが複数の箇所でインクルードされる場合に、
+#define _FIRE_H		// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 #include "entity.h"
@@ -33,4 +33,4 @@ public:
 	// 新しいメンバー関数
 	void fire(Brave *brave);		// 勇者からミサイルを発射
 };
-#endif // !_FILE_H
+#endif

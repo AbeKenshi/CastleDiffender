@@ -142,6 +142,7 @@
     <ClInclude Include="console.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="dashboard.h" />
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="fire.h" />
     <ClInclude Include="game.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="brave.cpp" />
     <ClCompile Include="console.cpp" />
     <ClCompile Include="dashboard.cpp" />
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="entity.cpp" />
     <ClCompile Include="fire.cpp" />
     <ClCompile Include="game.cpp" />

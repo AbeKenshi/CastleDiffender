@@ -7,6 +7,7 @@
 #include "image.h"
 #include "brave.h"
 #include "fire.h"
+#include "enemy.h"
 #include "dashboard.h"
 #include "rect.h"
 
@@ -67,6 +68,8 @@ private:
 	Image tile;                     // タイル画像
 	TextureManager fireTexture;		// 炎のテクスチャ
 	Fire fire;						// 炎の画像
+	TextureManager enemyTexture;	// 雑魚敵のテクスチャ
+	Enemy enemy;					// 雑魚敵の画像
 	TextureManager dashboardTextures;	// ダッシュボードテクスチャ
 	BarGraph barGraph;				// 体力バー
 	Rect *rect;						// Rectへのポインター

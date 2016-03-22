@@ -13,7 +13,7 @@ namespace braveNS
 	const int Y = GAME_HEIGHT / 6 - HEIGHT;
 	const int MOVE_SPEED = 150;						// 移動速度（ピクセル）
 	enum DIRECTION { LEFT, RIGHT, UP, DOWN, NONE };		// 回転の方向
-	const int TEXTURE_COLS = 12;					// テクスチャは6 * 4列
+	const int TEXTURE_COLS = 12;					// テクスチャは12列
 	const int MOVE_UP_START_FRAME = 48;				// 上方向移動のアニメーションはフレーム0から開始
 	const int MOVE_UP_END_FRAME = 50;				// 上方向移動のアニメーションフレームは0、1、2、3、4、5
 	const int MOVE_RIGHT_START_FRAME = 60;			// 右方向移動のアニメーションはフレーム12から開始
