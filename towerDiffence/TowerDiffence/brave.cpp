@@ -19,7 +19,7 @@ Brave::Brave() : Entity()
 	state = braveNS::STATE::MOVE;
 	direction = braveNS::UP;
 	secondAttackFlag = false;
-	isDamaged = true;
+	isDamaged = false;
 	timeCounter = 0.0f;
 	totalTimeCounter = 0.0f;
 	drawFlag = true;

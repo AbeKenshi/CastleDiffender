@@ -61,6 +61,13 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!fire.initialize(this, fireNS::WIDTH, fireNS::HEIGHT, fireNS::TEXTURE_COLS, &fireTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire"));
 
+	// 雑魚敵のテクスチャ
+	if (!enemyTexture.initialize(graphics, ENEMY_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy texture"));
+	if (!enemy.initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
+	enemy.setScale(2);
+
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing dashboard textures"));
@@ -89,6 +96,7 @@ void TowerDiffence::update()
 		if (input->isKeyDown(BRAVE_FIRE_KEY))
 			fire.fire(&brave);
 		brave.update(frameTime);
+		enemy.update(frameTime);
 		fire.update(frameTime);
 	}
 }
@@ -149,6 +157,7 @@ void TowerDiffence::render()
 		graphics->spriteEnd();		// スプライトの描画を開始
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
+		enemy.draw();
 		fire.draw();
 		brave.draw();
 		barGraph.set(brave.getHealth());
