@@ -17,6 +17,7 @@ Brave::Brave() : Entity()
 	endFrame = braveNS::MOVE_UP_END_FRAME;
 	currentFrame = startFrame;
 	state = braveNS::STATE::MOVE;
+	direction = braveNS::UP;
 	secondAttackFlag = false;
 	isDamaged = true;
 	timeCounter = 0.0f;
@@ -31,6 +32,7 @@ Brave::Brave() : Entity()
 bool Brave::initialize(Game *gamePtr, int width, int height, int ncols,
 	TextureManager *textureM)
 {
+	setRect();
 	return(Entity::initialize(gamePtr, width, height, ncols, textureM));
 }
 

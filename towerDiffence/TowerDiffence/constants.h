@@ -25,8 +25,9 @@ const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1ƒtƒŒ[ƒ€‚É—v‚·‚éÅ‘å‚Ì
 // ‰æ‘œ
 const char MENU_IMAGE[] = "pictures\\menu.png";				// ƒƒjƒ…[‰æ‘œ
 const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main.png";	// —EÒ‚Ì•às‰æ‘œ
+const char FIRE_IMAGE[] = "pictures\\alex\\fire.png";				// ‰Š‚Ì‰æ‘œ
 const char TILE_IMAGES[] = "pictures\\map\\ground.png";             // ƒ}ƒbƒv‰æ‘œ
-const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";
+const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";		// ƒ_ƒbƒVƒ…ƒ{[ƒh‰æ‘œ
 
 
 // ‰¹º
@@ -48,6 +49,7 @@ const UCHAR BRAVE_UP_KEY = VK_UP;			// ãˆÚ“®ƒL[
 const UCHAR BRAVE_DOWN_KEY = VK_DOWN;		// ‰ºˆÚ“®ƒL[
 const UCHAR BRAVE_ATTACK_KEY = VK_RETURN;	// UŒ‚ƒL[
 const UCHAR BRAVE_GAURD_KEY = 'G';			// ƒK[ƒhƒL[
+const UCHAR BRAVE_FIRE_KEY = 'F';			// •KE‹ZƒL[
 
 // weapon types
 enum WEAPON { TORPEDO, SHIP, PLANET };
