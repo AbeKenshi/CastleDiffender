@@ -18,6 +18,10 @@ Brave::Brave() : Entity()
 	currentFrame = startFrame;
 	state = braveNS::STATE::MOVE;
 	secondAttackFlag = false;
+	isDamaged = true;
+	timeCounter = 0.0f;
+	totalTimeCounter = 0.0f;
+	drawFlag = true;
 }
 
 //==========================================================
@@ -35,7 +39,8 @@ bool Brave::initialize(Game *gamePtr, int width, int height, int ncols,
 //==========================================================
 void Brave::draw()
 {
-	Image::draw();		// 勇者を描画
+	if (drawFlag)
+		Image::draw();	// 勇者を描画
 }
 
 //=============================================================================
@@ -67,7 +72,6 @@ void Brave::update(float frameTime)
 				}
 				// 左に移動
 				spriteData.x -= braveNS::MOVE_SPEED * frameTime;
-				Entity::updateOnlyImage(frameTime);
 			}
 			// 右キーが入力された場合、
 			if (input->isKeyDown(BRAVE_RIGHT_KEY))
@@ -84,7 +88,6 @@ void Brave::update(float frameTime)
 				}
 				// 右に移動
 				spriteData.x += braveNS::MOVE_SPEED * frameTime;
-				Entity::updateOnlyImage(frameTime);
 			}
 			// 上キーが入力された場合、
 			if (input->isKeyDown(BRAVE_UP_KEY))
@@ -101,7 +104,6 @@ void Brave::update(float frameTime)
 				}
 				// 上に移動
 				spriteData.y -= braveNS::MOVE_SPEED * frameTime;
-				Entity::updateOnlyImage(frameTime);
 			}
 			// 下キーが入力された場合、
 			if (input->isKeyDown(BRAVE_DOWN_KEY))
@@ -118,8 +120,8 @@ void Brave::update(float frameTime)
 				}
 				// 下に移動
 				spriteData.y += braveNS::MOVE_SPEED * frameTime;
-				Entity::updateOnlyImage(frameTime);
 			}
+			Entity::updateOnlyImage(frameTime);
 		}
 		else if (input->isKeyDown(BRAVE_ATTACK_KEY))	// 攻撃キーが押された場合、
 		{
@@ -270,7 +272,6 @@ void Brave::update(float frameTime)
 		}
 		break;
 	}
-
 	// 状態遷移後の処理
 	switch (state)
 	{
@@ -288,8 +289,30 @@ void Brave::update(float frameTime)
 		break;
 	}
 
-	spriteData.x += frameTime * velocity.x;     // 宇宙船をX方向に動かす
-	spriteData.y += frameTime * velocity.y;     // 宇宙船をY方向に動かす
+	// ダメージを受けているなら一定時間ごとにアニメーションを点滅
+	if (isDamaged)
+	{
+		timeCounter += frameTime;
+		totalTimeCounter += frameTime;
+		if (timeCounter > 0.15f)
+		{
+			if (drawFlag)
+				drawFlag = false;
+			else
+				drawFlag = true;
+			timeCounter = 0.0f;
+		}
+		if (totalTimeCounter > braveNS::DAMAGE_TIME)
+		{
+			timeCounter = 0.0f;
+			totalTimeCounter = 0.0f;
+			drawFlag = true;
+			isDamaged = false;
+		}
+	}
+
+	spriteData.x += frameTime * velocity.x;     // キャラをX方向に動かす
+	spriteData.y += frameTime * velocity.y;     // キャラをY方向に動かす
 }
 
 //==========================================================
@@ -313,6 +336,6 @@ void Brave::updateAttacking(float frameTime)
 // ダメージ
 //==========================================================
 void Brave::damage(WEAPON weapon)
-{
-
+{	
+	isDamaged = true;
 }
