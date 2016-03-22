@@ -16,9 +16,10 @@
 
 namespace dashboardNS
 {
-    const int   IMAGE_SIZE = 32;        // each texture size
-    const int   TEXTURE_COLS = 8;       // texture has 4 columns
-    const int   BAR_FRAME = 44;          // the frame number of each texture
+	const int	WIDTH = 64;
+	const int	HEGIHT = 64;
+    const int   TEXTURE_COLS = 4;       // texture has 4 columns
+    const int   BAR_FRAME = 0;          // the frame number of each texture
     const int   DIAL360_FRAME = 1;      // "
     const int   DIAL270_FRAME = 2;      // ...
     const int   DIAL180_FRAME = 3;

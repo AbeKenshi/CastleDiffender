@@ -22,7 +22,6 @@ class Game;
 #include "messageDialog.h"
 #include "inputDialog.h"
 
-
 namespace gameNS
 {
 	const char FONT[] = "Courier New";  // font

@@ -117,7 +117,7 @@ void Game::initialize(HWND hw)
 	// initialize input, do not capture mouse
 	input->initialize(hwnd, false);             // throws GameError
 
-												// initialize console
+	// initialize console
 	console = new Console();
 	console->initialize(graphics, input);       // prepare console
 	console->print("---Console---");
@@ -181,7 +181,6 @@ void Game::renderGame()
 		graphics->spriteEnd();      // end drawing sprites
 
 		console->draw();    // console is drawn here so it appears on top of game
-
 		messageDialog->draw();  // dialog is drawn on top
 		inputDialog->draw();    // dialog is drawn on top
 

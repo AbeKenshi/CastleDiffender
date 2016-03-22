@@ -28,7 +28,7 @@ bool SevenSegment::initialize(Graphics *graphics, TextureManager *textureM,
                    int left, int top, float scale, UINT digs, COLOR_ARGB color)
 {
     try {
-        Image::initialize(graphics, dashboardNS::IMAGE_SIZE, dashboardNS::IMAGE_SIZE, 
+        Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::SEGMENT_FRAME);
         spriteData.x = (float)left;
@@ -39,7 +39,7 @@ bool SevenSegment::initialize(Graphics *graphics, TextureManager *textureM,
             digs = 1;
         digits = digs;
 
-        decimal.initialize(graphics, dashboardNS::IMAGE_SIZE, dashboardNS::IMAGE_SIZE,
+        decimal.initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT,
                            dashboardNS::TEXTURE_COLS, textureM);
         decimal.setCurrentFrame(dashboardNS::DECIMAL_FRAME);
         decimal.setColorFilter(color);
@@ -205,7 +205,7 @@ bool Bar::initialize(Graphics *graphics, TextureManager *textureM, int left,
                      int top, float scale, COLOR_ARGB color)
 {
     try {
-        Image::initialize(graphics, dashboardNS::IMAGE_SIZE, dashboardNS::IMAGE_SIZE, 
+        Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::BAR_FRAME);
         spriteData.x = (float)left;
@@ -250,7 +250,7 @@ bool DialGauge::initialize(Graphics *graphics, TextureManager *textureM, int lef
                     float zeroAngle, COLOR_ARGB dialColor, COLOR_ARGB pointerColor)
 {
     try {
-        Image::initialize(graphics, dashboardNS::IMAGE_SIZE, dashboardNS::IMAGE_SIZE, 
+        Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         dialType = type;
         switch(type)
@@ -268,8 +268,8 @@ bool DialGauge::initialize(Graphics *graphics, TextureManager *textureM, int lef
         colorFilter = dialColor;
         setDegrees(zeroAngle);
 
-        pointer.initialize(graphics, dashboardNS::IMAGE_SIZE,
-                           dashboardNS::IMAGE_SIZE, dashboardNS::TEXTURE_COLS,
+        pointer.initialize(graphics, dashboardNS::WIDTH,
+                           dashboardNS::HEGIHT, dashboardNS::TEXTURE_COLS,
                            textureM);
         pointer.setCurrentFrame(dashboardNS::POINTER_FRAME);
         pointer.setColorFilter(pointerColor);
@@ -341,7 +341,7 @@ bool Light::initialize(Graphics *graphics, TextureManager *textureM, int left, i
                 float scale, float flashRate, COLOR_ARGB colorOn, COLOR_ARGB colorOff)
 {
     try {
-        Image::initialize(graphics, dashboardNS::IMAGE_SIZE, dashboardNS::IMAGE_SIZE, 
+        Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::LIGHT_FRAME);
         spriteData.x = (float)left;
@@ -417,7 +417,7 @@ bool ToggleSwitch::initialize(Graphics *graphics, TextureManager *textureM, Inpu
                     int left, int top, float scale)
 {
     try {
-        Image::initialize(graphics, dashboardNS::IMAGE_SIZE, dashboardNS::IMAGE_SIZE, 
+        Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::SWITCH_OFF_FRAME);
         spriteData.x = (float)left;
@@ -499,7 +499,7 @@ bool PushButton::initialize(Graphics *graphics, TextureManager *textureM, Input 
                     int left, int top, float scale, bool type)
 {
     try {
-        Image::initialize(graphics, dashboardNS::IMAGE_SIZE, dashboardNS::IMAGE_SIZE, 
+        Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::BUTTON_UP_FRAME);
         spriteData.x = (float)left;
@@ -591,7 +591,7 @@ bool BarGraph::initialize(Graphics *graphics, TextureManager *textureM, int left
                     float scale, UINT bars, COLOR_ARGB color)
 {
     try {
-        Image::initialize(graphics, dashboardNS::IMAGE_SIZE, dashboardNS::IMAGE_SIZE, 
+        Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::BAR_GRAPH_FRAME);
         spriteData.x = (float)left;
