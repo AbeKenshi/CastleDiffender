@@ -1,4 +1,5 @@
 #include "brave.h"
+#include "math.h"
 
 //==========================================================
 // デフォルトコンストラクタ
@@ -15,8 +16,8 @@ Brave::Brave() : Entity()
 	startFrame = braveNS::MOVE_UP_START_FRAME;
 	endFrame = braveNS::MOVE_UP_END_FRAME;
 	currentFrame = startFrame;
-	direction = braveNS::DIRECTION::RIGHT;
 	state = braveNS::STATE::MOVE;
+	secondAttackFlag = false;
 }
 
 //==========================================================
@@ -185,7 +186,61 @@ void Brave::update(float frameTime)
 			setRect();
 		}
 		break;
-	case braveNS::ATTACK:	// 攻撃時はアニメーションが終了するまで入力を受け付けない
+	case braveNS::ATTACK:	// 攻撃時はアニメーションが終了するまで第二段攻撃の入力しか受け付けない
+		if (input->isKeyDown(BRAVE_ATTACK_KEY) && currentFrame > startFrame + 2)
+		{
+			secondAttackFlag = true;
+		}
+		if (animComplete)
+		{
+			if (secondAttackFlag)
+			{
+				switch (direction)
+				{
+				case braveNS::DOWN:
+					startFrame = braveNS::DOWN_SECOND_ATTACK_START_FRAME;
+					endFrame = braveNS::DOWN_SECOND_ATTACK_END_FRAME;
+					break;
+				case braveNS::RIGHT:
+					startFrame = braveNS::RIGHT_SECOND_ATTACK_START_FRAME;
+					endFrame = braveNS::RIGHT_SECOND_ATTACK_END_FRAME;
+					break;
+				case braveNS::UP:
+					startFrame = braveNS::UP_SECOND_ATTACK_START_FRAME;
+					endFrame = braveNS::UP_SECOND_ATTACK_END_FRAME;
+					break;
+				case braveNS::LEFT:
+					startFrame = braveNS::LEFT_SECOND_ATTACK_START_FRAME;
+					endFrame = braveNS::LEFT_SECOND_ATTACK_END_FRAME;
+					break;
+				}
+				state = braveNS::SECOND_ATTACK;
+				loop = false;
+				currentFrame = startFrame;
+				animTimer = 0.0f;
+				animComplete = false;
+				setRect();
+				Entity::updateOnlyImage(frameTime);
+				secondAttackFlag = false;
+				velocity.y = -sqrt(2 * 2000.0f * braveNS::HEIGHT);
+			}
+			else
+			{
+				state = braveNS::MOVE;
+				mode = imageNS::HORIZONTAL;
+				loop = true;
+				startFrame = oldStartFrame;
+				endFrame = oldEndFrame;
+				currentFrame = startFrame;
+				animTimer = 0.0f;
+				animComplete = false;
+				setRect();
+				Entity::updateOnlyImage(frameTime);
+			}
+		}
+		break;
+	case braveNS::SECOND_ATTACK:	// 第二段攻撃時はアニメーションが終了するまで入力を受け付けない
+		velocity.y += frameTime * 2000.0f;
 		if (animComplete)
 		{
 			state = braveNS::MOVE;
@@ -198,9 +253,10 @@ void Brave::update(float frameTime)
 			animComplete = false;
 			setRect();
 			Entity::updateOnlyImage(frameTime);
+			velocity.y = 0.0f;
 		}
 		break;
-	case braveNS::GAURD:	// ガード時は
+	case braveNS::GAURD:	// ボタンが離されたらガード終了
 		if (!input->isKeyDown(BRAVE_GAURD_KEY))
 		{
 			state = braveNS::MOVE;
@@ -231,6 +287,9 @@ void Brave::update(float frameTime)
 		Entity::update(frameTime);
 		break;
 	}
+
+	spriteData.x += frameTime * velocity.x;     // 宇宙船をX方向に動かす
+	spriteData.y += frameTime * velocity.y;     // 宇宙船をY方向に動かす
 }
 
 //==========================================================
