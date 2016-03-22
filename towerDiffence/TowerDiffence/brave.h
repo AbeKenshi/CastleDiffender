@@ -23,15 +23,23 @@ namespace braveNS
 	const int MOVE_LEFT_START_FRAME = 84;			// 左方向移動のアニメーションはフレーム36から開始
 	const int MOVE_LEFT_END_FRAME = 86;				// 左方向移動のアニメーションフレームは36、37、38、39、40、41
 	const float MOVE_ANIMATION_DELAY = 0.2f;		// 移動アニメーションのフレーム間の時間
-	const int DOWN_ATTACK_START_FRAME = 145 + 24;		// 下方向への攻撃アニメーションはフレーム145から開始
+	const int DOWN_ATTACK_START_FRAME = 145 + 24;	// 下方向への攻撃アニメーションはフレーム145から開始
 	const int DOWN_ATTACK_END_FRAME = 145 + 36;		// 下方向への攻撃アニメーションフレームは145、157、169、181
-	const int LEFT_ATTACK_START_FRAME = 148 + 24;		// 左方向への攻撃アニメーションはフレーム148から開始
+	const int LEFT_ATTACK_START_FRAME = 148 + 24;	// 左方向への攻撃アニメーションはフレーム148から開始
 	const int LEFT_ATTACK_END_FRAME = 148 + 36;		// 左方向への攻撃アニメーションフレームは148、160、172、184
-	const int UP_ATTACK_START_FRAME = 151 + 24;			// 上方向への攻撃アニメーションはフレーム151から開始
+	const int UP_ATTACK_START_FRAME = 151 + 24;		// 上方向への攻撃アニメーションはフレーム151から開始
 	const int UP_ATTACK_END_FRAME = 151 + 36;		// 上方向への攻撃アニメーションフレームは151、163、175、187
-	const int RIGHT_ATTACK_START_FRAME = 154 + 24;		// 右方向への攻撃アニメーションはフレーム154から開始
+	const int RIGHT_ATTACK_START_FRAME = 154 + 24;	// 右方向への攻撃アニメーションはフレーム154から開始
 	const int RIGHT_ATTACK_END_FRAME = 154 + 36;	// 右方向への攻撃アニメーションフレームは154、166、178、190
-	enum STATE { MOVE, ATTACK };					// 状態
+	const int UP_GUARD_START_FRAME = 240;			// 上方向へのガードアニメーションはフレーム240から開始
+	const int UP_GUARD_END_FRAME = 242;				// 上方向へのガードアニメーションはフレーム240、241、242
+	const int RIGHT_GUARD_START_FRAME = 252;		// 右方向へのガードアニメーションはフレーム252から開始
+	const int RIGHT_GUARD_END_FRAME = 254;			// 右方向へのガードアニメーションはフレーム252、253、234
+	const int DOWN_GUARD_START_FRAME = 264;			// 下方向へのガードアニメーションはフレーム264から開始
+	const int DOWN_GUARD_END_FRAME = 266;			// 下方向へのガードアニメーションはフレーム264、265、266
+	const int LEFT_GUARD_START_FRAME = 276;			// 左方向へのガードアニメーションはフレーム276から開始
+	const int LEFT_GUARD_END_FRAME = 278;			// 左方向へのガードアニメーションはフレーム276、277、278
+	enum STATE { MOVE, ATTACK , GAURD };			// 状態
 }
 
 // Braveクラス
