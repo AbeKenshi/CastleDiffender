@@ -55,11 +55,17 @@ void TowerDiffence::initialize(HWND hwnd)
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
 
+	// 炎のテクスチャ
+	if (!fireTexture.initialize(graphics, FIRE_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire texture"));
+	if (!fire.initialize(this, fireNS::WIDTH, fireNS::HEIGHT, fireNS::TEXTURE_COLS, &fireTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire"));
+
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing dashboard textures"));
 	barGraph.initialize(graphics, &dashboardTextures, towerDiffenceNS::BAR_GRAPH_X, towerDiffenceNS::BAR_GRAPH_Y, 0.5f, 20, graphicsNS::RED);
-	barGraph.set(100);
+	barGraph.set(brave.getHealth());
 
 	return;
 }
@@ -80,7 +86,10 @@ void TowerDiffence::update()
 	}
 	else
 	{
+		if (input->isKeyDown(BRAVE_FIRE_KEY))
+			fire.fire(&brave);
 		brave.update(frameTime);
+		fire.update(frameTime);
 	}
 }
 
@@ -140,7 +149,9 @@ void TowerDiffence::render()
 		graphics->spriteEnd();		// スプライトの描画を開始
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
+		fire.draw();
 		brave.draw();
+		barGraph.set(brave.getHealth());
 		barGraph.draw(graphicsNS::FILTER);	// 体力バーを描画
 	}
 	graphics->spriteEnd();		// スプライトの描画を開始

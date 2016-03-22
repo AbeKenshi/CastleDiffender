@@ -6,6 +6,7 @@
 #include "textureManager.h"
 #include "image.h"
 #include "brave.h"
+#include "fire.h"
 #include "dashboard.h"
 #include "rect.h"
 
@@ -64,6 +65,8 @@ private:
 	Brave brave;					// 勇者
 	TextureManager tileTexture;     // タイルのテクスチャ
 	Image tile;                     // タイル画像
+	TextureManager fireTexture;		// 炎のテクスチャ
+	Fire fire;						// 炎の画像
 	TextureManager dashboardTextures;	// ダッシュボードテクスチャ
 	BarGraph barGraph;				// 体力バー
 	Rect *rect;						// Rectへのポインター
