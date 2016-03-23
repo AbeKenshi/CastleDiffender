@@ -72,8 +72,11 @@ void Brave::update(float frameTime)
 					animTimer = 0.0f;
 					setRect();
 				}
-				// 左に移動
-				spriteData.x -= braveNS::MOVE_SPEED * frameTime;
+				// 移動可能だったら
+				if (Brave::checkCanMove(spriteData.x - braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
+					// 左に移動
+					spriteData.x -= braveNS::MOVE_SPEED * frameTime;
+				}
 			}
 			// 右キーが入力された場合、
 			if (input->isKeyDown(BRAVE_RIGHT_KEY))
@@ -88,8 +91,11 @@ void Brave::update(float frameTime)
 					animTimer = 0.0f;
 					setRect();
 				}
-				// 右に移動
-				spriteData.x += braveNS::MOVE_SPEED * frameTime;
+				// 移動可能だったら
+				if (Brave::checkCanMove(spriteData.x + braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
+					// 右に移動
+					spriteData.x += braveNS::MOVE_SPEED * frameTime;
+				}
 			}
 			// 上キーが入力された場合、
 			if (input->isKeyDown(BRAVE_UP_KEY))
@@ -104,8 +110,11 @@ void Brave::update(float frameTime)
 					animTimer = 0.0f;
 					setRect();
 				}
-				// 上に移動
-				spriteData.y -= braveNS::MOVE_SPEED * frameTime;
+				// 移動可能だったら
+				if (Brave::checkCanMove(spriteData.x, spriteData.y - braveNS::MOVE_SPEED * frameTime)) {
+					// 上に移動
+					spriteData.y -= braveNS::MOVE_SPEED * frameTime;
+				}
 			}
 			// 下キーが入力された場合、
 			if (input->isKeyDown(BRAVE_DOWN_KEY))
@@ -120,8 +129,11 @@ void Brave::update(float frameTime)
 					animTimer = 0.0f;
 					setRect();
 				}
-				// 下に移動
-				spriteData.y += braveNS::MOVE_SPEED * frameTime;
+				// 移動可能だったら
+				if (Brave::checkCanMove(spriteData.x, spriteData.y + braveNS::MOVE_SPEED * frameTime)) {
+					// 下に移動
+					spriteData.y += braveNS::MOVE_SPEED * frameTime;
+				}
 			}
 			Entity::updateOnlyImage(frameTime);
 		}
@@ -313,8 +325,12 @@ void Brave::update(float frameTime)
 		}
 	}
 
-	spriteData.x += frameTime * velocity.x;     // キャラをX方向に動かす
-	spriteData.y += frameTime * velocity.y;     // キャラをY方向に動かす
+	// 移動可能だったら
+	if (Brave::checkCanMove(spriteData.x + frameTime * velocity.x, spriteData.y + frameTime * velocity.y))
+	{
+		spriteData.x += frameTime * velocity.x;     // キャラをX方向に動かす
+		spriteData.y += frameTime * velocity.y;     // キャラをY方向に動かす
+	}
 }
 
 //==========================================================
@@ -340,4 +356,34 @@ void Brave::updateAttacking(float frameTime)
 void Brave::damage(WEAPON weapon)
 {	
 	isDamaged = true;
+}
+
+//==========================================================
+// 移動可能かチェック
+//==========================================================
+bool Brave::checkCanMove(float x, float y)
+{
+	// 1マス32pixelのため32で割る
+	// -16はめり込みを防止するために半マス分引いてる
+	// +αは微調整…
+	int map_x = (int)((x - 16) / 32) + 1;
+	int map_y = (int)((y - 16) / 32) + 2;
+
+	if (map_x <= 0)
+		map_x = 0;
+	if (map_x >= mapNS::MAP_WIDTH)
+		map_x = mapNS::MAP_WIDTH - 1;
+	if (map_y <= 0)
+		map_y = 0;
+	if (map_y >= mapNS::MAP_HEIGHT)
+		map_y = mapNS::MAP_HEIGHT - 1;
+
+	if (mapNS::tileCol[map_y][map_x] == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }

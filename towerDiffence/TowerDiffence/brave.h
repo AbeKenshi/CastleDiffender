@@ -4,6 +4,7 @@
 
 #include "entity.h"
 #include "constants.h"
+#include "map.h"
 
 namespace braveNS
 {
@@ -82,5 +83,7 @@ public:
 	void updateAttacking(float frameTime);
 	// 向いている方向を返す
 	braveNS::DIRECTION getDirection() { return direction; }
+	// 移動可能かチェックする関数
+	bool checkCanMove(float x, float y);
  };
 #endif
