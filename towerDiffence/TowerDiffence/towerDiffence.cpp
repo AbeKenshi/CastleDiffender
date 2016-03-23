@@ -134,7 +134,6 @@ void TowerDiffence::ai()
 void TowerDiffence::collisions()
 {
 	VECTOR2 collisionVector;
-<<<<<<< HEAD
 	// ƒvƒŒƒCƒ„[‚ÆŽG‹›“G‚ÌÕ“Ë‚Ìê‡
 	if (enemy.collidesWith(brave, collisionVector))
 	{
@@ -143,12 +142,10 @@ void TowerDiffence::collisions()
 	}
 	else
 		enemy.setNearPlayer(false);
-=======
 
 	if (brave.collidesWith(barricade, collisionVector)) {
 		// ”j‰óˆ—
 	}
->>>>>>> e39ca4c35f30020dbce61fc642fe87c1ee1602be
 }
 
 //==========================================================
