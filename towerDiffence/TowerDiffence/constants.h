@@ -28,7 +28,8 @@ const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main.png";	// 勇者の歩行画
 const char FIRE_IMAGE[] = "pictures\\alex\\fire.png";				// 炎の画像
 const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy.png";			// 雑魚敵の画像
 const char TILE_IMAGES[] = "pictures\\map\\ground.png";             // マップ画像
-const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";		// ダッシュボード画像
+const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";// ダッシュボード画像
+const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";	// バリケードの画像
 
 
 // 音声

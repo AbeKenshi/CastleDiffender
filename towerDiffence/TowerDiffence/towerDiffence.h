@@ -11,6 +11,7 @@
 #include "enemy.h"
 #include "dashboard.h"
 #include "rect.h"
+#include "barricade.h"
 
 namespace towerDiffenceNS
 {
@@ -34,6 +35,8 @@ private:
 	Brave brave;					// 勇者
 	TextureManager tileTexture;     // タイルのテクスチャ
 	Image tile;                     // タイル画像
+	TextureManager barricadeTexture;	// バリケードのテクスチャ
+	Barricade barricade;			// バリケード画像
 	TextureManager fireTexture;		// 炎のテクスチャ
 	Fire fire;						// 炎の画像
 	TextureManager enemyTexture;	// 雑魚敵のテクスチャ

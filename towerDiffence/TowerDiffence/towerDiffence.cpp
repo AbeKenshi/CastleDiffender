@@ -45,6 +45,16 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!tile.initialize(graphics, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_COLS, &tileTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing tile"));
 
+	// バリケードのテクスチャ
+	if (!barricadeTexture.initialize(graphics, BARRICADE_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade texture"));
+	// バリケードの画像
+	if (!barricade.initialize(this, barricadeNS::WIDTH, barricadeNS::HEIGHT, barricadeNS::TEXTURE_COLS, &barricadeTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade"));
+	barricade.setScale(2);
+	barricade.setX(100);
+	barricade.setY(100);
+
 	// 勇者のテクスチャ
 	if (!braveTexture.initialize(graphics, BRAVE_MOVE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave_move texture"));
@@ -98,6 +108,7 @@ void TowerDiffence::update()
 		brave.update(frameTime);
 		enemy.update(frameTime);
 		fire.update(frameTime);
+		barricade.update(frameTime);
 	}
 }
 
@@ -157,6 +168,8 @@ void TowerDiffence::render()
 		graphics->spriteEnd();		// スプライトの描画を開始
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
+
+		barricade.draw();
 		enemy.draw();
 		fire.draw();
 		brave.draw();
