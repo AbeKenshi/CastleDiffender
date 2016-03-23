@@ -48,6 +48,7 @@ namespace braveNS
 	const int UP_SECOND_ATTACK_END_FRAME = UP_ATTACK_END_FRAME;
 	const int RIGHT_SECOND_ATTACK_START_FRAME = RIGHT_ATTACK_START_FRAME;// 右方向への攻撃アニメーション（第二段）はフレーム145から開始
 	const int RIGHT_SECOND_ATTACK_END_FRAME = RIGHT_ATTACK_END_FRAME;
+	const int RESERVOIR_TIME = 1.0f;				// 攻撃までのため時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けて点滅する時間
 	enum STATE { MOVE, ATTACK , SECOND_ATTACK, GAURD };			// 状態
 }
@@ -60,7 +61,7 @@ private:
 	braveNS::STATE state;			// 状態
 	int oldStartFrame;
 	int oldEndFrame;
-	float timeCounter;				// アニメーション用のタイマー
+	float timeCounter;				// ダメージアニメーション用のタイマー
 	float totalTimeCounter;
 	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
 	bool isDamaged;					// ダメージを受けている状態かどうか

@@ -52,8 +52,6 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!barricade.initialize(this, barricadeNS::WIDTH, barricadeNS::HEIGHT, barricadeNS::TEXTURE_COLS, &barricadeTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade"));
 	barricade.setScale(1);
-	barricade.setX(0);
-	barricade.setY(0);
 
 	// 勇者のテクスチャ
 	if (!braveTexture.initialize(graphics, BRAVE_MOVE_IMAGE))
@@ -138,7 +136,6 @@ void TowerDiffence::collisions()
 	if (enemy.collidesWith(brave, collisionVector))
 	{
 		enemy.setNearPlayer(true);
-		enemy.setCollisionVector(collisionVector);
 	}
 	else
 		enemy.setNearPlayer(false);
