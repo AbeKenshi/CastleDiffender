@@ -125,7 +125,7 @@ void TowerDiffence::roundStart()
 //==========================================================
 void TowerDiffence::ai()
 {
-
+	enemy.ai(frameTime, brave);
 }
 
 //==========================================================
@@ -133,7 +133,15 @@ void TowerDiffence::ai()
 //==========================================================
 void TowerDiffence::collisions()
 {
-
+	VECTOR2 collisionVector;
+	// ÉvÉåÉCÉÑÅ[Ç∆éGãõìGÇÃè’ìÀÇÃèÍçá
+	if (enemy.collidesWith(brave, collisionVector))
+	{
+		enemy.setNearPlayer(true);
+		enemy.setCollisionVector(collisionVector);
+	}
+	else
+		enemy.setNearPlayer(false);
 }
 
 //==========================================================

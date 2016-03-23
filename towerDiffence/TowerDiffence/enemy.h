@@ -39,6 +39,10 @@ private:
 	float totalTimeCounter;
 	bool isDamaged;						// ダメージを受けている状態かどうか
 	bool drawFlag;
+	float distanceCounter;				// 距離計測用カウンター
+	enemyNS::DIRECTION goalDirection;	// 次に進むべき方向
+	bool nearPlayer;					// プレイヤーと隣接しているかどうか
+	VECTOR2 collisionVector;			// プレイヤーへの衝突ベクトル
 public:
 	// コンストラクタ
 	Enemy();
@@ -47,8 +51,9 @@ public:
 	virtual void draw();
 	virtual bool initialize(Game *gamePtr, int width, int height, int ncols,
 		TextureManager *textureM);
+	virtual void ai(float frameTime, Entity &ent);
 	void update(float frameTime);
-	void damage(WEAPON);
+	void damage(WEAPON);	
 
 	// 新しく追加するメンバー関数
 	// 移動時のアップデート関数
@@ -57,6 +62,15 @@ public:
 	void updateAttacking(float frameTime);
 	// 向いている方向を返す
 	enemyNS::DIRECTION getDirection(){ return direction; }
-
+	// プレイヤーと隣接しているかどうかをセット
+	void setNearPlayer(bool np)
+	{
+		nearPlayer = np;
+	}
+	// プレイヤーへの衝突ベクトルをセット
+	void setCollisionVector(VECTOR2 vc)
+	{
+		collisionVector = vc;
+	}
 };
 #endif
