@@ -51,9 +51,9 @@ void TowerDiffence::initialize(HWND hwnd)
 	// バリケードの画像
 	if (!barricade.initialize(this, barricadeNS::WIDTH, barricadeNS::HEIGHT, barricadeNS::TEXTURE_COLS, &barricadeTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade"));
-	barricade.setScale(2);
-	barricade.setX(100);
-	barricade.setY(100);
+	barricade.setScale(1);
+	barricade.setX(0);
+	barricade.setY(0);
 
 	// 勇者のテクスチャ
 	if (!braveTexture.initialize(graphics, BRAVE_MOVE_IMAGE))
@@ -133,7 +133,11 @@ void TowerDiffence::ai()
 //==========================================================
 void TowerDiffence::collisions()
 {
+	VECTOR2 collisionVector;
 
+	if (brave.collidesWith(barricade, collisionVector)) {
+		// 破壊処理
+	}
 }
 
 //==========================================================
@@ -154,6 +158,7 @@ void TowerDiffence::render()
 		for (int row = 0; row<mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
 		{
 			tile.setY((float)(row*mapNS::TEXTURE_SIZE));      // タイルのYを設定
+			barricade.setY((float)(row*barricadeNS::WIDTH));  // オブジェクトのYを設定
 			for (int col = 0; col<mapNS::MAP_WIDTH; col++)    // マップの各列を処理
 			{
 				if (mapNS::tileMap[row][col] >= 0)            // タイルが存在する場合
@@ -163,13 +168,19 @@ void TowerDiffence::render()
 					if (tile.getX() > -mapNS::TEXTURE_SIZE && tile.getX() < GAME_WIDTH)   // タイルが画面上にあるかどうか
 						tile.draw();    // タイルを描画
 				}
+				if (mapNS::tileObj[row][col] >= 0)
+				{
+					barricade.setCurrentFrame(mapNS::tileObj[row][col]);							// オブジェクトのテクスチャを設定
+					barricade.setX((float)(col*mapNS::TEXTURE_SIZE) + mapX);						// オブジェクトのXを設定
+					if (barricade.getX() > -mapNS::TEXTURE_SIZE && barricade.getX() < GAME_WIDTH)   // オブジェクトが画面上にあるかどうか
+						barricade.draw();   // オブジェクトを描画
+				}
 			}
 		}
 		graphics->spriteEnd();		// スプライトの描画を開始
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
 
-		barricade.draw();
 		enemy.draw();
 		fire.draw();
 		brave.draw();
