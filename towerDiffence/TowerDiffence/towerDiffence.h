@@ -33,25 +33,26 @@ class TowerDiffence : public Game
 {
 private:
 	// ゲームアイテム
-	TextureManager menuTexture;		// タイトルのテクスチャ
-	Image menu;						// タイトル画像
-	TextureManager braveTexture;	// 勇者のテクスチャ
-	Brave brave;					// 勇者
-	TextureManager braveAttackCollisionTexture;	// 勇者の攻撃の当たり判定用のテクスチャ
-	AttackCollision braveAttackCollision;		// 勇者の攻撃の当たり判定用
-	TextureManager tileTexture;     // タイルのテクスチャ
-	Map map;                        // タイル画像
-	TextureManager barricadeTexture;	// バリケードのテクスチャ
+	TextureManager menuTexture;							// タイトルのテクスチャ
+	Image menu;											// タイトル画像
+	TextureManager braveTexture;						// 勇者のテクスチャ
+	Brave brave;										// 勇者
+	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
+	AttackCollision braveAttackCollision;				// 勇者の攻撃の当たり判定用
+	AttackCollision enemyAttackCollision;				// 雑魚敵の攻撃の当たり判定用
+	TextureManager tileTexture;							// タイルのテクスチャ
+	Map map;											// タイル画像
+	TextureManager barricadeTexture;					// バリケードのテクスチャ
 	Barricade barricades[towerDiffenceNS::barricadeNum];// バリケード画像
-	TextureManager fireTexture;		// 炎のテクスチャ
-	Fire fire;						// 炎の画像
-	TextureManager enemyTexture;	// 雑魚敵のテクスチャ
-	Enemy enemy;					// 雑魚敵の画像
-	TextureManager dashboardTextures;	// ダッシュボードテクスチャ
-	BarGraph barGraph;				// 体力バー
-	Rect *rect;						// Rectへのポインター
-	float mapX;                     // 初期X座標
-	bool menuOn;					// メニューフラグ
+	TextureManager fireTexture;							// 炎のテクスチャ
+	Fire fire;											// 炎の画像
+	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
+	Enemy enemy;										// 雑魚敵の画像
+	TextureManager dashboardTextures;					// ダッシュボードテクスチャ
+	BarGraph barGraph;									// 体力バー
+	Rect *rect;											// Rectへのポインター
+	float mapX;											// 初期X座標
+	bool menuOn;										// メニューフラグ
 
 public:
 	// コンストラクタ

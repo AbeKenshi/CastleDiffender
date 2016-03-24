@@ -68,3 +68,37 @@ void AttackCollision::attack(Brave * brave)
 	visible = true;							// UŒ‚‚ğ•\¦
 	active = true;							// Õ“Ë‰Â”\‚É‚·‚é
 }
+
+//==========================================================
+// Attack
+// G‹›“G‚©‚çUŒ‚‚ğ”­“®
+//==========================================================
+void AttackCollision::attack(Enemy *enemy)
+{
+	switch (enemy->getDirection())
+	{
+	case braveNS::RIGHT:
+		spriteData.x = enemy->getCenterX();
+		spriteData.y = enemy->getCenterY() - spriteData.height / 2;
+		spriteData.angle = 0.0f;
+		break;
+	case braveNS::UP:
+		spriteData.x = enemy->getCenterX() - spriteData.width / 2;
+		spriteData.y = enemy->getCenterY() - spriteData.height / 2 - enemy->getWidth();
+		spriteData.angle = PI / 2;
+		break;
+	case braveNS::LEFT:
+		spriteData.x = enemy->getCenterX() - spriteData.width / 2 - enemy->getWidth();
+		spriteData.y = enemy->getCenterY() - spriteData.height / 2;
+		spriteData.angle = 0.0f;
+		break;
+	case braveNS::DOWN:
+		spriteData.x = enemy->getCenterX() - spriteData.width / 2;
+		spriteData.y = enemy->getCenterY() + spriteData.height / 16;
+		spriteData.angle = PI / 2;
+		break;
+	}
+	collisionTimer = 0.0f;
+	visible = true;							// UŒ‚‚ğ•\¦
+	active = true;							// Õ“Ë‰Â”\‚É‚·‚é
+}

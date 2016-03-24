@@ -36,6 +36,7 @@ namespace enemyNS
 	const float ATTACK_TIME = 0.3f;					// プレイヤーに隣接してから攻撃に移るまでの溜め時間
 	const float CONTINUE_ATTACK_TIME = 0.8f;		// 連続で攻撃する場合の溜め時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けている場合、DAMAGE_TIMEごとに画像が点滅
+	const int ATTACK_DAMAGE = 5.0f;
 	enum STATE {MOVE, ATTACK, PRE_ATTACK, GAURD };	// 雑魚敵の状態
 }
 
@@ -57,6 +58,7 @@ private:
 	bool drawFlag;						// 描画フラグ、ダメージを受けている状態時に使用
 	bool nearPlayer;					// プレイヤーと隣接しているかどうか
 	bool isAttacked;					// 攻撃した直後かどうか
+	bool attackCollisionFlag;			// 攻撃用の衝突判定を出現させるフラグ
 public:
 	// コンストラクタ
 	Enemy();
@@ -88,5 +90,7 @@ public:
 	void dead();
 	// 移動可能かチェック
 	bool checkCanMove(float x, float y, Map *map);
+	// 攻撃用の衝突判定を出現させるフラグ、攻撃状態に遷移した直後にtrueとなって、それ以外はfalse
+	bool getAttackCollisionFlag() { return attackCollisionFlag; }
 };
 #endif

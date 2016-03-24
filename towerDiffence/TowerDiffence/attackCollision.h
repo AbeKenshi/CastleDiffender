@@ -5,6 +5,7 @@
 #include "entity.h"
 #include "constants.h"
 #include "brave.h"
+#include "enemy.h"
 
 namespace attackCollisionNS
 {
@@ -27,6 +28,7 @@ public:
 
 	// V‚µ‚¢ƒƒ“ƒo[ŠÖ”
 	void attack(Brave *brave);	// —EÒ‚©‚ç‚ÌUŒ‚
+	void attack(Enemy *enemy);	// G‹›“G‚©‚ç‚ÌUŒ‚
 };
 
 #endif // !_ATTACK_COLLISION_H
