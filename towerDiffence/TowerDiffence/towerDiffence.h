@@ -6,7 +6,8 @@
 #include "textureManager.h"
 #include "image.h"
 #include "brave.h"
-#include "attackCollision.h"
+#include "braveAttackCollision.h"
+#include "enemyAttackCollision.h"
 #include "fire.h"
 #include "map.h"
 #include "enemy.h"
@@ -38,8 +39,8 @@ private:
 	TextureManager braveTexture;						// 勇者のテクスチャ
 	Brave brave;										// 勇者
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
-	AttackCollision braveAttackCollision;				// 勇者の攻撃の当たり判定用
-	AttackCollision enemyAttackCollision;				// 雑魚敵の攻撃の当たり判定用
+	BraveAttackCollision braveAttackCollision;				// 勇者の攻撃の当たり判定用
+	EnemyAttackCollision enemyAttackCollision;				// 雑魚敵の攻撃の当たり判定用
 	TextureManager tileTexture;							// タイルのテクスチャ
 	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ

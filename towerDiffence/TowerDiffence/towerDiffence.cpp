@@ -77,12 +77,12 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!attackCollisionTexture.initialize(graphics, COLLISION_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision texture"));
 	// —EŽÒ‚Ì‚ ‚½‚è”»’è—p
-	if (!braveAttackCollision.initialize(this, attackCollisionNS::WIDTH, attackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
+	if (!braveAttackCollision.initialize(this, braveAttackCollisionNS::WIDTH, braveAttackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision"));
 	// ŽG‹›“G‚Ì“–‚½‚è”»’è—p
-	if (!enemyAttackCollision.initialize(this, attackCollisionNS::WIDTH, attackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
+	if (!enemyAttackCollision.initialize(this, enemyAttackCollisionNS::WIDTH, enemyAttackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
-
+	
 	// ‰Š‚ÌƒeƒNƒXƒ`ƒƒ
 	if (!fireTexture.initialize(graphics, FIRE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire texture"));

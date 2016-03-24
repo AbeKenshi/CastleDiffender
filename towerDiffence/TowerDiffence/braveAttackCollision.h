@@ -7,7 +7,7 @@
 #include "brave.h"
 #include "enemy.h"
 
-namespace attackCollisionNS
+namespace braveAttackCollisionNS
 {
 	const int WIDTH = 48;				// 画像の幅（各フレーム）
 	const int HEIGHT = 96;				// 画像の高さ
@@ -15,20 +15,19 @@ namespace attackCollisionNS
 	const float COLLISION_TIME = 0.3f;	// 攻撃の当たり判定が出ている時間
 }
 
-class AttackCollision : public Entity
+class BraveAttackCollision : public Entity
 {
 private:
 	float collisionTimer;				// 攻撃の当たり判定が出ている時間を計測するタイマー
 public:
 	// コンストラクタ
-	AttackCollision();
+	BraveAttackCollision();
 
 	// 継承されたメンバー関数
 	void update(float frameTime);
 
 	// 新しいメンバー関数
 	void attack(Brave *brave);	// 勇者からの攻撃
-	void attack(Enemy *enemy);	// 雑魚敵からの攻撃
 };
 
 #endif // !_ATTACK_COLLISION_H
