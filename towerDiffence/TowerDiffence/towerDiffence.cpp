@@ -63,6 +63,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
 
+
 	// 勇者の当たり判定用のテクスチャ
 	if (!braveAttackCollisionTexture.initialize(graphics, COLLISION_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision texture"));
@@ -149,6 +150,14 @@ void TowerDiffence::collisions()
 	}
 	else
 		enemy.setNearPlayer(false);
+	
+	// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
+	if (braveAttackCollision.collidesWith(enemy, collisionVector))
+	{
+		enemy.damage(BRAVE_ATTACK);
+		braveAttackCollision.setVisible(false);
+		braveAttackCollision.setActive(false);
+	}
 
 	// プレイヤーとバリケードの衝突
 	if (brave.collidesWith(barricade, collisionVector)) {

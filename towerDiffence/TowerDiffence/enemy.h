@@ -3,6 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include "entity.h"
+#include "brave.h"
 #include "constants.h"
 
 namespace enemyNS
@@ -82,5 +83,7 @@ public:
 	}
 	// 向きをgoalDirectionへとアップデートする関数
 	void changeDirection(int strF, int endF);
+	// 死亡時に呼び出す関数
+	void dead();
 };
 #endif
