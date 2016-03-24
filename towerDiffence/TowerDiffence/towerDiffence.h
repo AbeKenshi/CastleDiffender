@@ -34,7 +34,7 @@ private:
 	TextureManager braveTexture;	// 勇者のテクスチャ
 	Brave brave;					// 勇者
 	TextureManager tileTexture;     // タイルのテクスチャ
-	Image tile;                     // タイル画像
+	Map map;                        // タイル画像
 	TextureManager barricadeTexture;	// バリケードのテクスチャ
 	Barricade barricade;			// バリケード画像
 	TextureManager fireTexture;		// 炎のテクスチャ
