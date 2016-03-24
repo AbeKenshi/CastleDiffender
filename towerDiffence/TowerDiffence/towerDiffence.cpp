@@ -42,7 +42,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!tileTexture.initialize(graphics, TILE_IMAGES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing map texture"));
 	// マップの画像
-	if (!tile.initialize(graphics, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_COLS, &tileTexture))
+	if (!map.initialize(this, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_COLS, &tileTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing tile"));
 
 	// バリケードのテクスチャ
@@ -103,7 +103,7 @@ void TowerDiffence::update()
 	{
 		if (input->isKeyDown(BRAVE_FIRE_KEY))
 			fire.fire(&brave);
-		brave.update(frameTime);
+		brave.update(frameTime, &map);
 		enemy.update(frameTime);
 		fire.update(frameTime);
 		barricade.update(frameTime);
@@ -140,8 +140,15 @@ void TowerDiffence::collisions()
 	else
 		enemy.setNearPlayer(false);
 
+	// プレイヤーとバリケードの衝突
 	if (brave.collidesWith(barricade, collisionVector)) {
-		// 破壊処理
+		// 当たり判定を消す
+		map.updateMapCol(barricade.getX(), barricade.getY(), 0);
+		// オブジェクトを消す
+		map.updateMapObj(barricade.getX(), barricade.getY(), -1);
+
+		barricade.setActive(false);
+		barricade.setVisible(false);
 	}
 }
 
@@ -162,20 +169,20 @@ void TowerDiffence::render()
 		// ステージの描画
 		for (int row = 0; row<mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
 		{
-			tile.setY((float)(row*mapNS::TEXTURE_SIZE));      // タイルのYを設定
+			map.setY((float)(row*mapNS::TEXTURE_SIZE));       // タイルのYを設定
 			barricade.setY((float)(row*barricadeNS::WIDTH));  // オブジェクトのYを設定
 			for (int col = 0; col<mapNS::MAP_WIDTH; col++)    // マップの各列を処理
 			{
-				if (mapNS::tileMap[row][col] >= 0)            // タイルが存在する場合
+				if (map.getMapData(row, col) >= 0)          // タイルが存在する場合
 				{
-					tile.setCurrentFrame(mapNS::tileMap[row][col]);                       // タイルのテクスチャを設定
-					tile.setX((float)(col*mapNS::TEXTURE_SIZE) + mapX);                   // タイルのXを設定
-					if (tile.getX() > -mapNS::TEXTURE_SIZE && tile.getX() < GAME_WIDTH)   // タイルが画面上にあるかどうか
-						tile.draw();    // タイルを描画
+					map.setCurrentFrame(map.getMapData(row, col));                       // タイルのテクスチャを設定
+					map.setX((float)(col*mapNS::TEXTURE_SIZE) + mapX);                    // タイルのXを設定
+					if (map.getX() > -mapNS::TEXTURE_SIZE && map.getX() < GAME_WIDTH)     // タイルが画面上にあるかどうか
+						map.draw();    // タイルを描画
 				}
-				if (mapNS::tileObj[row][col] >= 0)
+				if (map.getMapObj(row, col) >= 0)
 				{
-					barricade.setCurrentFrame(mapNS::tileObj[row][col]);							// オブジェクトのテクスチャを設定
+					barricade.setCurrentFrame(map.getMapObj(row, col));		    					// オブジェクトのテクスチャを設定
 					barricade.setX((float)(col*mapNS::TEXTURE_SIZE) + mapX);						// オブジェクトのXを設定
 					if (barricade.getX() > -mapNS::TEXTURE_SIZE && barricade.getX() < GAME_WIDTH)   // オブジェクトが画面上にあるかどうか
 						barricade.draw();   // オブジェクトを描画

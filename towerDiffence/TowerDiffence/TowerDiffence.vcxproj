@@ -173,6 +173,7 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="inputDialog.cpp" />
+    <ClCompile Include="map.cpp" />
     <ClCompile Include="messageDialog.cpp" />
     <ClCompile Include="rect.cpp" />
     <ClCompile Include="textDX.cpp" />

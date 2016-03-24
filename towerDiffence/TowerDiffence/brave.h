@@ -50,7 +50,7 @@ namespace braveNS
 	const int RIGHT_SECOND_ATTACK_END_FRAME = RIGHT_ATTACK_END_FRAME;
 	const int RESERVOIR_TIME = 1.0f;				// 攻撃までのため時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けて点滅する時間
-	enum STATE { MOVE, ATTACK , SECOND_ATTACK, GAURD };			// 状態
+	enum STATE { MOVE, ATTACK, SECOND_ATTACK, GAURD };			// 状態
 }
 
 // Braveクラス
@@ -74,7 +74,7 @@ public:
 	virtual void draw();
 	virtual bool initialize(Game *gamePtr, int width, int height, int ncols,
 		TextureManager *textureM);
-	void update(float frameTime);
+	void update(float frameTime, Map *map);
 	void damage(WEAPON);
 
 	// 新しく追加するメンバー関数
@@ -85,6 +85,6 @@ public:
 	// 向いている方向を返す
 	braveNS::DIRECTION getDirection() { return direction; }
 	// 移動可能かチェックする関数
-	bool checkCanMove(float x, float y);
- };
+	bool checkCanMove(float x, float y, Map *map);
+};
 #endif
