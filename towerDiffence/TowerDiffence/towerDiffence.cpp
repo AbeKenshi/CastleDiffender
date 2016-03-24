@@ -63,6 +63,13 @@ void TowerDiffence::initialize(HWND hwnd)
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
 
+	// 勇者の当たり判定用のテクスチャ
+	if (!braveAttackCollisionTexture.initialize(graphics, COLLISION_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision texture"));
+	// 勇者のあたり判定用
+	if (!braveAttackCollision.initialize(this, attackCollisionNS::WIDTH, attackCollisionNS::HEIGHT, 0, &braveAttackCollisionTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision"));
+	
 	// 炎のテクスチャ
 	if (!fireTexture.initialize(graphics, FIRE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire texture"));
@@ -103,9 +110,12 @@ void TowerDiffence::update()
 	{
 		if (input->isKeyDown(BRAVE_FIRE_KEY))
 			fire.fire(&brave);
+		if (brave.getAttackCollisionFlag())
+			braveAttackCollision.attack(&brave);
 		brave.update(frameTime);
 		enemy.update(frameTime);
 		fire.update(frameTime);
+		braveAttackCollision.update(frameTime);
 		barricade.update(frameTime);
 	}
 }
@@ -189,6 +199,7 @@ void TowerDiffence::render()
 		enemy.draw();
 		fire.draw();
 		brave.draw();
+		braveAttackCollision.draw();
 		barGraph.set(brave.getHealth());
 		barGraph.draw(graphicsNS::FILTER);	// 体力バーを描画
 	}
