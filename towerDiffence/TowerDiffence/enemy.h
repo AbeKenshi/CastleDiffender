@@ -5,6 +5,7 @@
 #include "entity.h"
 #include "brave.h"
 #include "constants.h"
+#include "map.h"
 
 namespace enemyNS
 {
@@ -65,11 +66,11 @@ public:
 	virtual bool initialize(Game *gamePtr, int width, int height, int ncols,
 		TextureManager *textureM);
 	virtual void ai(float frameTime, Entity &ent);
-	void update(float frameTime);
 	void damage(WEAPON);	
 
 
 	// 新しく追加するメンバー関数
+	void update(float frameTime, Map *map);
 	// 移動時のアップデート関数
 	void updateMoving(float frameTime);
 	// 攻撃時のアップデート関数
@@ -85,5 +86,7 @@ public:
 	void changeDirection(int strF, int endF);
 	// 死亡時に呼び出す関数
 	void dead();
+	// 移動可能かチェック
+	bool checkCanMove(float x, float y, Map *map);
 };
 #endif

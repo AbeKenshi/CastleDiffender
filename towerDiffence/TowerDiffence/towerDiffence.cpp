@@ -123,7 +123,7 @@ void TowerDiffence::update()
 		if (brave.getAttackCollisionFlag())
 			braveAttackCollision.attack(&brave);
 		brave.update(frameTime, &map);
-		enemy.update(frameTime);
+		enemy.update(frameTime, &map);
 		fire.update(frameTime);
 		braveAttackCollision.update(frameTime);
 		for (int i = 0; i < sizeof(barricades) / sizeof(barricades[0]); i++)
@@ -173,7 +173,7 @@ void TowerDiffence::collisions()
 
 	// プレイヤーとバリケードの衝突
 	for (int i = 0; i < sizeof(barricades) / sizeof(barricades[0]); i++) {
-		if (brave.collidesWith(barricades[i], collisionVector)) {
+		if (enemy.collidesWith(barricades[i], collisionVector)) {
 			barricades[i].setActive(false);
 			barricades[i].setVisible(false);
 
