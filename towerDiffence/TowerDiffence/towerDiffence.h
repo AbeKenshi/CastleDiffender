@@ -37,7 +37,7 @@ private:
 	TextureManager braveAttackCollisionTexture;	// 勇者の攻撃の当たり判定用のテクスチャ
 	AttackCollision braveAttackCollision;		// 勇者の攻撃の当たり判定用
 	TextureManager tileTexture;     // タイルのテクスチャ
-	Image tile;                     // タイル画像
+	Map map;                        // タイル画像
 	TextureManager barricadeTexture;	// バリケードのテクスチャ
 	Barricade barricade;			// バリケード画像
 	TextureManager fireTexture;		// 炎のテクスチャ
