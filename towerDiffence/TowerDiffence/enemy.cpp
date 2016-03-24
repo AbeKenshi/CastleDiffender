@@ -61,7 +61,7 @@ void Enemy::draw()
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //=============================================================================
-void Enemy::update(float frameTime)
+void Enemy::update(float frameTime, Map *map)
 {
 	if (!active)
 		return;
@@ -78,7 +78,11 @@ void Enemy::update(float frameTime)
 			{
 				changeDirection(enemyNS::MOVE_LEFT_START_FRAME, enemyNS::MOVE_LEFT_END_FRAME);
 			}
-			spriteData.x -= enemyNS::MOVE_SPEED * frameTime;
+			// 移動可能だったら
+			if (checkCanMove(spriteData.x - enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+				// 左に移動
+				spriteData.x -= enemyNS::MOVE_SPEED * frameTime;
+			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case enemyNS::RIGHT:
@@ -86,7 +90,11 @@ void Enemy::update(float frameTime)
 			{
 				changeDirection(enemyNS::MOVE_RIGHT_START_FRAME, enemyNS::MOVE_RIGHT_END_FRAME);
 			}
-			spriteData.x += enemyNS::MOVE_SPEED * frameTime;
+			// 移動可能だったら
+			if (checkCanMove(spriteData.x + enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+				// 右に移動
+				spriteData.x += enemyNS::MOVE_SPEED * frameTime;
+			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case enemyNS::UP:
@@ -94,7 +102,11 @@ void Enemy::update(float frameTime)
 			{
 				changeDirection(enemyNS::MOVE_UP_START_FRAME, enemyNS::MOVE_UP_END_FRAME);
 			}
-			spriteData.y -= enemyNS::MOVE_SPEED * frameTime;
+			// 移動可能だったら
+			if (checkCanMove(spriteData.y - enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+				// 上に移動
+				spriteData.y -= enemyNS::MOVE_SPEED * frameTime;
+			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case enemyNS::DOWN:
@@ -102,7 +114,11 @@ void Enemy::update(float frameTime)
 			{
 				changeDirection(enemyNS::MOVE_DOWN_START_FRAME, enemyNS::MOVE_DOWN_END_FRAME);
 			}
-			spriteData.y += enemyNS::MOVE_SPEED * frameTime;
+			// 移動可能だったら
+			if (checkCanMove(spriteData.y + enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+				// 下に移動
+				spriteData.y += enemyNS::MOVE_SPEED * frameTime;
+			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case enemyNS::NONE:
@@ -339,4 +355,34 @@ void Enemy::changeDirection(int strF, int endF)
 	currentFrame = startFrame;
 	animTimer = 0.0f;
 	setRect();
+}
+
+//==========================================================
+// 移動可能かチェック
+//==========================================================
+bool Enemy::checkCanMove(float x, float y, Map *map)
+{
+	// 1マス32pixelのため32で割る
+	// -16はめり込みを防止するために半マス分引いてる
+	// +αは微調整…
+	int map_x = (int)((x - 8) / 32) + 1;
+	int map_y = (int)((y - 8) / 32) + 2;
+
+	if (map_x <= 0)
+		map_x = 0;
+	if (map_x >= mapNS::MAP_WIDTH)
+		map_x = mapNS::MAP_WIDTH - 1;
+	if (map_y <= 0)
+		map_y = 0;
+	if (map_y >= mapNS::MAP_HEIGHT)
+		map_y = mapNS::MAP_HEIGHT - 1;
+
+	if (map->getMapCol(map_y, map_x) == 0)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
