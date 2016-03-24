@@ -213,9 +213,20 @@ void Enemy::update(float frameTime, Map *map)
 			isDamaged = false;
 		}
 	}
+	if (checkCanMove(spriteData.y + enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+		spriteData.x += frameTime * velocity.x;     // キャラをX方向に動かす
+		spriteData.y += frameTime * velocity.y;     // キャラをY方向に動かす
+	}
+	// 画面の端まで来たら進めない
+	if (spriteData.x > GAME_WIDTH - enemyNS::WIDTH * getScale())	// 画面右端を超えたら
+		spriteData.x = GAME_WIDTH - enemyNS::WIDTH * getScale();	// 画面右端に移動
+	if (spriteData.x < 0)											// 画面左端を超えたら
+		spriteData.x = 0;											// 画面左端に移動
+	if (spriteData.y < rectNS::HEIGHT - 10)								// 画面上端を超えたら
+		spriteData.y = rectNS::HEIGHT - 10;								// 画面上端に移動
+	if (spriteData.y > GAME_HEIGHT - enemyNS::HEIGHT * getScale())  // 画面下端を超えたら
+		spriteData.y = GAME_HEIGHT - enemyNS::HEIGHT * getScale();	// 画面下端に移動
 
-	spriteData.x += frameTime * velocity.x;     // キャラをX方向に動かす
-	spriteData.y += frameTime * velocity.y;     // キャラをY方向に動かす
 }
 
 //==========================================================
