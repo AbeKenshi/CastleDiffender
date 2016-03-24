@@ -66,6 +66,7 @@ private:
 	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
 	bool isDamaged;					// ダメージを受けている状態かどうか
 	bool drawFlag;
+	bool attackCollisionFlag;
 public:
 	// コンストラクタ
 	Brave();
@@ -84,7 +85,11 @@ public:
 	void updateAttacking(float frameTime);
 	// 向いている方向を返す
 	braveNS::DIRECTION getDirection() { return direction; }
+	// 状態を返す
+	braveNS::STATE getState() { return state; }
 	// 移動可能かチェックする関数
 	bool checkCanMove(float x, float y);
+	// 攻撃用の衝突判定を出現されるフラグ、攻撃状態に遷移した直後にtrueとなって、それ以外はfalse
+	bool getAttackCollisionFlag() { return attackCollisionFlag; }
  };
 #endif

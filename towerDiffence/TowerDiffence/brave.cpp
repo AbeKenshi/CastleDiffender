@@ -25,6 +25,7 @@ Brave::Brave() : Entity()
 	timeCounter = 0.0f;
 	totalTimeCounter = 0.0f;
 	drawFlag = true;
+	attackCollisionFlag = false;
 }
 
 //==========================================================
@@ -54,6 +55,7 @@ void Brave::draw()
 //=============================================================================
 void Brave::update(float frameTime)
 {	
+	attackCollisionFlag = false;
 	// 状態遷移前の処理
 	switch (state)
 	{
@@ -148,6 +150,7 @@ void Brave::update(float frameTime)
 			// アニメーション終了時にフレームを戻すために保存
 			oldStartFrame = startFrame;
 			oldEndFrame = endFrame;
+			attackCollisionFlag = true;
 			// 向いている方向でアニメーションを分岐
 			switch (direction)
 			{
@@ -241,6 +244,7 @@ void Brave::update(float frameTime)
 				Entity::updateOnlyImage(frameTime);
 				secondAttackFlag = false;
 				velocity.y = -sqrt(2 * 2000.0f * braveNS::HEIGHT);
+				attackCollisionFlag = true;
 			}
 			else
 			{

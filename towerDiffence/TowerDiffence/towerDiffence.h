@@ -6,6 +6,7 @@
 #include "textureManager.h"
 #include "image.h"
 #include "brave.h"
+#include "attackCollision.h"
 #include "fire.h"
 #include "map.h"
 #include "enemy.h"
@@ -33,6 +34,8 @@ private:
 	Image menu;						// タイトル画像
 	TextureManager braveTexture;	// 勇者のテクスチャ
 	Brave brave;					// 勇者
+	TextureManager braveAttackCollisionTexture;	// 勇者の攻撃の当たり判定用のテクスチャ
+	AttackCollision braveAttackCollision;		// 勇者の攻撃の当たり判定用
 	TextureManager tileTexture;     // タイルのテクスチャ
 	Image tile;                     // タイル画像
 	TextureManager barricadeTexture;	// バリケードのテクスチャ

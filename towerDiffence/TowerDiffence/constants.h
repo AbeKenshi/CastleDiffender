@@ -30,7 +30,7 @@ const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy1.png";			// 雑魚敵の画像
 const char TILE_IMAGES[] = "pictures\\map\\ground.png";             // マップ画像
 const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";// ダッシュボード画像
 const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";	// バリケードの画像
-
+const char COLLISION_IMAGE[] = "pictures\\alex\\attackCollision.png";// 攻撃用のテクスチャ
 
 // 音声
 // WAVE_BANK must be location of .xwb file.

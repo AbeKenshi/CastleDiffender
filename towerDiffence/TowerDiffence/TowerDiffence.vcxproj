@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="attackCollision.h" />
     <ClInclude Include="audio.h" />
     <ClInclude Include="barricade.h" />
     <ClInclude Include="brave.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="towerDiffence.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="attackCollision.cpp" />
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="barricade.cpp" />
     <ClCompile Include="brave.cpp" />
