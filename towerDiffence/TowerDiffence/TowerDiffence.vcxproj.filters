@@ -140,7 +140,11 @@
     <ClCompile Include="barricade.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="attackCollision.cpp">
+=======
+    <ClCompile Include="map.cpp">
+>>>>>>> 59f0f1a842c0e14e36be723f2a1d2df7a7e115c3
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

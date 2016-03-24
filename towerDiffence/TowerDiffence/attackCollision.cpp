@@ -23,6 +23,8 @@ AttackCollision::AttackCollision() : Entity()
 //==========================================================
 void AttackCollision::update(float frameTime)
 {
+	if (visible == false)
+		return;
 	collisionTimer += frameTime;
 	if (collisionTimer >= attackCollisionNS::COLLISION_TIME)
 	{
@@ -30,8 +32,6 @@ void AttackCollision::update(float frameTime)
 		visible = false;
 		active = false;
 	}
-	if (visible == false)
-		return;
 	Image::update(frameTime);
 }
 
