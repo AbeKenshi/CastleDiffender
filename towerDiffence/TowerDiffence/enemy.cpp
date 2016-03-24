@@ -63,6 +63,8 @@ void Enemy::draw()
 //=============================================================================
 void Enemy::update(float frameTime)
 {
+	if (!active)
+		return;
 	// 状態遷移前の処理
 	switch (state)
 	{
@@ -217,9 +219,34 @@ void Enemy::updateAttacking(float frameTime)
 //==========================================================
 void Enemy::damage(WEAPON weapon)
 {
+	switch (weapon)
+	{
+	case FIRE:
+		break;
+	case BRAVE_ATTACK:
+		health -= braveNS::ATTACK_DAMAGE;
+		break;
+	case BRAVE_SECOND_ATTACK:
+		break;
+	case ENEMY_ATTACK:
+		break;
+	default:
+		break;
+	}
+	if (health <= 0)
+		dead();
 	isDamaged = true;
 }
 
+//==========================================================
+// 死亡時に呼び出される関数
+//==========================================================
+void Enemy::dead()
+{
+	active = false;
+	visible = false;
+	health = 0;
+}
 //==========================================================
 // 人工知能
 //==========================================================

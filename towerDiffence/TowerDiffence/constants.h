@@ -54,7 +54,7 @@ const UCHAR BRAVE_GAURD_KEY = 'G';			// ガードキー
 const UCHAR BRAVE_FIRE_KEY = 'F';			// 必殺技キー
 
 // weapon types
-enum WEAPON { TORPEDO, SHIP, PLANET };
+enum WEAPON { FIRE, BRAVE_ATTACK, BRAVE_SECOND_ATTACK, ENEMY_ATTACK };
 
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.

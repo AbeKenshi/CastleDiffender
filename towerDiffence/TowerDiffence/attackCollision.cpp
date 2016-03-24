@@ -44,27 +44,27 @@ void AttackCollision::attack(Brave * brave)
 	switch (brave->getDirection())
 	{
 		case braveNS::RIGHT:
-			spriteData.x = brave->getCenterX() + spriteData.width / 2;
+			spriteData.x = brave->getCenterX();
 			spriteData.y = brave->getCenterY() - spriteData.height / 2;
 			spriteData.angle = 0.0f;
 			break;
 		case braveNS::UP:
-			spriteData.x = brave->getCenterX() + spriteData.width / 2;
-			spriteData.y = brave->getCenterY() - spriteData.height / 2;
+			spriteData.x = brave->getCenterX() - spriteData.width / 2;
+			spriteData.y = brave->getCenterY() - spriteData.height / 2 - brave->getWidth();
 			spriteData.angle = PI / 2;
 			break;
 		case braveNS::LEFT:
-			spriteData.x = brave->getCenterX() - spriteData.width * 3 / 2;
+			spriteData.x = brave->getCenterX() - spriteData.width / 2 - brave->getWidth();
 			spriteData.y = brave->getCenterY() - spriteData.height / 2;
 			spriteData.angle = 0.0f;
 			break;
 		case braveNS::DOWN:
-			spriteData.x = brave->getCenterX() + spriteData.width / 2;
-			spriteData.y = brave->getCenterY() - spriteData.height / 2;
+			spriteData.x = brave->getCenterX() - spriteData.width / 2;
+			spriteData.y = brave->getCenterY() + spriteData.height / 16;
 			spriteData.angle = PI / 2;
 			break;
 	}
 	collisionTimer = 0.0f;
-	visible = true;							// ‰Š‚ğ•\¦
+	visible = true;							// UŒ‚‚ğ•\¦
 	active = true;							// Õ“Ë‰Â”\‚É‚·‚é
 }
