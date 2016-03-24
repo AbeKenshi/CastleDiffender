@@ -34,6 +34,8 @@ Enemy::Enemy() : Entity()
 	distanceCounter = 0.0f;
 	// 描画フラグはオン
 	drawFlag = true;
+	// 攻撃判定のコリジョンは無効状態からスタート
+	attackCollisionFlag = false;
 }
 
 //==========================================================
@@ -65,6 +67,7 @@ void Enemy::update(float frameTime, Map *map)
 {
 	if (!active)
 		return;
+	attackCollisionFlag = false;
 	// 状態遷移前の処理
 	switch (state)
 	{
@@ -155,11 +158,13 @@ void Enemy::update(float frameTime, Map *map)
 		{
 			attackTimer = 0.0f;
 			state = enemyNS::ATTACK;
+			attackCollisionFlag = true;
 		}
 		else if (!isAttacked && attackTimer > enemyNS::ATTACK_TIME)
 		{
 			attackTimer = 0.0f;
 			state = enemyNS::ATTACK;
+			attackCollisionFlag = true;
 		}
 		break;
 	case enemyNS::GAURD:
@@ -263,6 +268,7 @@ void Enemy::dead()
 	visible = false;
 	health = 0;
 }
+
 //==========================================================
 // 人工知能
 //==========================================================

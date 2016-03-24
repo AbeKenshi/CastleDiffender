@@ -25,6 +25,7 @@ Brave::Brave() : Entity()
 	timeCounter = 0.0f;
 	totalTimeCounter = 0.0f;
 	drawFlag = true;
+	// 攻撃判定のコリジョンは無効状態からスタート
 	attackCollisionFlag = false;
 }
 
@@ -55,6 +56,8 @@ void Brave::draw()
 //=============================================================================	
 void Brave::update(float frameTime, Map *map)
 {
+	if (!active)
+		return;
 	attackCollisionFlag = false;
 	// 状態遷移前の処理
 	switch (state)
@@ -361,6 +364,22 @@ void Brave::updateAttacking(float frameTime)
 //==========================================================
 void Brave::damage(WEAPON weapon)
 {
+	switch (weapon)
+	{
+	case FIRE:
+		break;
+	case BRAVE_ATTACK:
+		break;
+	case BRAVE_SECOND_ATTACK:
+		break;
+	case ENEMY_ATTACK:
+		health -= enemyNS::ATTACK_DAMAGE;
+		break;
+	default:
+		break;
+	}
+	if (health <= 0)
+		dead();
 	isDamaged = true;
 }
 
@@ -392,4 +411,14 @@ bool Brave::checkCanMove(float x, float y, Map *map)
 	{
 		return false;
 	}
+}
+
+//==========================================================
+// 死亡時に呼び出される関数
+//==========================================================
+void Brave::dead()
+{
+	active = false;
+	visible = false;
+	health = 0;
 }

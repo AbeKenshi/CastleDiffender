@@ -5,6 +5,7 @@
 #include "entity.h"
 #include "constants.h"
 #include "map.h"
+#include "enemy.h"
 
 namespace braveNS
 {
@@ -66,8 +67,8 @@ private:
 	float totalTimeCounter;
 	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
 	bool isDamaged;					// ダメージを受けている状態かどうか
-	bool drawFlag;
-	bool attackCollisionFlag;
+	bool drawFlag;					// 描画フラグ、true時に描画
+	bool attackCollisionFlag;		// 攻撃用の衝突判定を出現させるフラグ
 public:
 	// コンストラクタ
 	Brave();
@@ -88,9 +89,11 @@ public:
 	braveNS::DIRECTION getDirection() { return direction; }
 	// 状態を返す
 	braveNS::STATE getState() { return state; }
-	// 攻撃用の衝突判定を出現されるフラグ、攻撃状態に遷移した直後にtrueとなって、それ以外はfalse
+	// 攻撃用の衝突判定を出現させるフラグ、攻撃状態に遷移した直後にtrueとなって、それ以外はfalse
 	bool getAttackCollisionFlag() { return attackCollisionFlag; }
 	// 移動可能かチェックする関数
 	bool checkCanMove(float x, float y, Map *map);
+	// 死亡時に呼び出す関数
+	void dead();
 };
 #endif

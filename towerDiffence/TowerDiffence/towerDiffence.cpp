@@ -74,12 +74,15 @@ void TowerDiffence::initialize(HWND hwnd)
 
 
 	// 勇者の当たり判定用のテクスチャ
-	if (!braveAttackCollisionTexture.initialize(graphics, COLLISION_IMAGE))
+	if (!attackCollisionTexture.initialize(graphics, COLLISION_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision texture"));
 	// 勇者のあたり判定用
-	if (!braveAttackCollision.initialize(this, attackCollisionNS::WIDTH, attackCollisionNS::HEIGHT, 0, &braveAttackCollisionTexture))
+	if (!braveAttackCollision.initialize(this, attackCollisionNS::WIDTH, attackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision"));
-	
+	// 雑魚敵の当たり判定用
+	if (!enemyAttackCollision.initialize(this, attackCollisionNS::WIDTH, attackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
+
 	// 炎のテクスチャ
 	if (!fireTexture.initialize(graphics, FIRE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire texture"));
@@ -122,10 +125,13 @@ void TowerDiffence::update()
 			fire.fire(&brave);
 		if (brave.getAttackCollisionFlag())
 			braveAttackCollision.attack(&brave);
+		if (enemy.getAttackCollisionFlag())
+			enemyAttackCollision.attack(&enemy);
 		brave.update(frameTime, &map);
 		enemy.update(frameTime, &map);
 		fire.update(frameTime);
 		braveAttackCollision.update(frameTime);
+		enemyAttackCollision.update(frameTime);
 		for (int i = 0; i < sizeof(barricades) / sizeof(barricades[0]); i++)
 		{
 			barricades[i].update(frameTime);
@@ -169,6 +175,12 @@ void TowerDiffence::collisions()
 		enemy.damage(BRAVE_ATTACK);
 		braveAttackCollision.setVisible(false);
 		braveAttackCollision.setActive(false);
+	}
+	if (enemyAttackCollision.collidesWith(brave, collisionVector))
+	{
+		brave.damage(ENEMY_ATTACK);
+		enemyAttackCollision.setVisible(false);
+		enemyAttackCollision.setActive(false);
 	}
 
 	// プレイヤーとバリケードの衝突
@@ -233,6 +245,7 @@ void TowerDiffence::render()
 		fire.draw();
 		brave.draw();
 		braveAttackCollision.draw();
+		enemyAttackCollision.draw();
 		barGraph.set(brave.getHealth());
 		barGraph.draw(graphicsNS::FILTER);	// 体力バーを描画
 	}
