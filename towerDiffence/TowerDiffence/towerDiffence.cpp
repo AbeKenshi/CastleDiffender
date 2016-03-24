@@ -176,13 +176,20 @@ void TowerDiffence::collisions()
 		braveAttackCollision.setVisible(false);
 		braveAttackCollision.setActive(false);
 	}
+	// 敵の攻撃コリジョンとプレイヤーの衝突の場合
 	if (enemyAttackCollision.collidesWith(brave, collisionVector))
 	{
 		brave.damage(ENEMY_ATTACK);
 		enemyAttackCollision.setVisible(false);
 		enemyAttackCollision.setActive(false);
 	}
-
+	// 炎と雑魚敵の衝突の場合
+	if (fire.collidesWith(enemy, collisionVector))
+	{
+		enemy.damage(FIRE);
+		fire.setVisible(false);
+		fire.setActive(false);
+	}
 	// プレイヤーとバリケードの衝突
 	for (int i = 0; i < sizeof(barricades) / sizeof(barricades[0]); i++) {
 		if (enemy.collidesWith(barricades[i], collisionVector)) {

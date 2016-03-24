@@ -46,6 +46,12 @@ void Fire::update(float frameTime)
 
 	spriteData.x += frameTime * velocity.x;		// X•ûŒü‚ÉˆÚ“®
 	spriteData.y += frameTime * velocity.y;		// Y•ûŒü‚ÉˆÚ“®
+	// ‰æ–Ê‚Ì’[‚Ü‚Å—ˆ‚½‚çÁ‹Ž
+	if (spriteData.x > GAME_WIDTH || spriteData.x < 0 || spriteData.y < 0 || spriteData.y > GAME_HEIGHT)
+	{
+		visible = false;
+		active = false;
+	}
 }
 
 //==========================================================

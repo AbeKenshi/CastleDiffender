@@ -254,6 +254,7 @@ void Enemy::damage(WEAPON weapon)
 	switch (weapon)
 	{
 	case FIRE:
+		health -= braveNS::FIRE_DAMAGE;
 		break;
 	case BRAVE_ATTACK:
 		health -= braveNS::ATTACK_DAMAGE;
