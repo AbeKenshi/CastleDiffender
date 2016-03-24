@@ -6,6 +6,7 @@
 #include "constants.h"
 #include "map.h"
 #include "enemy.h"
+#include "rect.h"
 
 namespace braveNS
 {
