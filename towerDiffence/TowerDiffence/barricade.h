@@ -9,7 +9,7 @@ namespace barricadeNS
 {
 	const int WIDTH = 32;			// 画像の幅（各フレーム）
 	const int HEIGHT = 32;			// 画像の高さ
-	const int COLLISION_RADIUS = 4;	// 円の衝突判定
+	const int COLLISION_RADIUS = 10;// 円の衝突判定
 	const int TEXTURE_COLS = 8;		// テクスチャは8列
 	const int START_FRAME = 0;		// アニメーションはフレーム0から開始
 	const int END_FRAME = 2;		// アニメーションフレームは0、1、2
