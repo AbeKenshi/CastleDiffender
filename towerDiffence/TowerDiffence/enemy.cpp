@@ -108,7 +108,7 @@ void Enemy::update(float frameTime, Map *map)
 				changeDirection(enemyNS::MOVE_UP_START_FRAME, enemyNS::MOVE_UP_END_FRAME);
 			}
 			// 移動可能だったら
-			if (checkCanMove(spriteData.y - enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+			if (checkCanMove(spriteData.x, spriteData.y - enemyNS::MOVE_SPEED * frameTime, map)) {
 				// 上に移動
 				spriteData.y -= enemyNS::MOVE_SPEED * frameTime;
 			}
@@ -120,7 +120,7 @@ void Enemy::update(float frameTime, Map *map)
 				changeDirection(enemyNS::MOVE_DOWN_START_FRAME, enemyNS::MOVE_DOWN_END_FRAME);
 			}
 			// 移動可能だったら
-			if (checkCanMove(spriteData.y + enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+			if (checkCanMove(spriteData.x, spriteData.y + enemyNS::MOVE_SPEED * frameTime, map)) {
 				// 下に移動
 				spriteData.y += enemyNS::MOVE_SPEED * frameTime;
 			}
@@ -215,7 +215,9 @@ void Enemy::update(float frameTime, Map *map)
 			isDamaged = false;
 		}
 	}
-	if (checkCanMove(spriteData.y + enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+	// 移動可能だったら
+	if (checkCanMove(spriteData.x + frameTime * velocity.x, spriteData.y + frameTime * velocity.y, map))
+	{
 		spriteData.x += frameTime * velocity.x;     // キャラをX方向に動かす
 		spriteData.y += frameTime * velocity.y;     // キャラをY方向に動かす
 	}
