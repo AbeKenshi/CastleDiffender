@@ -10,6 +10,7 @@
 #include "enemyAttackCollision.h"
 #include "fire.h"
 #include "map.h"
+#include "castle.h"
 #include "enemy.h"
 #include "dashboard.h"
 #include "rect.h"
@@ -36,12 +37,14 @@ private:
 	TextureManager braveTexture;						// 勇者のテクスチャ
 	Brave brave;										// 勇者
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
-	BraveAttackCollision braveAttackCollision;				// 勇者の攻撃の当たり判定用
-	EnemyAttackCollision enemyAttackCollision;				// 雑魚敵の攻撃の当たり判定用
+	BraveAttackCollision braveAttackCollision;			// 勇者の攻撃の当たり判定用
+	EnemyAttackCollision enemyAttackCollision;			// 雑魚敵の攻撃の当たり判定用
 	TextureManager tileTexture;							// タイルのテクスチャ
 	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ
 	Barricade barricades[mapNS::BARRICADE_NUM];         // バリケード画像
+	TextureManager castleTexture;						// 城のテクスチャ
+	Castle castle;										// 城の画像
 	TextureManager fireTexture;							// 炎のテクスチャ
 	Fire fire;											// 炎の画像
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
