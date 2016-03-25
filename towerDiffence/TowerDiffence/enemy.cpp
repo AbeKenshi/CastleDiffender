@@ -36,6 +36,8 @@ Enemy::Enemy() : Entity()
 	drawFlag = true;
 	// 攻撃判定のコリジョンは無効状態からスタート
 	attackCollisionFlag = false;
+	// 範囲内にはいない状態からスタート
+	inCertainRange = false;
 }
 
 //==========================================================
@@ -284,13 +286,14 @@ void Enemy::dead()
 //==========================================================
 // 人工知能
 //==========================================================
-void Enemy::ai(float frameTime, Entity &ent)
+void Enemy::ai(float frameTime, Entity &ent, Barricade *barricades)
 {
 	// 攻撃中ならば行動選択は行わない
 	if (state == enemyNS::ATTACK || state == enemyNS::PRE_ATTACK)
 	{
 		return;
 	}
+
 	// 近くにプレイヤーがいる場合、
 	if (nearPlayer)
 	{
@@ -331,16 +334,27 @@ void Enemy::ai(float frameTime, Entity &ent)
 		setRect();
 		return;
 	}
+
 	// それ以外は移動モードに切り替え
 	state = enemyNS::MOVE;
-	// プレイヤの現在位置を取得
-	int playerX = ent.getX();
-	int playerY = ent.getY();
-	int subX = playerX - getX();
-	int subY = playerY - getY();
-	
+
+	int subX, subY;
+	// プレイヤーとの位置が一定範囲内ならばtrue、それ以外はfalse
+	inCertainRange = checkDistancePlayer(ent.getX(), ent.getY());
+
+	if (inCertainRange) // 範囲内にいたらプレイヤーを目指す
+	{
+		subX = ent.getX() - getX();
+		subY = ent.getY() - getY();
+	}
+	else  // 範囲内でなければ一番近くのバリケードの位置を目指す
+	{
+		subX = searchNearBarricade(ent, barricades).x - getX();
+		subY = searchNearBarricade(ent, barricades).y - getY();
+	}
+
 	// 同じ方向に32ピクセル移動するごとに方向を決めなおす
-	if (distanceCounter <=  0.0f)
+	if (distanceCounter <= 0.0f)
 	{
 		distanceCounter = 32.0f;
 		if (abs(subX) > abs(subY))
@@ -403,4 +417,76 @@ bool Enemy::checkCanMove(float x, float y, Map *map)
 	{
 		return false;
 	}
+}
+
+
+//==========================================================
+// プレイヤーとの距離が一定範囲内ならtrue、それ以外はfalseを返す
+//==========================================================
+bool Enemy::checkDistancePlayer(int px, int py)
+{
+	int subX = px - getX();
+	int subY = py - getY();
+
+	int dist = (int)sqrt(subX * subX + subY * subY);
+
+	if (dist < 300) return true;
+	else return false;
+}
+
+//==========================================================
+// 一番近くのバリケードの位置を返す関数
+// バリケードが存在しない場合はプレイヤーの位置を返す
+//==========================================================
+VECTOR2 Enemy::searchNearBarricade(Entity &ent, Barricade *barricade)
+{
+	// 最小の距離差
+	int minX = 0, minY = 0;
+	// アクティブなバリケードの数を数える用
+	int count = 0;
+
+	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
+	{
+		// もしバリケードnがアクティブなら
+		if (barricade[i].getActive())
+		{
+			// 探索1つ目の場合
+			if (count == 0)
+			{
+				minX = barricade[i].getX();
+				minY = barricade[i].getY();
+			}
+			else // 2つ目以降
+			{
+				// もし最小値を更新したら
+				if (barricade[i].getX() * barricade[i].getX() + barricade[i].getY() * barricade[i].getY() <
+					minX * minX + minY * minY)
+				{
+					// 新たに代入
+					minX = barricade[i].getX();
+					minY = barricade[i].getY();
+				}
+			}
+			// カウントを増やす
+			count++;
+		}
+	}
+
+	// ベクター2クラス生成
+	VECTOR2 vec;
+
+	// もしバリケードが1つ以上存在したら
+	if (count > 0) {
+		// 最小値を代入
+		vec.x = minX;
+		vec.y = minY;
+	}
+	else {
+		// プレイヤーの位置を代入
+		vec.x = ent.getX();
+		vec.y = ent.getY();
+	}
+
+	// ベクトル返す
+	return vec;
 }

@@ -46,7 +46,7 @@ void TowerDiffence::initialize(HWND hwnd)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing tile"));
 
 	// バリケードオブジェクト初期化
-	for (int i = 0; i < towerDiffenceNS::barricadeNum; i++)
+	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
 		barricades[i] = *(new Barricade());
 	}
@@ -55,7 +55,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!barricadeTexture.initialize(graphics, BARRICADE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade texture"));
 	// バリケードの画像
-	for (int i = 0; i < towerDiffenceNS::barricadeNum; i++)
+	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
 		if (!barricades[i].initialize(this, barricadeNS::WIDTH, barricadeNS::HEIGHT, barricadeNS::TEXTURE_COLS, &barricadeTexture))
 			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade"));
@@ -132,7 +132,7 @@ void TowerDiffence::update()
 		fire.update(frameTime);
 		braveAttackCollision.update(frameTime);
 		enemyAttackCollision.update(frameTime);
-		for (int i = 0; i < sizeof(barricades) / sizeof(barricades[0]); i++)
+		for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 		{
 			barricades[i].update(frameTime);
 		}
@@ -152,7 +152,7 @@ void TowerDiffence::roundStart()
 //==========================================================
 void TowerDiffence::ai()
 {
-	enemy.ai(frameTime, brave);
+	enemy.ai(frameTime, brave, barricades);
 }
 
 //==========================================================
@@ -191,7 +191,7 @@ void TowerDiffence::collisions()
 		fire.setActive(false);
 	}
 	// プレイヤーとバリケードの衝突
-	for (int i = 0; i < sizeof(barricades) / sizeof(barricades[0]); i++) {
+	for (int i = 0; i < mapNS::BARRICADE_NUM; i++) {
 		if (enemy.collidesWith(barricades[i], collisionVector)) {
 			barricades[i].setActive(false);
 			barricades[i].setVisible(false);
