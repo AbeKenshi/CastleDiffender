@@ -24,6 +24,7 @@
     <ClCompile Include="braveAttackCollision.cpp" />
     <ClCompile Include="enemyAttackCollision.cpp" />
     <ClCompile Include="castle.cpp" />
+    <ClCompile Include="braveIcon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio.h" />
@@ -50,5 +51,6 @@
     <ClInclude Include="braveAttackCollision.h" />
     <ClInclude Include="enemyAttackCollision.h" />
     <ClInclude Include="castle.h" />
+    <ClInclude Include="braveIcon.h" />
   </ItemGroup>
 </Project>

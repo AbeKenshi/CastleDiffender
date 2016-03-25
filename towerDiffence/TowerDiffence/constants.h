@@ -23,15 +23,16 @@ const float MIN_FRAME_TIME = 1.0f / FRAME_RATE;			// 1フレームに要する最小の時間
 const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1フレームに要する最大の時間
 
 // 画像
-const char MENU_IMAGE[] = "pictures\\menu.png";				// メニュー画像
-const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main.png";	// 勇者の歩行画像
-const char FIRE_IMAGE[] = "pictures\\alex\\fire.png";				// 炎の画像
-const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy1.png";			// 雑魚敵の画像
-const char TILE_IMAGES[] = "pictures\\map\\ground.png";             // マップ画像
-const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";// ダッシュボード画像
-const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";	// バリケードの画像
-const char COLLISION_IMAGE[] = "pictures\\alex\\attackCollision.png";// 攻撃用のテクスチャ
-const char CASTLE_IMAGE[] = "pictures\\map\\castle.png";	// 城画像
+const char MENU_IMAGE[] = "pictures\\menu.png";							// メニュー画像
+const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main.png";		// 勇者の歩行画像
+const char FIRE_IMAGE[] = "pictures\\alex\\fire.png";					// 炎の画像
+const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy1.png";				// 雑魚敵の画像
+const char TILE_IMAGES[] = "pictures\\map\\ground.png";					// マップ画像
+const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";			// ダッシュボード画像
+const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";			// バリケードの画像
+const char COLLISION_IMAGE[] = "pictures\\alex\\attackCollision.png";	// 攻撃用のテクスチャ
+const char CASTLE_IMAGE[] = "pictures\\map\\castle.png";				// 城画像
+const char BRAVE_ICON_IMAGE[] = "pictures\\alex\\icon.png";				// 勇者のアイコン画像
 
 // 音声
 // WAVE_BANK must be location of .xwb file.

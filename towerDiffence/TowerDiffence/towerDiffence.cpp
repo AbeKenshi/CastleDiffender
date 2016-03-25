@@ -45,12 +45,6 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!map.initialize(this, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_COLS, &tileTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing tile"));
 
-	// バリケードオブジェクト初期化
-	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
-	{
-		barricades[i] = *(new Barricade());
-	}
-
 	// バリケードのテクスチャ
 	if (!barricadeTexture.initialize(graphics, BARRICADE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade texture"));
@@ -80,6 +74,13 @@ void TowerDiffence::initialize(HWND hwnd)
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
 
+	// 勇者のアイコンのテクスチャ
+	if (!braveIconTexture.initialize(graphics, BRAVE_ICON_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave icon texture"));
+	// 勇者のアイコンの画像
+	if (!braveIcon.initialize(graphics, braveIconNS::WIDTH, braveIconNS::HEIGHT, braveIconNS::TEXTURE_COLS, &braveIconTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave icon"));
+	braveIcon.linkEntity(&brave);
 
 	// 勇者の当たり判定用のテクスチャ
 	if (!attackCollisionTexture.initialize(graphics, COLLISION_IMAGE))
@@ -107,8 +108,10 @@ void TowerDiffence::initialize(HWND hwnd)
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing dashboard textures"));
-	barGraph.initialize(graphics, &dashboardTextures, towerDiffenceNS::BAR_GRAPH_X, towerDiffenceNS::BAR_GRAPH_Y, 0.5f, 20, graphicsNS::RED);
-	barGraph.set(brave.getHealth());
+	braveBarGraph.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_BAR_GRAPH_X, towerDiffenceNS::BRAVE_BAR_GRAPH_Y, 0.5f, 20, graphicsNS::RED);
+	braveBarGraph.set(brave.getHealth());
+	castleBarGraph.initialize(graphics, &dashboardTextures, towerDiffenceNS::CASTLE_BAR_GRAPH_X + 40, towerDiffenceNS::CASTLE_BAR_GRAPH_Y, 0.5f, 20, graphicsNS::BLUE);
+	castleBarGraph.set(castle.getHealth());
 
 	return;
 }
@@ -141,6 +144,7 @@ void TowerDiffence::update()
 		braveAttackCollision.update(frameTime);
 		enemyAttackCollision.update(frameTime);
 		castle.update(frameTime);
+		braveIcon.update(frameTime);
 		for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 		{
 			barricades[i].update(frameTime);
@@ -266,14 +270,17 @@ void TowerDiffence::render()
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
 
+		braveIcon.draw();
 		castle.draw();
 		enemy.draw();
 		fire.draw();
 		brave.draw();
 		braveAttackCollision.draw();
 		enemyAttackCollision.draw();
-		barGraph.set(brave.getHealth());
-		barGraph.draw(graphicsNS::FILTER);	// 体力バーを描画
+		braveBarGraph.set(brave.getHealth());
+		castleBarGraph.set(castle.getHealth());
+		braveBarGraph.draw(graphicsNS::FILTER);	// 体力バーを描画
+		castleBarGraph.draw(graphicsNS::FILTER);
 	}
 	graphics->spriteEnd();		// スプライトの描画を開始
 }
