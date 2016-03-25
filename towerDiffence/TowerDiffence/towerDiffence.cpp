@@ -192,6 +192,15 @@ void TowerDiffence::collisions()
 		enemyAttackCollision.setVisible(false);
 		enemyAttackCollision.setActive(false);
 	}
+	// “G‚ÌUŒ‚ƒRƒŠƒWƒ‡ƒ“‚Æé‚ÌÕ“Ë‚Ìê‡
+	if (enemyAttackCollision.collidesWith(castle, collisionVector))
+	{
+		castle.damage(ENEMY_ATTACK);
+		enemyAttackCollision.setVisible(false);
+		enemyAttackCollision.setActive(false);
+		if (castle.isDeath())
+			exit(1);
+	}
 	// ‰Š‚ÆG‹›“G‚ÌÕ“Ë‚Ìê‡
 	if (fire.collidesWith(enemy, collisionVector))
 	{

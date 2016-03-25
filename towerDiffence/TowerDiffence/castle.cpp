@@ -18,6 +18,18 @@ Castle::Castle() : Entity()
 	currentFrame = startFrame;
 	radius = castleNS::COLLISION_RADIUS;		// 円の衝突判定用
 	collisionType = entityNS::CIRCLE;
+	death = false;
+	isDamaged = false;
+	drawFlag = true;
+}
+
+//==========================================================
+// 城を描画
+//==========================================================
+void Castle::draw()
+{
+	if (drawFlag)
+		Image::draw();	// 城を描画
 }
 
 //==========================================================
@@ -30,5 +42,51 @@ void Castle::update(float frameTime)
 	if (visible == false)
 		return;
 
-	Image::update(frameTime);
+	// ダメージを受けているなら一定時間ごとにアニメーションを点滅
+	if (isDamaged)
+	{
+		timeCounter += frameTime;
+		totalTimeCounter += frameTime;
+		if (timeCounter > 0.15f)
+		{
+			if (drawFlag)
+				drawFlag = false;
+			else
+				drawFlag = true;
+			timeCounter = 0.0f;
+		}
+		if (totalTimeCounter > braveNS::DAMAGE_TIME)
+		{
+			timeCounter = 0.0f;
+			totalTimeCounter = 0.0f;
+			drawFlag = true;
+			isDamaged = false;
+		}
+	}
+
+	Entity::update(frameTime);
+}
+
+//==========================================================
+// ダメージ
+//==========================================================
+void Castle::damage(WEAPON weapon)
+{
+	switch (weapon)
+	{
+	case FIRE:
+		break;
+	case BRAVE_ATTACK:
+		break;
+	case BRAVE_SECOND_ATTACK:
+		break;
+	case ENEMY_ATTACK:
+		health -= enemyNS::ATTACK_DAMAGE;
+		break;
+	default:
+		break;
+	}
+	if (health <= 0)
+		death = true;
+	isDamaged = true;
 }

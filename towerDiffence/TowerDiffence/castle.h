@@ -3,6 +3,7 @@
 
 #include "entity.h"
 #include "constants.h"
+#include "enemy.h"
 
 namespace castleNS
 {
@@ -10,18 +11,32 @@ namespace castleNS
 	const int HEIGHT = 96;			// 画像の高さ
 	const int X = 18.3 * 30;	// 初期位置
 	const int Y = 9.5 * 30;
-	const int COLLISION_RADIUS = 10;// 円の衝突判定	
+	const int COLLISION_RADIUS = 60;// 円の衝突判定	
 	const int START_FRAME = 0;
 }
 
 class Castle : public Entity		// Entityクラスを継承
 {
+private:
+	float timeCounter;				// ダメージアニメーション用のタイマー
+	float totalTimeCounter;
+	bool death;						// 城が死亡時にtrue
+	bool isDamaged;					// ダメージを受けている状態かどうか
+	bool drawFlag;					// 描画フラグ、true時に描画
 public:
 	// コンストラクタ
 	Castle();
 
 	// 継承されたメンバー関数
+	virtual void draw();
 	void update(float frameTime);
+	void damage(WEAPON);
+
+	// getter
+	bool isDeath() { return death; }
+
+	// setter
+	void setDeath(bool d) { death = d; }
 };
 
 #endif // !_CASTLE_H
