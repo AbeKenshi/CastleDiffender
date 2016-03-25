@@ -36,7 +36,6 @@ Brave::Brave() : Entity()
 bool Brave::initialize(Game *gamePtr, int width, int height, int ncols,
 	TextureManager *textureM)
 {
-	setRect();
 	return(Entity::initialize(gamePtr, width, height, ncols, textureM));
 }
 

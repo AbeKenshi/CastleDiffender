@@ -24,7 +24,6 @@ HWND hwnd = NULL;
 //		nCmdShow：ウィンドウをどのように表示するかを指定
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-
 	// デバッグビルドの場合、メモリリークをチェック
 	#if defined(DEBUG) | defined(_DEBUG)
 		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

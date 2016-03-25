@@ -141,6 +141,7 @@
     <ClInclude Include="audio.h" />
     <ClInclude Include="barricade.h" />
     <ClInclude Include="brave.h" />
+    <ClInclude Include="braveIcon.h" />
     <ClInclude Include="castle.h" />
     <ClInclude Include="console.h" />
     <ClInclude Include="constants.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="audio.cpp" />
     <ClCompile Include="barricade.cpp" />
     <ClCompile Include="brave.cpp" />
+    <ClCompile Include="braveIcon.cpp" />
     <ClCompile Include="castle.cpp" />
     <ClCompile Include="console.cpp" />
     <ClCompile Include="dashboard.cpp" />

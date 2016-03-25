@@ -15,14 +15,15 @@
 #include "dashboard.h"
 #include "rect.h"
 #include "barricade.h"
+#include "braveIcon.h"
 
 namespace towerDiffenceNS
 {
 	// 体力バーの位置
-	const int BAR_GRAPH_X = 0;	
-	const int BAR_GRAPH_Y = 0;
-	const int HBAR_X = 0;
-	const int HBAR_Y = 0;
+	const int BRAVE_BAR_GRAPH_X = 0;
+	const int BRAVE_BAR_GRAPH_Y = 0;
+	const int CASTLE_BAR_GRAPH_X = 100;
+	const int CASTLE_BAR_GRAPH_Y = 0;
 }
 
 //==========================================================
@@ -36,6 +37,8 @@ private:
 	Image menu;											// タイトル画像
 	TextureManager braveTexture;						// 勇者のテクスチャ
 	Brave brave;										// 勇者
+	TextureManager braveIconTexture;					// 勇者のアイコンのテクスチャ
+	BraveIcon braveIcon;								// 勇者のアイコン
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
 	BraveAttackCollision braveAttackCollision;			// 勇者の攻撃の当たり判定用
 	EnemyAttackCollision enemyAttackCollision;			// 雑魚敵の攻撃の当たり判定用
@@ -50,7 +53,8 @@ private:
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
 	Enemy enemy;										// 雑魚敵の画像
 	TextureManager dashboardTextures;					// ダッシュボードテクスチャ
-	BarGraph barGraph;									// 体力バー
+	BarGraph braveBarGraph;								// 勇者の体力バー
+	BarGraph castleBarGraph;							// 城の体力バー
 	Rect *rect;											// Rectへのポインター
 	float mapX;											// 初期X座標
 	bool menuOn;										// メニューフラグ
