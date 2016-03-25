@@ -23,6 +23,7 @@
     <ClCompile Include="winmain.cpp" />
     <ClCompile Include="braveAttackCollision.cpp" />
     <ClCompile Include="enemyAttackCollision.cpp" />
+    <ClCompile Include="castle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio.h" />
@@ -48,5 +49,6 @@
     <ClInclude Include="towerDiffence.h" />
     <ClInclude Include="braveAttackCollision.h" />
     <ClInclude Include="enemyAttackCollision.h" />
+    <ClInclude Include="castle.h" />
   </ItemGroup>
 </Project>

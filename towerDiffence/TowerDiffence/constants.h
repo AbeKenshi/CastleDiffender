@@ -31,6 +31,7 @@ const char TILE_IMAGES[] = "pictures\\map\\ground.png";             // ƒ}ƒbƒv‰æ‘
 const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";// ƒ_ƒbƒVƒ…ƒ{[ƒh‰æ‘œ
 const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";	// ƒoƒŠƒP[ƒh‚Ì‰æ‘œ
 const char COLLISION_IMAGE[] = "pictures\\alex\\attackCollision.png";// UŒ‚—p‚ÌƒeƒNƒXƒ`ƒƒ
+const char CASTLE_IMAGE[] = "pictures\\map\\castle.png";	// é‰æ‘œ
 
 // ‰¹º
 // WAVE_BANK must be location of .xwb file.

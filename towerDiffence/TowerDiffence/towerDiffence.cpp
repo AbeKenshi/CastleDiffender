@@ -62,6 +62,14 @@ void TowerDiffence::initialize(HWND hwnd)
 		barricades[i].setScale(1);
 	}
 
+	// 城のテクスチャ
+	if (!castleTexture.initialize(graphics, CASTLE_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle texture"));
+	// 城の画像
+	if (!castle.initialize(this, castleNS::WIDTH, castleNS::HEIGHT, 0, &castleTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle"));
+	castle.setScale(120.0f / 96.0f);
+
 	// 勇者のテクスチャ
 	if (!braveTexture.initialize(graphics, BRAVE_MOVE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave_move texture"));
@@ -132,6 +140,7 @@ void TowerDiffence::update()
 		fire.update(frameTime);
 		braveAttackCollision.update(frameTime);
 		enemyAttackCollision.update(frameTime);
+		castle.update(frameTime);
 		for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 		{
 			barricades[i].update(frameTime);
@@ -248,6 +257,7 @@ void TowerDiffence::render()
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
 
+		castle.draw();
 		enemy.draw();
 		fire.draw();
 		brave.draw();
