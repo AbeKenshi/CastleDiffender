@@ -22,9 +22,6 @@ namespace towerDiffenceNS
 	const int BAR_GRAPH_Y = 0;
 	const int HBAR_X = 0;
 	const int HBAR_Y = 0;
-
-	// 初期バリケードの数
-	const int barricadeNum = 8;
 }
 
 //==========================================================
@@ -44,7 +41,7 @@ private:
 	TextureManager tileTexture;							// タイルのテクスチャ
 	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ
-	Barricade barricades[towerDiffenceNS::barricadeNum];// バリケード画像
+	Barricade barricades[mapNS::BARRICADE_NUM];         // バリケード画像
 	TextureManager fireTexture;							// 炎のテクスチャ
 	Fire fire;											// 炎の画像
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ

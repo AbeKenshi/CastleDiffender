@@ -10,9 +10,10 @@ namespace mapNS
 	const int TEXTURE_SIZE = 32;  // 画像サイズ（1タイル分）
 	const int TEXTURE_COLS = 16;  // 行数
 	const int MAP_HEIGHT = 23;    // マップの高さ
-	const int MAP_WIDTH = 40;    // マップの幅
+	const int MAP_WIDTH = 40;     // マップの幅
+	const int BARRICADE_NUM = 8;  // 初期バリケードの数
 
-								 // マップデータ
+	// マップデータ
 	const int mapData[MAP_HEIGHT][MAP_WIDTH] = {
 		//              5                  10                  15                  20                  25                  30                  35                  40
 		0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,

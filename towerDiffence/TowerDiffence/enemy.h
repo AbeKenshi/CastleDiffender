@@ -6,6 +6,7 @@
 #include "brave.h"
 #include "constants.h"
 #include "map.h"
+#include "barricade.h"
 
 namespace enemyNS
 {
@@ -59,6 +60,7 @@ private:
 	bool nearPlayer;					// プレイヤーと隣接しているかどうか
 	bool isAttacked;					// 攻撃した直後かどうか
 	bool attackCollisionFlag;			// 攻撃用の衝突判定を出現させるフラグ
+	bool inCertainRange;                // プレイヤーが一定範囲内にいるか
 public:
 	// コンストラクタ
 	Enemy();
@@ -67,7 +69,7 @@ public:
 	virtual void draw();
 	virtual bool initialize(Game *gamePtr, int width, int height, int ncols,
 		TextureManager *textureM);
-	virtual void ai(float frameTime, Entity &ent);
+	virtual void ai(float frameTime, Entity &ent, Barricade *barricades);
 	void damage(WEAPON);	
 
 
@@ -92,5 +94,9 @@ public:
 	bool checkCanMove(float x, float y, Map *map);
 	// 攻撃用の衝突判定を出現させるフラグ、攻撃状態に遷移した直後にtrueとなって、それ以外はfalse
 	bool getAttackCollisionFlag() { return attackCollisionFlag; }
+	// プレイヤーとの距離が一定範囲内ならtrue、それ以外はfalseを返す
+	bool checkDistancePlayer(int px, int py);
+	// 一番近くのバリケードの位置を返す関数
+	VECTOR2 searchNearBarricade(Entity &entity, Barricade *barricade);
 };
 #endif
