@@ -10,9 +10,13 @@ BraveAttackCollision::BraveAttackCollision() : Entity()
 	spriteData.height = braveAttackCollisionNS::HEIGHT;
 	spriteData.rect.bottom = braveAttackCollisionNS::HEIGHT;
 	spriteData.rect.right = braveAttackCollisionNS::WIDTH;
-	radius = 4;										// ‰~‚ÌÕ“Ë”»’è—p
 	visible = false;
-	collisionType = entityNS::CIRCLE;
+	// Box‚ÌÕ“Ë”»’è—p
+	edge.left = -braveAttackCollisionNS::WIDTH / 2.0;
+	edge.right = braveAttackCollisionNS::WIDTH / 2.0;
+	edge.top = -braveAttackCollisionNS::HEIGHT / 2.0;
+	edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
+	collisionType = entityNS::BOX;
 	collisionTimer = 0.0f;
 }
 
@@ -46,21 +50,37 @@ void BraveAttackCollision::attack(Brave * brave)
 		case braveNS::RIGHT:
 			spriteData.x = brave->getCenterX();
 			spriteData.y = brave->getCenterY() - spriteData.height / 2;
+			edge.left = -braveAttackCollisionNS::WIDTH / 2.0;
+			edge.right = braveAttackCollisionNS::WIDTH / 2.0;
+			edge.top = -braveAttackCollisionNS::HEIGHT / 2.0;
+			edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
 			spriteData.angle = 0.0f;
 			break;
 		case braveNS::UP:
 			spriteData.x = brave->getCenterX() - spriteData.width / 2;
 			spriteData.y = brave->getCenterY() - spriteData.height / 2 - brave->getWidth();
+			edge.left = -braveAttackCollisionNS::HEIGHT / 2.0;
+			edge.right = braveAttackCollisionNS::HEIGHT / 2.0;
+			edge.top = -braveAttackCollisionNS::WIDTH / 2.0;
+			edge.bottom = braveAttackCollisionNS::WIDTH / 2.0;
 			spriteData.angle = PI / 2;
 			break;
 		case braveNS::LEFT:
 			spriteData.x = brave->getCenterX() - spriteData.width / 2 - brave->getWidth();
 			spriteData.y = brave->getCenterY() - spriteData.height / 2;
+			edge.left = -braveAttackCollisionNS::WIDTH / 2.0;
+			edge.right = braveAttackCollisionNS::WIDTH / 2.0;
+			edge.top = -braveAttackCollisionNS::HEIGHT / 2.0;
+			edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
 			spriteData.angle = 0.0f;
 			break;
 		case braveNS::DOWN:
 			spriteData.x = brave->getCenterX() - spriteData.width / 2;
 			spriteData.y = brave->getCenterY() + spriteData.height / 16;
+			edge.left = -braveAttackCollisionNS::HEIGHT / 2.0;
+			edge.right = braveAttackCollisionNS::HEIGHT / 2.0;
+			edge.top = -braveAttackCollisionNS::WIDTH / 2.0;
+			edge.bottom = braveAttackCollisionNS::WIDTH / 2.0;
 			spriteData.angle = PI / 2;
 			break;
 	}

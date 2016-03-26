@@ -10,9 +10,13 @@ EnemyAttackCollision::EnemyAttackCollision() : Entity()
 	spriteData.height = enemyAttackCollisionNS::HEIGHT;
 	spriteData.rect.bottom = enemyAttackCollisionNS::HEIGHT;
 	spriteData.rect.right = enemyAttackCollisionNS::WIDTH;
-	radius = 4;										// ‰~‚ÌÕ“Ë”»’è—p
 	visible = false;
-	collisionType = entityNS::CIRCLE;
+	// Box‚ÌÕ“Ë”»’è—p
+	edge.left = -enemyAttackCollisionNS::WIDTH / 2.0;
+	edge.right = enemyAttackCollisionNS::WIDTH / 2.0;
+	edge.top = -enemyAttackCollisionNS::HEIGHT / 2.0;
+	edge.bottom = enemyAttackCollisionNS::HEIGHT / 2.0;
+	collisionType = entityNS::BOX;
 	collisionTimer = 0.0f;
 }
 
@@ -45,22 +49,38 @@ void EnemyAttackCollision::attack(Enemy *enemy)
 	{
 	case enemyNS::RIGHT:
 		spriteData.x = enemy->getCenterX() + spriteData.width / 2;
-		spriteData.y = enemy->getCenterY();
+		spriteData.y = enemy->getCenterY() - spriteData.height / 2 + 10;
+		edge.left = -enemyAttackCollisionNS::WIDTH / 2.0;
+		edge.right = enemyAttackCollisionNS::WIDTH / 2.0;
+		edge.top = -enemyAttackCollisionNS::HEIGHT / 2.0;
+		edge.bottom = enemyAttackCollisionNS::HEIGHT / 2.0;
 		spriteData.angle = 0.0f;
 		break;
 	case enemyNS::UP:
 		spriteData.x = enemy->getCenterX() - spriteData.width / 2;
 		spriteData.y = enemy->getCenterY() - spriteData.height / 2 - enemy->getWidth() / 2;
+		edge.left = -enemyAttackCollisionNS::HEIGHT / 2.0;
+		edge.right = enemyAttackCollisionNS::HEIGHT / 2.0;
+		edge.top = -enemyAttackCollisionNS::WIDTH / 2.0;
+		edge.bottom = enemyAttackCollisionNS::WIDTH / 2.0;
 		spriteData.angle = PI / 2;
 		break;
 	case enemyNS::LEFT:
 		spriteData.x = enemy->getCenterX() - spriteData.width / 2 - enemy->getWidth();
-		spriteData.y = enemy->getCenterY();
+		spriteData.y = enemy->getCenterY() - spriteData.height / 2 + 10;
+		edge.left = -enemyAttackCollisionNS::WIDTH / 2.0;
+		edge.right = enemyAttackCollisionNS::WIDTH / 2.0;
+		edge.top = -enemyAttackCollisionNS::HEIGHT / 2.0;
+		edge.bottom = enemyAttackCollisionNS::HEIGHT / 2.0;
 		spriteData.angle = 0.0f;
 		break;
 	case enemyNS::DOWN:
 		spriteData.x = enemy->getCenterX() - spriteData.width / 2;
 		spriteData.y = enemy->getCenterY() + spriteData.height / 2;
+		edge.left = -enemyAttackCollisionNS::HEIGHT / 2.0;
+		edge.right = enemyAttackCollisionNS::HEIGHT / 2.0;
+		edge.top = -enemyAttackCollisionNS::WIDTH / 2.0;
+		edge.bottom = enemyAttackCollisionNS::WIDTH / 2.0;
 		spriteData.angle = PI / 2;
 		break;
 	}

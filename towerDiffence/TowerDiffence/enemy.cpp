@@ -20,9 +20,12 @@ Enemy::Enemy() : Entity()
 	oldStartFrame = startFrame;
 	oldEndFrame = endFrame;
 	currentFrame = startFrame;
-	// 円の衝突判定用
-	radius = enemyNS::WIDTH / 2.0;
-	collisionType = entityNS::CIRCLE;
+	// Boxの衝突判定用
+	edge.left = -enemyNS::WIDTH / 2.0;
+	edge.right = enemyNS::WIDTH / 2.0;
+	edge.top = -enemyNS::HEIGHT / 8.0;
+	edge.bottom = enemyNS::HEIGHT / 2.0;
+	collisionType = entityNS::BOX;
 	// 初期の状態は移動
 	state = enemyNS::MOVE;
 	// ダメージは受けていない状態からスタート
@@ -432,7 +435,7 @@ bool Enemy::checkDistancePlayer(int px, int py)
 
 	int dist = (int)sqrt(subX * subX + subY * subY);
 
-	if (dist < 100) return true;
+	if (dist < 500) return true;
 	else return false;
 }
 
