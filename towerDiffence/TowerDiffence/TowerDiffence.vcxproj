@@ -143,6 +143,7 @@
     <ClInclude Include="brave.h" />
     <ClInclude Include="braveIcon.h" />
     <ClInclude Include="castle.h" />
+    <ClInclude Include="castleIcon.h" />
     <ClInclude Include="console.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="dashboard.h" />
@@ -153,12 +154,15 @@
     <ClInclude Include="game.h" />
     <ClInclude Include="gameError.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="hpTextImage.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="inputDialog.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="messageDialog.h" />
+    <ClInclude Include="mpTextImage.h" />
     <ClInclude Include="rect.h" />
+    <ClInclude Include="text.h" />
     <ClInclude Include="textDX.h" />
     <ClInclude Include="textureManager.h" />
     <ClInclude Include="towerDiffence.h" />
@@ -170,6 +174,7 @@
     <ClCompile Include="brave.cpp" />
     <ClCompile Include="braveIcon.cpp" />
     <ClCompile Include="castle.cpp" />
+    <ClCompile Include="castleIcon.cpp" />
     <ClCompile Include="console.cpp" />
     <ClCompile Include="dashboard.cpp" />
     <ClCompile Include="enemy.cpp" />
@@ -178,12 +183,15 @@
     <ClCompile Include="fire.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="graphics.cpp" />
+    <ClCompile Include="hpTextImage.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="inputDialog.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="messageDialog.cpp" />
+    <ClCompile Include="mpTextImage.cpp" />
     <ClCompile Include="rect.cpp" />
+    <ClCompile Include="text.cpp" />
     <ClCompile Include="textDX.cpp" />
     <ClCompile Include="textureManager.cpp" />
     <ClCompile Include="towerDiffence.cpp" />

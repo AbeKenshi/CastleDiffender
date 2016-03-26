@@ -25,6 +25,10 @@
     <ClCompile Include="enemyAttackCollision.cpp" />
     <ClCompile Include="castle.cpp" />
     <ClCompile Include="braveIcon.cpp" />
+    <ClCompile Include="hpTextImage.cpp" />
+    <ClCompile Include="mpTextImage.cpp" />
+    <ClCompile Include="castleIcon.cpp" />
+    <ClCompile Include="text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio.h" />
@@ -52,5 +56,9 @@
     <ClInclude Include="enemyAttackCollision.h" />
     <ClInclude Include="castle.h" />
     <ClInclude Include="braveIcon.h" />
+    <ClInclude Include="hpTextImage.h" />
+    <ClInclude Include="mpTextImage.h" />
+    <ClInclude Include="castleIcon.h" />
+    <ClInclude Include="text.h" />
   </ItemGroup>
 </Project>
