@@ -54,6 +54,8 @@ namespace braveNS
 	const int FIRE_DAMAGE = 100;
 	const int RESERVOIR_TIME = 1.0f;				// 攻撃までのため時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けて点滅する時間
+	const int MP_RECOVERY = 10;
+	const float MP_RECOVERY_TIME = 2.0f;			// MPはMP_RECOVERY_TIMEごとにMP_RECOVERYだけ回復
 	enum STATE { MOVE, ATTACK, SECOND_ATTACK, GAURD };			// 状態
 }
 
@@ -63,10 +65,12 @@ class Brave : public Entity
 private:
 	braveNS::DIRECTION direction;	// 向き
 	braveNS::STATE state;			// 状態
+	int magicPoint;					// MP、必殺技を使うと減少。
 	int oldStartFrame;
 	int oldEndFrame;
-	float timeCounter;				// ダメージアニメーション用のタイマー
-	float totalTimeCounter;
+	float damageTimer;				// ダメージアニメーション用のタイマー
+	float totalDamageTime;
+	float mpTimer;					// MP回復用のタイマー
 	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
 	bool isDamaged;					// ダメージを受けている状態かどうか
 	bool drawFlag;					// 描画フラグ、true時に描画
@@ -97,5 +101,11 @@ public:
 	bool checkCanMove(float x, float y, Map *map);
 	// 死亡時に呼び出す関数
 	void dead();
+	
+	// getter
+	int getMP() { return magicPoint; }
+
+	// setter
+	void setMP(int mp) { magicPoint = mp; }
 };
 #endif

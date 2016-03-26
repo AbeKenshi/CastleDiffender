@@ -20,10 +20,12 @@
 namespace towerDiffenceNS
 {
 	// 体力バーの位置
-	const int BRAVE_BAR_GRAPH_X = 0;
-	const int BRAVE_BAR_GRAPH_Y = 0;
-	const int CASTLE_BAR_GRAPH_X = 100;
-	const int CASTLE_BAR_GRAPH_Y = 0;
+	const int BRAVE_HEALTH_BAR_X = 100;
+	const int BRAVE_HEALTH_BAR_Y = 0;
+	const int BRAVE_MP_BAR_X = BRAVE_HEALTH_BAR_X;
+	const int BRAVE_MP_BAR_Y = 25;
+	const int CASTLE_HEALTH_BAR_X = 200;
+	const int CASTLE_HEALTH_BAR_Y = 0;
 }
 
 //==========================================================
@@ -53,8 +55,9 @@ private:
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
 	Enemy enemy;										// 雑魚敵の画像
 	TextureManager dashboardTextures;					// ダッシュボードテクスチャ
-	BarGraph braveBarGraph;								// 勇者の体力バー
-	BarGraph castleBarGraph;							// 城の体力バー
+	BarGraph braveHealthBar;							// 勇者の体力バー
+	BarGraph braveMpBar;								// 勇者のMPバー
+	BarGraph castleHealthBar;							// 城の体力バー
 	Rect *rect;											// Rectへのポインター
 	float mapX;											// 初期X座標
 	bool menuOn;										// メニューフラグ
