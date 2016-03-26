@@ -16,8 +16,12 @@ Brave::Brave() : Entity()
 	startFrame = braveNS::MOVE_UP_START_FRAME;
 	endFrame = braveNS::MOVE_UP_END_FRAME;
 	currentFrame = startFrame;
-	radius = braveNS::WIDTH / 2.0;
-	collisionType = entityNS::CIRCLE;
+	// BoxÇÃè’ìÀîªíËóp
+	edge.left = -braveNS::WIDTH / 4.0;
+	edge.right = braveNS::WIDTH / 2.0;
+	edge.top = -braveNS::HEIGHT / 26.0;
+	edge.bottom = braveNS::HEIGHT / 2.0;
+	collisionType = entityNS::BOX;
 	state = braveNS::STATE::MOVE;
 	direction = braveNS::UP;
 	secondAttackFlag = false;

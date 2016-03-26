@@ -34,7 +34,7 @@ namespace enemyNS
 	const int ATTACK_DOWN_END_FRAME = 103 + 36;		// 下方向攻撃のアニメーションフレームは103、115、127、139
 	const int ATTACK_LEFT_START_FRAME = 100;		// 左方向攻撃のアニメーションはフレーム100から開始
 	const int ATTACK_LEFT_END_FRAME = 100 + 36;		// 左方向攻撃のアニメーションフレームは100、112、124、136
-	const float ATTACK_TIME = 0.3f;					// プレイヤーに隣接してから攻撃に移るまでの溜め時間
+	const float ATTACK_TIME = 0.6f;					// プレイヤーに隣接してから攻撃に移るまでの溜め時間
 	const float CONTINUE_ATTACK_TIME = 0.8f;		// 連続で攻撃する場合の溜め時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けている場合、DAMAGE_TIMEごとに画像が点滅
 	const int ATTACK_DAMAGE = 5.0f;

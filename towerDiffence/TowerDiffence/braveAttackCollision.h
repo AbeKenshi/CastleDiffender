@@ -9,7 +9,7 @@
 
 namespace braveAttackCollisionNS
 {
-	const int WIDTH = 48;				// 画像の幅（各フレーム）
+	const int WIDTH = 24;				// 画像の幅（各フレーム）
 	const int HEIGHT = 96;				// 画像の高さ
 	const int COLLISION_RADIUS = 4;		// 円の衝突判定
 	const float COLLISION_TIME = 0.3f;	// 攻撃の当たり判定が出ている時間
