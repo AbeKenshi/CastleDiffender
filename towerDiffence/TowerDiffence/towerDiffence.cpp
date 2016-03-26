@@ -7,8 +7,10 @@
 TowerDiffence::TowerDiffence()
 {
 	initialized = false;
+	fontCK = new Text();   // sprite based font
 	menuOn = true;
 	rect = NULL;
+	remainingTime = 1500.0f;
 }
 
 //==========================================================
@@ -17,6 +19,7 @@ TowerDiffence::TowerDiffence()
 TowerDiffence::~TowerDiffence()
 {
 	safeDelete(rect);
+	safeDelete(fontCK);
 	releaseAll();	// すべてのグラフィックスアイテムについて、onLostDevice()を呼び出す
 }
 
@@ -29,6 +32,11 @@ void TowerDiffence::initialize(HWND hwnd)
 	Game::initialize(hwnd);	// GameErrorをスロー
 	rect = new Rect();
 	rect->initialize(graphics);
+
+	// init text
+	if (!fontCK->initialize(graphics, FONT_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing CKfont"));
+
 
 	// メニューのテクスチャ
 	if (!menuTexture.initialize(graphics, MENU_IMAGE))
@@ -60,9 +68,15 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!castleTexture.initialize(graphics, CASTLE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle texture"));
 	// 城の画像
-	if (!castle.initialize(this, castleNS::WIDTH, castleNS::HEIGHT, 0, &castleTexture))
+	if (!castle.initialize(this, castleNS::WIDTH, castleNS::HEIGHT, castleNS::TEXTURE_COLS, &castleTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle"));
-	castle.setScale(120.0f / 96.0f);
+
+	// 城のアイコンのテクスチャ
+	if (!castleIconTexture.initialize(graphics, CASTLE_ICON_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle icon texture"));
+	// 城のアイコンの画像
+	if (!castleIcon.initialize(graphics, castleIconNS::WIDTH, castleIconNS::HEIGHT, castleIconNS::TEXTURE_COLS, &castleIconTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle icon"));
 
 	// 勇者のテクスチャ
 	if (!braveTexture.initialize(graphics, BRAVE_MOVE_IMAGE))
@@ -109,13 +123,23 @@ void TowerDiffence::initialize(HWND hwnd)
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing dashboard textures"));
-	braveHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_HEALTH_BAR_X, towerDiffenceNS::BRAVE_HEALTH_BAR_Y, 0.5f, 20, graphicsNS::RED);
+	braveHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_HEALTH_BAR_X, towerDiffenceNS::BRAVE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::RED);
 	braveHealthBar.set(brave.getHealth());
-	braveMpBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_MP_BAR_X, towerDiffenceNS::BRAVE_MP_BAR_Y, 0.5f, 20, graphicsNS::GREEN);
-	braveHealthBar.set(brave.getMP());
-	castleHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::CASTLE_HEALTH_BAR_X + 40, towerDiffenceNS::CASTLE_HEALTH_BAR_Y, 0.5f, 20, graphicsNS::BLUE);
+	braveMpBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_MP_BAR_X, towerDiffenceNS::BRAVE_MP_BAR_Y, 0.5f, 100, graphicsNS::GREEN);
+	braveMpBar.set(brave.getMP());
+	castleHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::CASTLE_HEALTH_BAR_X + 40, towerDiffenceNS::CASTLE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::BLUE);
 	castleHealthBar.set(castle.getHealth());
 
+	// テキスト画像
+	if (!textTexture.initialize(graphics, TEXT_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing text textures"));
+	if (!braveHpText.initialize(graphics, hpTextImageNS::WIDTH, hpTextImageNS::HEIGHT, hpTextImageNS::TEXTURE_COLS, &textTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hp text"));
+	if (!braveMpText.initialize(graphics, mpTextImageNS::WIDTH, mpTextImageNS::HEIGHT, mpTextImageNS::TEXTURE_COLS, &textTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hp text"));
+	if (!castleHpText.initialize(graphics, hpTextImageNS::WIDTH, hpTextImageNS::HEIGHT, hpTextImageNS::TEXTURE_COLS, &textTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hp text"));
+	castleHpText.setX(830);
 	return;
 }
 
@@ -135,6 +159,7 @@ void TowerDiffence::update()
 	}
 	else
 	{
+		remainingTime -= frameTime;
 		if (input->isKeyDown(BRAVE_FIRE_KEY))
 			fire.fire(&brave);
 		if (brave.getAttackCollisionFlag())
@@ -223,7 +248,7 @@ void TowerDiffence::collisions()
 
 		}
 
-		barricades[i].draw();
+//		barricades[i].draw();
 	}
 }
 
@@ -273,7 +298,11 @@ void TowerDiffence::render()
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
 
+		braveHpText.draw();
+		braveMpText.draw();
+		castleHpText.draw();
 		braveIcon.draw();
+		castleIcon.draw();
 		castle.draw();
 		enemy.draw();
 		fire.draw();
@@ -286,6 +315,18 @@ void TowerDiffence::render()
 		braveHealthBar.draw(graphicsNS::FILTER);	// 体力バーを描画
 		braveMpBar.draw(graphicsNS::FILTER);
 		castleHealthBar.draw(graphicsNS::FILTER);
+		
+		// shadow
+		char str[128] = "TIME-";
+		char time[5] = { 0 };
+		sprintf_s(time, "%04d", (int)remainingTime);
+		strcat_s(str, time);
+		fontCK->setFontHeight(40);
+		fontCK->setFontColor(SETCOLOR_ARGB(128, 128, 128, 128));  // shadow grey
+		fontCK->print(str, 512, 10);
+		fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+		fontCK->print(str, 505, 7);
+		fontCK->setFontHeight(14);
 	}
 	graphics->spriteEnd();		// スプライトの描画を開始
 }
@@ -297,6 +338,7 @@ void TowerDiffence::render()
 //==========================================================
 void TowerDiffence::releaseAll()
 {
+	SAFE_ON_LOST_DEVICE(fontCK);
 	menuTexture.onLostDevice();
 	braveTexture.onLostDevice();
 	dashboardTextures.onLostDevice();
@@ -311,6 +353,7 @@ void TowerDiffence::releaseAll()
 //==========================================================
 void TowerDiffence::resetAll()
 {
+	SAFE_ON_RESET_DEVICE(fontCK);
 	dashboardTextures.onLostDevice();
 	braveTexture.onResetDevice();
 	menuTexture.onResetDevice();

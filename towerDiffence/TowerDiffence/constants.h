@@ -33,6 +33,9 @@ const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";			// バリケードの
 const char COLLISION_IMAGE[] = "pictures\\alex\\attackCollision.png";	// 攻撃用のテクスチャ
 const char CASTLE_IMAGE[] = "pictures\\map\\castle.png";				// 城画像
 const char BRAVE_ICON_IMAGE[] = "pictures\\alex\\icon.png";				// 勇者のアイコン画像
+const char TEXT_IMAGE[] = "pictures\\systemGraphics\\text.png";			// テキスト（ＭＰ、ＨＰ）画像
+const char CASTLE_ICON_IMAGE[] = "pictures\\map\\castleIcon.png";		// 城のアイコンの画像
+const char FONT_IMAGE[] = "pictures\\CKfont.png";
 
 // 音声
 // WAVE_BANK must be location of .xwb file.

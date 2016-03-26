@@ -13,7 +13,7 @@ Castle::Castle() : Entity()
 	spriteData.rect.right = castleNS::WIDTH;
 	spriteData.x = castleNS::X;
 	spriteData.y = castleNS::Y;
-	cols = 0;
+	cols = castleNS::TEXTURE_COLS;
 	startFrame = castleNS::START_FRAME;
 	currentFrame = startFrame;
 	radius = castleNS::COLLISION_RADIUS;		// â~ÇÃè’ìÀîªíËóp
@@ -21,6 +21,7 @@ Castle::Castle() : Entity()
 	death = false;
 	isDamaged = false;
 	drawFlag = true;
+	mode = imageNS::HORIZONTAL;
 }
 
 //==========================================================

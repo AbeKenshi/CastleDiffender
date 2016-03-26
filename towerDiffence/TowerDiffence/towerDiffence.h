@@ -3,6 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include "game.h"
+#include "text.h"
 #include "textureManager.h"
 #include "image.h"
 #include "brave.h"
@@ -16,6 +17,10 @@
 #include "rect.h"
 #include "barricade.h"
 #include "braveIcon.h"
+#include "castleIcon.h"
+#include "hpTextImage.h"
+#include "mpTextImage.h"
+#include <string>
 
 namespace towerDiffenceNS
 {
@@ -24,7 +29,7 @@ namespace towerDiffenceNS
 	const int BRAVE_HEALTH_BAR_Y = 0;
 	const int BRAVE_MP_BAR_X = BRAVE_HEALTH_BAR_X;
 	const int BRAVE_MP_BAR_Y = 25;
-	const int CASTLE_HEALTH_BAR_X = 200;
+	const int CASTLE_HEALTH_BAR_X = 830;
 	const int CASTLE_HEALTH_BAR_Y = 0;
 }
 
@@ -35,6 +40,7 @@ class TowerDiffence : public Game
 {
 private:
 	// ゲームアイテム
+	Text    *fontCK;									// sprite based font
 	TextureManager menuTexture;							// タイトルのテクスチャ
 	Image menu;											// タイトル画像
 	TextureManager braveTexture;						// 勇者のテクスチャ
@@ -50,6 +56,8 @@ private:
 	Barricade barricades[mapNS::BARRICADE_NUM];         // バリケード画像
 	TextureManager castleTexture;						// 城のテクスチャ
 	Castle castle;										// 城の画像
+	TextureManager castleIconTexture;					// 城のアイコンのテクスチャ
+	CastleIcon castleIcon;								// 城のアイコン
 	TextureManager fireTexture;							// 炎のテクスチャ
 	Fire fire;											// 炎の画像
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
@@ -58,10 +66,14 @@ private:
 	BarGraph braveHealthBar;							// 勇者の体力バー
 	BarGraph braveMpBar;								// 勇者のMPバー
 	BarGraph castleHealthBar;							// 城の体力バー
+	TextureManager textTexture;							// テキスト（ＭＰ、ＨＰ）のテクスチャ
+	HpTextImage braveHpText;							// 勇者のＨＰテキスト
+	MpTextImage braveMpText;							// 勇者のＭＰテキスト
+	HpTextImage castleHpText;							// 城のＨＰテキスト
 	Rect *rect;											// Rectへのポインター
 	float mapX;											// 初期X座標
 	bool menuOn;										// メニューフラグ
-
+	float remainingTime;								// ゲーム内の残り時間
 public:
 	// コンストラクタ
 	TowerDiffence();
