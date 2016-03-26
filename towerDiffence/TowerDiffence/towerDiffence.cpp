@@ -97,6 +97,7 @@ void TowerDiffence::initialize(HWND hwnd)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire texture"));
 	if (!fire.initialize(this, fireNS::WIDTH, fireNS::HEIGHT, fireNS::TEXTURE_COLS, &fireTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire"));
+	fire.setScale(1.5);
 
 	// 雑魚敵のテクスチャ
 	if (!enemyTexture.initialize(graphics, ENEMY_IMAGE))
@@ -108,10 +109,12 @@ void TowerDiffence::initialize(HWND hwnd)
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing dashboard textures"));
-	braveBarGraph.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_BAR_GRAPH_X, towerDiffenceNS::BRAVE_BAR_GRAPH_Y, 0.5f, 20, graphicsNS::RED);
-	braveBarGraph.set(brave.getHealth());
-	castleBarGraph.initialize(graphics, &dashboardTextures, towerDiffenceNS::CASTLE_BAR_GRAPH_X + 40, towerDiffenceNS::CASTLE_BAR_GRAPH_Y, 0.5f, 20, graphicsNS::BLUE);
-	castleBarGraph.set(castle.getHealth());
+	braveHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_HEALTH_BAR_X, towerDiffenceNS::BRAVE_HEALTH_BAR_Y, 0.5f, 20, graphicsNS::RED);
+	braveHealthBar.set(brave.getHealth());
+	braveMpBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_MP_BAR_X, towerDiffenceNS::BRAVE_MP_BAR_Y, 0.5f, 20, graphicsNS::GREEN);
+	braveHealthBar.set(brave.getMP());
+	castleHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::CASTLE_HEALTH_BAR_X + 40, towerDiffenceNS::CASTLE_HEALTH_BAR_Y, 0.5f, 20, graphicsNS::BLUE);
+	castleHealthBar.set(castle.getHealth());
 
 	return;
 }
@@ -277,10 +280,12 @@ void TowerDiffence::render()
 		brave.draw();
 		braveAttackCollision.draw();
 		enemyAttackCollision.draw();
-		braveBarGraph.set(brave.getHealth());
-		castleBarGraph.set(castle.getHealth());
-		braveBarGraph.draw(graphicsNS::FILTER);	// 体力バーを描画
-		castleBarGraph.draw(graphicsNS::FILTER);
+		braveHealthBar.set(brave.getHealth());
+		braveMpBar.set(brave.getMP());
+		castleHealthBar.set(castle.getHealth());
+		braveHealthBar.draw(graphicsNS::FILTER);	// 体力バーを描画
+		braveMpBar.draw(graphicsNS::FILTER);
+		castleHealthBar.draw(graphicsNS::FILTER);
 	}
 	graphics->spriteEnd();		// スプライトの描画を開始
 }

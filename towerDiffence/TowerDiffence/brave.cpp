@@ -26,11 +26,13 @@ Brave::Brave() : Entity()
 	direction = braveNS::UP;
 	secondAttackFlag = false;
 	isDamaged = false;
-	timeCounter = 0.0f;
-	totalTimeCounter = 0.0f;
+	damageTimer = 0.0f;
+	totalDamageTime = 0.0f;
+	mpTimer = 0.0;
 	drawFlag = true;
 	// 攻撃判定のコリジョンは無効状態からスタート
 	attackCollisionFlag = false;
+	magicPoint = 100;							// MPはMAX100でスタート
 }
 
 //==========================================================
@@ -318,23 +320,32 @@ void Brave::update(float frameTime, Map *map)
 	// ダメージを受けているなら一定時間ごとにアニメーションを点滅
 	if (isDamaged)
 	{
-		timeCounter += frameTime;
-		totalTimeCounter += frameTime;
-		if (timeCounter > 0.15f)
+		damageTimer += frameTime;
+		totalDamageTime += frameTime;
+		if (damageTimer > 0.15f)
 		{
 			if (drawFlag)
 				drawFlag = false;
 			else
 				drawFlag = true;
-			timeCounter = 0.0f;
+			damageTimer = 0.0f;
 		}
-		if (totalTimeCounter > braveNS::DAMAGE_TIME)
+		if (totalDamageTime > braveNS::DAMAGE_TIME)
 		{
-			timeCounter = 0.0f;
-			totalTimeCounter = 0.0f;
+			damageTimer = 0.0f;
+			totalDamageTime = 0.0f;
 			drawFlag = true;
 			isDamaged = false;
 		}
+	}
+	// MPを一定時間ごとに回復
+	mpTimer += frameTime;
+	if (mpTimer > braveNS::MP_RECOVERY_TIME)
+	{
+		mpTimer = 0.0f;
+		magicPoint += braveNS::MP_RECOVERY;
+		if (magicPoint > 100)
+			magicPoint = 100;
 	}
 
 	// 移動可能だったら
@@ -385,14 +396,19 @@ void Brave::damage(WEAPON weapon)
 	case BRAVE_SECOND_ATTACK:
 		break;
 	case ENEMY_ATTACK:
-		health -= enemyNS::ATTACK_DAMAGE;
+		if (state == braveNS::GAURD)
+			magicPoint -= 25;
+		else
+		{
+			health -= enemyNS::ATTACK_DAMAGE;
+			isDamaged = true;
+		}
 		break;
 	default:
 		break;
 	}
 	if (health <= 0)
 		dead();
-	isDamaged = true;
 }
 
 //==========================================================

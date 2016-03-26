@@ -11,12 +11,13 @@ namespace fireNS
 	const int WIDTH = 24;							// 画像の幅（各フレーム）
 	const int HEIGHT = 32;							// 画像の高さ
 	const int COLLISION_RADIUS = 4;					// 円の衝突判定
-	const float SPEED = 200;						// 1秒あたりのピクセル数
-	const float FIRE_DELAY = 1.0f;					// 炎発動の間隔は4秒
+	const float SPEED = 300;						// 1秒あたりのピクセル数
+	const float FIRE_DELAY = 0.5f;					// 炎発動の間隔は4秒
 	const int TEXTURE_COLS = 12;					// テクスチャは8列
 	const int START_FRAME = 52;						// アニメーションはフレーム52から開始
 	const int END_FRAME = 52 + 36;					// アニメーションフレームは52、64、76、88
 	const float ANIMATION_DELAY = 0.1f;				// フレーム間の時間
+	const int FIRE_MP = 20;							// 必殺技に使用するMP
 }
 
 class Fire : public Entity							// Entityクラスを継承

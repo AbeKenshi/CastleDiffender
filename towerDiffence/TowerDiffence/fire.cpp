@@ -60,7 +60,7 @@ void Fire::update(float frameTime)
 //==========================================================
 void Fire::fire(Brave *brave)
 {
-	if (fireTimer <= 0.0f)						// 発射可能な場合
+	if (fireTimer <= 0.0f && brave->getMP() > fireNS::FIRE_MP)	// 発射可能な場合
 	{
 		switch (brave->getDirection())
 		{
@@ -87,8 +87,9 @@ void Fire::fire(Brave *brave)
 		}
 		spriteData.x = brave->getCenterX() - spriteData.width / 2;
 		spriteData.y = brave->getCenterY() - spriteData.height / 2;
-		visible = true;							// 炎を表示
-		active = true;							// 衝突可能にする
-		fireTimer = fireNS::FIRE_DELAY;			// 発射の間隔
+		visible = true;									// 炎を表示
+		active = true;									// 衝突可能にする
+		fireTimer = fireNS::FIRE_DELAY;					// 発射の間隔
+		brave->setMP(brave->getMP() - fireNS::FIRE_MP);	// MPを減少
 	}
 }
