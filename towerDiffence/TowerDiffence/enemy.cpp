@@ -300,7 +300,7 @@ void Enemy::ai(float frameTime, Entity &ent, Barricade *barricades)
 	}
 
 	// 近くにプレイヤーがいる場合、
-	if (nearPlayer)
+	if (nearPlayer || nearBarricade)
 	{
 		// 攻撃直前モードにチェンジ
 		loop = false;

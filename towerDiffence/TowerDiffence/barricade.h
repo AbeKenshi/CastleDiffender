@@ -9,7 +9,7 @@ namespace barricadeNS
 {
 	const int WIDTH = 32;			// 画像の幅（各フレーム）
 	const int HEIGHT = 32;			// 画像の高さ
-	const int COLLISION_RADIUS = 10;// 円の衝突判定
+	const int COLLISION_RADIUS = 16;// 円の衝突判定
 	const int TEXTURE_COLS = 8;		// テクスチャは8列
 	const int START_FRAME = 0;		// アニメーションはフレーム0から開始
 	const int END_FRAME = 2;		// アニメーションフレームは0、1、2
@@ -17,11 +17,20 @@ namespace barricadeNS
 
 class Barricade : public Entity		// Entityクラスを継承
 {
+private:
+	float timeCounter;				// ダメージアニメーション用のタイマー
+	float totalTimeCounter;
+	bool death;						// 城が死亡時にtrue
+	bool isDamaged;					// ダメージを受けている状態かどうか
+	bool drawFlag;					// 描画フラグ、true時に描画
 public:
 	// コンストラクタ
 	Barricade();
 
 	// 継承されたメンバー関数
+	virtual void draw();
+
 	void update(float frameTime);
+	void damage();
 };
 #endif // !_BARRICADE_H

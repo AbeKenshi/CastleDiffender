@@ -6,6 +6,7 @@
 Barricade::Barricade() : Entity()
 {
 	active = true;
+	visible = true;
 	spriteData.width = barricadeNS::WIDTH;			// １つの画像のサイズ
 	spriteData.height = barricadeNS::HEIGHT;
 	spriteData.rect.bottom = barricadeNS::HEIGHT;	// 画像内の選択する部分
@@ -17,8 +18,21 @@ Barricade::Barricade() : Entity()
 	endFrame = barricadeNS::END_FRAME;
 	currentFrame = startFrame;
 	radius = barricadeNS::COLLISION_RADIUS;			// 円の衝突判定用
-	visible = true;
 	collisionType = entityNS::CIRCLE;
+	health = 100;
+	death = false;
+	isDamaged = false;
+	drawFlag = true;
+	mode = imageNS::HORIZONTAL;
+}
+
+//==========================================================
+// バリケードを描画
+//==========================================================
+void Barricade::draw()
+{
+	if (drawFlag)
+		Image::draw();	// 城を描画
 }
 
 //==========================================================
@@ -32,5 +46,21 @@ void Barricade::update(float frameTime)
 		return;
 
 //	updateWithoutImage(frameTime);
-	Image::update(frameTime);
+	Entity::update(frameTime);
+}
+
+//==========================================================
+// ダメージ処理
+//==========================================================
+void Barricade::damage()
+{
+	health -= 5;
+
+	if (health <= 0)
+	{
+		visible = false;
+		active = false;
+	}
+
+	isDamaged = true;
 }
