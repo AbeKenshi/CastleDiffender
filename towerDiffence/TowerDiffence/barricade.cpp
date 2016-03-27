@@ -16,9 +16,13 @@ Barricade::Barricade() : Entity()
 	startFrame = barricadeNS::START_FRAME;
 	// アニメーションの最後のフレーム
 	endFrame = barricadeNS::END_FRAME;
-	currentFrame = startFrame;
-	radius = barricadeNS::COLLISION_RADIUS;			// 円の衝突判定用
-	collisionType = entityNS::CIRCLE;
+	currentFrame = startFrame;	
+	// Boxの衝突判定用
+	edge.left = -barricadeNS::WIDTH / 2.0;
+	edge.right = barricadeNS::WIDTH / 2.0;
+	edge.top = -barricadeNS::HEIGHT / 2.0;
+	edge.bottom = barricadeNS::HEIGHT / 2.0;
+	collisionType = entityNS::BOX;
 	health = 100;
 	death = false;
 	isDamaged = false;

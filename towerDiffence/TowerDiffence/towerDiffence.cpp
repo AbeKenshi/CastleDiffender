@@ -258,7 +258,10 @@ void TowerDiffence::collisions()
 		if (enemy.collidesWith(barricades[i], collisionVector))
 		{
 			enemy.setNearBarricade(true);
+			break;
 		}
+		if (i == mapNS::BARRICADE_NUM - 1)
+			enemy.setNearBarricade(false);
 	}
 
 	// 敵の攻撃コリジョンとバリケードの衝突
