@@ -58,6 +58,7 @@ private:
 	bool isDamaged;						// ダメージを受けている状態かどうか
 	bool drawFlag;						// 描画フラグ、ダメージを受けている状態時に使用
 	bool nearPlayer;					// プレイヤーと隣接しているかどうか
+	bool nearBarricade;                 // バリケードと隣接しているかどうか
 	bool isAttacked;					// 攻撃した直後かどうか
 	bool attackCollisionFlag;			// 攻撃用の衝突判定を出現させるフラグ
 	bool inCertainRange;                // プレイヤーが一定範囲内にいるか
@@ -85,6 +86,11 @@ public:
 	void setNearPlayer(bool np)
 	{
 		nearPlayer = np;
+	}
+	// バリケードと隣接しているかどうかをセット
+	void setNearBarricade(bool nb)
+	{
+		nearBarricade = nb;
 	}
 	// 向きをgoalDirectionへとアップデートする関数
 	void changeDirection(int strF, int endF);
