@@ -36,6 +36,33 @@ Brave::Brave() : Entity()
 }
 
 //==========================================================
+// パラメータ初期化
+//==========================================================
+void Brave::reset()
+{
+	active = true;
+	visible = true;
+	health = 100;
+	magicPoint = 100;							// MPはMAX100でスタート
+	spriteData.x = braveNS::X;					// 画面上の位置
+	spriteData.y = braveNS::Y;
+	frameDelay = braveNS::MOVE_ANIMATION_DELAY;
+	startFrame = braveNS::MOVE_UP_START_FRAME;
+	endFrame = braveNS::MOVE_UP_END_FRAME;
+	currentFrame = startFrame;
+	state = braveNS::STATE::MOVE;
+	direction = braveNS::UP;
+	secondAttackFlag = false;
+	isDamaged = false;
+	damageTimer = 0.0f;
+	totalDamageTime = 0.0f;
+	mpTimer = 0.0;
+	drawFlag = true;
+	// 攻撃判定のコリジョンは無効状態からスタート
+	attackCollisionFlag = false;
+}
+
+//==========================================================
 // 勇者を初期化
 // 実行後：成功した場合はtrue、失敗した場合はfalseを戻す
 //==========================================================

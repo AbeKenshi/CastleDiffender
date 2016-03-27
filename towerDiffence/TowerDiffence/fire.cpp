@@ -25,6 +25,25 @@ Fire::Fire() : Entity()
 }
 
 //==========================================================
+// パラメータ初期化
+//==========================================================
+void Fire::reset()
+{
+	active = false;								// 炎はアクティブでない状態から開始
+	frameDelay = fireNS::ANIMATION_DELAY;
+	// ファイアーアニメーションの最初のフレーム
+	startFrame = fireNS::START_FRAME;
+	// ファイアーアニメーションの最後のフレーム
+	endFrame = fireNS::END_FRAME;
+	currentFrame = startFrame;
+	radius = fireNS::COLLISION_RADIUS;			// 円の衝突判定用
+	visible = false;
+	fireTimer = 0.0f;
+	collisionType = entityNS::CIRCLE;
+	mode = imageNS::VERTICAL;
+}
+
+//==========================================================
 // Update
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用

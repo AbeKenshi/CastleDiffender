@@ -28,6 +28,7 @@ public:
 
 	// Œp³‚³‚ê‚½ƒƒ“ƒo[ŠÖ”
 	virtual void draw();
+	void reset();
 
 	void update(float frameTime);
 	void damage();

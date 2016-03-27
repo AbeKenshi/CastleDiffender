@@ -46,6 +46,45 @@ Enemy::Enemy() : Entity()
 }
 
 //==========================================================
+// パラメータ初期化
+//==========================================================
+void Enemy::reset()
+{
+	active = true;
+	visible = true;
+	health = 100;
+
+	spriteData.x = enemyNS::X;					// 画面上の位置
+	spriteData.y = enemyNS::Y;
+	frameDelay = enemyNS::MOVE_ANIMATION_DELAY;
+	// 初期の方向は右
+	direction = enemyNS::RIGHT;
+	oldDirection = direction;
+	startFrame = enemyNS::MOVE_RIGHT_START_FRAME;
+	endFrame = enemyNS::MOVE_RIGHT_END_FRAME;
+	oldStartFrame = startFrame;
+	oldEndFrame = endFrame;
+	currentFrame = startFrame;
+	// 初期の状態は移動
+	state = enemyNS::MOVE_CASTLE;
+	goalPos.x = castleNS::X + castleNS::WIDTH / 2;
+	goalPos.y = castleNS::Y + castleNS::HEIGHT / 2;
+	// ダメージは受けていない状態からスタート
+	isDamaged = false;
+	// タイマーをリセット
+	damageTimer = 0.0f;
+	totalDamageTime = 0.0f;
+	// 距離計測用カウンターをリセット
+	distanceCounter = 0.0f;
+	// 描画フラグはオン
+	drawFlag = true;
+	// 攻撃判定のコリジョンは無効状態からスタート
+	attackCollisionFlag = false;
+	// 範囲内にはいない状態からスタート
+	inCertainRange = false;
+}
+
+//==========================================================
 // 雑魚敵を初期化
 // 実行後：成功した場合はtrue、失敗した場合はfalseを戻す
 //==========================================================

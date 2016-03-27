@@ -29,6 +29,24 @@ Castle::Castle() : Entity()
 }
 
 //==========================================================
+// ƒpƒ‰ƒ[ƒ^‰Šú‰»
+//==========================================================
+void Castle::reset()
+{
+	active = true;
+	visible = true;
+	health = 100;
+	spriteData.x = castleNS::X;
+	spriteData.y = castleNS::Y;
+	startFrame = castleNS::START_FRAME;
+	currentFrame = startFrame;
+	death = false;
+	isDamaged = false;
+	drawFlag = true;
+	mode = imageNS::HORIZONTAL;
+}
+
+//==========================================================
 // é‚ğ•`‰æ
 //==========================================================
 void Castle::draw()

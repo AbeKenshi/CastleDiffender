@@ -121,5 +121,7 @@ public:
 	bool checkBarricadeOnLine(float x, float y, Map *map);
 	// 攻撃モードにチェンジするときに呼び出す関数
 	void changeAttack();
+	// パラメータリセット
+	void reset();
 };
 #endif

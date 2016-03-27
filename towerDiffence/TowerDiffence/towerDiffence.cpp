@@ -47,6 +47,14 @@ void TowerDiffence::initialize(HWND hwnd)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing menu"));
 	menu.setScale(2);
 
+	// リザルトのテクスチャ
+	if (!resultTexture.initialize(graphics, RESULT_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing result texture"));
+	// リザルトの画像
+	if (!result.initialize(graphics, 0, 0, 0, &resultTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing result"));
+	result.setScale(2);
+
 	// マップのテクスチャ
 	if (!tileTexture.initialize(graphics, TILE_IMAGES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing map texture"));
@@ -158,6 +166,19 @@ void TowerDiffence::update()
 			roundStart();
 		}
 	}
+	else if (roundOver)
+	{
+		if (input->isKeyDown('Z'))
+		{
+			menuOn = true;
+			input->clearAll();
+			roundStart();
+		}
+		else if (input->isKeyDown('X'))
+		{
+			exit(1);
+		}
+	}
 	else
 	{
 		if (input->isKeyDown(BRAVE_FIRE_KEY))
@@ -182,14 +203,16 @@ void TowerDiffence::update()
 		if (remainingTime < 0)
 		{
 			roundOver = true;
-			roundTimer = towerDiffenceNS::ROUND_TIME;
+			// roundTimer = towerDiffenceNS::ROUND_TIME;
 		}
+		/*
 		if (roundOver)
 		{
 			roundTimer -= frameTime;
 			if (roundTimer <= 0)
 				roundStart();
 		}
+		*/
 	}
 }
 
@@ -198,6 +221,23 @@ void TowerDiffence::update()
 //==========================================================
 void TowerDiffence::roundStart()
 {
+	// 初期化
+	brave.reset();
+	enemy.reset();
+	castle.reset();
+	fire.reset();
+
+	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
+	{
+		barricades[i].reset();
+	}
+
+	// HP,MP初期化
+	brave.setHealth(100);
+	brave.setMP(100);
+
+	remainingTime = 1500.0f;
+
 	roundOver = false;
 }
 
@@ -319,12 +359,15 @@ void TowerDiffence::collisions()
 	// 死亡チェック
 	if (castle.isDeath() || brave.getActive() == false)
 	{
+		roundOver = true;
+		/*
 		exit(1);
 		if (roundOver == false)
 		{
 			roundOver = towerDiffenceNS::ROUND_TIME;
 			roundOver = true;
 		}
+		*/
 	}
 }
 
@@ -338,6 +381,10 @@ void TowerDiffence::render()
 	if (menuOn)
 	{
 		menu.draw();
+	}
+	else if (roundOver)
+	{
+		result.draw();
 	}
 	else
 	{

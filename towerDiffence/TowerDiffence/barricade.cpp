@@ -31,6 +31,25 @@ Barricade::Barricade() : Entity()
 }
 
 //==========================================================
+// パラメータ初期化
+//==========================================================
+void Barricade::reset()
+{
+	active = true;
+	visible = true;
+	health = 100;
+	// アニメーションの最初のフレーム
+	startFrame = barricadeNS::START_FRAME;
+	// アニメーションの最後のフレーム
+	endFrame = barricadeNS::END_FRAME;
+	currentFrame = startFrame;
+	death = false;
+	isDamaged = false;
+	drawFlag = true;
+	mode = imageNS::HORIZONTAL;
+}
+
+//==========================================================
 // バリケードを描画
 //==========================================================
 void Barricade::draw()

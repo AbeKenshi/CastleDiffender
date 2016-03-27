@@ -50,6 +50,8 @@ private:
 	Text    *fontCK;									// sprite based font
 	TextureManager menuTexture;							// タイトルのテクスチャ
 	Image menu;											// タイトル画像
+	TextureManager resultTexture;                       // リザルトのテクスチャ
+	Image result;                                       // リザルト画像
 	TextureManager braveTexture;						// 勇者のテクスチャ
 	Brave brave;										// 勇者
 	TextureManager braveIconTexture;					// 勇者のアイコンのテクスチャ
