@@ -12,7 +12,6 @@ namespace castleNS
 	const int TEXTURE_COLS = 2;
 	const int X = 18.3 * 30;	// ‰ŠúˆÊ’u
 	const int Y = 9.5 * 30;
-	const int COLLISION_RADIUS = 60;// ‰~‚ÌÕ“Ë”»’è	
 	const int START_FRAME = 1;
 }
 

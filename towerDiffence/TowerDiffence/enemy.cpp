@@ -435,7 +435,7 @@ bool Enemy::checkDistancePlayer(int px, int py)
 
 	int dist = (int)sqrt(subX * subX + subY * subY);
 
-	if (dist < 500) return true;
+	if (dist < 100) return true;
 	else return false;
 }
 
