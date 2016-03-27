@@ -26,8 +26,10 @@ Enemy::Enemy() : Entity()
 	edge.top = -enemyNS::HEIGHT / 8.0;
 	edge.bottom = enemyNS::HEIGHT / 2.0;
 	collisionType = entityNS::BOX;
-	// 初期の状態は移動
-	state = enemyNS::MOVE;
+	// 初期の状態は城に向かって移動
+	state = enemyNS::MOVE_CASTLE;
+	goalPos.x = castleNS::X + castleNS::WIDTH / 2;
+	goalPos.y = castleNS::Y + castleNS::HEIGHT / 2;
 	// ダメージは受けていない状態からスタート
 	isDamaged = false;
 	// タイマーをリセット
@@ -70,9 +72,120 @@ void Enemy::draw()
 //=============================================================================
 void Enemy::update(float frameTime, Map *map)
 {
+	// 非アクティブなら何もしない
 	if (!active)
 		return;
+	// 攻撃中のフラグをオフ
 	attackCollisionFlag = false;
+	// 状態ごとに処理を分岐
+	switch (state)
+	{
+	case enemyNS::MOVE_CASTLE:		// 城への移動
+	case enemyNS::MOVE_BARRICADE:	// バリケードへの移動
+		// 目標への向きに応じて自分の向きを修正
+		// 向きを変更する場合はアニメーションをリセット
+		switch (goalDirection)
+		{
+		case enemyNS::LEFT:
+			if (direction != goalDirection)
+			{
+				changeDirection(enemyNS::MOVE_LEFT_START_FRAME, enemyNS::MOVE_LEFT_END_FRAME);
+			}
+			// 移動可能だったら
+			if (checkCanMove(spriteData.x - enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+				// 左に移動
+				spriteData.x -= enemyNS::MOVE_SPEED * frameTime;
+			}
+			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
+			break;
+		case enemyNS::RIGHT:
+			if (direction != goalDirection)
+			{
+				changeDirection(enemyNS::MOVE_RIGHT_START_FRAME, enemyNS::MOVE_RIGHT_END_FRAME);
+			}
+			// 移動可能だったら
+			if (checkCanMove(spriteData.x + enemyNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+				// 右に移動
+				spriteData.x += enemyNS::MOVE_SPEED * frameTime;
+			}
+			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
+			break;
+		case enemyNS::UP:
+			if (direction != goalDirection)
+			{
+				changeDirection(enemyNS::MOVE_UP_START_FRAME, enemyNS::MOVE_UP_END_FRAME);
+			}
+			// 移動可能だったら
+			if (checkCanMove(spriteData.x, spriteData.y - enemyNS::MOVE_SPEED * frameTime, map)) {
+				// 上に移動
+				spriteData.y -= enemyNS::MOVE_SPEED * frameTime;
+			}
+			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
+			break;
+		case enemyNS::DOWN:
+			if (direction != goalDirection)
+			{
+				changeDirection(enemyNS::MOVE_DOWN_START_FRAME, enemyNS::MOVE_DOWN_END_FRAME);
+			}
+			// 移動可能だったら
+			if (checkCanMove(spriteData.x, spriteData.y + enemyNS::MOVE_SPEED * frameTime, map)) {
+				// 下に移動
+				spriteData.y += enemyNS::MOVE_SPEED * frameTime;
+			}
+			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
+			break;
+		case enemyNS::NONE:
+			break;
+		}
+		// 攻撃直後ではないはずなのでフラグをオフ
+		isAttacked = false;
+		// 画像のみアップデート
+		Entity::updateOnlyImage(frameTime);
+		break;
+	case enemyNS::ATTACK_BRAVE:
+	case enemyNS::ATTACK_CASTLE:
+	case enemyNS::ATTACK_BARRICADE:
+		// アニメーションが終了していたら攻撃終了
+		// 状態を移動時に戻す
+		if (animComplete)
+		{
+			isAttacked = true;
+			mode = imageNS::HORIZONTAL;
+			direction = oldDirection;
+			state = enemyNS::MOVE_CASTLE;
+			loop = true;
+			startFrame = oldStartFrame;
+			endFrame = oldEndFrame;
+			currentFrame = startFrame;
+			animTimer = 0.0f;
+			animComplete = false;
+			setRect();
+			Entity::updateOnlyImage(frameTime);
+		}
+		break;
+	case enemyNS::PRE_ATTACK:
+		// タイマーを加算、一定時間を超えたら攻撃に移る
+		attackTimer += frameTime;
+		if (isAttacked && attackTimer > enemyNS::CONTINUE_ATTACK_TIME)
+		{
+			attackTimer = 0.0f;
+			state = attackState;
+			attackCollisionFlag = true;
+		}
+		else if (!isAttacked && attackTimer > enemyNS::ATTACK_TIME)
+		{
+			attackTimer = 0.0f;
+			state = attackState;
+			attackCollisionFlag = true;
+		}
+		break;
+	case enemyNS::GAURD:
+		break;
+	default:
+		break;
+	}
+
+	/*
 	// 状態遷移前の処理
 	switch (state)
 	{
@@ -145,7 +258,7 @@ void Enemy::update(float frameTime, Map *map)
 			isAttacked = true;
 			mode = imageNS::HORIZONTAL;
 			direction = oldDirection;
-			state = enemyNS::MOVE;
+			state = enemyNS::ATTACK;
 			loop = true;
 			startFrame = oldStartFrame;
 			endFrame = oldEndFrame;
@@ -177,13 +290,18 @@ void Enemy::update(float frameTime, Map *map)
 	default:
 		break;
 	}
+	*/
+
 	// 状態遷移後の処理
 	switch (state)
 	{
-	case enemyNS::MOVE:
+	case enemyNS::MOVE_CASTLE:
+	case enemyNS::MOVE_BARRICADE:
 		updateMoving(frameTime);
 		break;
-	case enemyNS::ATTACK:
+	case enemyNS::ATTACK_BRAVE:
+	case enemyNS::ATTACK_CASTLE:
+	case enemyNS::ATTACK_BARRICADE:
 		updateAttacking(frameTime);
 		break;
 	case enemyNS::PRE_ATTACK:
@@ -294,56 +412,25 @@ void Enemy::dead()
 void Enemy::ai(float frameTime, Entity &ent, Barricade *barricades)
 {
 	// 攻撃中ならば行動選択は行わない
-	if (state == enemyNS::ATTACK || state == enemyNS::PRE_ATTACK)
+	if (state == enemyNS::ATTACK_BARRICADE || state == enemyNS::ATTACK_BRAVE || state == enemyNS::ATTACK_CASTLE || state == enemyNS::PRE_ATTACK)
 	{
 		return;
 	}
 
+	/*
 	// 近くにプレイヤーがいる場合、
 	if (nearPlayer || nearBarricade)
 	{
-		// 攻撃直前モードにチェンジ
-		loop = false;
-		distanceCounter = 0.0f;
-		goalDirection = enemyNS::NONE;
-		state = enemyNS::PRE_ATTACK;
-		mode = imageNS::VERTICAL;
-		// アニメーション終了時にフレームを戻すために保存
-		oldStartFrame = startFrame;
-		oldEndFrame = endFrame;
-		oldDirection = direction;
-		// 方向に応じてアニメーションを切り替え
-		switch (direction)
-		{
-		case enemyNS::LEFT:
-			startFrame = enemyNS::ATTACK_LEFT_START_FRAME;
-			endFrame = enemyNS::ATTACK_LEFT_END_FRAME;
-			break;
-		case enemyNS::RIGHT:
-			startFrame = enemyNS::ATTACK_RIGHT_START_FRAME;
-			endFrame = enemyNS::ATTACK_RIGHT_END_FRAME;
-			break;
-		case enemyNS::UP:
-			startFrame = enemyNS::ATTACK_UP_START_FRAME;
-			endFrame = enemyNS::ATTACK_UP_END_FRAME;
-			break;
-		case enemyNS::DOWN:
-			startFrame = enemyNS::ATTACK_DOWN_START_FRAME;
-			endFrame = enemyNS::ATTACK_DOWN_END_FRAME;
-			break;
-		default:
-			break;
-		}
-		currentFrame = startFrame;
-		animTimer = 0.0f;
-		setRect();
-		return;
+		changeAttack();
 	}
+	*/
 
+	/*
 	// それ以外は移動モードに切り替え
 	state = enemyNS::MOVE;
-
+	*/
 	int subX, subY;
+	/*
 	// プレイヤーとの位置が一定範囲内ならばtrue、それ以外はfalse
 	inCertainRange = checkDistancePlayer(ent.getX(), ent.getY());
 
@@ -354,8 +441,14 @@ void Enemy::ai(float frameTime, Entity &ent, Barricade *barricades)
 	}
 	else  // 範囲内でなければ一番近くのバリケードの位置を目指す
 	{
-		subX = searchNearBarricade(ent, barricades).x - getX();
-		subY = searchNearBarricade(ent, barricades).y - getY();
+		VECTOR2 nearBarricade = searchNearBarricade(ent, barricades);
+		subX = nearBarricade.x - getX();
+		subY = nearBarricade.y - getY();
+	}*/
+	if (state == enemyNS::MOVE_CASTLE || state == enemyNS::MOVE_BARRICADE)
+	{
+		subX = goalPos.x - getX();
+		subY = goalPos.y - getY();
 	}
 
 	// 同じ方向に32ピクセル移動するごとに方向を決めなおす
@@ -445,6 +538,7 @@ bool Enemy::checkDistancePlayer(int px, int py)
 //==========================================================
 VECTOR2 Enemy::searchNearBarricade(Entity &ent, Barricade *barricade)
 {
+
 	// 最小の距離差
 	int minX = 0, minY = 0;
 	// アクティブなバリケードの数を数える用
@@ -494,4 +588,109 @@ VECTOR2 Enemy::searchNearBarricade(Entity &ent, Barricade *barricade)
 
 	// ベクトル返す
 	return vec;
+}
+
+//==========================================================
+// 一番近くのバリケードのインデックスを返す関数
+//==========================================================
+int Enemy::searchNearBarricadeIndex(Barricade *barricade) 
+{
+
+	// 最小の距離差
+	int minX = 0, minY = 0;
+	// 最小の距離のインデックス
+	int minIndex = 0;
+	// アクティブなバリケードの数を数える用
+	int count = 0;
+
+	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
+	{
+		// もしバリケードnがアクティブなら
+		if (barricade[i].getActive())
+		{
+			// 探索1つ目の場合
+			if (count == 0)
+			{
+				minX = barricade[i].getX();
+				minY = barricade[i].getY();
+				minIndex = i;
+			}
+			else // 2つ目以降
+			{
+				// もし最小値を更新したら
+				if (barricade[i].getX() * barricade[i].getX() + barricade[i].getY() * barricade[i].getY() <
+					minX * minX + minY * minY)
+				{
+					// 新たに代入
+					minX = barricade[i].getX();
+					minY = barricade[i].getY();
+					minIndex = i;
+				}
+			}
+			// カウントを増やす
+			count++;
+		}
+	}
+	return minIndex;
+}
+
+//==========================================================
+// 雑魚敵からある点までの直線上にバリケードが存在したらtrue、存在しない場合はfalseを返す。
+//==========================================================
+bool Enemy::checkBarricadeOnLine(float x, float y, Map *map) {
+	float a = (spriteData.y - y) / (spriteData.x - x);
+	float b = (spriteData.x * y - x * spriteData.y) / (spriteData.x - x);
+	if (spriteData.x <= x)
+	{
+		for (int i = spriteData.x; i <= x; ++i)
+		{
+			if (map->getMapObj(i, a * i + b) == 0)
+				return true;
+			if (i == x)
+				return false;
+		}
+	}
+}
+
+//==========================================================
+// 攻撃モードにチェンジするときに呼び出す関数
+//==========================================================
+void Enemy::changeAttack()
+{
+	// 攻撃直前モードにチェンジ
+	loop = false;
+	distanceCounter = 0.0f;
+	goalDirection = enemyNS::NONE;
+	state = enemyNS::PRE_ATTACK;
+	mode = imageNS::VERTICAL;
+	// アニメーション終了時にフレームを戻すために保存
+	oldStartFrame = startFrame;
+	oldEndFrame = endFrame;
+	oldDirection = direction;
+	// 方向に応じてアニメーションを切り替え
+	switch (direction)
+	{
+	case enemyNS::LEFT:
+		startFrame = enemyNS::ATTACK_LEFT_START_FRAME;
+		endFrame = enemyNS::ATTACK_LEFT_END_FRAME;
+		break;
+	case enemyNS::RIGHT:
+		startFrame = enemyNS::ATTACK_RIGHT_START_FRAME;
+		endFrame = enemyNS::ATTACK_RIGHT_END_FRAME;
+		break;
+	case enemyNS::UP:
+		startFrame = enemyNS::ATTACK_UP_START_FRAME;
+		endFrame = enemyNS::ATTACK_UP_END_FRAME;
+		break;
+	case enemyNS::DOWN:
+		startFrame = enemyNS::ATTACK_DOWN_START_FRAME;
+		endFrame = enemyNS::ATTACK_DOWN_END_FRAME;
+		break;
+	default:
+		break;
+	}
+	currentFrame = startFrame;
+	animTimer = 0.0f;
+	setRect();
+	return;
 }

@@ -7,13 +7,14 @@
 #include "constants.h"
 #include "map.h"
 #include "barricade.h"
+#include "castle.h"
 
 namespace enemyNS
 {
 	const int WIDTH = 24;							// 画像の幅（各フレーム）
 	const int HEIGHT = 32;							// 画像の高さ
 	const int X = 200;								// 画面上の位置
-	const int Y = 200;
+	const int Y = 000;
 	const int MOVE_SPEED = 100;						// 移動速度（ピクセル）
 	enum DIRECTION { LEFT, RIGHT, UP, DOWN, NONE };	// 向いている方向
 	const int TEXTURE_COLS = 12;					// テクスチャは12列
@@ -25,7 +26,7 @@ namespace enemyNS
 	const int MOVE_DOWN_END_FRAME = 80;				// 下方向移動のアニメーションフレームは78、79、80
 	const int MOVE_LEFT_START_FRAME = 90;			// 左方向移動のアニメーションはフレーム90から開始
 	const int MOVE_LEFT_END_FRAME = 92;				// 左方向移動のアニメーションフレームは90、91、92
-	const float MOVE_ANIMATION_DELAY = 0.2;			// 移動アニメーションのフレーム間の時間
+	const float MOVE_ANIMATION_DELAY = 0.1;			// 移動アニメーションのフレーム間の時間
 	const int ATTACK_UP_START_FRAME = 151;			// 上方向攻撃のアニメーションはフレーム151から開始
 	const int ATTACK_UP_END_FRAME = 151 + 36;		// 上方向攻撃にアニメーションフレームは151、163、175、184
 	const int ATTACK_RIGHT_START_FRAME = 148;		// 右方向攻撃のアニメーションはフレーム148から開始
@@ -38,7 +39,7 @@ namespace enemyNS
 	const float CONTINUE_ATTACK_TIME = 0.8f;		// 連続で攻撃する場合の溜め時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けている場合、DAMAGE_TIMEごとに画像が点滅
 	const int ATTACK_DAMAGE = 5.0f;
-	enum STATE {MOVE, ATTACK, PRE_ATTACK, GAURD };	// 雑魚敵の状態
+	enum STATE {MOVE_CASTLE, MOVE_BARRICADE , ATTACK_BRAVE, ATTACK_CASTLE, ATTACK_BARRICADE , PRE_ATTACK, GAURD };	// 雑魚敵の状態
 }
 
 // Enemyクラス
@@ -49,6 +50,8 @@ private:
 	enemyNS::DIRECTION oldDirection;	// 攻撃直前に向いていた方向を格納
 	enemyNS::DIRECTION goalDirection;	// 次に進むべき方向
 	enemyNS::STATE state;				// 状態
+	enemyNS::STATE attackState;			// 攻撃用の状態
+	VECTOR2 goalPos;					// 目標地点の座標
 	int oldStartFrame;					// 攻撃アニメーション終了後に戻るべきアニメーションフレーム保存用
 	int oldEndFrame;					// 攻撃アニメーション終了後に戻るべきアニメーションフレーム保存用
 	float distanceCounter;				// 距離計測用カウンター、同じ方向に一定距離進まないと方向転換できないようにする
@@ -92,6 +95,12 @@ public:
 	{
 		nearBarricade = nb;
 	}
+	// 状態をセットする関数
+	void setState(enemyNS::STATE st) { state = st; }
+	// 攻撃の状態をセットする関数
+	void setAttackState(enemyNS::STATE st) { attackState = st; }
+	// 目標地点をセットする関数
+	void setGoalPost(VECTOR2 pos) { goalPos = pos; }
 	// 向きをgoalDirectionへとアップデートする関数
 	void changeDirection(int strF, int endF);
 	// 死亡時に呼び出す関数
@@ -100,9 +109,17 @@ public:
 	bool checkCanMove(float x, float y, Map *map);
 	// 攻撃用の衝突判定を出現させるフラグ、攻撃状態に遷移した直後にtrueとなって、それ以外はfalse
 	bool getAttackCollisionFlag() { return attackCollisionFlag; }
+	// 状態を返す関数
+	enemyNS::STATE getState() { return state; }
 	// プレイヤーとの距離が一定範囲内ならtrue、それ以外はfalseを返す
 	bool checkDistancePlayer(int px, int py);
 	// 一番近くのバリケードの位置を返す関数
 	VECTOR2 searchNearBarricade(Entity &entity, Barricade *barricade);
+	// 一番近くのバリケードのインデックスを返す関数
+	int searchNearBarricadeIndex(Barricade *barricade);
+	// 雑魚敵からある点までの直線上にバリケードが存在したらtrue、存在しない場合はfalseを返す。
+	bool checkBarricadeOnLine(float x, float y, Map *map);
+	// 攻撃モードにチェンジするときに呼び出す関数
+	void changeAttack();
 };
 #endif
