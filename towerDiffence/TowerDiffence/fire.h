@@ -30,6 +30,7 @@ public:
 
 	// 継承されたメンバー関数
 	void update(float frameTime);
+	void reset();
 
 	// 新しいメンバー関数
 	void fire(Brave *brave);		// 勇者からミサイルを発射

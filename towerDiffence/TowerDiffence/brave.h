@@ -101,6 +101,8 @@ public:
 	bool checkCanMove(float x, float y, Map *map);
 	// 死亡時に呼び出す関数
 	void dead();
+	// パラメータリセット
+	void reset();
 	
 	// getter
 	int getMP() { return magicPoint; }

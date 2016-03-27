@@ -24,6 +24,7 @@ const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1ƒtƒŒ[ƒ€‚É—v‚·‚éÅ‘å‚Ì
 
 // ‰æ‘œ
 const char MENU_IMAGE[] = "pictures\\menu.png";							// ƒƒjƒ…[‰æ‘œ
+const char RESULT_IMAGE[] = "pictures\\result.png";                      // ƒŠƒUƒ‹ƒg‰æ‘œ
 const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main.png";		// —EÒ‚Ì•às‰æ‘œ
 const char FIRE_IMAGE[] = "pictures\\alex\\fire.png";					// ‰Š‚Ì‰æ‘œ
 const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy1.png";				// G‹›“G‚Ì‰æ‘œ

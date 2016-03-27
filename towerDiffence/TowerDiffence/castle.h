@@ -31,6 +31,7 @@ public:
 	virtual void draw();
 	void update(float frameTime);
 	void damage(WEAPON);
+	void reset();
 
 	// getter
 	bool isDeath() { return death; }
