@@ -24,6 +24,9 @@
 
 namespace towerDiffenceNS
 {
+	const char FONT[] = "Arial Bold";	// フォント
+	const int FONT_BIG_SIZE = 256;		// フォントの高さ
+	const int FONT_SCORE_SIZE = 48;
 	// 体力バーの位置
 	const int BRAVE_HEALTH_BAR_X = 100;
 	const int BRAVE_HEALTH_BAR_Y = 0;
@@ -31,6 +34,9 @@ namespace towerDiffenceNS
 	const int BRAVE_MP_BAR_Y = 25;
 	const int CASTLE_HEALTH_BAR_X = 830;
 	const int CASTLE_HEALTH_BAR_Y = 0;
+	const int COUNT_DOWN_X = GAME_WIDTH / 2 - FONT_BIG_SIZE / 4;
+	const int COUNT_DOWN_Y = GAME_HEIGHT / 2 - FONT_BIG_SIZE / 2;
+	const int ROUND_TIME = 5;           // 新しいラウンドが開始するまでの時間
 }
 
 //==========================================================
@@ -40,6 +46,7 @@ class TowerDiffence : public Game
 {
 private:
 	// ゲームアイテム
+	TextDX  fontBig;									// ゲームバナーのDirectXフォン
 	Text    *fontCK;									// sprite based font
 	TextureManager menuTexture;							// タイトルのテクスチャ
 	Image menu;											// タイトル画像
@@ -74,6 +81,8 @@ private:
 	float mapX;											// 初期X座標
 	bool menuOn;										// メニューフラグ
 	float remainingTime;								// ゲーム内の残り時間
+	bool    roundOver;									// ラウンドが終了した場合、true
+	float   roundTimer;									// 新しいラウンドが開始するまでの時間
 public:
 	// コンストラクタ
 	TowerDiffence();

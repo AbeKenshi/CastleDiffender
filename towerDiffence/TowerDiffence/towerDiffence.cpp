@@ -9,6 +9,7 @@ TowerDiffence::TowerDiffence()
 	initialized = false;
 	fontCK = new Text();   // sprite based font
 	menuOn = true;
+	roundOver = false;
 	rect = NULL;
 	remainingTime = 1500.0f;
 }
@@ -159,7 +160,6 @@ void TowerDiffence::update()
 	}
 	else
 	{
-		remainingTime -= frameTime;
 		if (input->isKeyDown(BRAVE_FIRE_KEY))
 			fire.fire(&brave);
 		if (brave.getAttackCollisionFlag())
@@ -177,6 +177,19 @@ void TowerDiffence::update()
 		{
 			barricades[i].update(frameTime);
 		}
+		// 残り時間が0ならゲームオーバー
+		remainingTime -= frameTime;
+		if (remainingTime < 0)
+		{
+			roundOver = true;
+			roundTimer = towerDiffenceNS::ROUND_TIME;
+		}
+		if (roundOver)
+		{
+			roundTimer -= frameTime;
+			if (roundTimer <= 0)
+				roundStart();
+		}
 	}
 }
 
@@ -185,7 +198,7 @@ void TowerDiffence::update()
 //==========================================================
 void TowerDiffence::roundStart()
 {
-
+	roundOver = false;
 }
 
 //==========================================================
@@ -230,8 +243,6 @@ void TowerDiffence::collisions()
 		castle.damage(ENEMY_ATTACK);
 		enemyAttackCollision.setVisible(false);
 		enemyAttackCollision.setActive(false);
-		if (castle.isDeath())
-			exit(1);
 	}
 	// 炎と雑魚敵の衝突の場合
 	if (fire.collidesWith(enemy, collisionVector))
@@ -250,6 +261,16 @@ void TowerDiffence::collisions()
 
 //		barricades[i].draw();
 	}
+	// 死亡チェック
+	if (castle.isDeath() || brave.getActive() == false)
+	{
+		exit(1);
+		if (roundOver == false)
+		{
+			roundOver = towerDiffenceNS::ROUND_TIME;
+			roundOver = true;
+		}
+	}
 }
 
 //==========================================================
@@ -259,7 +280,6 @@ void TowerDiffence::collisions()
 void TowerDiffence::render()
 {
 	graphics->spriteBegin();	// スプライトの描画を開始
-
 	if (menuOn)
 	{
 		menu.draw();
@@ -315,7 +335,6 @@ void TowerDiffence::render()
 		braveHealthBar.draw(graphicsNS::FILTER);	// 体力バーを描画
 		braveMpBar.draw(graphicsNS::FILTER);
 		castleHealthBar.draw(graphicsNS::FILTER);
-		
 		// shadow
 		char str[128] = "TIME-";
 		char time[5] = { 0 };

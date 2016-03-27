@@ -16,8 +16,12 @@ Castle::Castle() : Entity()
 	cols = castleNS::TEXTURE_COLS;
 	startFrame = castleNS::START_FRAME;
 	currentFrame = startFrame;
-	radius = castleNS::COLLISION_RADIUS;		// ‰~‚ÌÕ“Ë”»’è—p
-	collisionType = entityNS::CIRCLE;
+	// Box‚ÌÕ“Ë”»’è—p
+	edge.left = -castleNS::WIDTH / 2.0;
+	edge.right = castleNS::WIDTH / 2.0;
+	edge.top = -castleNS::HEIGHT / 2.0;
+	edge.bottom = castleNS::HEIGHT / 2.0;
+	collisionType = entityNS::BOX;
 	death = false;
 	isDamaged = false;
 	drawFlag = true;
