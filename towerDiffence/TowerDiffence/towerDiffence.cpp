@@ -240,15 +240,24 @@ void TowerDiffence::collisions()
 		fire.setVisible(false);
 		fire.setActive(false);
 	}
-	// プレイヤーとバリケードの衝突
-	for (int i = 0; i < mapNS::BARRICADE_NUM; i++) {
-		if (enemy.collidesWith(barricades[i], collisionVector)) {
-			barricades[i].setActive(false);
-			barricades[i].setVisible(false);
-
+	
+	// 敵とバリケードの衝突, 1つでも衝突していたら敵に通知
+	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
+	{
+		if (enemy.collidesWith(barricades[i], collisionVector))
+		{
+			enemy.setNearBarricade(true);
 		}
+	}
 
-//		barricades[i].draw();
+	// 敵の攻撃コリジョンとバリケードの衝突
+	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
+	{
+		if (enemyAttackCollision.collidesWith(barricades[i], collisionVector)) {
+			barricades[i].damage();
+			// enemyAttackCollision.setVisible(false);
+			// enemyAttackCollision.setActive(false);
+		}
 	}
 }
 
