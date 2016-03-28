@@ -694,11 +694,49 @@ bool Enemy::checkBarricadeOnLine(float x, float y, Map *map) {
 //==========================================================
 // 攻撃モードにチェンジするときに呼び出す関数
 //==========================================================
-void Enemy::changeAttack()
+void Enemy::changeAttack(VECTOR2 &collisionVector)
 {
 	// 攻撃直前モードにチェンジ
 	loop = false;
 	distanceCounter = 0.0f;
+	float yPerx = (float)collisionVector.y / collisionVector.x;
+	float hPerw = (float)spriteData.height / spriteData.width;
+	if (collisionVector.x > 0)
+	{
+		if (yPerx > -hPerw && yPerx < hPerw)
+		{
+			goalDirection = enemyNS::RIGHT;
+			changeDirection(enemyNS::MOVE_RIGHT_START_FRAME, enemyNS::MOVE_RIGHT_END_FRAME);
+		}
+		else if (yPerx < -hPerw)
+		{
+			goalDirection = enemyNS::UP;
+			changeDirection(enemyNS::MOVE_UP_START_FRAME, enemyNS::MOVE_UP_END_FRAME);
+		}
+		else
+		{
+			goalDirection = enemyNS::DOWN;
+			changeDirection(enemyNS::MOVE_DOWN_START_FRAME, enemyNS::MOVE_DOWN_END_FRAME);
+		}
+	}
+	else
+	{
+		if (yPerx > -hPerw && yPerx < hPerw)
+		{
+			goalDirection = enemyNS::LEFT;
+			changeDirection(enemyNS::MOVE_LEFT_START_FRAME, enemyNS::MOVE_LEFT_END_FRAME);
+		}
+		else if (yPerx < -hPerw)
+		{
+			goalDirection = enemyNS::DOWN;
+			changeDirection(enemyNS::MOVE_DOWN_START_FRAME, enemyNS::MOVE_DOWN_END_FRAME);
+		}
+		else
+		{
+			goalDirection = enemyNS::UP;
+			changeDirection(enemyNS::MOVE_UP_START_FRAME, enemyNS::MOVE_UP_END_FRAME);
+		}
+	}
 	goalDirection = enemyNS::NONE;
 	state = enemyNS::PRE_ATTACK;
 	mode = imageNS::VERTICAL;

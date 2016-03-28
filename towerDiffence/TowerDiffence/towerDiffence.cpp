@@ -296,15 +296,15 @@ void TowerDiffence::collisions()
 	if (enemy.getState() == enemyNS::ATTACK_BARRICADE || enemy.getState() == enemyNS::ATTACK_BRAVE || enemy.getState() == enemyNS::ATTACK_CASTLE || enemy.getState() == enemyNS::PRE_ATTACK)
 	{
 	}
-	else if (enemy.collidesWith(castle, collisionVector))	// 雑魚敵と城の衝突判定
-	{
-		enemy.changeAttack();
-		enemy.setAttackState(enemyNS::ATTACK_CASTLE);
-	}
 	else if (enemy.collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーの衝突判定
 	{
-		enemy.changeAttack();
+		enemy.changeAttack(collisionVector);
 		enemy.setAttackState(enemyNS::ATTACK_BRAVE);
+	}
+	else if (enemy.collidesWith(castle, collisionVector))	// 雑魚敵と城の衝突判定
+	{
+		enemy.changeAttack(collisionVector);
+		enemy.setAttackState(enemyNS::ATTACK_CASTLE);
 	}
 	else if (!enemy.checkBarricadeOnLine(castle.getCenterX(), castle.getCenterY(), &map))	// 城までの直線上にバリケードがあるかをチェック
 	{
@@ -321,7 +321,7 @@ void TowerDiffence::collisions()
 		// 最近接のバリケードに衝突していたら攻撃、それ以外ならバリケードに向かう。
 		if (enemy.collidesWith(barricades[nearBarricadeIndex], collisionVector))
 		{
-			enemy.changeAttack();
+			enemy.changeAttack(collisionVector);
 			enemy.setAttackState(enemyNS::ATTACK_BARRICADE);
 		}
 		else
