@@ -47,7 +47,7 @@ void EnemyAttackCollision::attack(Enemy *enemy)
 {
 	switch (enemy->getDirection())
 	{
-	case enemyNS::RIGHT:
+	case characterNS::RIGHT:
 		spriteData.x = enemy->getCenterX() + spriteData.width / 2;
 		spriteData.y = enemy->getCenterY() - spriteData.height / 2 + 10;
 		edge.left = -enemyAttackCollisionNS::WIDTH / 2.0;
@@ -56,7 +56,7 @@ void EnemyAttackCollision::attack(Enemy *enemy)
 		edge.bottom = enemyAttackCollisionNS::HEIGHT / 2.0;
 		spriteData.angle = 0.0f;
 		break;
-	case enemyNS::UP:
+	case characterNS::UP:
 		spriteData.x = enemy->getCenterX() - spriteData.width / 2;
 		spriteData.y = enemy->getCenterY() - spriteData.height / 2 - enemy->getWidth() / 2;
 		edge.left = -enemyAttackCollisionNS::HEIGHT / 2.0;
@@ -65,7 +65,7 @@ void EnemyAttackCollision::attack(Enemy *enemy)
 		edge.bottom = enemyAttackCollisionNS::WIDTH / 2.0;
 		spriteData.angle = PI / 2;
 		break;
-	case enemyNS::LEFT:
+	case characterNS::LEFT:
 		spriteData.x = enemy->getCenterX() - spriteData.width / 2 - enemy->getWidth();
 		spriteData.y = enemy->getCenterY() - spriteData.height / 2 + 10;
 		edge.left = -enemyAttackCollisionNS::WIDTH / 2.0;
@@ -74,7 +74,7 @@ void EnemyAttackCollision::attack(Enemy *enemy)
 		edge.bottom = enemyAttackCollisionNS::HEIGHT / 2.0;
 		spriteData.angle = 0.0f;
 		break;
-	case enemyNS::DOWN:
+	case characterNS::DOWN:
 		spriteData.x = enemy->getCenterX() - spriteData.width / 2;
 		spriteData.y = enemy->getCenterY() + spriteData.height / 2;
 		edge.left = -enemyAttackCollisionNS::HEIGHT / 2.0;

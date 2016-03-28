@@ -96,6 +96,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	brave.setScale(2);
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
+	brave.setMapPointer(&map);
 
 	// 勇者のアイコンのテクスチャ
 	if (!braveIconTexture.initialize(graphics, BRAVE_ICON_IMAGE))
@@ -128,6 +129,8 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!enemy.initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
 	enemy.setScale(2);
+	enemy.setMapPointer(&map);
+	enemy.setBarricadesPointer(barricades);
 
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
@@ -187,8 +190,8 @@ void TowerDiffence::update()
 			braveAttackCollision.attack(&brave);
 		if (enemy.getAttackCollisionFlag())
 			enemyAttackCollision.attack(&enemy);
-		brave.update(frameTime, &map);
-		enemy.update(frameTime, &map);
+		brave.update(frameTime);
+		enemy.update(frameTime);
 		fire.update(frameTime);
 		braveAttackCollision.update(frameTime);
 		enemyAttackCollision.update(frameTime);
@@ -246,7 +249,7 @@ void TowerDiffence::roundStart()
 //==========================================================
 void TowerDiffence::ai()
 {
-	enemy.ai(frameTime, brave, barricades);
+	enemy.ai(frameTime, brave);
 }
 
 //==========================================================
@@ -306,7 +309,7 @@ void TowerDiffence::collisions()
 		enemy.changeAttack(collisionVector);
 		enemy.setAttackState(enemyNS::ATTACK_CASTLE);
 	}
-	else if (!enemy.checkBarricadeOnLine(castle.getCenterX(), castle.getCenterY(), &map))	// 城までの直線上にバリケードがあるかをチェック
+	else if (!enemy.checkBarricadeOnLine(castle.getCenterX(), castle.getCenterY()))	// 城までの直線上にバリケードがあるかをチェック
 	{
 		enemy.setState(enemyNS::MOVE_CASTLE);
 		VECTOR2 pos;
@@ -317,7 +320,7 @@ void TowerDiffence::collisions()
 	else 
 	{
 		// 最近接のバリケードを探索
-		int nearBarricadeIndex = enemy.searchNearBarricadeIndex(barricades);
+		int nearBarricadeIndex = enemy.searchNearBarricadeIndex();
 		// 最近接のバリケードに衝突していたら攻撃、それ以外ならバリケードに向かう。
 		if (enemy.collidesWith(barricades[nearBarricadeIndex], collisionVector))
 		{

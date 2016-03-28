@@ -83,22 +83,22 @@ void Fire::fire(Brave *brave)
 	{
 		switch (brave->getDirection())
 		{
-		case braveNS::UP:
+		case characterNS::UP:
 			velocity.x = 0.0f;
 			velocity.y = -fireNS::SPEED;
 			spriteData.angle = PI / 2;
 			break;
-		case braveNS::RIGHT:
+		case characterNS::RIGHT:
 			velocity.x = fireNS::SPEED;
 			velocity.y = 0.0f;
 			spriteData.angle = -PI;
 			break;
-		case braveNS::DOWN:
+		case characterNS::DOWN:
 			velocity.x = 0.0f;
 			velocity.y = fireNS::SPEED;
 			spriteData.angle = -PI / 2;
 			break;
-		case braveNS::LEFT:
+		case characterNS::LEFT:
 			velocity.x = -fireNS::SPEED;
 			velocity.y = 0.0f;
 			spriteData.angle = 0.0f;
