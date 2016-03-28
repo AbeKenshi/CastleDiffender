@@ -4,7 +4,7 @@
 //==========================================================
 // デフォルトコンストラクタ
 //==========================================================
-Brave::Brave() : Entity()
+Brave::Brave() : Character()
 {
 	spriteData.width = braveNS::WIDTH;			// 勇者のサイズ
 	spriteData.height = braveNS::HEIGHT;
@@ -21,17 +21,10 @@ Brave::Brave() : Entity()
 	edge.right = braveNS::WIDTH / 2.0;
 	edge.top = -braveNS::HEIGHT / 26.0;
 	edge.bottom = braveNS::HEIGHT / 2.0;
-	collisionType = entityNS::BOX;
+	// 状態は何もしない状態からスタート
 	state = braveNS::STATE::MOVE;
-	direction = braveNS::UP;
 	secondAttackFlag = false;
-	isDamaged = false;
-	damageTimer = 0.0f;
-	totalDamageTime = 0.0f;
 	mpTimer = 0.0;
-	drawFlag = true;
-	// 攻撃判定のコリジョンは無効状態からスタート
-	attackCollisionFlag = false;
 	magicPoint = 100;							// MPはMAX100でスタート
 }
 
@@ -40,9 +33,6 @@ Brave::Brave() : Entity()
 //==========================================================
 void Brave::reset()
 {
-	active = true;
-	visible = true;
-	health = 100;
 	magicPoint = 100;							// MPはMAX100でスタート
 	spriteData.x = braveNS::X;					// 画面上の位置
 	spriteData.y = braveNS::Y;
@@ -51,34 +41,9 @@ void Brave::reset()
 	endFrame = braveNS::MOVE_UP_END_FRAME;
 	currentFrame = startFrame;
 	state = braveNS::STATE::MOVE;
-	direction = braveNS::UP;
 	secondAttackFlag = false;
-	isDamaged = false;
-	damageTimer = 0.0f;
-	totalDamageTime = 0.0f;
 	mpTimer = 0.0;
-	drawFlag = true;
-	// 攻撃判定のコリジョンは無効状態からスタート
-	attackCollisionFlag = false;
-}
-
-//==========================================================
-// 勇者を初期化
-// 実行後：成功した場合はtrue、失敗した場合はfalseを戻す
-//==========================================================
-bool Brave::initialize(Game *gamePtr, int width, int height, int ncols,
-	TextureManager *textureM)
-{
-	return(Entity::initialize(gamePtr, width, height, ncols, textureM));
-}
-
-//==========================================================
-// 勇者を描画
-//==========================================================
-void Brave::draw()
-{
-	if (drawFlag)
-		Image::draw();	// 勇者を描画
+	Character::reset();
 }
 
 //=============================================================================
@@ -86,7 +51,7 @@ void Brave::draw()
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //=============================================================================	
-void Brave::update(float frameTime, Map *map)
+void Brave::update(float frameTime)
 {
 	if (!active)
 		return;
@@ -102,9 +67,9 @@ void Brave::update(float frameTime, Map *map)
 			if (input->isKeyDown(BRAVE_LEFT_KEY))
 			{
 				// 左方向を向いていなければ左方向にアニメーションをリセット
-				if (direction != braveNS::DIRECTION::LEFT)
+				if (direction != characterNS::DIRECTION::LEFT)
 				{
-					direction = braveNS::DIRECTION::LEFT;
+					direction = characterNS::DIRECTION::LEFT;
 					startFrame = braveNS::MOVE_LEFT_START_FRAME;
 					endFrame = braveNS::MOVE_LEFT_END_FRAME;
 					currentFrame = startFrame;
@@ -112,7 +77,7 @@ void Brave::update(float frameTime, Map *map)
 					setRect();
 				}
 				// 移動可能だったら
-				if (Brave::checkCanMove(spriteData.x - braveNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+				if (checkCanMove(spriteData.x - braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
 					// 左に移動
 					spriteData.x -= braveNS::MOVE_SPEED * frameTime;
 				}
@@ -121,9 +86,9 @@ void Brave::update(float frameTime, Map *map)
 			if (input->isKeyDown(BRAVE_RIGHT_KEY))
 			{
 				// 右方向を向いていなければ右方向にアニメーションをリセット
-				if (direction != braveNS::DIRECTION::RIGHT)
+				if (direction != characterNS::DIRECTION::RIGHT)
 				{
-					direction = braveNS::DIRECTION::RIGHT;
+					direction = characterNS::DIRECTION::RIGHT;
 					startFrame = braveNS::MOVE_RIGHT_START_FRAME;
 					endFrame = braveNS::MOVE_RIGHT_END_FRAME;
 					currentFrame = startFrame;
@@ -131,7 +96,7 @@ void Brave::update(float frameTime, Map *map)
 					setRect();
 				}
 				// 移動可能だったら
-				if (Brave::checkCanMove(spriteData.x + braveNS::MOVE_SPEED * frameTime, spriteData.y, map)) {
+				if (checkCanMove(spriteData.x + braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
 					// 右に移動
 					spriteData.x += braveNS::MOVE_SPEED * frameTime;
 				}
@@ -140,9 +105,9 @@ void Brave::update(float frameTime, Map *map)
 			if (input->isKeyDown(BRAVE_UP_KEY))
 			{
 				// 上方向を向いていなければ上方向にアニメーションをリセット
-				if (direction != braveNS::DIRECTION::UP)
+				if (direction != characterNS::DIRECTION::UP)
 				{
-					direction = braveNS::DIRECTION::UP;
+					direction = characterNS::DIRECTION::UP;
 					startFrame = braveNS::MOVE_UP_START_FRAME;
 					endFrame = braveNS::MOVE_UP_END_FRAME;
 					currentFrame = startFrame;
@@ -150,7 +115,7 @@ void Brave::update(float frameTime, Map *map)
 					setRect();
 				}
 				// 移動可能だったら
-				if (Brave::checkCanMove(spriteData.x, spriteData.y - braveNS::MOVE_SPEED * frameTime, map)) {
+				if (checkCanMove(spriteData.x, spriteData.y - braveNS::MOVE_SPEED * frameTime)) {
 					// 上に移動
 					spriteData.y -= braveNS::MOVE_SPEED * frameTime;
 				}
@@ -159,9 +124,9 @@ void Brave::update(float frameTime, Map *map)
 			if (input->isKeyDown(BRAVE_DOWN_KEY))
 			{
 				// 下方向を向いていなければ下方向にアニメーションをリセット
-				if (direction != braveNS::DIRECTION::DOWN)
+				if (direction != characterNS::DIRECTION::DOWN)
 				{
-					direction = braveNS::DIRECTION::DOWN;
+					direction = characterNS::DIRECTION::DOWN;
 					startFrame = braveNS::MOVE_DOWN_START_FRAME;
 					endFrame = braveNS::MOVE_DOWN_END_FRAME;
 					currentFrame = startFrame;
@@ -169,7 +134,7 @@ void Brave::update(float frameTime, Map *map)
 					setRect();
 				}
 				// 移動可能だったら
-				if (Brave::checkCanMove(spriteData.x, spriteData.y + braveNS::MOVE_SPEED * frameTime, map)) {
+				if (checkCanMove(spriteData.x, spriteData.y + braveNS::MOVE_SPEED * frameTime)) {
 					// 下に移動
 					spriteData.y += braveNS::MOVE_SPEED * frameTime;
 				}
@@ -189,19 +154,19 @@ void Brave::update(float frameTime, Map *map)
 			// 向いている方向でアニメーションを分岐
 			switch (direction)
 			{
-			case braveNS::DOWN:
+			case characterNS::DOWN:
 				startFrame = braveNS::DOWN_ATTACK_START_FRAME;
 				endFrame = braveNS::DOWN_ATTACK_END_FRAME;
 				break;
-			case braveNS::RIGHT:
+			case characterNS::RIGHT:
 				startFrame = braveNS::RIGHT_ATTACK_START_FRAME;
 				endFrame = braveNS::RIGHT_ATTACK_END_FRAME;
 				break;
-			case braveNS::LEFT:
+			case characterNS::LEFT:
 				startFrame = braveNS::LEFT_ATTACK_START_FRAME;
 				endFrame = braveNS::LEFT_ATTACK_END_FRAME;
 				break;
-			case braveNS::UP:
+			case characterNS::UP:
 				startFrame = braveNS::UP_ATTACK_START_FRAME;
 				endFrame = braveNS::UP_ATTACK_END_FRAME;
 				break;
@@ -220,19 +185,19 @@ void Brave::update(float frameTime, Map *map)
 			// 向いている方向でアニメーションを分岐
 			switch (direction)
 			{
-			case braveNS::DOWN:
+			case characterNS::DOWN:
 				startFrame = braveNS::DOWN_GUARD_START_FRAME;
 				endFrame = braveNS::DOWN_GUARD_END_FRAME;
 				break;
-			case braveNS::RIGHT:
+			case characterNS::RIGHT:
 				startFrame = braveNS::RIGHT_GUARD_START_FRAME;
 				endFrame = braveNS::RIGHT_GUARD_END_FRAME;
 				break;
-			case braveNS::LEFT:
+			case characterNS::LEFT:
 				startFrame = braveNS::LEFT_GUARD_START_FRAME;
 				endFrame = braveNS::LEFT_GUARD_END_FRAME;
 				break;
-			case braveNS::UP:
+			case characterNS::UP:
 				startFrame = braveNS::UP_GUARD_START_FRAME;
 				endFrame = braveNS::UP_GUARD_END_FRAME;
 				break;
@@ -253,19 +218,19 @@ void Brave::update(float frameTime, Map *map)
 			{
 				switch (direction)
 				{
-				case braveNS::DOWN:
+				case characterNS::DOWN:
 					startFrame = braveNS::DOWN_SECOND_ATTACK_START_FRAME;
 					endFrame = braveNS::DOWN_SECOND_ATTACK_END_FRAME;
 					break;
-				case braveNS::RIGHT:
+				case characterNS::RIGHT:
 					startFrame = braveNS::RIGHT_SECOND_ATTACK_START_FRAME;
 					endFrame = braveNS::RIGHT_SECOND_ATTACK_END_FRAME;
 					break;
-				case braveNS::UP:
+				case characterNS::UP:
 					startFrame = braveNS::UP_SECOND_ATTACK_START_FRAME;
 					endFrame = braveNS::UP_SECOND_ATTACK_END_FRAME;
 					break;
-				case braveNS::LEFT:
+				case characterNS::LEFT:
 					startFrame = braveNS::LEFT_SECOND_ATTACK_START_FRAME;
 					endFrame = braveNS::LEFT_SECOND_ATTACK_END_FRAME;
 					break;
@@ -376,7 +341,7 @@ void Brave::update(float frameTime, Map *map)
 	}
 
 	// 移動可能だったら
-	if (Brave::checkCanMove(spriteData.x + frameTime * velocity.x, spriteData.y + frameTime * velocity.y, map))
+	if (checkCanMove(spriteData.x + frameTime * velocity.x, spriteData.y + frameTime * velocity.y))
 	{
 		spriteData.x += frameTime * velocity.x;     // キャラをX方向に動かす
 		spriteData.y += frameTime * velocity.y;     // キャラをY方向に動かす
@@ -390,23 +355,6 @@ void Brave::update(float frameTime, Map *map)
 		spriteData.y = rectNS::HEIGHT - 10;								// 画面上端に移動
 	if (spriteData.y > GAME_HEIGHT - braveNS::HEIGHT * getScale())  // 画面下端を超えたら
 		spriteData.y = GAME_HEIGHT -braveNS::HEIGHT * getScale();	// 画面下端に移動
-}
-
-//==========================================================
-// 移動時のアップデート関数
-//==========================================================
-void Brave::updateMoving(float frameTime)
-{
-	// アニメーションのアップデートは単独で行われるのでそれ以外をアップデート
-	Entity::updateWithoutImage(frameTime);
-}
-
-//==========================================================
-// 攻撃時のアップデート関数
-//==========================================================
-void Brave::updateAttacking(float frameTime)
-{
-	Entity::update(frameTime);
 }
 
 //==========================================================
@@ -436,44 +384,4 @@ void Brave::damage(WEAPON weapon)
 	}
 	if (health <= 0)
 		dead();
-}
-
-//==========================================================
-// 移動可能かチェック
-//==========================================================
-bool Brave::checkCanMove(float x, float y, Map *map)
-{
-	// 1マス32pixelのため32で割る
-	// -16はめり込みを防止するために半マス分引いてる
-	// +αは微調整…
-	int map_x = (int)((x - 8) / 32) + 1;
-	int map_y = (int)((y - 8) / 32) + 2;
-
-	if (map_x <= 0)
-		map_x = 0;
-	if (map_x >= mapNS::MAP_WIDTH)
-		map_x = mapNS::MAP_WIDTH - 1;
-	if (map_y <= 0)
-		map_y = 0;
-	if (map_y >= mapNS::MAP_HEIGHT)
-		map_y = mapNS::MAP_HEIGHT - 1;
-
-	if (map->getMapCol(map_y, map_x) == 0)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-//==========================================================
-// 死亡時に呼び出される関数
-//==========================================================
-void Brave::dead()
-{
-	active = false;
-	visible = false;
-	health = 0;
 }

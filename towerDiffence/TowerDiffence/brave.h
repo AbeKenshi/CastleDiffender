@@ -2,11 +2,11 @@
 #define _BRAVE_H		// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
-#include "entity.h"
 #include "constants.h"
 #include "map.h"
 #include "enemy.h"
 #include "rect.h"
+#include "character.h"
 
 namespace braveNS
 {
@@ -15,7 +15,6 @@ namespace braveNS
 	const int X = GAME_WIDTH / 2 - WIDTH / 2;		// 画面上の位置
 	const int Y = GAME_HEIGHT / 6 - HEIGHT;
 	const int MOVE_SPEED = 150;						// 移動速度（ピクセル）
-	enum DIRECTION { LEFT, RIGHT, UP, DOWN, NONE };		// 回転の方向
 	const int TEXTURE_COLS = 12;					// テクスチャは12列
 	const int MOVE_UP_START_FRAME = 48;				// 上方向移動のアニメーションはフレーム0から開始
 	const int MOVE_UP_END_FRAME = 50;				// 上方向移動のアニメーションフレームは0、1、2、3、4、5
@@ -60,54 +59,45 @@ namespace braveNS
 }
 
 // Braveクラス
-class Brave : public Entity
+class Brave : public Character
 {
 private:
-	braveNS::DIRECTION direction;	// 向き
 	braveNS::STATE state;			// 状態
 	int magicPoint;					// MP、必殺技を使うと減少。
-	int oldStartFrame;
-	int oldEndFrame;
-	float damageTimer;				// ダメージアニメーション用のタイマー
-	float totalDamageTime;
 	float mpTimer;					// MP回復用のタイマー
 	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
-	bool isDamaged;					// ダメージを受けている状態かどうか
-	bool drawFlag;					// 描画フラグ、true時に描画
-	bool attackCollisionFlag;		// 攻撃用の衝突判定を出現させるフラグ
 public:
 	// コンストラクタ
 	Brave();
 
+	//==========================================================
 	// 継承されたメンバー関数
-	virtual void draw();
-	virtual bool initialize(Game *gamePtr, int width, int height, int ncols,
-		TextureManager *textureM);
-	void update(float frameTime, Map *map);
+	//==========================================================
+	// Update
+	// 通常、フレームごとに1回呼び出す
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
+	void update(float frameTime);
+	// 人工知能。NPCの行動を決定するのに使用
+	void ai(float frameTime, Entity &ent) {};
+	// キャラクターにダメージを与える関数
 	void damage(WEAPON);
-
-	// 新しく追加するメンバー関数
-	// 移動時のアップデート関数
-	void updateMoving(float frameTime);
-	// 攻撃時のアップデート関数
-	void updateAttacking(float frameTime);
-	// 向いている方向を返す
-	braveNS::DIRECTION getDirection() { return direction; }
-	// 状態を返す
-	braveNS::STATE getState() { return state; }
-	// 攻撃用の衝突判定を出現させるフラグ、攻撃状態に遷移した直後にtrueとなって、それ以外はfalse
-	bool getAttackCollisionFlag() { return attackCollisionFlag; }
-	// 移動可能かチェックする関数
-	bool checkCanMove(float x, float y, Map *map);
-	// 死亡時に呼び出す関数
-	void dead();
 	// パラメータリセット
 	void reset();
-	
-	// getter
-	int getMP() { return magicPoint; }
 
+	// 新しく追加するメンバー関数
+	
+	//==========================================================
+	// getter
+	//==========================================================
+	// MPを返す関数
+	int getMP() { return magicPoint; }
+	// 状態を返す関数
+	braveNS::STATE getState() { return state; }
+
+	//==========================================================
 	// setter
+	//==========================================================
+	// MPをセットする関数
 	void setMP(int mp) { magicPoint = mp; }
 };
 #endif

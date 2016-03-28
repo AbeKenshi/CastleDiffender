@@ -47,7 +47,7 @@ void BraveAttackCollision::attack(Brave * brave)
 {
 	switch (brave->getDirection())
 	{
-		case braveNS::RIGHT:
+		case characterNS::RIGHT:
 			spriteData.x = brave->getCenterX();
 			spriteData.y = brave->getCenterY() - spriteData.height / 2;
 			edge.left = -braveAttackCollisionNS::WIDTH / 2.0;
@@ -56,7 +56,7 @@ void BraveAttackCollision::attack(Brave * brave)
 			edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
 			spriteData.angle = 0.0f;
 			break;
-		case braveNS::UP:
+		case characterNS::UP:
 			spriteData.x = brave->getCenterX() - spriteData.width / 2;
 			spriteData.y = brave->getCenterY() - spriteData.height / 2 - brave->getWidth();
 			edge.left = -braveAttackCollisionNS::HEIGHT / 2.0;
@@ -65,7 +65,7 @@ void BraveAttackCollision::attack(Brave * brave)
 			edge.bottom = braveAttackCollisionNS::WIDTH / 2.0;
 			spriteData.angle = PI / 2;
 			break;
-		case braveNS::LEFT:
+		case characterNS::LEFT:
 			spriteData.x = brave->getCenterX() - spriteData.width / 2 - brave->getWidth();
 			spriteData.y = brave->getCenterY() - spriteData.height / 2;
 			edge.left = -braveAttackCollisionNS::WIDTH / 2.0;
@@ -74,7 +74,7 @@ void BraveAttackCollision::attack(Brave * brave)
 			edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
 			spriteData.angle = 0.0f;
 			break;
-		case braveNS::DOWN:
+		case characterNS::DOWN:
 			spriteData.x = brave->getCenterX() - spriteData.width / 2;
 			spriteData.y = brave->getCenterY() + spriteData.height / 16;
 			edge.left = -braveAttackCollisionNS::HEIGHT / 2.0;
