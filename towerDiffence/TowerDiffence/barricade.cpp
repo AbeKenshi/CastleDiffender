@@ -27,7 +27,6 @@ Barricade::Barricade() : Entity()
 	death = false;
 	isDamaged = false;
 	drawFlag = true;
-	mode = imageNS::HORIZONTAL;
 }
 
 //==========================================================
@@ -68,8 +67,24 @@ void Barricade::update(float frameTime)
 	if (visible == false)
 		return;
 
-//	updateWithoutImage(frameTime);
-	Entity::update(frameTime);
+	
+	if ((currentFrame == barricadeNS::START_FRAME && health < 66) || (currentFrame == barricadeNS::START_FRAME + 1 && health < 33))
+	{
+		currentFrame++;
+		if (currentFrame < startFrame || currentFrame > endFrame)
+		{
+			if (loop == true)            // if looping animation
+				currentFrame = startFrame;
+			else                        // not looping animation
+			{
+				currentFrame = endFrame;
+				animComplete = true;    // animation complete
+			}
+		}
+		setRect();                      // set spriteData.rect
+	}
+	updateWithoutImage(frameTime);
+	
 }
 
 //==========================================================
@@ -77,7 +92,7 @@ void Barricade::update(float frameTime)
 //==========================================================
 void Barricade::damage()
 {
-	health -= 5;
+	health -= 10;
 
 	if (health <= 0)
 	{

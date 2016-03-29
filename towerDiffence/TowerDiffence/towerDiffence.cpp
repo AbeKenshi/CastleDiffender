@@ -365,8 +365,8 @@ void TowerDiffence::collisions()
 	{
 		if (enemyAttackCollision.collidesWith(barricades[i], collisionVector)) {
 			barricades[i].damage();
-			// enemyAttackCollision.setVisible(false);
-			// enemyAttackCollision.setActive(false);
+			enemyAttackCollision.setVisible(false);
+			enemyAttackCollision.setActive(false);
 		}
 	}
 	// 死亡チェック
@@ -419,7 +419,7 @@ void TowerDiffence::render()
 				}
 				if (map.getMapObj(row, col) >= 0)
 				{
-					barricades[count].setCurrentFrame(map.getMapObj(row, col));		    							// オブジェクトのテクスチャを設定
+					//barricades[count].setCurrentFrame(map.getMapObj(row, col));		    							// オブジェクトのテクスチャを設定
 					barricades[count].setX((float)(col*mapNS::TEXTURE_SIZE) + mapX);								// オブジェクトのXを設定
 					barricades[count].setY((float)(row*barricadeNS::WIDTH));										// オブジェクトのYを設定
 					if (barricades[count].getX() > -mapNS::TEXTURE_SIZE && barricades[count].getX() < GAME_WIDTH)	// オブジェクトが画面上にあるかどうか
