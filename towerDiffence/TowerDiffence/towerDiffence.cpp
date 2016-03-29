@@ -152,6 +152,10 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!castleHpText.initialize(graphics, hpTextImageNS::WIDTH, hpTextImageNS::HEIGHT, hpTextImageNS::TEXTURE_COLS, &textTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hp text"));
 	castleHpText.setX(830);
+
+	// タイトルBGM再生
+	audio->playCue("title");
+
 	return;
 }
 
@@ -166,6 +170,8 @@ void TowerDiffence::update()
 		{
 			menuOn = false;
 			input->clearAll();
+			audio->stopCue("title");
+			audio->playCue("stage");
 			roundStart();
 		}
 	}
@@ -175,6 +181,8 @@ void TowerDiffence::update()
 		{
 			menuOn = true;
 			input->clearAll();
+			audio->stopCue("gameover");
+			audio->playCue("title");
 			roundStart();
 		}
 		else if (input->isKeyDown('X'))
@@ -205,6 +213,8 @@ void TowerDiffence::update()
 		remainingTime -= frameTime;
 		if (remainingTime < 0)
 		{
+			audio->stopCue("stage");
+			audio->playCue("gameover");
 			roundOver = true;
 			// roundTimer = towerDiffenceNS::ROUND_TIME;
 		}
@@ -362,6 +372,8 @@ void TowerDiffence::collisions()
 	// 死亡チェック
 	if (castle.isDeath() || brave.getActive() == false)
 	{
+		audio->stopCue("stage");
+		audio->playCue("gameover");
 		roundOver = true;
 		/*
 		exit(1);

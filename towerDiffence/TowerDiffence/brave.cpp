@@ -143,6 +143,7 @@ void Brave::update(float frameTime)
 		}
 		else if (input->isKeyDown(BRAVE_ATTACK_KEY))	// 攻撃キーが押された場合、
 		{
+			audio->playCue("kill");
 			// アニメーションをリセット
 			loop = false;
 			state = braveNS::ATTACK;
