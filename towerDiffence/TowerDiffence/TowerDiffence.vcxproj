@@ -161,6 +161,7 @@
     <ClInclude Include="inputDialog.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="messageDialog.h" />
+    <ClInclude Include="midBoss.h" />
     <ClInclude Include="mpTextImage.h" />
     <ClInclude Include="rect.h" />
     <ClInclude Include="text.h" />
@@ -191,6 +192,7 @@
     <ClCompile Include="inputDialog.cpp" />
     <ClCompile Include="map.cpp" />
     <ClCompile Include="messageDialog.cpp" />
+    <ClCompile Include="midBoss.cpp" />
     <ClCompile Include="mpTextImage.cpp" />
     <ClCompile Include="rect.cpp" />
     <ClCompile Include="text.cpp" />
