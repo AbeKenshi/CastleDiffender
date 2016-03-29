@@ -227,10 +227,10 @@ Wave Bank
     Compression Preset Name = <none>;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 1162996151;
-    PC Bank Last Modified High = 30509408;
-    Bank Last Revised Low = 1162996151;
-    Bank Last Revised High = 30509408;
+    PC Bank Last Modified Low = 3102482130;
+    PC Bank Last Modified High = 30509477;
+    Bank Last Revised Low = 3044136972;
+    Bank Last Revised High = 30509477;
 
     Wave
     {
@@ -303,29 +303,6 @@ Wave Bank
 
     Wave
     {
-        Name = gameover;
-        File = BGM\gameover.wav;
-        Build Settings Last Modified Low = 4123970681;
-        Build Settings Last Modified High = 30509406;
-
-        Cache
-        {
-            Format Tag = 0;
-            Channels = 2;
-            Sampling Rate = 44100;
-            Bits Per Sample = 1;
-            Play Region Offset = 4096;
-            Play Region Length = 11289600;
-            Loop Region Offset = 0;
-            Loop Region Length = 0;
-            File Type = 1;
-            Last Modified Low = 2042963200;
-            Last Modified High = 30372675;
-        }
-    }
-
-    Wave
-    {
         Name = kill01;
         File = SE\kill01.wav;
         Build Settings Last Modified Low = 834230273;
@@ -369,6 +346,29 @@ Wave Bank
             Last Modified High = 30216410;
         }
     }
+
+    Wave
+    {
+        Name = gameover02;
+        File = BGM\gameover02.wav;
+        Build Settings Last Modified Low = 2544491692;
+        Build Settings Last Modified High = 30509477;
+
+        Cache
+        {
+            Format Tag = 0;
+            Channels = 2;
+            Sampling Rate = 44100;
+            Bits Per Sample = 1;
+            Play Region Offset = 4096;
+            Play Region Length = 8467200;
+            Loop Region Offset = 0;
+            Loop Region Length = 0;
+            File Type = 1;
+            Last Modified Low = 2672897792;
+            Last Modified High = 30372673;
+        }
+    }
 }
 
 Sound Bank
@@ -378,8 +378,8 @@ Sound Bank
     Windows File = Win\Sound Bank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
-    Bank Last Modified Low = 1163621181;
-    Bank Last Modified High = 30509408;
+    Bank Last Modified Low = 3103382732;
+    Bank Last Modified High = 30509477;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -402,6 +402,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;
@@ -449,6 +450,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;
@@ -496,6 +498,7 @@ Sound Bank
 
             Play Wave Event
             {
+                Loop Count = 255;
                 Break Loop = 0;
                 Use Speaker Position = 0;
                 Use Center Speaker = 1;
@@ -517,53 +520,6 @@ Sound Bank
                     Bank Index = 0;
                     Entry Name = clear01;
                     Entry Index = 2;
-                    Weight = 255;
-                    Weight Min = 0;
-                }
-            }
-        }
-    }
-
-    Sound
-    {
-        Name = gameover;
-        Volume = -1200;
-        Pitch = 0;
-        Priority = 0;
-
-        Category Entry
-        {
-            Name = Default;
-        }
-
-        Track
-        {
-            Volume = 0;
-            Use Filter = 0;
-
-            Play Wave Event
-            {
-                Break Loop = 0;
-                Use Speaker Position = 0;
-                Use Center Speaker = 1;
-                New Speaker Position On Loop = 1;
-                Speaker Position Angle = 0.000000;
-                Speaker Position Arc = 0.000000;
-
-                Event Header
-                {
-                    Timestamp = 0;
-                    Relative = 0;
-                    Random Recurrence = 0;
-                    Random Offset = 0;
-                }
-
-                Wave Entry
-                {
-                    Bank Name = Wave Bank;
-                    Bank Index = 0;
-                    Entry Name = gameover;
-                    Entry Index = 3;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -610,7 +566,7 @@ Sound Bank
                     Bank Name = Wave Bank;
                     Bank Index = 0;
                     Entry Name = fire01;
-                    Entry Index = 5;
+                    Entry Index = 4;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -657,7 +613,54 @@ Sound Bank
                     Bank Name = Wave Bank;
                     Bank Index = 0;
                     Entry Name = kill01;
-                    Entry Index = 4;
+                    Entry Index = 3;
+                    Weight = 255;
+                    Weight Min = 0;
+                }
+            }
+        }
+    }
+
+    Sound
+    {
+        Name = gameover02;
+        Volume = -1200;
+        Pitch = 0;
+        Priority = 0;
+
+        Category Entry
+        {
+            Name = Default;
+        }
+
+        Track
+        {
+            Volume = 0;
+            Use Filter = 0;
+
+            Play Wave Event
+            {
+                Break Loop = 0;
+                Use Speaker Position = 0;
+                Use Center Speaker = 1;
+                New Speaker Position On Loop = 1;
+                Speaker Position Angle = 0.000000;
+                Speaker Position Arc = 0.000000;
+
+                Event Header
+                {
+                    Timestamp = 0;
+                    Relative = 0;
+                    Random Recurrence = 0;
+                    Random Offset = 0;
+                }
+
+                Wave Entry
+                {
+                    Bank Name = Wave Bank;
+                    Bank Index = 0;
+                    Entry Name = gameover02;
+                    Entry Index = 5;
                     Weight = 255;
                     Weight Min = 0;
                 }
@@ -727,26 +730,6 @@ Sound Bank
 
     Cue
     {
-        Name = gameover;
-
-        Variation
-        {
-            Variation Type = 3;
-            Variation Table Type = 1;
-            New Variation on Loop = 0;
-        }
-
-        Sound Entry
-        {
-            Name = gameover;
-            Index = 3;
-            Weight Min = 0;
-            Weight Max = 255;
-        }
-    }
-
-    Cue
-    {
         Name = fire;
 
         Variation
@@ -759,7 +742,7 @@ Sound Bank
         Sound Entry
         {
             Name = fire01;
-            Index = 4;
+            Index = 3;
             Weight Min = 0;
             Weight Max = 255;
         }
@@ -779,6 +762,26 @@ Sound Bank
         Sound Entry
         {
             Name = kill01;
+            Index = 4;
+            Weight Min = 0;
+            Weight Max = 255;
+        }
+    }
+
+    Cue
+    {
+        Name = gameover;
+
+        Variation
+        {
+            Variation Type = 3;
+            Variation Table Type = 1;
+            New Variation on Loop = 0;
+        }
+
+        Sound Entry
+        {
+            Name = gameover02;
             Index = 5;
             Weight Min = 0;
             Weight Max = 255;
