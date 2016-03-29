@@ -18,13 +18,13 @@ MidBoss::MidBoss() : Enemy()
 //==========================================================
 void MidBoss::reset()
 {
+	Enemy::reset();
 	// ‰Šú‚Ì•ûŒü‚Í‰E
 	startFrame = midBossNS::MOVE_RIGHT_START_FRAME;
 	endFrame = midBossNS::MOVE_RIGHT_END_FRAME;
 	oldStartFrame = startFrame;
 	oldEndFrame = endFrame;
 	currentFrame = startFrame;
-	Enemy::reset();
 }
 
 //==========================================================
@@ -138,6 +138,12 @@ void MidBoss::update(float frameTime)
 				// ¶‚ÉˆÚ“®
 				spriteData.x -= enemyNS::MOVE_SPEED * frameTime;
 			}
+			else
+			{
+				goalDirection = (characterNS::DIRECTION) (rand() % 4);
+				if (distanceCounter < 0.0f)
+					distanceCounter = 32.0f;
+			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case characterNS::RIGHT:
@@ -149,6 +155,12 @@ void MidBoss::update(float frameTime)
 			if (checkCanMove(spriteData.x + enemyNS::MOVE_SPEED * frameTime, spriteData.y)) {
 				// ‰E‚ÉˆÚ“®
 				spriteData.x += enemyNS::MOVE_SPEED * frameTime;
+			}
+			else 
+			{
+				goalDirection = (characterNS::DIRECTION) (rand() % 4);
+				if (distanceCounter < 0.0f)
+					distanceCounter = 32.0f;
 			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
@@ -162,6 +174,12 @@ void MidBoss::update(float frameTime)
 				// ã‚ÉˆÚ“®
 				spriteData.y -= enemyNS::MOVE_SPEED * frameTime;
 			}
+			else
+			{
+				goalDirection = (characterNS::DIRECTION) (rand() % 4);
+				if (distanceCounter < 0.0f)
+					distanceCounter = 32.0f;
+			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case characterNS::DOWN:
@@ -173,6 +191,12 @@ void MidBoss::update(float frameTime)
 			if (checkCanMove(spriteData.x, spriteData.y + enemyNS::MOVE_SPEED * frameTime)) {
 				// ‰º‚ÉˆÚ“®
 				spriteData.y += enemyNS::MOVE_SPEED * frameTime;
+			}
+			else
+			{
+				goalDirection = (characterNS::DIRECTION) (rand() % 4);
+				if (distanceCounter < 0.0f)
+					distanceCounter = 32.0f;
 			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;

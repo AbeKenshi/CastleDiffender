@@ -17,10 +17,10 @@ Castle::Castle() : Entity()
 	startFrame = castleNS::START_FRAME;
 	currentFrame = startFrame;
 	// BoxÇÃè’ìÀîªíËóp
-	edge.left = -castleNS::WIDTH / 2.0;
-	edge.right = castleNS::WIDTH / 2.0;
-	edge.top = -castleNS::HEIGHT / 2.0;
-	edge.bottom = castleNS::HEIGHT / 2.0;
+	edge.left = -castleNS::WIDTH / 1.8;
+	edge.right = castleNS::WIDTH / 1.8;
+	edge.top = -castleNS::HEIGHT / 1.8;
+	edge.bottom = castleNS::HEIGHT / 1.8;
 	collisionType = entityNS::BOX;
 	death = false;
 	isDamaged = false;

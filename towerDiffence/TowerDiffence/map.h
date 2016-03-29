@@ -116,11 +116,23 @@ public:
 
 	// 新しく追加するメンバ関数
 	// マップデータの取得　引数は取得したい座標のインデックス
-	int getMapData(int x, int y);
+	int getMapData(int x, int y)
+	{
+		return tileMap[x][y];
+	}
+
 	// マップ当たり判定の更新 引き数は取得したい座標のインデックス
-	int getMapCol(int x, int y);
+	int getMapCol(int x, int y)
+	{
+		return tileCol[x][y];
+	}
+
 	// マップ上のオブジェクトデータ更新　引数は取得したい座標のインデックス
-	int getMapObj(int x, int y);
+	int getMapObj(int x, int y)
+	{
+		return tileObj[x][y];
+	}
+
 
 	// マップデータの更新　引数は更新したい座標値と更新する値
 	void updateMapData(float x, float y, int val);
@@ -129,6 +141,15 @@ public:
 	void updateMapCol(float x, float y, int val);
 	// マップ上のオブジェクトデータ更新　引数は更新したい座標値と更新する値
 	void updateMapObj(float x, float y, int val);
+	void resetMapCol() {
+		for (int i = 0; i < mapNS::MAP_HEIGHT; ++i)
+		{
+			for (int j = 0; j < mapNS::MAP_WIDTH; ++j)
+			{
+				tileCol[i][j] = mapNS::colData[i][j];
+			}
+		}
+	}
 };
 
 #endif
