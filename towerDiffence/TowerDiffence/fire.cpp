@@ -81,6 +81,7 @@ void Fire::fire(Brave *brave)
 {
 	if (fireTimer <= 0.0f && brave->getMP() > fireNS::FIRE_MP)	// ”­ŽË‰Â”\‚Èê‡
 	{
+		audio->playCue("fire");
 		switch (brave->getDirection())
 		{
 		case characterNS::UP:

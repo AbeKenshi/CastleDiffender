@@ -40,10 +40,16 @@ const char FONT_IMAGE[] = "pictures\\CKfont.png";
 
 // 音声
 // WAVE_BANK must be location of .xwb file.
-const char WAVE_BANK[] = "audio\\Win\\waveBank.xwb";
+const char WAVE_BANK[] = "audio\\Win\\Wave Bank.xwb";
 // SOUND_BANK must be location of .xsb file.
-const char SOUND_BANK[] = "audio\\Win\\soundBank.xsb";
+const char SOUND_BANK[] = "audio\\Win\\Sound Bank.xsb";
 // audio cues
+const char TITLE[]    = "title";
+const char STAGE[]    = "stage";
+const char CLEAR[]    = "clear";
+const char GAMEOVER[] = "gameover";
+const char KILL[]     = "kill";
+const char FIRE_SE[]  = "fire";
 
 
 // キーマップ
