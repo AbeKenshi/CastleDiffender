@@ -370,7 +370,7 @@ void TowerDiffence::collisions()
 		}
 	}
 	// 死亡チェック
-	if (castle.isDeath() || brave.getActive() == false)
+	if ((castle.isDeath() || brave.getActive() == false) && !roundOver)
 	{
 		audio->stopCue("stage");
 		audio->playCue("gameover");
