@@ -7,7 +7,7 @@
 
 namespace characterNS
 {
-	enum DIRECTION { LEFT, RIGHT, UP, DOWN, NONE };	// キャラクターの向き（上下左右）
+	enum DIRECTION { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3, NONE = 4};	// キャラクターの向き（上下左右）
 }
 
 // Characterクラス
@@ -50,7 +50,7 @@ public:
 	// パラメータリセット
 	virtual void reset();
 	// 移動可能かチェック
-	bool checkCanMove(float x, float y);	
+	virtual bool checkCanMove(float x, float y);	
 	// 死亡時に呼び出す関数
 	void dead();
 	// 移動時のアップデート関数

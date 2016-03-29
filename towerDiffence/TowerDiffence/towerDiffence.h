@@ -59,8 +59,8 @@ private:
 	BraveIcon braveIcon;								// 勇者のアイコン
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
 	BraveAttackCollision braveAttackCollision;			// 勇者の攻撃の当たり判定用
-	EnemyAttackCollision enemyAttackCollision;			// 雑魚敵の攻撃の当たり判定用
-	EnemyAttackCollision midBossAttackCollision;		// 中ボスの攻撃の当たり判定用
+	EnemyCollision enemyAttackCollision;			// 雑魚敵の攻撃の当たり判定用
+	EnemyCollision midBossAttackCollision;		// 中ボスの攻撃の当たり判定用
 	TextureManager tileTexture;							// タイルのテクスチャ
 	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ

@@ -94,6 +94,11 @@ void Enemy::update(float frameTime)
 				// 左に移動
 				spriteData.x -= enemyNS::MOVE_SPEED * frameTime;
 			}
+			else
+			{
+				goalDirection = (characterNS::DIRECTION) (rand() % 4);
+				distanceCounter = 32.0f;
+			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case characterNS::RIGHT:
@@ -105,6 +110,11 @@ void Enemy::update(float frameTime)
 			if (checkCanMove(spriteData.x + enemyNS::MOVE_SPEED * frameTime, spriteData.y)) {
 				// 右に移動
 				spriteData.x += enemyNS::MOVE_SPEED * frameTime;
+			}
+			else
+			{
+				goalDirection = (characterNS::DIRECTION) (rand() % 4);
+				distanceCounter = 32.0f;
 			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
@@ -118,6 +128,11 @@ void Enemy::update(float frameTime)
 				// 上に移動
 				spriteData.y -= enemyNS::MOVE_SPEED * frameTime;
 			}
+			else
+			{
+				goalDirection = (characterNS::DIRECTION) (rand() % 4);
+				distanceCounter = 32.0f;
+			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case characterNS::DOWN:
@@ -129,6 +144,11 @@ void Enemy::update(float frameTime)
 			if (checkCanMove(spriteData.x, spriteData.y + enemyNS::MOVE_SPEED * frameTime)) {
 				// 下に移動
 				spriteData.y += enemyNS::MOVE_SPEED * frameTime;
+			}
+			else
+			{
+				goalDirection = (characterNS::DIRECTION) (rand() % 4);
+				distanceCounter = 32.0f;
 			}
 			distanceCounter -= enemyNS::MOVE_SPEED * frameTime;
 			break;
@@ -432,7 +452,6 @@ void Enemy::ai(float frameTime, Entity &ent)
 				goalDirection = characterNS::RIGHT;
 			else
 				goalDirection = characterNS::LEFT;
-			return;
 		}
 		else
 		{
@@ -440,8 +459,10 @@ void Enemy::ai(float frameTime, Entity &ent)
 				goalDirection = characterNS::DOWN;
 			else
 				goalDirection = characterNS::UP;
-			return;
 		}
+		if (rand() % 5 == 0)
+			goalDirection = (characterNS::DIRECTION) (rand() % 4);
+		return;
 	}
 }
 
@@ -683,4 +704,16 @@ void Enemy::changeAttack(VECTOR2 &collisionVector)
 	animTimer = 0.0f;
 	setRect();
 	return;
+}
+
+//==========================================================
+// 移動可能かチェック
+//==========================================================
+bool Enemy::checkCanMove(float x, float y)
+{
+	if (!canMove)
+	{
+		return false;
+	}
+	return Character::checkCanMove(x, y);
 }

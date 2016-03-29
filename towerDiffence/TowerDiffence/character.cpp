@@ -102,12 +102,12 @@ bool Character::checkCanMove(float x, float y)
 	if (map_y >= mapNS::MAP_HEIGHT)
 		map_y = mapNS::MAP_HEIGHT - 1;
 
-	if (map->getMapCol(map_y, map_x) == 0)
+	if (map->getMapCol(map_y, map_x) == 1)
 	{
-		return true;
+		return false;
 	}
 	else
 	{
-		return false;
+		return true;
 	}
 }

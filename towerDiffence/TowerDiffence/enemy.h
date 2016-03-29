@@ -56,6 +56,7 @@ protected:
 	bool nearBarricade;						// バリケードと隣接しているかどうか
 	bool isAttacked;						// 攻撃した直後かどうか
 	bool inCertainRange;					// プレイヤーが一定範囲内にいるか
+	bool canMove;							// 行きたい方向に進むことができるかどうか
 	Barricade* barricades;					// バリケードの配列へのポインタ
 
 public:
@@ -75,6 +76,8 @@ public:
 	virtual void damage(WEAPON);
 	// パラメータリセット
 	virtual void reset();
+	// 移動可能かチェック
+	virtual bool checkCanMove(float x, float y);
 
 	//==========================================================
 	// setter
@@ -91,13 +94,17 @@ public:
 	void setGoalPost(VECTOR2 pos) { goalPos = pos; }
 	// バリケードの配列へのポインタをセットする関数
 	void setBarricadesPointer(Barricade *b) { barricades = b; }
+	// 行きたい方向に進めるかどうかをセットする関数
+	void setCanMove(bool cm) { canMove = cm; }
 
 	//==========================================================
 	// getter
 	//==========================================================
 	// 状態を返す関数
 	enemyNS::STATE getState() { return state; }
-
+	// 次に進むべき方向を返す関数
+	characterNS::DIRECTION getGoalDirection() { return goalDirection; }
+	
 	// 向きをgoalDirectionへとアップデートする関数
 	void changeDirection(int strF, int endF);
 	// プレイヤーとの距離が一定範囲内ならtrue、それ以外はfalseを返す
