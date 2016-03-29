@@ -30,6 +30,7 @@
     <ClCompile Include="castleIcon.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="character.cpp" />
+    <ClCompile Include="midBoss.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio.h" />
@@ -62,5 +63,6 @@
     <ClInclude Include="castleIcon.h" />
     <ClInclude Include="text.h" />
     <ClInclude Include="character.h" />
+    <ClInclude Include="midBoss.h" />
   </ItemGroup>
 </Project>

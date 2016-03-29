@@ -47,16 +47,16 @@ class Enemy : public Character
 protected:
 	characterNS::DIRECTION oldDirection;	// 攻撃直前に向いていた方向を格納
 	characterNS::DIRECTION goalDirection;	// 次に進むべき方向
-	enemyNS::STATE state;				// 状態
-	enemyNS::STATE attackState;			// 攻撃用の状態
-	VECTOR2 goalPos;					// 目標地点の座標
-	float distanceCounter;				// 距離計測用カウンター、同じ方向に一定距離進まないと方向転換できないようにする
-	float attackTimer;					// 攻撃アニメーション用のタイマー
-	bool nearPlayer;					// プレイヤーと隣接しているかどうか
-	bool nearBarricade;                 // バリケードと隣接しているかどうか
-	bool isAttacked;					// 攻撃した直後かどうか
-	bool inCertainRange;                // プレイヤーが一定範囲内にいるか
-	Barricade* barricades;			// バリケードの配列へのポインタ
+	enemyNS::STATE state;					// 状態
+	enemyNS::STATE attackState;				// 攻撃用の状態
+	VECTOR2 goalPos;						// 目標地点の座標
+	float distanceCounter;					// 距離計測用カウンター、同じ方向に一定距離進まないと方向転換できないようにする
+	float attackTimer;						// 攻撃アニメーション用のタイマー
+	bool nearPlayer;						// プレイヤーと隣接しているかどうか
+	bool nearBarricade;						// バリケードと隣接しているかどうか
+	bool isAttacked;						// 攻撃した直後かどうか
+	bool inCertainRange;					// プレイヤーが一定範囲内にいるか
+	Barricade* barricades;					// バリケードの配列へのポインタ
 
 public:
 	// コンストラクタ
@@ -109,6 +109,6 @@ public:
 	// 雑魚敵からある点までの直線上にバリケードが存在したらtrue、存在しない場合はfalseを返す。
 	bool checkBarricadeOnLine(float x, float y);
 	// 攻撃モードにチェンジするときに呼び出す関数
-	void changeAttack(VECTOR2 &collisionVector);
+	virtual void changeAttack(VECTOR2 &collisionVector);
 };
 #endif

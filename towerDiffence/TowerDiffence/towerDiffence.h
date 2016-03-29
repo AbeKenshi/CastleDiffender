@@ -13,6 +13,7 @@
 #include "map.h"
 #include "castle.h"
 #include "enemy.h"
+#include "midBoss.h"
 #include "dashboard.h"
 #include "rect.h"
 #include "barricade.h"
@@ -59,18 +60,21 @@ private:
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
 	BraveAttackCollision braveAttackCollision;			// 勇者の攻撃の当たり判定用
 	EnemyAttackCollision enemyAttackCollision;			// 雑魚敵の攻撃の当たり判定用
+	EnemyAttackCollision midBossAttackCollision;		// 中ボスの攻撃の当たり判定用
 	TextureManager tileTexture;							// タイルのテクスチャ
 	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ
-	Barricade barricades[mapNS::BARRICADE_NUM];         // バリケード画像
+	Barricade barricades[mapNS::BARRICADE_NUM];         // バリケードの配列
 	TextureManager castleTexture;						// 城のテクスチャ
-	Castle castle;										// 城の画像
+	Castle castle;										// 城
 	TextureManager castleIconTexture;					// 城のアイコンのテクスチャ
 	CastleIcon castleIcon;								// 城のアイコン
 	TextureManager fireTexture;							// 炎のテクスチャ
-	Fire fire;											// 炎の画像
+	Fire fire;											// 炎
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
-	Enemy enemy;										// 雑魚敵の画像
+	Enemy enemy;										// 雑魚敵
+	TextureManager midBossTexture;						// 中ボスのテクスチャ
+	MidBoss midBoss;									// 中ボス
 	TextureManager dashboardTextures;					// ダッシュボードテクスチャ
 	BarGraph braveHealthBar;							// 勇者の体力バー
 	BarGraph braveMpBar;								// 勇者のMPバー
