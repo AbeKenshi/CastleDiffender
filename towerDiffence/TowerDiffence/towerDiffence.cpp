@@ -600,7 +600,14 @@ void TowerDiffence::render()
 		graphics->spriteBegin();	// スプライトの描画を開始
 
 		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
-			enemy[i].draw();
+			// 敵の描画、色は適当に分けてるので…
+			if (i % 3 == 0)
+				enemy[i].draw(graphicsNS::WHITE);
+			else if (i % 3 == 1)
+				enemy[i].draw(graphicsNS::RED);
+			else if (i % 3 == 2)
+				enemy[i].draw(graphicsNS::BLUE);
+
 			enemyAttackCollision[i].draw();
 		}
 		braveHpText.draw();
@@ -609,9 +616,9 @@ void TowerDiffence::render()
 		braveIcon.draw();
 		castleIcon.draw();
 		castle.draw();
-		midBoss.draw();
+		midBoss.draw(graphicsNS::WHITE);
 		fire.draw();
-		brave.draw();
+		brave.draw(graphicsNS::WHITE);
 		braveAttackCollision.draw();
 		midBossAttackCollision.draw();
 		braveHealthBar.set(brave.getHealth());

@@ -13,9 +13,9 @@ namespace enemyNS
 {
 	const int WIDTH = 24;							// 画像の幅（各フレーム）
 	const int HEIGHT = 32;							// 画像の高さ
-	const int X[] = { 200, 100, 600, 800,1000,
+	const int X[] = { 200, 100, 800, 600,1000,
 	                   50, 350, 750,1100,1200};
-	const int Y[] = {   0, 400, 700, 100, 700,
+	const int Y[] = {   0, 400, 100, 700, 700,
 	                  600,  20, 600, 350,  10};
 	const int MOVE_SPEED = 100;						// 移動速度（ピクセル）
 	const int TEXTURE_COLS = 12;					// テクスチャは12列
