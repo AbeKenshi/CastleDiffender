@@ -18,6 +18,8 @@ Character::Character() : Entity()
 	drawFlag = true;
 	// 攻撃判定のコリジョンは最初はなし
 	attackCollisionFlag = false;
+	// 状態は何もしない状態からスタート
+	state = characterNS::STATE::MOVE;
 }
 
 //==========================================================
@@ -41,6 +43,8 @@ void Character::reset()
 	drawFlag = true;
 	// 攻撃判定のコリジョンはなしでリセット
 	attackCollisionFlag = false;
+	// 状態は何もしない状態からスタート
+	state = characterNS::STATE::MOVE;
 }
 
 //==========================================================
@@ -102,7 +106,7 @@ bool Character::checkCanMove(float x, float y)
 	if (map_y >= mapNS::MAP_HEIGHT)
 		map_y = mapNS::MAP_HEIGHT - 1;
 
-	if (map->getMapCol(map_y, map_x) == 1)
+	if (map->getMapCol(map_y, map_x) >= 1)
 	{
 		return false;
 	}

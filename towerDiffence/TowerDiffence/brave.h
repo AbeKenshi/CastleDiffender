@@ -61,7 +61,6 @@ namespace braveNS
 class Brave : public Character
 {
 private:
-	characterNS::STATE state;			// 状態
 	int magicPoint;					// MP、必殺技を使うと減少。
 	float mpTimer;					// MP回復用のタイマー
 	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
@@ -90,8 +89,6 @@ public:
 	//==========================================================
 	// MPを返す関数
 	int getMP() { return magicPoint; }
-	// 状態を返す関数
-	characterNS::STATE getState() { return state; }
 
 	//==========================================================
 	// setter

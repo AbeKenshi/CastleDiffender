@@ -15,7 +15,7 @@ namespace enemyNS
 	const int HEIGHT = 32;							// 画像の高さ
 	const int X[] = { 200, 100, 800, 600,1000,
 	                   50, 350, 750,1100,1200};
-	const int Y[] = {   0, 400, 100, 700, 700,
+	const int Y[] = {   320, 400, 100, 700, 700,
 	                  600,  20, 600, 350,  10};
 	const int MOVE_SPEED = 100;						// 移動速度（ピクセル）
 	const int TEXTURE_COLS = 12;					// テクスチャは12列
@@ -40,7 +40,7 @@ namespace enemyNS
 	const float CONTINUE_ATTACK_TIME = 0.8f;		// 連続で攻撃する場合の溜め時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けている場合、DAMAGE_TIMEごとに画像が点滅
 	const int ATTACK_DAMAGE = 5.0f;
-	enum STATE { MOVE_CASTLE, MOVE_BARRICADE, ATTACK_BRAVE, ATTACK_CASTLE, ATTACK_BARRICADE, PRE_ATTACK, GAURD };	// 雑魚敵の状態
+	enum STATE_DETAIL { MOVE_CASTLE, MOVE_BARRICADE, ATTACK_BRAVE, ATTACK_CASTLE, ATTACK_BARRICADE, PRE_ATTACK, GAURD };	// 雑魚敵の状態
 }
 
 // Enemyクラス
@@ -49,18 +49,18 @@ class Enemy : public Character
 protected:
 	characterNS::DIRECTION oldDirection;	// 攻撃直前に向いていた方向を格納
 	characterNS::DIRECTION goalDirection;	// 次に進むべき方向
-	enemyNS::STATE state;					// 状態
-	enemyNS::STATE attackState;				// 攻撃用の状態
+	enemyNS::STATE_DETAIL stateDeteil;		// 状態
+	enemyNS::STATE_DETAIL attackState;		// 攻撃用の状態
 	VECTOR2 goalPos;						// 目標地点の座標
-	float distanceCounter;					// 距離計測用カウンター、同じ方向に一定距離進まないと方向転換できないようにする
 	float attackTimer;						// 攻撃アニメーション用のタイマー
 	bool nearPlayer;						// プレイヤーと隣接しているかどうか
 	bool nearBarricade;						// バリケードと隣接しているかどうか
 	bool isAttacked;						// 攻撃した直後かどうか
 	bool inCertainRange;					// プレイヤーが一定範囲内にいるか
 	bool canMove;							// 行きたい方向に進むことができるかどうか
+	bool canMakeDecesionMove;				// 移動に関しての意思決定を行えるかどうか
 	Barricade* barricades;					// バリケードの配列へのポインタ
-
+	int nearBarricadeIndex;					// 最近接のバリケードのインデックス
 public:
 	// コンストラクタ
 	Enemy();
@@ -89,23 +89,29 @@ public:
 	// バリケードと隣接しているかどうかをセット
 	void setNearBarricade(bool nb) { nearBarricade = nb; }
 	// 状態をセットする関数
-	void setState(enemyNS::STATE st) { state = st; }
+	void setStateDetail(enemyNS::STATE_DETAIL st) { stateDeteil = st; }
 	// 攻撃の状態をセットする関数
-	void setAttackState(enemyNS::STATE st) { attackState = st; }
+	void setAttackState(enemyNS::STATE_DETAIL st) { attackState = st; }
 	// 目標地点をセットする関数
 	void setGoalPost(VECTOR2 pos) { goalPos = pos; }
 	// バリケードの配列へのポインタをセットする関数
 	void setBarricadesPointer(Barricade *b) { barricades = b; }
 	// 行きたい方向に進めるかどうかをセットする関数
 	void setCanMove(bool cm) { canMove = cm; }
+	// 次に進むべき方向をセットする関数
+	void setGoalDirection(characterNS::DIRECTION gd) { goalDirection = gd; }
 
 	//==========================================================
 	// getter
 	//==========================================================
 	// 状態を返す関数
-	enemyNS::STATE getState() { return state; }
+	enemyNS::STATE_DETAIL getStateDetail() { return stateDeteil; }
 	// 次に進むべき方向を返す関数
 	characterNS::DIRECTION getGoalDirection() { return goalDirection; }
+	// 移動に関しての意思決定を行えるかどうか
+	bool canMakeDecesionMoving() { return canMakeDecesionMove; }
+	// 最近接のバリケードのインデックスを返す
+	int getNearBarricadeIndex() { return nearBarricadeIndex; }
 	
 	// 向きをgoalDirectionへとアップデートする関数
 	void changeDirection(int strF, int endF);
@@ -115,9 +121,13 @@ public:
 	VECTOR2 searchNearBarricade(Entity &entity);
 	// 一番近くのバリケードのインデックスを返す関数
 	int searchNearBarricadeIndex();
-	// 雑魚敵からある点までの直線上にバリケードが存在したらtrue、存在しない場合はfalseを返す。
-	bool checkBarricadeOnLine(float x, float y);
+	// 雑魚敵から城までの直線上にバリケードが存在したらtrue、存在しない場合はfalseを返す。
+	bool checkBarricadeOnLine();
 	// 攻撃モードにチェンジするときに呼び出す関数
 	virtual void changeAttack(VECTOR2 &collisionVector);
+	// 攻撃モードにチェンジするときに呼び出す関数
+	virtual void changeAttack(characterNS::DIRECTION dir);
+	// タイルの中央にキャラクターがいるかどうか
+	virtual bool isCenterOfTile();
 };
 #endif
