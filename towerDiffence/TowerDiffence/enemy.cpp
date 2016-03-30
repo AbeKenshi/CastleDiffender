@@ -582,6 +582,7 @@ bool Enemy::checkCanMove(float x, float y)
 //==========================================================
 bool Enemy::isCenterOfTile()
 {
+	map->updateMapCol(tileY * mapNS::TEXTURE_SIZE, tileX * mapNS::TEXTURE_SIZE, 0);
 	switch (goalDirection)
 	{
 	case characterNS::RIGHT:
