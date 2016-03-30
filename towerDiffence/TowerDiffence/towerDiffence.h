@@ -38,6 +38,7 @@ namespace towerDiffenceNS
 	const int COUNT_DOWN_X = GAME_WIDTH / 2 - FONT_BIG_SIZE / 4;
 	const int COUNT_DOWN_Y = GAME_HEIGHT / 2 - FONT_BIG_SIZE / 2;
 	const int ROUND_TIME = 5;           // 新しいラウンドが開始するまでの時間
+	const int ENEMY_NUM = 10;  // 雑魚敵の数
 }
 
 //==========================================================
@@ -59,7 +60,7 @@ private:
 	BraveIcon braveIcon;								// 勇者のアイコン
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
 	BraveAttackCollision braveAttackCollision;			// 勇者の攻撃の当たり判定用
-	EnemyCollision enemyAttackCollision;			// 雑魚敵の攻撃の当たり判定用
+	EnemyCollision enemyAttackCollision[towerDiffenceNS::ENEMY_NUM]; // 雑魚敵の攻撃の当たり判定用
 	EnemyCollision midBossAttackCollision;		// 中ボスの攻撃の当たり判定用
 	TextureManager tileTexture;							// タイルのテクスチャ
 	Map map;											// タイル画像
@@ -72,7 +73,7 @@ private:
 	TextureManager fireTexture;							// 炎のテクスチャ
 	Fire fire;											// 炎
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
-	Enemy enemy;										// 雑魚敵
+	Enemy enemy[towerDiffenceNS::ENEMY_NUM];	    	// 雑魚敵
 	TextureManager midBossTexture;						// 中ボスのテクスチャ
 	MidBoss midBoss;									// 中ボス
 	TextureManager dashboardTextures;					// ダッシュボードテクスチャ
