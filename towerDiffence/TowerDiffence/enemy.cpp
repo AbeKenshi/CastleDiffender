@@ -7,8 +7,8 @@ Enemy::Enemy() : Character()
 {
 	spriteData.width = enemyNS::WIDTH;			// 雑魚敵のサイズ
 	spriteData.height = enemyNS::HEIGHT;
-	spriteData.x = enemyNS::X;					// 画面上の位置
-	spriteData.y = enemyNS::Y;
+	// spriteData.x = enemyNS::X;					// 画面上の位置
+	// spriteData.y = enemyNS::Y;
 	spriteData.rect.bottom = enemyNS::HEIGHT;	// 画面の一部を選択
 	spriteData.rect.right = enemyNS::WIDTH;
 	frameDelay = enemyNS::MOVE_ANIMATION_DELAY;
@@ -43,8 +43,8 @@ void Enemy::reset()
 	visible = true;
 	health = 100;
 
-	spriteData.x = enemyNS::X;					// 画面上の位置
-	spriteData.y = enemyNS::Y;
+	// spriteData.x = enemyNS::X;					// 画面上の位置
+	// spriteData.y = enemyNS::Y;
 	frameDelay = enemyNS::MOVE_ANIMATION_DELAY;
 	// 初期の方向は右
 	oldDirection = direction;
@@ -502,6 +502,8 @@ VECTOR2 Enemy::searchNearBarricade(Entity &ent)
 
 	// 最小の距離差
 	int minX = 0, minY = 0;
+	// 最小のバリケードの座標
+	int minBariPosiX = 0, minBariPosiY = 0;
 	// アクティブなバリケードの数を数える用
 	int count = 0;
 
@@ -513,18 +515,23 @@ VECTOR2 Enemy::searchNearBarricade(Entity &ent)
 			// 探索1つ目の場合
 			if (count == 0)
 			{
-				minX = barricades[i].getX();
-				minY = barricades[i].getY();
+				minX = (int)abs(barricades[i].getX() - getX());
+				minY = (int)abs(barricades[i].getY() - getY());
+				minBariPosiX = (int)barricades[i].getX();
+				minBariPosiY = (int)barricades[i].getY();
 			}
 			else // 2つ目以降
 			{
 				// もし最小値を更新したら
-				if (barricades[i].getX() * barricades[i].getX() + barricades[i].getY() * barricades[i].getY() <
+				if ((barricades[i].getX() - getX())*(barricades[i].getX() - getX()) +
+					(barricades[i].getY() - getY())*(barricades[i].getY() - getY()) <
 					minX * minX + minY * minY)
 				{
 					// 新たに代入
-					minX = barricades[i].getX();
-					minY = barricades[i].getY();
+					minX = (int)abs(barricades[i].getX() - getX());
+					minY = (int)abs(barricades[i].getY() - getY());
+					minBariPosiX = (int)barricades[i].getX();
+					minBariPosiY = (int)barricades[i].getY();
 				}
 			}
 			// カウントを増やす
@@ -538,8 +545,8 @@ VECTOR2 Enemy::searchNearBarricade(Entity &ent)
 	// もしバリケードが1つ以上存在したら
 	if (count > 0) {
 		// 最小値を代入
-		vec.x = minX;
-		vec.y = minY;
+		vec.x = minBariPosiX;
+		vec.y = minBariPosiY;
 	}
 	else {
 		// プレイヤーの位置を代入
@@ -551,12 +558,10 @@ VECTOR2 Enemy::searchNearBarricade(Entity &ent)
 	return vec;
 }
 
-//==========================================================
 // 一番近くのバリケードのインデックスを返す関数
 //==========================================================
 int Enemy::searchNearBarricadeIndex()
 {
-
 	// 最小の距離差
 	int minX = 0, minY = 0;
 	// 最小の距離のインデックス
@@ -572,19 +577,19 @@ int Enemy::searchNearBarricadeIndex()
 			// 探索1つ目の場合
 			if (count == 0)
 			{
-				minX = barricades[i].getX();
-				minY = barricades[i].getY();
+				minX = (int)abs(barricades[i].getX() - getX());
+				minY = (int)abs(barricades[i].getY() - getY());
 				minIndex = i;
 			}
 			else // 2つ目以降
 			{
-				// もし最小値を更新したら
-				if (barricades[i].getX() * barricades[i].getX() + barricades[i].getY() * barricades[i].getY() <
+				if ((barricades[i].getX() - getX())*(barricades[i].getX() - getX()) +
+					(barricades[i].getY() - getY())*(barricades[i].getY() - getY()) <
 					minX * minX + minY * minY)
 				{
 					// 新たに代入
-					minX = barricades[i].getX();
-					minY = barricades[i].getY();
+					minX = (int)abs(barricades[i].getX() - getX());
+					minY = (int)abs(barricades[i].getY() - getY());
 					minIndex = i;
 				}
 			}

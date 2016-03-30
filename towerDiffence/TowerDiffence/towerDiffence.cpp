@@ -112,9 +112,6 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 勇者のあたり判定用
 	if (!braveAttackCollision.initialize(this, braveAttackCollisionNS::WIDTH, braveAttackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision"));
-	// 雑魚敵の当たり判定用
-	if (!enemyAttackCollision.initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
 	// 中ボスの当たり判定用
 	if (!midBossAttackCollision.initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
@@ -129,11 +126,17 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 雑魚敵のテクスチャ
 	if (!enemyTexture.initialize(graphics, ENEMY_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy texture"));
-	if (!enemy.initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
-	enemy.setScale(2);
-	enemy.setMapPointer(&map);
-	enemy.setBarricadesPointer(barricades);
+	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
+		if (!enemy[i].initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
+		enemy[i].setScale(2);
+		enemy[i].setMapPointer(&map);
+		enemy[i].setBarricadesPointer(barricades);
+
+		// 雑魚敵の当たり判定用
+		if (!enemyAttackCollision[i].initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
+	}
 	// 中ボス
 	if (!midBossTexture.initialize(graphics, MID_BOSS_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss texture"));
@@ -166,6 +169,13 @@ void TowerDiffence::initialize(HWND hwnd)
 
 	// タイトルBGM再生
 	audio->playCue("title");
+
+	// 敵の位置初期化
+	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
+	{
+		enemy[i].setX(enemyNS::X[i]);
+		enemy[i].setY(enemyNS::Y[i]);
+	}
 
 	return;
 }
@@ -207,18 +217,21 @@ void TowerDiffence::update()
 			fire.fire(&brave);
 		if (brave.getAttackCollisionFlag())
 			braveAttackCollision.attack(&brave);
-		if (enemy.getAttackCollisionFlag())
-			enemyAttackCollision.attack(&enemy);
+		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
+			if (enemy[i].getAttackCollisionFlag()) {
+				enemyAttackCollision[i].attack(&enemy[i]);
+			}
+			enemy[i].update(frameTime);
+			enemyAttackCollision[i].update(frameTime);
+		}
 		if (midBoss.getAttackCollisionFlag())
 			midBossAttackCollision.attack(&midBoss);
 		if (midBoss.getState() == enemyNS::MOVE_BARRICADE || midBoss.getState() == enemyNS::MOVE_CASTLE)
 			midBossAttackCollision.walk(&midBoss);
 		brave.update(frameTime);
-		enemy.update(frameTime);
 		midBoss.update(frameTime);
 		fire.update(frameTime);
 		braveAttackCollision.update(frameTime);
-		enemyAttackCollision.update(frameTime);
 		midBossAttackCollision.update(frameTime);
 		castle.update(frameTime);
 		braveIcon.update(frameTime);
@@ -253,7 +266,12 @@ void TowerDiffence::roundStart()
 {
 	// 初期化
 	brave.reset();
-	enemy.reset();
+	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
+	{
+		enemy[i].reset();
+		enemy[i].setX(enemyNS::X[i]);
+		enemy[i].setY(enemyNS::Y[i]);
+	}
 	midBoss.reset();
 	midBoss.setX(GAME_WIDTH / 2 - 500);
 	midBoss.setY(GAME_HEIGHT / 2 - 80);
@@ -279,7 +297,8 @@ void TowerDiffence::roundStart()
 //==========================================================
 void TowerDiffence::ai()
 {
-	enemy.ai(frameTime, brave);
+	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
+		enemy[i].ai(frameTime, brave);
 	midBoss.ai(frameTime, brave);
 }
 
@@ -289,115 +308,115 @@ void TowerDiffence::ai()
 void TowerDiffence::collisions()
 {
 	VECTOR2 collisionVector;
-	// プレイヤーと雑魚敵の衝突の場合
-	if (enemy.collidesWith(brave, collisionVector))
-	{
-		enemy.setNearPlayer(true);
-	}
-	else
-		enemy.setNearPlayer(false);
-	
-	// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
-	if (braveAttackCollision.collidesWith(enemy, collisionVector))
-	{
-		enemy.damage(BRAVE_ATTACK);
-		braveAttackCollision.setVisible(false);
-		braveAttackCollision.setActive(false);
-	}
+	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
+		// プレイヤーと雑魚敵の衝突の場合
+		if (enemy[i].collidesWith(brave, collisionVector))
+			enemy[i].setNearPlayer(true);
+		else
+			enemy[i].setNearPlayer(false);
 
-	// 敵が攻撃時は、城とプレイヤーとバリケードとの当たり判定をチェック
-	if (enemy.getState() == enemyNS::ATTACK_BARRICADE || enemy.getState() == enemyNS::ATTACK_CASTLE || enemy.getState() == enemyNS::ATTACK_BRAVE)
-	{
-		// 敵の攻撃コリジョンとプレイヤーの衝突の場合
-		if (enemyAttackCollision.collidesWith(brave, collisionVector))
+		// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
+		if (braveAttackCollision.collidesWith(enemy[i], collisionVector))
 		{
-			brave.damage(ENEMY_ATTACK);
-			enemyAttackCollision.setVisible(false);
-			enemyAttackCollision.setActive(false);
+			enemy[i].damage(BRAVE_ATTACK);
+			braveAttackCollision.setVisible(false);
+			braveAttackCollision.setActive(false);
 		}
-		// 敵の攻撃コリジョンと城の衝突の場合
-		if (enemyAttackCollision.collidesWith(castle, collisionVector))
+
+		// 敵が攻撃時は、城とプレイヤーとバリケードとの当たり判定をチェック
+		if (enemy[i].getState() == enemyNS::ATTACK_BARRICADE || enemy[i].getState() == enemyNS::ATTACK_CASTLE || enemy[i].getState() == enemyNS::ATTACK_BRAVE)
 		{
-			castle.damage(ENEMY_ATTACK);
-			enemyAttackCollision.setVisible(false);
-			enemyAttackCollision.setActive(false);
-		}
-		// 敵の攻撃コリジョンとバリケードの衝突
-		for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
-		{
-			if (enemyAttackCollision.collidesWith(barricades[i], collisionVector)) {
-				barricades[i].damage();
-				enemyAttackCollision.setVisible(false);
-				enemyAttackCollision.setActive(false);
+			// 敵の攻撃コリジョンとプレイヤーの衝突の場合
+			if (enemyAttackCollision[i].collidesWith(brave, collisionVector))
+			{
+				brave.damage(ENEMY_ATTACK);
+				enemyAttackCollision[i].setVisible(false);
+				enemyAttackCollision[i].setActive(false);
+			}
+			// 敵の攻撃コリジョンと城の衝突の場合
+			if (enemyAttackCollision[i].collidesWith(castle, collisionVector))
+			{
+				castle.damage(ENEMY_ATTACK);
+				enemyAttackCollision[i].setVisible(false);
+				enemyAttackCollision[i].setActive(false);
+			}
+			// 敵の攻撃コリジョンとバリケードの衝突
+			for (int j = 0; j < mapNS::BARRICADE_NUM; j++)
+			{
+				if (enemyAttackCollision[i].collidesWith(barricades[j], collisionVector)) {
+					barricades[j].damage();
+					enemyAttackCollision[i].setVisible(false);
+					enemyAttackCollision[i].setActive(false);
+				}
 			}
 		}
-	}
-	// 敵が移動時には、他の敵との当たり判定をチェック
-	enemy.setCanMove(true);
-	if (enemy.getState() == enemyNS::MOVE_BARRICADE || enemy.getState() == enemyNS::MOVE_CASTLE)
-	{
-		// 当たり判定を進行方向に対して出現
-		enemyAttackCollision.walk(&enemy);
-		// 進もうとしている方向に他の敵がいたら移動はできない
-		if (enemyAttackCollision.collidesWith(midBoss, collisionVector))
+		// 敵が移動時には、他の敵との当たり判定をチェック
+		enemy[i].setCanMove(true);
+		if (enemy[i].getState() == enemyNS::MOVE_BARRICADE || enemy[i].getState() == enemyNS::MOVE_CASTLE)
 		{
-			enemy.setCanMove(false);
+			// 当たり判定を進行方向に対して出現
+			enemyAttackCollision[i].walk(&enemy[i]);
+			// 進もうとしている方向に他の敵がいたら移動はできない
+			if (enemyAttackCollision[i].collidesWith(midBoss, collisionVector))
+			{
+				enemy[i].setCanMove(false);
+			}
+			//enemyAttackCollision.setVisible(false);
+			enemyAttackCollision[i].setActive(false);
 		}
-		//enemyAttackCollision.setVisible(false);
-		enemyAttackCollision.setActive(false);
-	}
 
-	// 炎と雑魚敵の衝突の場合
-	if (fire.collidesWith(enemy, collisionVector))
-	{
-		enemy.damage(FIRE);
-		fire.setVisible(false);
-		fire.setActive(false);
-	}
-
-	// 攻撃中ならば行動選択は行わない
-	if (enemy.getState() == enemyNS::ATTACK_BARRICADE || enemy.getState() == enemyNS::ATTACK_BRAVE || enemy.getState() == enemyNS::ATTACK_CASTLE || enemy.getState() == enemyNS::PRE_ATTACK)
-	{
-	}
-	else if (enemy.collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーの衝突判定
-	{
-		enemy.changeAttack(collisionVector);
-		enemy.setAttackState(enemyNS::ATTACK_BRAVE);
-	}
-	else if (enemy.collidesWith(castle, collisionVector))	// 雑魚敵と城の衝突判定
-	{
-		enemy.changeAttack(collisionVector);
-		enemy.setAttackState(enemyNS::ATTACK_CASTLE);
-	}
-	else if (!enemy.checkBarricadeOnLine(castle.getCenterX(), castle.getCenterY()))	// 城までの直線上にバリケードがあるかをチェック
-	{
-		enemy.setState(enemyNS::MOVE_CASTLE);
-		VECTOR2 pos;
-		pos.x = castle.getCenterX();
-		pos.y = castle.getCenterY();
-		enemy.setGoalPost(pos);
-	}
-	else 
-	{
-		// 最近接のバリケードを探索
-		int nearBarricadeIndex = enemy.searchNearBarricadeIndex();
-		// 最近接のバリケードに衝突していたら攻撃、それ以外ならバリケードに向かう。
-		if (enemy.collidesWith(barricades[nearBarricadeIndex], collisionVector))
+		// 炎と雑魚敵の衝突の場合
+		if (fire.collidesWith(enemy[i], collisionVector))
 		{
-			enemy.changeAttack(collisionVector);
-			enemy.setAttackState(enemyNS::ATTACK_BARRICADE);
+			enemy[i].damage(FIRE);
+			fire.setVisible(false);
+			fire.setActive(false);
+		}
+
+		// 攻撃中ならば行動選択は行わない
+		if (enemy[i].getState() == enemyNS::ATTACK_BARRICADE || enemy[i].getState() == enemyNS::ATTACK_BRAVE || enemy[i].getState() == enemyNS::ATTACK_CASTLE || enemy[i].getState() == enemyNS::PRE_ATTACK)
+		{
+		}
+		else if (enemy[i].collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーの衝突判定
+		{
+			enemy[i].changeAttack(collisionVector);
+			enemy[i].setAttackState(enemyNS::ATTACK_BRAVE);
+		}
+		else if (enemy[i].collidesWith(castle, collisionVector))	// 雑魚敵と城の衝突判定
+		{
+			enemy[i].changeAttack(collisionVector);
+			enemy[i].setAttackState(enemyNS::ATTACK_CASTLE);
+		}
+		else if (!enemy[i].checkBarricadeOnLine(castle.getCenterX(), castle.getCenterY()))	// 城までの直線上にバリケードがあるかをチェック
+		{
+			enemy[i].setState(enemyNS::MOVE_CASTLE);
+			VECTOR2 pos;
+			pos.x = castle.getCenterX();
+			pos.y = castle.getCenterY();
+			enemy[i].setGoalPost(pos);
 		}
 		else
 		{
-			enemy.setState(enemyNS::MOVE_BARRICADE);
-			VECTOR2 pos;
-			pos.x = barricades[nearBarricadeIndex].getX();
-			pos.y = barricades[nearBarricadeIndex].getY();
-			enemy.setGoalPost(pos);
+			// 最近接のバリケードを探索
+			int nearBarricadeIndex = enemy[i].searchNearBarricadeIndex();
+			// 最近接のバリケードに衝突していたら攻撃、それ以外ならバリケードに向かう。
+			if (enemy[i].collidesWith(barricades[nearBarricadeIndex], collisionVector))
+			{
+				enemy[i].changeAttack(collisionVector);
+				enemy[i].setAttackState(enemyNS::ATTACK_BARRICADE);
+			}
+			else
+			{
+				enemy[i].setState(enemyNS::MOVE_BARRICADE);
+				VECTOR2 pos;
+				pos.x = barricades[nearBarricadeIndex].getX();
+				pos.y = barricades[nearBarricadeIndex].getY();
+				enemy[i].setGoalPost(pos);
+			}
 		}
 	}
 
-	// プレイヤーと雑魚敵の衝突の場合
+	// プレイヤーと中ボスの衝突の場合
 	if (midBoss.collidesWith(brave, collisionVector))
 	{
 		midBoss.setNearPlayer(true);
@@ -405,7 +424,7 @@ void TowerDiffence::collisions()
 	else
 		midBoss.setNearPlayer(false);
 
-	// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
+	// プレイヤーの攻撃コリジョンと中ボスの衝突の場合
 	if (braveAttackCollision.collidesWith(midBoss, collisionVector))
 	{
 		midBoss.damage(BRAVE_ATTACK);
@@ -415,14 +434,14 @@ void TowerDiffence::collisions()
 
 	if (midBoss.getState() == enemyNS::ATTACK_BARRICADE || midBoss.getState() == enemyNS::ATTACK_CASTLE || midBoss.getState() == enemyNS::ATTACK_BRAVE)
 	{
-		// 敵の攻撃コリジョンとプレイヤーの衝突の場合
+		// 中ボスの攻撃コリジョンとプレイヤーの衝突の場合
 		if (midBossAttackCollision.collidesWith(brave, collisionVector))
 		{
 			brave.damage(ENEMY_ATTACK);
 			midBossAttackCollision.setVisible(false);
 			midBossAttackCollision.setActive(false);
 		}
-		// 敵の攻撃コリジョンと城の衝突の場合
+		// 中ボスの攻撃コリジョンと城の衝突の場合
 		if (midBossAttackCollision.collidesWith(castle, collisionVector))
 		{
 			castle.damage(ENEMY_ATTACK);
@@ -433,11 +452,13 @@ void TowerDiffence::collisions()
 	midBoss.setCanMove(true);
 	if (midBoss.getState() == enemyNS::MOVE_BARRICADE || midBoss.getState() == enemyNS::MOVE_CASTLE)
 	{
-		if (midBossAttackCollision.collidesWith(enemy, collisionVector))
-		{
-			midBoss.setCanMove(false);
-			midBossAttackCollision.setVisible(false);
-			midBossAttackCollision.setActive(false);
+		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
+			if (midBossAttackCollision.collidesWith(enemy[i], collisionVector))
+			{
+				midBoss.setCanMove(false);
+				midBossAttackCollision.setVisible(false);
+				midBossAttackCollision.setActive(false);
+			}
 		}
 	}
 	// 炎と雑魚敵の衝突の場合
@@ -452,12 +473,12 @@ void TowerDiffence::collisions()
 	if (midBoss.getState() == enemyNS::ATTACK_BARRICADE || midBoss.getState() == enemyNS::ATTACK_BRAVE || midBoss.getState() == enemyNS::ATTACK_CASTLE || midBoss.getState() == enemyNS::PRE_ATTACK)
 	{
 	}
-	else if (midBoss.collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーの衝突判定
+	else if (midBoss.collidesWith(brave, collisionVector))// 中ボスとプレイヤーの衝突判定
 	{
 		midBoss.changeAttack(collisionVector);
 		midBoss.setAttackState(enemyNS::ATTACK_BRAVE);
 	}
-	else if (midBoss.collidesWith(castle, collisionVector))	// 雑魚敵と城の衝突判定
+	else if (midBoss.collidesWith(castle, collisionVector))	// 中ボスと城の衝突判定
 	{
 		midBoss.changeAttack(collisionVector);
 		midBoss.setAttackState(enemyNS::ATTACK_CASTLE);
@@ -503,7 +524,7 @@ void TowerDiffence::collisions()
 			enemy.setNearBarricade(false);
 	}*/
 
-	// 敵の攻撃コリジョンとバリケードの衝突
+	// 中ボスの攻撃コリジョンとバリケードの衝突
 	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
 		if (midBossAttackCollision.collidesWith(barricades[i], collisionVector)) {
@@ -578,18 +599,20 @@ void TowerDiffence::render()
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
 
+		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
+			enemy[i].draw();
+			enemyAttackCollision[i].draw();
+		}
 		braveHpText.draw();
 		braveMpText.draw();
 		castleHpText.draw();
 		braveIcon.draw();
 		castleIcon.draw();
 		castle.draw();
-		enemy.draw();
 		midBoss.draw();
 		fire.draw();
 		brave.draw();
 		braveAttackCollision.draw();
-		enemyAttackCollision.draw();
 		midBossAttackCollision.draw();
 		braveHealthBar.set(brave.getHealth());
 		braveMpBar.set(brave.getMP());
