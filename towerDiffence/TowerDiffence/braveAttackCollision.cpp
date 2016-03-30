@@ -48,7 +48,7 @@ void BraveAttackCollision::attack(Brave * brave)
 	switch (brave->getDirection())
 	{
 		case characterNS::RIGHT:
-			spriteData.x = brave->getCenterX();
+			spriteData.x = brave->getCenterX() + brave->getWidth() * brave->getScale() / 2;
 			spriteData.y = brave->getCenterY() - spriteData.height / 2;
 			edge.left = -braveAttackCollisionNS::WIDTH / 2.0;
 			edge.right = braveAttackCollisionNS::WIDTH / 2.0;

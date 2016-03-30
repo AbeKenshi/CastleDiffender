@@ -11,7 +11,7 @@
 
 namespace enemyNS
 {
-	const int WIDTH = 24;							// 画像の幅（各フレーム）
+	const int WIDTH = 32;							// 画像の幅（各フレーム）
 	const int HEIGHT = 32;							// 画像の高さ
 	const int X[] = { 200, 100, 800, 600,1000,
 	                   50, 350, 750,1100,1200};
