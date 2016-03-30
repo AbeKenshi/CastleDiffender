@@ -10,7 +10,7 @@
 
 namespace braveNS
 {
-	const int WIDTH = 24;							// 画像の幅（各フレーム）
+	const int WIDTH = 32;							// 画像の幅（各フレーム）
 	const int HEIGHT = 32;							// 画像の高さ
 	const int X = GAME_WIDTH / 2 - WIDTH / 2;		// 画面上の位置
 	const int Y = GAME_HEIGHT / 6 - HEIGHT;
@@ -55,14 +55,13 @@ namespace braveNS
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けて点滅する時間
 	const int MP_RECOVERY = 10;
 	const float MP_RECOVERY_TIME = 2.0f;			// MPはMP_RECOVERY_TIMEごとにMP_RECOVERYだけ回復
-	enum STATE { MOVE, ATTACK, SECOND_ATTACK, GAURD };			// 状態
 }
 
 // Braveクラス
 class Brave : public Character
 {
 private:
-	braveNS::STATE state;			// 状態
+	characterNS::STATE state;			// 状態
 	int magicPoint;					// MP、必殺技を使うと減少。
 	float mpTimer;					// MP回復用のタイマー
 	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
@@ -92,7 +91,7 @@ public:
 	// MPを返す関数
 	int getMP() { return magicPoint; }
 	// 状態を返す関数
-	braveNS::STATE getState() { return state; }
+	characterNS::STATE getState() { return state; }
 
 	//==========================================================
 	// setter

@@ -22,7 +22,7 @@ Brave::Brave() : Character()
 	edge.top = -braveNS::HEIGHT / 26.0;
 	edge.bottom = braveNS::HEIGHT / 2.0;
 	// 状態は何もしない状態からスタート
-	state = braveNS::STATE::MOVE;
+	state = characterNS::STATE::MOVE;
 	secondAttackFlag = false;
 	mpTimer = 0.0;
 	magicPoint = 100;							// MPはMAX100でスタート
@@ -40,7 +40,7 @@ void Brave::reset()
 	startFrame = braveNS::MOVE_UP_START_FRAME;
 	endFrame = braveNS::MOVE_UP_END_FRAME;
 	currentFrame = startFrame;
-	state = braveNS::STATE::MOVE;
+	state = characterNS::STATE::MOVE;
 	secondAttackFlag = false;
 	mpTimer = 0.0;
 	Character::reset();
@@ -59,7 +59,7 @@ void Brave::update(float frameTime)
 	// 状態遷移前の処理
 	switch (state)
 	{
-	case braveNS::MOVE:		// 移動時はすべてのキーの入力を受け付ける
+	case characterNS::MOVE:		// 移動時はすべてのキーの入力を受け付ける
 							// 上下左右キーが入力された場合、
 		if (input->isKeyDown(BRAVE_LEFT_KEY) || input->isKeyDown(BRAVE_RIGHT_KEY) || input->isKeyDown(BRAVE_UP_KEY) || input->isKeyDown(BRAVE_DOWN_KEY))
 		{
@@ -146,7 +146,7 @@ void Brave::update(float frameTime)
 			audio->playCue("kill");
 			// アニメーションをリセット
 			loop = false;
-			state = braveNS::ATTACK;
+			state = characterNS::ATTACK;
 			mode = imageNS::VERTICAL;
 			// アニメーション終了時にフレームを戻すために保存
 			oldStartFrame = startFrame;
@@ -179,7 +179,7 @@ void Brave::update(float frameTime)
 		else if (input->isKeyDown(BRAVE_GAURD_KEY))	// ガードキーが押された場合、
 		{
 			// アニメーションをリセット
-			state = braveNS::GAURD;
+			state = characterNS::GAURD;
 			// アニメーション終了時にフレームを戻すために保存
 			oldStartFrame = startFrame;
 			oldEndFrame = endFrame;
@@ -208,7 +208,7 @@ void Brave::update(float frameTime)
 			setRect();
 		}
 		break;
-	case braveNS::ATTACK:	// 攻撃時はアニメーションが終了するまで第二段攻撃の入力しか受け付けない
+	case characterNS::ATTACK:	// 攻撃時はアニメーションが終了するまで第二段攻撃の入力しか受け付けない
 		if (input->isKeyDown(BRAVE_ATTACK_KEY) && currentFrame > startFrame + 2)
 		{
 			secondAttackFlag = true;
@@ -236,7 +236,7 @@ void Brave::update(float frameTime)
 					endFrame = braveNS::LEFT_SECOND_ATTACK_END_FRAME;
 					break;
 				}
-				state = braveNS::SECOND_ATTACK;
+				state = characterNS::SECOND_ATTACK;
 				loop = false;
 				currentFrame = startFrame;
 				animTimer = 0.0f;
@@ -249,7 +249,7 @@ void Brave::update(float frameTime)
 			}
 			else
 			{
-				state = braveNS::MOVE;
+				state = characterNS::MOVE;
 				mode = imageNS::HORIZONTAL;
 				loop = true;
 				startFrame = oldStartFrame;
@@ -262,11 +262,11 @@ void Brave::update(float frameTime)
 			}
 		}
 		break;
-	case braveNS::SECOND_ATTACK:	// 第二段攻撃時はアニメーションが終了するまで入力を受け付けない
+	case characterNS::SECOND_ATTACK:	// 第二段攻撃時はアニメーションが終了するまで入力を受け付けない
 		velocity.y += frameTime * 2000.0f;
 		if (animComplete)
 		{
-			state = braveNS::MOVE;
+			state = characterNS::MOVE;
 			mode = imageNS::HORIZONTAL;
 			loop = true;
 			startFrame = oldStartFrame;
@@ -279,10 +279,10 @@ void Brave::update(float frameTime)
 			velocity.y = 0.0f;
 		}
 		break;
-	case braveNS::GAURD:	// ボタンが離されたらガード終了
+	case characterNS::GAURD:	// ボタンが離されたらガード終了
 		if (!input->isKeyDown(BRAVE_GAURD_KEY))
 		{
-			state = braveNS::MOVE;
+			state = characterNS::MOVE;
 			mode = imageNS::HORIZONTAL;
 			startFrame = oldStartFrame;
 			endFrame = oldEndFrame;
@@ -296,13 +296,13 @@ void Brave::update(float frameTime)
 	// 状態遷移後の処理
 	switch (state)
 	{
-	case braveNS::MOVE:
+	case characterNS::MOVE:
 		updateMoving(frameTime);
 		break;
-	case braveNS::ATTACK:
+	case characterNS::ATTACK:
 		updateAttacking(frameTime);
 		break;
-	case braveNS::GAURD:
+	case characterNS::GAURD:
 		Entity::update(frameTime);
 		break;
 	default:
@@ -372,7 +372,7 @@ void Brave::damage(WEAPON weapon)
 	case BRAVE_SECOND_ATTACK:
 		break;
 	case ENEMY_ATTACK:
-		if (state == braveNS::GAURD)
+		if (state == characterNS::GAURD)
 			magicPoint -= 25;
 		else
 		{

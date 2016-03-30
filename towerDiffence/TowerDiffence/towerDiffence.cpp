@@ -93,7 +93,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	// —EŽÒ
 	if (!brave.initialize(this, braveNS::WIDTH, braveNS::HEIGHT, braveNS::TEXTURE_COLS, &braveTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave_move"));
-	brave.setScale(2);
+	brave.setScale(1.5);
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
 	brave.setMapPointer(&map);
@@ -129,7 +129,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
 		if (!enemy[i].initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
 			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
-		enemy[i].setScale(2);
+		enemy[i].setScale(1.5);
 		enemy[i].setMapPointer(&map);
 		enemy[i].setBarricadesPointer(barricades);
 
@@ -142,7 +142,7 @@ void TowerDiffence::initialize(HWND hwnd)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss texture"));
 	if (!midBoss.initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
-	midBoss.setScale(2);
+	midBoss.setScale(1.5);
 	midBoss.setMapPointer(&map);
 	midBoss.setBarricadesPointer(barricades);
 	
