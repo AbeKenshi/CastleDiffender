@@ -74,7 +74,7 @@ void MidBoss::changeAttack(VECTOR2 &collisionVector)
 		}
 	}
 	goalDirection = characterNS::NONE;
-	state = enemyNS::PRE_ATTACK;
+	stateDeteil = enemyNS::PRE_ATTACK;
 	// アニメーション終了時にフレームを戻すために保存
 	oldStartFrame = startFrame;
 	oldEndFrame = endFrame;
@@ -120,7 +120,7 @@ void MidBoss::update(float frameTime)
 	// 攻撃中のフラグをオフ
 	attackCollisionFlag = false;
 	// 状態ごとに処理を分岐
-	switch (state)
+	switch (stateDeteil)
 	{
 	case enemyNS::MOVE_CASTLE:		// 城への移動
 	case enemyNS::MOVE_BARRICADE:	// バリケードへの移動
@@ -218,7 +218,7 @@ void MidBoss::update(float frameTime)
 			isAttacked = true;
 			mode = imageNS::HORIZONTAL;
 			direction = oldDirection;
-			state = enemyNS::MOVE_CASTLE;
+			stateDeteil = enemyNS::MOVE_CASTLE;
 			loop = true;
 			startFrame = oldStartFrame;
 			endFrame = oldEndFrame;
@@ -235,13 +235,13 @@ void MidBoss::update(float frameTime)
 		if (isAttacked && attackTimer > enemyNS::CONTINUE_ATTACK_TIME)
 		{
 			attackTimer = 0.0f;
-			state = attackState;
+			stateDeteil = attackState;
 			attackCollisionFlag = true;
 		}
 		else if (!isAttacked && attackTimer > enemyNS::ATTACK_TIME)
 		{
 			attackTimer = 0.0f;
-			state = attackState;
+			stateDeteil = attackState;
 			attackCollisionFlag = true;
 		}
 		break;
@@ -359,7 +359,7 @@ void MidBoss::update(float frameTime)
 	*/
 
 	// 状態遷移後の処理
-	switch (state)
+	switch (stateDeteil)
 	{
 	case enemyNS::MOVE_CASTLE:
 	case enemyNS::MOVE_BARRICADE:

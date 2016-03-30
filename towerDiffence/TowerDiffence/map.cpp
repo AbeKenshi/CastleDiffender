@@ -70,3 +70,12 @@ void Map::updateMapObj(float x, float y, int val)
 	// 座標値を更新
 	tileObj[px][py] = val;
 }
+
+//==========================================================
+// マップ上のオブジェクトデータ更新　引き数は更新したい座標値と更新する値
+//==========================================================
+void Map::updateMapObjInt(int y, int x, int val)
+{
+	// 座標値を更新
+	tileObj[y][x] = val;
+}

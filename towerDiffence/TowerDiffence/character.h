@@ -8,7 +8,7 @@
 namespace characterNS
 {
 	enum DIRECTION { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3, NONE = 4};	// キャラクターの向き（上下左右）
-	enum STATE { MOVE, ATTACK, SECOND_ATTACK, GAURD };			// 状態
+	enum STATE { MOVE, ATTACK, SECOND_ATTACK, GAURD , PRE_ATTACK };			// 状態
 }
 
 // Characterクラス
@@ -26,7 +26,7 @@ protected:
 	bool isDamaged;						// ダメージを受けている状態ならtrue、それ以外ならfalse
 	bool attackCollisionFlag;			// 攻撃用の衝突判定を出現させるフラグ。攻撃を開始してから一定時間後にtrueとなる。時間を調整することによってアニメーションと同期させるのが目的。
 	Map *map;							// ステージマップへのポインタ
-
+	characterNS::STATE state;			// 状態
 public:
 	// コンストラクタ
 	Character();
@@ -64,6 +64,8 @@ public:
 	//==========================================================
 	// マップへのポインタをセットする関数
 	void setMapPointer(Map *m) { map = m; }
+	// 状態をセットする関数
+	void setState(characterNS::STATE st) { state = st; }
 
 	//==========================================================
 	// getter
@@ -72,6 +74,8 @@ public:
 	bool getAttackCollisionFlag() { return attackCollisionFlag; }
 	// 向いている方向を返す関数
 	characterNS::DIRECTION getDirection() { return direction; }
+	// 状態を返す関数
+	characterNS::STATE getState() { return state; }
 
 };
 

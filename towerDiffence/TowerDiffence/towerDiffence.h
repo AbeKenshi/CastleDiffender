@@ -38,7 +38,7 @@ namespace towerDiffenceNS
 	const int COUNT_DOWN_X = GAME_WIDTH / 2 - FONT_BIG_SIZE / 4;
 	const int COUNT_DOWN_Y = GAME_HEIGHT / 2 - FONT_BIG_SIZE / 2;
 	const int ROUND_TIME = 5;           // 新しいラウンドが開始するまでの時間
-	const int ENEMY_NUM = 10;  // 雑魚敵の数
+	const int ENEMY_NUM = 1;  // 雑魚敵の数
 }
 
 //==========================================================
@@ -85,11 +85,11 @@ private:
 	MpTextImage braveMpText;							// 勇者のＭＰテキスト
 	HpTextImage castleHpText;							// 城のＨＰテキスト
 	Rect *rect;											// Rectへのポインター
-	float mapX;											// 初期X座標
 	bool menuOn;										// メニューフラグ
 	float remainingTime;								// ゲーム内の残り時間
 	bool    roundOver;									// ラウンドが終了した場合、true
 	float   roundTimer;									// 新しいラウンドが開始するまでの時間
+	int a = 0;
 public:
 	// コンストラクタ
 	TowerDiffence();

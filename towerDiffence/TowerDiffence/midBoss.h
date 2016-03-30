@@ -29,6 +29,8 @@ namespace midBossNS
 // MidBossクラス
 class MidBoss : public Enemy
 {
+private:
+	float distanceCounter;
 public:
 	// コンストラクタ
 	MidBoss();

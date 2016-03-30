@@ -51,6 +51,7 @@ protected:
 	bool    active;         // only active entities may collide
 	bool    rotatedBoxReady;    // true when rotated collision box is ready
 	DWORD   pixelsColliding;    // number of pixels colliding in pixel perfect collision
+	int tileX, tileY;						// 自分が存在するタイルの位置
 
 								// --- The following functions are protected because they are not intended to be
 								// --- called from outside the class.
@@ -133,7 +134,13 @@ public:
 
 	// Return number of pixels colliding in pixel perfect collision
 	virtual DWORD getPixelsColliding() const { return pixelsColliding; }
-
+	
+	// 自分が存在するタイルのX位置
+	int getTileX() { return tileX; }
+	
+	// 自分が存在するタイルのY位置
+	int getTileY() { return tileY; }
+	
 	////////////////////////////////////////
 	//           Set functions            //
 	////////////////////////////////////////
@@ -170,6 +177,12 @@ public:
 
 	// Set rotatedBoxReady. Set to false to force recalculation.
 	virtual void setRotatedBoxReady(bool r) { rotatedBoxReady = r; }
+
+	// タイル上での位置をセットする関数
+	void setTileX(int x) { tileX = x; }
+
+	// タイル上での位置をセットする関数
+	void setTileY(int y) { tileY = y; }
 
 	////////////////////////////////////////
 	//         Other functions            //
@@ -216,6 +229,9 @@ public:
 
 	// Adds the gravitational force to the velocity vector of this entity
 	void gravityForce(Entity *other, float frameTime);
+
+	// タイル上での位置を初期化する関数
+	void initTileXY();
 };
 
 #endif

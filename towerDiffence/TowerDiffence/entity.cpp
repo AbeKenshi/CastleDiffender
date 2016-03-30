@@ -593,3 +593,12 @@ void Entity::gravityForce(Entity *ent, float frameTime)
     // Add gravity vector to moving velocity vector to change direction
     velocity += gravityV;
 }
+
+//==========================================================
+// ƒ^ƒCƒ‹ã‚Å‚ÌˆÊ’u‚ğ‰Šú‰»‚·‚éŠÖ”
+//==========================================================
+void Entity::initTileXY()
+{
+	tileX = (int)spriteData.x / 32;
+	tileY = (int)spriteData.y / 32;
+}

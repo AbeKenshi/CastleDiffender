@@ -21,8 +21,6 @@ Brave::Brave() : Character()
 	edge.right = braveNS::WIDTH / 2.0;
 	edge.top = -braveNS::HEIGHT / 26.0;
 	edge.bottom = braveNS::HEIGHT / 2.0;
-	// 状態は何もしない状態からスタート
-	state = characterNS::STATE::MOVE;
 	secondAttackFlag = false;
 	mpTimer = 0.0;
 	magicPoint = 100;							// MPはMAX100でスタート
@@ -40,7 +38,6 @@ void Brave::reset()
 	startFrame = braveNS::MOVE_UP_START_FRAME;
 	endFrame = braveNS::MOVE_UP_END_FRAME;
 	currentFrame = startFrame;
-	state = characterNS::STATE::MOVE;
 	secondAttackFlag = false;
 	mpTimer = 0.0;
 	Character::reset();
