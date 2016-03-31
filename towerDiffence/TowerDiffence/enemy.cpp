@@ -148,6 +148,9 @@ void Enemy::update(float frameTime)
 			attackCollisionFlag = true;
 		}
 		break;
+	case characterNS::WAIT:
+		canMakeDecesionMove = true;
+		break;
 	default:
 		break;
 	}
@@ -164,6 +167,8 @@ void Enemy::update(float frameTime)
 	case characterNS::PRE_ATTACK:
 		Entity::updateWithoutImage(frameTime);
 		break;
+	case characterNS::WAIT:
+		Entity::updateWithoutImage(frameTime);
 	default:
 		Entity::update(frameTime);
 		break;
@@ -331,6 +336,7 @@ VECTOR2 Enemy::searchNearBarricade(Entity &ent)
 	return vec;
 }
 
+//==========================================================
 // 一番近くのバリケードのインデックスを返す関数
 //==========================================================
 int Enemy::searchNearBarricadeIndex()
@@ -582,7 +588,7 @@ bool Enemy::checkCanMove(float x, float y)
 //==========================================================
 bool Enemy::isCenterOfTile()
 {
-	map->updateMapCol(tileY * mapNS::TEXTURE_SIZE, tileX * mapNS::TEXTURE_SIZE, 0);
+	map->resetMapCol(tileY, tileX);
 	switch (goalDirection)
 	{
 	case characterNS::RIGHT:
@@ -615,4 +621,39 @@ bool Enemy::isCenterOfTile()
 		break;
 	}
 	return false;
+}
+
+//==========================================================
+// 指定した方向に進み始められるかどうか
+//==========================================================
+bool Enemy::canMoveTo(characterNS::DIRECTION dir)
+{
+	switch (dir)
+	{
+	case characterNS::LEFT:
+		if (map->getMapCol(tileY, tileX - 1) >= 1)
+		{
+			return false;
+		}
+		break;
+	case characterNS::RIGHT:
+		if (map->getMapCol(tileY, tileX + 1) >= 1)
+		{
+			return false;
+		}
+		break;
+	case characterNS::UP:
+		if (map->getMapCol(tileY - 1, tileX) >= 1)
+		{
+			return false;
+		}
+		break;
+	case characterNS::DOWN:
+		if (map->getMapCol(tileY + 1, tileX) >= 1)
+		{
+			return false;
+		}
+		break;
+	}
+	return true;
 }

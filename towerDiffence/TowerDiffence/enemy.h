@@ -40,7 +40,7 @@ namespace enemyNS
 	const float CONTINUE_ATTACK_TIME = 0.8f;		// 連続で攻撃する場合の溜め時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けている場合、DAMAGE_TIMEごとに画像が点滅
 	const int ATTACK_DAMAGE = 5.0f;
-	enum STATE_DETAIL { MOVE_CASTLE, MOVE_BARRICADE, ATTACK_BRAVE, ATTACK_CASTLE, ATTACK_BARRICADE, PRE_ATTACK, GAURD };	// 雑魚敵の状態
+	enum STATE_DETAIL { MOVE_CASTLE, MOVE_BARRICADE, ATTACK_BRAVE, ATTACK_CASTLE, ATTACK_BARRICADE, PRE_ATTACK, GAURD , WAIT };	// 雑魚敵の状態
 }
 
 // Enemyクラス
@@ -129,5 +129,7 @@ public:
 	virtual void changeAttack(characterNS::DIRECTION dir);
 	// タイルの中央にキャラクターがいるかどうか
 	virtual bool isCenterOfTile();
+	// 指定した方向に進めるかどうか
+	bool canMoveTo(characterNS::DIRECTION dir);
 };
 #endif
