@@ -153,6 +153,9 @@ public:
 			}
 		}
 	}
+	void resetMapCol(int y, int x) {
+		tileCol[y][x] = mapNS::colData[y][x];
+	}
 };
 
 #endif
