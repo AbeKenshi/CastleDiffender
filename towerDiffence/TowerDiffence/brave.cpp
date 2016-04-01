@@ -24,6 +24,23 @@ Brave::Brave() : Character()
 	secondAttackFlag = false;
 	mpTimer = 0.0;
 	magicPoint = 100;							// MPはMAX100でスタート
+	moveUpStartFrame = braveNS::MOVE_UP_START_FRAME;
+	moveUpEndFrame = braveNS::MOVE_UP_END_FRAME;
+	moveRightStartFrame = braveNS::MOVE_RIGHT_START_FRAME;
+	moveRightEndFrame = braveNS::MOVE_RIGHT_END_FRAME;
+	moveDownStartFrame = braveNS::MOVE_DOWN_START_FRAME;
+	moveDownEndFrame = braveNS::MOVE_DOWN_END_FRAME;
+	moveLeftStartFrame = braveNS::MOVE_LEFT_START_FRAME;
+	moveLeftEndFrame = braveNS::MOVE_LEFT_END_FRAME;
+	moveAnimationDelay = braveNS::MOVE_ANIMATION_DELAY;
+	attackUpStartFrame = braveNS::UP_ATTACK_START_FRAME;
+	attackUpEndFrame = braveNS::UP_ATTACK_END_FRAME;
+	attackRightStartFrame = braveNS::RIGHT_ATTACK_START_FRAME;
+	attackRightEndFrame = braveNS::RIGHT_ATTACK_END_FRAME;
+	attackDownStartFrame = braveNS::DOWN_ATTACK_START_FRAME;
+	attackDownEndFrame = braveNS::DOWN_ATTACK_END_FRAME;
+	attackLeftStartFrame = braveNS::LEFT_ATTACK_START_FRAME;
+	attackLeftEndFrame = braveNS::LEFT_ATTACK_END_FRAME;
 }
 
 //==========================================================
@@ -35,8 +52,8 @@ void Brave::reset()
 	spriteData.x = braveNS::X;					// 画面上の位置
 	spriteData.y = braveNS::Y;
 	frameDelay = braveNS::MOVE_ANIMATION_DELAY;
-	startFrame = braveNS::MOVE_UP_START_FRAME;
-	endFrame = braveNS::MOVE_UP_END_FRAME;
+	startFrame = moveUpStartFrame;
+	endFrame = moveUpEndFrame;
 	currentFrame = startFrame;
 	secondAttackFlag = false;
 	mpTimer = 0.0;
@@ -67,8 +84,8 @@ void Brave::update(float frameTime)
 				if (direction != characterNS::DIRECTION::LEFT)
 				{
 					direction = characterNS::DIRECTION::LEFT;
-					startFrame = braveNS::MOVE_LEFT_START_FRAME;
-					endFrame = braveNS::MOVE_LEFT_END_FRAME;
+					startFrame = moveLeftStartFrame;
+					endFrame = moveLeftEndFrame;
 					currentFrame = startFrame;
 					animTimer = 0.0f;
 					setRect();
@@ -86,8 +103,8 @@ void Brave::update(float frameTime)
 				if (direction != characterNS::DIRECTION::RIGHT)
 				{
 					direction = characterNS::DIRECTION::RIGHT;
-					startFrame = braveNS::MOVE_RIGHT_START_FRAME;
-					endFrame = braveNS::MOVE_RIGHT_END_FRAME;
+					startFrame = moveRightStartFrame;
+					endFrame = moveRightEndFrame;
 					currentFrame = startFrame;
 					animTimer = 0.0f;
 					setRect();
@@ -105,8 +122,8 @@ void Brave::update(float frameTime)
 				if (direction != characterNS::DIRECTION::UP)
 				{
 					direction = characterNS::DIRECTION::UP;
-					startFrame = braveNS::MOVE_UP_START_FRAME;
-					endFrame = braveNS::MOVE_UP_END_FRAME;
+					startFrame = moveUpStartFrame;
+					endFrame = moveUpEndFrame;
 					currentFrame = startFrame;
 					animTimer = 0.0f;
 					setRect();
@@ -124,8 +141,8 @@ void Brave::update(float frameTime)
 				if (direction != characterNS::DIRECTION::DOWN)
 				{
 					direction = characterNS::DIRECTION::DOWN;
-					startFrame = braveNS::MOVE_DOWN_START_FRAME;
-					endFrame = braveNS::MOVE_DOWN_END_FRAME;
+					startFrame = moveDownStartFrame;
+					endFrame = moveDownEndFrame;
 					currentFrame = startFrame;
 					animTimer = 0.0f;
 					setRect();
@@ -153,20 +170,20 @@ void Brave::update(float frameTime)
 			switch (direction)
 			{
 			case characterNS::DOWN:
-				startFrame = braveNS::DOWN_ATTACK_START_FRAME;
-				endFrame = braveNS::DOWN_ATTACK_END_FRAME;
+				startFrame = attackDownStartFrame;
+				endFrame = attackDownEndFrame;
 				break;
 			case characterNS::RIGHT:
-				startFrame = braveNS::RIGHT_ATTACK_START_FRAME;
-				endFrame = braveNS::RIGHT_ATTACK_END_FRAME;
+				startFrame = attackRightStartFrame;
+				endFrame = attackRightEndFrame;
 				break;
 			case characterNS::LEFT:
-				startFrame = braveNS::LEFT_ATTACK_START_FRAME;
-				endFrame = braveNS::LEFT_ATTACK_END_FRAME;
+				startFrame = attackLeftStartFrame;
+				endFrame = attackLeftEndFrame;
 				break;
 			case characterNS::UP:
-				startFrame = braveNS::UP_ATTACK_START_FRAME;
-				endFrame = braveNS::UP_ATTACK_END_FRAME;
+				startFrame = attackUpStartFrame;
+				endFrame = attackUpEndFrame;
 				break;
 			}
 			currentFrame = startFrame;

@@ -11,8 +11,6 @@ namespace enemyCollisionNS
 {
 	const int ATTACK_WIDTH = 32;				// 画像の幅（各フレーム）
 	const int ATTACK_HEIGHT = 1;				// 画像の高さ
-	const int WALK_WIDTH = 2;
-	const int WALK_HEIGHT = 24;
 	const float COLLISION_TIME = 0.3f;	// 攻撃の当たり判定が出ている時間
 }
 
@@ -29,7 +27,6 @@ public:
 
 	// 新しいメンバー関数
 	void attack(Enemy *enemy);	// 雑魚敵からの攻撃
-	void walk(Enemy *enemy);
 };
 
 #endif // !_ATTACK_COLLISION_H
