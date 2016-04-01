@@ -230,6 +230,8 @@ void TowerDiffence::update()
 			enemy[i].update(frameTime);
 			enemyAttackCollision[i].update(frameTime);
 		}
+		if (midBoss.getAttackCollisionFlag())
+			midBossAttackCollision.attack(&midBoss);
 		midBoss.update(frameTime);
 		midBossAttackCollision.update(frameTime);
 		// 勇者を更新
@@ -249,6 +251,8 @@ void TowerDiffence::update()
 		{
 			barricades[i].update(frameTime);
 		}
+		// 敵の数をチェックして、マップ上に存在しなければ新たに生成
+		checkCurrentEnemyNum();
 		// 残り時間が0ならゲームオーバー
 		remainingTime -= frameTime;
 		if (remainingTime < 0)
@@ -328,6 +332,58 @@ void TowerDiffence::roundStart()
 	remainingTime = 1500.0f;
 	// ゲームオーバーのフラグを初期化
 	roundOver = false;
+}
+
+//==========================================================
+// 敵の数をチェックし、マップ上に敵がいなければ新たに生成
+//==========================================================
+void TowerDiffence::checkCurrentEnemyNum()
+{
+	// 雑魚敵が存在したら
+	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
+	{
+		if (enemy[i].getActive())
+			return;
+	}
+
+	// 中ボスが存在したら
+	if (midBoss.getActive())
+		return;
+
+	// 敵が存在していないため全て初期化
+	// 雑魚敵の初期化
+	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
+	{
+		enemy[i].reset();
+		// 位置はランダム
+		if (i % 4 == 0) // 左上
+		{
+			enemy[i].setX(rand() % 200);
+			enemy[i].setY(rand() % 200);
+		}
+		else if (i % 4 == 1) // 右上
+		{
+			enemy[i].setX(GAME_WIDTH - (rand() % 200));
+			enemy[i].setY(rand()% 200);
+		}
+		else if (i % 4 == 2) // 左下
+		{
+			enemy[i].setX(rand() % 200);
+			enemy[i].setY(GAME_HEIGHT - (rand() % 200));
+		}
+		else if (i % 4 == 3) // 右下
+		{
+			enemy[i].setX(GAME_WIDTH - (rand() % 200));
+			enemy[i].setY(GAME_HEIGHT - (rand() % 200));
+		}
+		enemy[i].setActive(true);
+	}
+
+	// 中ボスの初期化
+	midBoss.setX(GAME_WIDTH / 2 - 600);
+	midBoss.setY(GAME_HEIGHT / 2 - 80);
+	midBoss.reset();
+	midBoss.setActive(true);
 }
 
 //==========================================================
