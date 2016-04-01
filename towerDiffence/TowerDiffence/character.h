@@ -27,6 +27,23 @@ protected:
 	bool attackCollisionFlag;			// 攻撃用の衝突判定を出現させるフラグ。攻撃を開始してから一定時間後にtrueとなる。時間を調整することによってアニメーションと同期させるのが目的。
 	Map *map;							// ステージマップへのポインタ
 	characterNS::STATE state;			// 状態
+	int moveUpStartFrame;
+	int moveUpEndFrame;
+	int moveRightStartFrame;
+	int moveRightEndFrame;
+	int moveDownStartFrame;
+	int moveDownEndFrame;
+	int moveLeftStartFrame;
+	int moveLeftEndFrame;
+	int moveAnimationDelay; 
+	int attackUpStartFrame;
+	int attackUpEndFrame;
+	int attackRightStartFrame;
+	int attackRightEndFrame;
+	int attackDownStartFrame;
+	int attackDownEndFrame;
+	int attackLeftStartFrame;
+	int attackLeftEndFrame;
 public:
 	// コンストラクタ
 	Character();

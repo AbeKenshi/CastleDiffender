@@ -61,7 +61,7 @@ private:
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
 	BraveAttackCollision braveAttackCollision;			// 勇者の攻撃の当たり判定用
 	EnemyCollision enemyAttackCollision[towerDiffenceNS::ENEMY_NUM]; // 雑魚敵の攻撃の当たり判定用
-	EnemyCollision midBossAttackCollision;		// 中ボスの攻撃の当たり判定用
+	EnemyCollision midBossAttackCollision;				// 中ボスの攻撃の当たり判定用
 	TextureManager tileTexture;							// タイルのテクスチャ
 	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ

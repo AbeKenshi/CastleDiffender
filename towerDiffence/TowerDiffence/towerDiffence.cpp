@@ -93,7 +93,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 勇者
 	if (!brave.initialize(this, braveNS::WIDTH, braveNS::HEIGHT, braveNS::TEXTURE_COLS, &braveTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave_move"));
-	brave.setScale(1.5);
+	brave.setScale(1.0);
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
 	brave.setMapPointer(&map);
@@ -142,10 +142,13 @@ void TowerDiffence::initialize(HWND hwnd)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss texture"));
 	if (!midBoss.initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
-	midBoss.setScale(1.5);
+	midBoss.setScale(1.0);
 	midBoss.setMapPointer(&map);
 	midBoss.setBarricadesPointer(barricades);
-	
+	// 雑魚敵の当たり判定用
+	if (!midBossAttackCollision.initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
+
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing dashboard textures"));
@@ -185,7 +188,7 @@ void TowerDiffence::initialize(HWND hwnd)
 //==========================================================
 void TowerDiffence::update()
 {
-	if (menuOn)
+	if (menuOn)		// メニュー画面表示中にいずれかのキーが押されるまではメニュー画面を表示し続ける
 	{
 		if (input->anyKeyPressed())
 		{
@@ -196,7 +199,7 @@ void TowerDiffence::update()
 			roundStart();
 		}
 	}
-	else if (roundOver)
+	else if (roundOver)	// ゲームオーバー中にZが押されたらメニュー画面に戻る、Xが押されたらプログラム終了
 	{
 		if (input->isKeyDown('Z'))
 		{
@@ -211,12 +214,15 @@ void TowerDiffence::update()
 			exit(1);
 		}
 	}
-	else
+	else				// ゲーム中の場合、
 	{
+		// FIRE_KEYに対応するキーが押されたら勇者から炎を発射
 		if (input->isKeyDown(BRAVE_FIRE_KEY))
 			fire.fire(&brave);
+		// 勇者の攻撃判定がでている場合はコリジョンを生成して当たり判定をとる
 		if (brave.getAttackCollisionFlag())
 			braveAttackCollision.attack(&brave);
+		// それぞれの敵を更新
 		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
 			if (enemy[i].getAttackCollisionFlag()) {
 				enemyAttackCollision[i].attack(&enemy[i]);
@@ -224,17 +230,21 @@ void TowerDiffence::update()
 			enemy[i].update(frameTime);
 			enemyAttackCollision[i].update(frameTime);
 		}
-		if (midBoss.getAttackCollisionFlag())
-			midBossAttackCollision.attack(&midBoss);
-		if (midBoss.getState() == characterNS::MOVE)
-			midBossAttackCollision.walk(&midBoss);
-		brave.update(frameTime);
-		//midBoss.update(frameTime);
-		fire.update(frameTime);
-		braveAttackCollision.update(frameTime);
+		midBoss.update(frameTime);
 		midBossAttackCollision.update(frameTime);
+		// 勇者を更新
+		brave.update(frameTime);
+		// 炎を更新
+		fire.update(frameTime);
+		// 勇者の攻撃コリジョンを更新
+		braveAttackCollision.update(frameTime);
+		// 敵の攻撃コリジョンを更新
+		midBossAttackCollision.update(frameTime);
+		// 城を更新
 		castle.update(frameTime);
+		// 勇者のアイコン画像を更新
 		braveIcon.update(frameTime);
+		// それぞれのバリケードを更新
 		for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 		{
 			barricades[i].update(frameTime);
@@ -265,7 +275,7 @@ void TowerDiffence::update()
 void TowerDiffence::roundStart()
 {
 	// 初期化
-	// マップとバリケードは初めだけ描画
+	// マップとバリケードを初期化
 	int count = 0;  // バリケードの数数える用
 	for (int row = 0; row<mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
 	{
@@ -290,7 +300,9 @@ void TowerDiffence::roundStart()
 			}
 		}
 	}
+	// 勇者を初期化
 	brave.reset();
+	// 各敵を初期化
 	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
 	{
 		enemy[i].reset();
@@ -298,24 +310,23 @@ void TowerDiffence::roundStart()
 		enemy[i].setY(enemyNS::Y[i]);
 		enemy[i].initTileXY();
 	}
+	// 中ボスを初期化
 	midBoss.reset();
 	midBoss.setX(GAME_WIDTH / 2 - 500);
 	midBoss.setY(GAME_HEIGHT / 2 - 80);
 	midBoss.initTileXY();
+	// 城を初期化
 	castle.reset();
+	// 炎を初期化
 	fire.reset();
-
+	// 各バリケードを初期化
 	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
 		barricades[i].reset();
 	}
-
-	// HP,MP初期化
-	brave.setHealth(100);
-	brave.setMP(100);
-
+	// 残り時間を初期化
 	remainingTime = 1500.0f;
-
+	// ゲームオーバーのフラグを初期化
 	roundOver = false;
 }
 
@@ -324,8 +335,10 @@ void TowerDiffence::roundStart()
 //==========================================================
 void TowerDiffence::ai()
 {
+	// 各敵を更新
 	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
 		enemy[i].ai(frameTime, brave);
+	// 中ボスを更新
 	midBoss.ai(frameTime, brave);
 }
 
@@ -334,47 +347,52 @@ void TowerDiffence::ai()
 //==========================================================
 void TowerDiffence::collisions()
 {
-	VECTOR2 collisionVector;
+	VECTOR2 collisionVector;	// 衝突判定したときの衝突相手へのベクトル
+	bool braveAttackCollidesWithAnyEnemy = false;
+	// 各敵について衝突判定
 	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
-		// プレイヤーと雑魚敵の衝突の場合
-		if (enemy[i].collidesWith(brave, collisionVector))
-			enemy[i].setNearPlayer(true);
-		else
-			enemy[i].setNearPlayer(false);
 
 		// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
 		if (braveAttackCollision.collidesWith(enemy[i], collisionVector))
 		{
+			// 敵にダメージを与える
 			enemy[i].damage(BRAVE_ATTACK);
-			braveAttackCollision.setVisible(false);
-			braveAttackCollision.setActive(false);
+			// いずれかの敵に攻撃があたったのでループを抜けた後に攻撃コリジョンをなくす
+			braveAttackCollidesWithAnyEnemy = true;
 		}
 
-		// 敵が攻撃時は、城とプレイヤーとバリケードとの当たり判定をチェック
+		// 敵が攻撃時は、城とプレイヤーとバリケードとの当たり判定をそれぞれチェック
 		if (enemy[i].getState() == characterNS::ATTACK)
 		{
 			// 敵の攻撃コリジョンとプレイヤーの衝突の場合
 			if (enemyAttackCollision[i].collidesWith(brave, collisionVector))
 			{
+				// プレイヤーにダメージを与える
 				brave.damage(ENEMY_ATTACK);
+				// 敵の攻撃コリジョンをなくす
 				enemyAttackCollision[i].setVisible(false);
 				enemyAttackCollision[i].setActive(false);
 			}
 			// 敵の攻撃コリジョンと城の衝突の場合
 			if (enemyAttackCollision[i].collidesWith(castle, collisionVector))
 			{
+				// 城にダメージを与える
 				castle.damage(ENEMY_ATTACK);
+				// 敵の攻撃コリジョンをなくす
 				enemyAttackCollision[i].setVisible(false);
 				enemyAttackCollision[i].setActive(false);
 			}
 			// 敵の攻撃コリジョンとバリケードの衝突の場合
 			if (enemyAttackCollision[i].collidesWith(barricades[enemy[i].getNearBarricadeIndex()], collisionVector)) {
+				// バリケードにダメージを与える（barricades[enemy[i].getNearBarricadeIndex()]が攻撃対象になるはず）
 				barricades[enemy[i].getNearBarricadeIndex()].damage();
-				//enemyAttackCollision[i].setVisible(false);
+				// 敵の攻撃コリジョンをなくす
+				enemyAttackCollision[i].setVisible(false);
 				enemyAttackCollision[i].setActive(false);
+				// 攻撃されたバリケードが破壊された場合、
 				if (!barricades[enemy[i].getNearBarricadeIndex()].getActive())
 				{
-					//map.updateMapObjInt(10, 15, -1);
+					// マップデータを更新
 					map.updateMapObjInt(barricades[enemy[i].getNearBarricadeIndex()].getTileY(), barricades[enemy[i].getNearBarricadeIndex()].getTileX(), 1);
 					if (map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 + 1) != 0 && map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 + 1) != 1)
 					{
@@ -395,21 +413,6 @@ void TowerDiffence::collisions()
 				}
 			}
 		}
-		/*
-		// 敵が移動時には、他の敵との当たり判定をチェック
-		enemy[i].setCanMove(true);
-		if (enemy[i].getState() == characterNS::MOVE)
-		{
-			// 当たり判定を進行方向に対して出現
-			enemyAttackCollision[i].walk(&enemy[i]);
-			// 進もうとしている方向に他の敵がいたら移動はできない
-			if (enemyAttackCollision[i].collidesWith(midBoss, collisionVector))
-			{
-				enemy[i].setCanMove(false);
-			}
-			//enemyAttackCollision.setVisible(false);
-			enemyAttackCollision[i].setActive(false);
-		}*/
 
 		// 炎と雑魚敵の衝突の場合
 		if (fire.collidesWith(enemy[i], collisionVector))
@@ -423,32 +426,21 @@ void TowerDiffence::collisions()
 		if (enemy[i].getState() == characterNS::ATTACK)
 		{
 		}
-		else if (map.getMapObj(enemy[i].getTileY(), enemy[i].getTileX()) == -2)	// 最近接のバリケードに衝突していたら攻撃、それ以外ならバリケードに向かう。
+		else if (enemy[i].collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーが衝突している場合、
 		{
-			if (enemy[i].getTileX() < (int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32)
-				enemy[i].changeAttack(characterNS::RIGHT);
-			else if (enemy[i].getTileX() > (int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32)
-				enemy[i].changeAttack(characterNS::LEFT);
-			else if (enemy[i].getTileY() < (int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32)
-				enemy[i].changeAttack(characterNS::DOWN);
-			else if (enemy[i].getTileY() > (int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32)
-				enemy[i].changeAttack(characterNS::UP);
-			else
-				throw(GameError(gameErrorNS::FATAL_ERROR, "Error enemy and barricades"));
-			enemy[i].setAttackState(enemyNS::ATTACK_BARRICADE);
-		}
-		else if (enemy[i].collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーの衝突判定
-		{
-			enemy[i].changeAttack(collisionVector);
+			// 敵の状態を勇者攻撃状態に変更
 			enemy[i].setAttackState(enemyNS::ATTACK_BRAVE);
+			// 勇者がいる方向に応じて攻撃する方向を変更
+			enemy[i].changeAttack(collisionVector);
 		}
-		else if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX()) == -1)	// 雑魚敵と城の衝突判定
+		else if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX()) == -1)	// 雑魚敵と城が衝突していたら攻撃、
 		{
+			// 城がある方向に応じて攻撃する方向を変更
 			if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() + 1) == 2)
 			{
 				enemy[i].changeAttack(characterNS::RIGHT);
-			} 
-			else if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX()- 1) == 2)
+			}
+			else if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() - 1) == 2)
 			{
 				enemy[i].changeAttack(characterNS::LEFT);
 			}
@@ -460,131 +452,131 @@ void TowerDiffence::collisions()
 			{
 				enemy[i].changeAttack(characterNS::UP);
 			}
+			// 敵の状態を城攻撃状態に変更
 			enemy[i].setAttackState(enemyNS::ATTACK_CASTLE);
 		}
-		else if (enemy[i].canMakeDecesionMoving())
+		else if (map.getMapObj(enemy[i].getTileY(), enemy[i].getTileX()) == -2)	// 最近接のバリケードに衝突していたら攻撃
 		{
+			// バリケードがある方向に応じて攻撃する方向を変更
+			if (enemy[i].getTileX() < (int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32)
+				enemy[i].changeAttack(characterNS::RIGHT);
+			else if (enemy[i].getTileX() > (int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32)
+				enemy[i].changeAttack(characterNS::LEFT);
+			else if (enemy[i].getTileY() < (int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32)
+				enemy[i].changeAttack(characterNS::DOWN);
+			else if (enemy[i].getTileY() > (int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32)
+				enemy[i].changeAttack(characterNS::UP);
+			else
+				throw(GameError(gameErrorNS::FATAL_ERROR, "Error enemy and barricades"));
+			// 敵の状態をバリケード攻撃状態に変更
+			enemy[i].setAttackState(enemyNS::ATTACK_BARRICADE);
+		}
+		else if (enemy[i].canMakeDecesionMoving())	// 敵が方向転換可能な状態にあるとき、意思決定を行い進む方向を決める
+		{
+			bool changeGoalDirectionFlag = false;	// 進みたい方向を変える必要があるかどうか
 			// 最近接のバリケードを探索
 			enemy[i].searchNearBarricadeIndex();
-			if (!enemy[i].checkBarricadeOnLine())	// 城までの直線上にバリケードがあるかをチェック
+			if (!enemy[i].checkBarricadeOnLine())	// 城までの直線上にバリケードがない場合、城へと進行する
 			{
+				// 敵の状態を城移動中へと変更
 				enemy[i].setStateDetail(enemyNS::MOVE_CASTLE);
 				enemy[i].setState(characterNS::MOVE);
+				// 進みたい方向に進めない場合、方向を進みたい方向をランダムに変換
 				switch (enemy[i].getGoalDirection())
 				{
 				case characterNS::LEFT:
 					if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() - 1) >= 1)
 					{
-						enemy[i].setGoalDirection(characterNS::RIGHT);
+						changeGoalDirectionFlag = true;
 					}
 					break;
 				case characterNS::RIGHT:
 					if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() + 1) >= 1)
 					{
-						enemy[i].setGoalDirection(characterNS::LEFT);
+						changeGoalDirectionFlag = true;
 					}
 					break;
 				case characterNS::UP:
 					if (map.getMapCol(enemy[i].getTileY() - 1, enemy[i].getTileX()) >= 1)
 					{
-						enemy[i].setGoalDirection(characterNS::DOWN);
+						changeGoalDirectionFlag = true;
 					}
 					break;
 				case characterNS::DOWN:
 					if (map.getMapCol(enemy[i].getTileY() + 1, enemy[i].getTileX()) >= 1)
 					{
-						enemy[i].setGoalDirection(characterNS::UP);
+						changeGoalDirectionFlag = true;
 					}
 					break;
 				}
 			}
-			else
+			else // 城までの直線状にバリケードが存在する場合、
 			{
+				// 敵の状態をバリケードに進行中へと変更
 				enemy[i].setStateDetail(enemyNS::MOVE_BARRICADE);
 				enemy[i].setState(characterNS::MOVE);
-				bool flag = false;
-				if (rand() % 2 == 0)
+				// 確率50%でx方向に進むかどうかを先に決定し、そのあとにy方向に進むかどうかを決定
+				bool canMoveXDirection = false;
+				bool canMoveYDirection = false;
+				characterNS::DIRECTION xDirection;
+				characterNS::DIRECTION yDirection;
+				if ((int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 < enemy[i].getTileX())
 				{
-					if ((int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 < enemy[i].getTileX())
+					if (!map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() - 1) >= 1)
 					{
-						if (!map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() - 1) >= 1)
-						{
-							enemy[i].setGoalDirection(characterNS::LEFT);
-							flag = true;
-						}
-					}
-					else if ((int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 > enemy[i].getTileX())
-					{
-						if (!map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() + 1) >= 1)
-						{
-							enemy[i].setGoalDirection(characterNS::RIGHT);
-							flag = true;
-						}
+						xDirection = characterNS::LEFT;
+						enemy[i].setGoalDirection(characterNS::LEFT);
+						canMoveXDirection = true;
 					}
 					else
-					{
-						if ((int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 < enemy[i].getTileY())
-						{
-							if (!map.getMapCol(enemy[i].getTileY() - 1, enemy[i].getTileX()) >= 1)
-							{
-								enemy[i].setGoalDirection(characterNS::UP);
-								flag = true;
-							}
-						}
-						else if ((int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 > enemy[i].getTileY())
-						{
-							if (!map.getMapCol(enemy[i].getTileY() + 1, enemy[i].getTileX()) >= 1)
-							{
-								enemy[i].setGoalDirection(characterNS::DOWN);
-								flag = true;
-							}
-						}
-						else
-							throw(GameError(gameErrorNS::FATAL_ERROR, "Error change enemy goalDirection"));
-					}
+						changeGoalDirectionFlag = true;
 				}
-				else
+				else if ((int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 > enemy[i].getTileX())
 				{
-
-					if ((int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 < enemy[i].getTileY())
+					if (!map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() + 1) >= 1)
 					{
-						if (!map.getMapCol(enemy[i].getTileY() - 1, enemy[i].getTileX()) >= 1)
-						{
-							enemy[i].setGoalDirection(characterNS::UP);
-							flag = true;
-						}
-					}
-					else if ((int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 > enemy[i].getTileY())
-					{
-						if (!map.getMapCol(enemy[i].getTileY() + 1, enemy[i].getTileX()) >= 1)
-						{
-							enemy[i].setGoalDirection(characterNS::DOWN);
-							flag = true;
-						}
+						xDirection = characterNS::RIGHT;
+						enemy[i].setGoalDirection(characterNS::RIGHT);
+						canMoveXDirection = true;
 					}
 					else
-					{
-						if ((int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 < enemy[i].getTileX())
-						{
-							if (!map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() - 1) >= 1)
-							{
-								enemy[i].setGoalDirection(characterNS::LEFT);
-								flag = true;
-							}
-						}
-						else if ((int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 > enemy[i].getTileX())
-						{
-							if (!map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() + 1) >= 1)
-							{
-								enemy[i].setGoalDirection(characterNS::RIGHT);
-								flag = true;
-							}
-						}
-					}
+						changeGoalDirectionFlag = true;
 				}
-				if (!flag)
+				if ((int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 < enemy[i].getTileY())
 				{
+					if (!map.getMapCol(enemy[i].getTileY() - 1, enemy[i].getTileX()) >= 1)
+					{
+						yDirection = characterNS::UP;
+						enemy[i].setGoalDirection(characterNS::UP);
+						canMoveYDirection = true;
+					}
+					else
+						changeGoalDirectionFlag = true;
+				}
+				else if ((int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 > enemy[i].getTileY())
+				{
+					if (!map.getMapCol(enemy[i].getTileY() + 1, enemy[i].getTileX()) >= 1)
+					{
+						yDirection = characterNS::DOWN;
+						enemy[i].setGoalDirection(characterNS::DOWN);
+						canMoveYDirection = true;
+					}
+					else
+						changeGoalDirectionFlag = true;
+				}
+				if (canMoveXDirection && canMoveYDirection)
+				{
+					if (rand() % 2 == 0)
+						enemy[i].setGoalDirection(xDirection);
+					else
+						enemy[i].setGoalDirection(yDirection);
+				}
+				// 進みたい方向に進めない場合、ランダムに方向を決めなおす
+				if (changeGoalDirectionFlag)
+				{
+					// ランダムに進みたい方向を修正
 					characterNS::DIRECTION newDirection = (characterNS::DIRECTION) (rand() % 4);
+					// それでも進めない場合、敵を待機状態にして静止させる
 					if (enemy[i].canMoveTo(newDirection))
 					{
 						enemy[i].setGoalDirection(newDirection);
@@ -598,52 +590,72 @@ void TowerDiffence::collisions()
 			}
 		}
 	}
-
-	// プレイヤーと中ボスの衝突の場合
-	if (midBoss.collidesWith(brave, collisionVector))
-	{
-		midBoss.setNearPlayer(true);
-	}
-	else
-		midBoss.setNearPlayer(false);
-
-	// プレイヤーの攻撃コリジョンと中ボスの衝突の場合
+	// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
 	if (braveAttackCollision.collidesWith(midBoss, collisionVector))
 	{
+		// 敵にダメージを与える
 		midBoss.damage(BRAVE_ATTACK);
-		braveAttackCollision.setVisible(false);
-		braveAttackCollision.setActive(false);
+		// いずれかの敵に攻撃があたったのでループを抜けた後に攻撃コリジョンをなくす
+		braveAttackCollidesWithAnyEnemy = true;
 	}
 
+	// 敵が攻撃時は、城とプレイヤーとバリケードとの当たり判定をそれぞれチェック
 	if (midBoss.getState() == characterNS::ATTACK)
 	{
-		// 中ボスの攻撃コリジョンとプレイヤーの衝突の場合
+		// 敵の攻撃コリジョンとプレイヤーの衝突の場合
 		if (midBossAttackCollision.collidesWith(brave, collisionVector))
 		{
+			// プレイヤーにダメージを与える
 			brave.damage(ENEMY_ATTACK);
+			// 敵の攻撃コリジョンをなくす
 			midBossAttackCollision.setVisible(false);
 			midBossAttackCollision.setActive(false);
 		}
-		// 中ボスの攻撃コリジョンと城の衝突の場合
+		// 敵の攻撃コリジョンと城の衝突の場合
 		if (midBossAttackCollision.collidesWith(castle, collisionVector))
 		{
+			// 城にダメージを与える
 			castle.damage(ENEMY_ATTACK);
+			// 敵の攻撃コリジョンをなくす
 			midBossAttackCollision.setVisible(false);
 			midBossAttackCollision.setActive(false);
 		}
-	}
-	midBoss.setCanMove(true);
-	if (midBoss.getState() == characterNS::MOVE)
-	{
-		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
-			if (midBossAttackCollision.collidesWith(enemy[i], collisionVector))
+		// 敵の攻撃コリジョンとバリケードの衝突の場合
+		if (midBossAttackCollision.collidesWith(barricades[midBoss.getNearBarricadeIndex()], collisionVector)) {
+			// バリケードにダメージを与える（barricades[enemy[i].getNearBarricadeIndex()]が攻撃対象になるはず）
+			barricades[midBoss.getNearBarricadeIndex()].damage();
+			// 敵の攻撃コリジョンをなくす
+			midBossAttackCollision.setVisible(false);
+			midBossAttackCollision.setActive(false);
+			// 攻撃されたバリケードが破壊された場合、
+			if (!barricades[midBoss.getNearBarricadeIndex()].getActive())
 			{
-				midBoss.setCanMove(false);
-				midBossAttackCollision.setVisible(false);
-				midBossAttackCollision.setActive(false);
+				// マップデータを更新
+				map.updateMapObjInt(barricades[midBoss.getNearBarricadeIndex()].getTileY(), barricades[midBoss.getNearBarricadeIndex()].getTileX(), 1);
+				if (map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32, barricades[midBoss.getNearBarricadeIndex()].getX() / 32 + 1) != 0 
+					&& map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32, barricades[midBoss.getNearBarricadeIndex()].getX() / 32 + 1) != 1)
+				{
+					map.updateMapObj(barricades[midBoss.getNearBarricadeIndex()].getY(), barricades[midBoss.getNearBarricadeIndex()].getX() + 32, -1);
+				}
+				if (map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32, barricades[midBoss.getNearBarricadeIndex()].getX() / 32 - 1) != 0 
+					&& map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32, barricades[midBoss.getNearBarricadeIndex()].getX() / 32 - 1) != 1)
+				{
+					map.updateMapObj(barricades[midBoss.getNearBarricadeIndex()].getY(), barricades[midBoss.getNearBarricadeIndex()].getX() - 32, -1);
+				}
+				if (map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32 + 1, barricades[midBoss.getNearBarricadeIndex()].getX() / 32) != 0 
+					&& map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32 + 1, barricades[midBoss.getNearBarricadeIndex()].getX() / 32) != 1)
+				{
+					map.updateMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() + 32, barricades[midBoss.getNearBarricadeIndex()].getX(), -1);
+				}
+				if (map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32 - 1, barricades[midBoss.getNearBarricadeIndex()].getX() / 32) != 0 
+					&& map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32 - 1, barricades[midBoss.getNearBarricadeIndex()].getX() / 32) != 0)
+				{
+					map.updateMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() - 32, barricades[midBoss.getNearBarricadeIndex()].getX(), -1);
+				}
 			}
 		}
 	}
+
 	// 炎と雑魚敵の衝突の場合
 	if (fire.collidesWith(midBoss, collisionVector))
 	{
@@ -656,55 +668,176 @@ void TowerDiffence::collisions()
 	if (midBoss.getState() == characterNS::ATTACK)
 	{
 	}
-	else if (midBoss.collidesWith(brave, collisionVector))// 中ボスとプレイヤーの衝突判定
+	else if (midBoss.collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーが衝突している場合、
 	{
-		midBoss.changeAttack(collisionVector);
+		// 敵の状態を勇者攻撃状態に変更
 		midBoss.setAttackState(enemyNS::ATTACK_BRAVE);
-	}
-	else if (midBoss.collidesWith(castle, collisionVector))	// 中ボスと城の衝突判定
-	{
+		// 勇者がいる方向に応じて攻撃する方向を変更
 		midBoss.changeAttack(collisionVector);
+	}
+	else if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX()) == -1)	// 雑魚敵と城が衝突していたら攻撃、
+	{
+		// 城がある方向に応じて攻撃する方向を変更
+		if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX() + 1) == 2)
+		{
+			midBoss.changeAttack(characterNS::RIGHT);
+		}
+		else if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX() - 1) == 2)
+		{
+			midBoss.changeAttack(characterNS::LEFT);
+		}
+		else if (map.getMapCol(midBoss.getTileY() + 1, midBoss.getTileX()) == 2)
+		{
+			midBoss.changeAttack(characterNS::DOWN);
+		}
+		else if (map.getMapCol(midBoss.getTileY() - 1, midBoss.getTileX()) == 2)
+		{
+			midBoss.changeAttack(characterNS::UP);
+		}
+		// 敵の状態を城攻撃状態に変更
 		midBoss.setAttackState(enemyNS::ATTACK_CASTLE);
 	}
-	else if (!midBoss.checkBarricadeOnLine())	// 城までの直線上にバリケードがあるかをチェック
+	else if (map.getMapObj(midBoss.getTileY(), midBoss.getTileX()) == -2)	// 最近接のバリケードに衝突していたら攻撃
 	{
-		midBoss.setStateDetail(enemyNS::MOVE_CASTLE);
-		midBoss.setState(characterNS::MOVE);
-		VECTOR2 pos;
-		pos.x = castle.getCenterX();
-		pos.y = castle.getCenterY();
-		midBoss.setGoalPost(pos);
-	}
-	else
-	{
-		// 最近接のバリケードを探索
-		int nearBarricadeIndex = midBoss.searchNearBarricadeIndex();
-		// 最近接のバリケードに衝突していたら攻撃、それ以外ならバリケードに向かう。
-		if (midBoss.collidesWith(barricades[nearBarricadeIndex], collisionVector))
-		{
-			midBoss.changeAttack(collisionVector);
-			midBoss.setAttackState(enemyNS::ATTACK_BARRICADE);
-		}
+		// バリケードがある方向に応じて攻撃する方向を変更
+		if (midBoss.getTileX() < (int)barricades[midBoss.getNearBarricadeIndex()].getX() / 32)
+			midBoss.changeAttack(characterNS::RIGHT);
+		else if (midBoss.getTileX() > (int)barricades[midBoss.getNearBarricadeIndex()].getX() / 32)
+			midBoss.changeAttack(characterNS::LEFT);
+		else if (midBoss.getTileY() < (int)barricades[midBoss.getNearBarricadeIndex()].getY() / 32)
+			midBoss.changeAttack(characterNS::DOWN);
+		else if (midBoss.getTileY() > (int)barricades[midBoss.getNearBarricadeIndex()].getY() / 32)
+			midBoss.changeAttack(characterNS::UP);
 		else
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error enemy and barricades"));
+		// 敵の状態をバリケード攻撃状態に変更
+		midBoss.setAttackState(enemyNS::ATTACK_BARRICADE);
+	}
+	else if (midBoss.canMakeDecesionMoving())	// 敵が方向転換可能な状態にあるとき、意思決定を行い進む方向を決める
+	{
+		bool changeGoalDirectionFlag = false;	// 進みたい方向を変える必要があるかどうか
+												// 最近接のバリケードを探索
+		midBoss.searchNearBarricadeIndex();
+		if (!midBoss.checkBarricadeOnLine())	// 城までの直線上にバリケードがない場合、城へと進行する
 		{
+			// 敵の状態を城移動中へと変更
+			midBoss.setStateDetail(enemyNS::MOVE_CASTLE);
+			midBoss.setState(characterNS::MOVE);
+			// 進みたい方向に進めない場合、方向を進みたい方向をランダムに変換
+			switch (midBoss.getGoalDirection())
+			{
+			case characterNS::LEFT:
+				if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX() - 1) >= 1)
+				{
+					changeGoalDirectionFlag = true;
+				}
+				break;
+			case characterNS::RIGHT:
+				if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX() + 1) >= 1)
+				{
+					changeGoalDirectionFlag = true;
+				}
+				break;
+			case characterNS::UP:
+				if (map.getMapCol(midBoss.getTileY() - 1, midBoss.getTileX()) >= 1)
+				{
+					changeGoalDirectionFlag = true;
+				}
+				break;
+			case characterNS::DOWN:
+				if (map.getMapCol(midBoss.getTileY() + 1, midBoss.getTileX()) >= 1)
+				{
+					changeGoalDirectionFlag = true;
+				}
+				break;
+			}
+		}
+		else // 城までの直線状にバリケードが存在する場合、
+		{
+			// 敵の状態をバリケードに進行中へと変更
 			midBoss.setStateDetail(enemyNS::MOVE_BARRICADE);
 			midBoss.setState(characterNS::MOVE);
-			VECTOR2 pos;
-			pos.x = barricades[nearBarricadeIndex].getX();
-			pos.y = barricades[nearBarricadeIndex].getY();
-			midBoss.setGoalPost(pos);
+			// 確率50%でx方向に進むかどうかを先に決定し、そのあとにy方向に進むかどうかを決定
+			bool canMoveXDirection = false;
+			bool canMoveYDirection = false;
+			characterNS::DIRECTION xDirection;
+			characterNS::DIRECTION yDirection;
+			if ((int)barricades[midBoss.getNearBarricadeIndex()].getX() / 32 < midBoss.getTileX())
+			{
+				if (!map.getMapCol(midBoss.getTileY(), midBoss.getTileX() - 1) >= 1)
+				{
+					xDirection = characterNS::LEFT;
+					midBoss.setGoalDirection(characterNS::LEFT);
+					canMoveXDirection = true;
+				}
+				else
+					changeGoalDirectionFlag = true;
+			}
+			else if ((int)barricades[midBoss.getNearBarricadeIndex()].getX() / 32 > midBoss.getTileX())
+			{
+				if (!map.getMapCol(midBoss.getTileY(), midBoss.getTileX() + 1) >= 1)
+				{
+					xDirection = characterNS::RIGHT;
+					midBoss.setGoalDirection(characterNS::RIGHT);
+					canMoveXDirection = true;
+				}
+				else
+					changeGoalDirectionFlag = true;
+			}
+			if ((int)barricades[midBoss.getNearBarricadeIndex()].getY() / 32 < midBoss.getTileY())
+			{
+				if (!map.getMapCol(midBoss.getTileY() - 1, midBoss.getTileX()) >= 1)
+				{
+					yDirection = characterNS::UP;
+					midBoss.setGoalDirection(characterNS::UP);
+					canMoveYDirection = true;
+				}
+				else
+					changeGoalDirectionFlag = true;
+			}
+			else if ((int)barricades[midBoss.getNearBarricadeIndex()].getY() / 32 > midBoss.getTileY())
+			{
+				if (!map.getMapCol(midBoss.getTileY() + 1, midBoss.getTileX()) >= 1)
+				{
+					yDirection = characterNS::DOWN;
+					midBoss.setGoalDirection(characterNS::DOWN);
+					canMoveYDirection = true;
+				}
+				else
+					changeGoalDirectionFlag = true;
+			}
+			if (canMoveXDirection && canMoveYDirection)
+			{
+				if (rand() % 2 == 0)
+					midBoss.setGoalDirection(xDirection);
+				else
+					midBoss.setGoalDirection(yDirection);
+			}
+			// 進みたい方向に進めない場合、ランダムに方向を決めなおす
+			if (changeGoalDirectionFlag)
+			{
+				// ランダムに進みたい方向を修正
+				characterNS::DIRECTION newDirection = (characterNS::DIRECTION) (rand() % 4);
+				// それでも進めない場合、敵を待機状態にして静止させる
+				if (midBoss.canMoveTo(newDirection))
+				{
+					midBoss.setGoalDirection(newDirection);
+				}
+				else
+				{
+					midBoss.setState(characterNS::WAIT);
+					midBoss.setStateDetail(enemyNS::WAIT);
+				}
+			}
 		}
+	}
+	// 勇者の攻撃がいずれかの敵に当たった場合、攻撃コリジョンをなくす
+	if (braveAttackCollidesWithAnyEnemy)
+	{
+		braveAttackCollision.setVisible(false);
+		braveAttackCollision.setActive(false);
 	}
 
-	// 中ボスの攻撃コリジョンとバリケードの衝突
-	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
-	{
-		if (midBossAttackCollision.collidesWith(barricades[i], collisionVector)) {
-			barricades[i].damage();
-			midBossAttackCollision.setVisible(false);
-			midBossAttackCollision.setActive(false);
-		}
-	}
 	// 死亡チェック
 	if ((castle.isDeath() || brave.getActive() == false) && !roundOver)
 	{
@@ -712,7 +845,6 @@ void TowerDiffence::collisions()
 		audio->playCue("gameover");
 		roundOver = true;
 		/*
-		exit(1);
 		if (roundOver == false)
 		{
 			roundOver = towerDiffenceNS::ROUND_TIME;
@@ -787,10 +919,10 @@ void TowerDiffence::render()
 		castleIcon.draw();
 		castle.draw();
 		midBoss.draw(graphicsNS::WHITE);
+		midBossAttackCollision.draw();
 		fire.draw();
 		brave.draw(graphicsNS::WHITE);
 		braveAttackCollision.draw();
-		midBossAttackCollision.draw();
 		braveHealthBar.set(brave.getHealth());
 		braveMpBar.set(brave.getMP());
 		castleHealthBar.set(castle.getHealth());

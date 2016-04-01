@@ -94,8 +94,8 @@ bool Character::checkCanMove(float x, float y)
 	// 1マス32pixelのため32で割る
 	// -16はめり込みを防止するために半マス分引いてる
 	// +αは微調整…
-	int map_x = (int)((x - 8) / 32) + 1;
-	int map_y = (int)((y - 8) / 32) + 2;
+	int map_x = (int)((x - 16) / 32) + 1;
+	int map_y = (int)((y - 0) / 32) + 1;
 
 	if (map_x <= 0)
 		map_x = 0;
@@ -106,7 +106,7 @@ bool Character::checkCanMove(float x, float y)
 	if (map_y >= mapNS::MAP_HEIGHT)
 		map_y = mapNS::MAP_HEIGHT - 1;
 
-	if (map->getMapCol(map_y, map_x) >= 1)
+	if (map->getMapCol(map_y, map_x) == 1 || map->getMapCol(map_y, map_x) == 2)
 	{
 		return false;
 	}

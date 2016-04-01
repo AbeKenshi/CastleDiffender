@@ -39,7 +39,7 @@ namespace enemyNS
 	const float ATTACK_TIME = 0.8f;					// プレイヤーに隣接してから攻撃に移るまでの溜め時間
 	const float CONTINUE_ATTACK_TIME = 0.8f;		// 連続で攻撃する場合の溜め時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けている場合、DAMAGE_TIMEごとに画像が点滅
-	const int ATTACK_DAMAGE = 5.0f;
+	const float ATTACK_DAMAGE = 5.0f;
 	enum STATE_DETAIL { MOVE_CASTLE, MOVE_BARRICADE, ATTACK_BRAVE, ATTACK_CASTLE, ATTACK_BARRICADE, PRE_ATTACK, GAURD , WAIT };	// 雑魚敵の状態
 }
 
@@ -51,16 +51,17 @@ protected:
 	characterNS::DIRECTION goalDirection;	// 次に進むべき方向
 	enemyNS::STATE_DETAIL stateDeteil;		// 状態
 	enemyNS::STATE_DETAIL attackState;		// 攻撃用の状態
-	VECTOR2 goalPos;						// 目標地点の座標
 	float attackTimer;						// 攻撃アニメーション用のタイマー
-	bool nearPlayer;						// プレイヤーと隣接しているかどうか
 	bool nearBarricade;						// バリケードと隣接しているかどうか
 	bool isAttacked;						// 攻撃した直後かどうか
 	bool inCertainRange;					// プレイヤーが一定範囲内にいるか
-	bool canMove;							// 行きたい方向に進むことができるかどうか
 	bool canMakeDecesionMove;				// 移動に関しての意思決定を行えるかどうか
 	Barricade* barricades;					// バリケードの配列へのポインタ
 	int nearBarricadeIndex;					// 最近接のバリケードのインデックス
+	float continueAttackTime;
+	float attackTime;
+	float attackDamage;
+	imageNS::MODE attackAnimationMode;
 public:
 	// コンストラクタ
 	Enemy();
@@ -84,20 +85,14 @@ public:
 	//==========================================================
 	// setter
 	//==========================================================
-	// プレイヤーと隣接しているかどうかをセット
-	void setNearPlayer(bool np) { nearPlayer = np; }
 	// バリケードと隣接しているかどうかをセット
 	void setNearBarricade(bool nb) { nearBarricade = nb; }
 	// 状態をセットする関数
 	void setStateDetail(enemyNS::STATE_DETAIL st) { stateDeteil = st; }
 	// 攻撃の状態をセットする関数
 	void setAttackState(enemyNS::STATE_DETAIL st) { attackState = st; }
-	// 目標地点をセットする関数
-	void setGoalPost(VECTOR2 pos) { goalPos = pos; }
 	// バリケードの配列へのポインタをセットする関数
 	void setBarricadesPointer(Barricade *b) { barricades = b; }
-	// 行きたい方向に進めるかどうかをセットする関数
-	void setCanMove(bool cm) { canMove = cm; }
 	// 次に進むべき方向をセットする関数
 	void setGoalDirection(characterNS::DIRECTION gd) { goalDirection = gd; }
 

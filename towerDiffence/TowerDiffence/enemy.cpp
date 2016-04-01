@@ -27,11 +27,30 @@ Enemy::Enemy() : Character()
 	edge.bottom = enemyNS::HEIGHT / 2.0;
 	// 初期の状態は城に向かって移動
 	stateDeteil = enemyNS::MOVE_CASTLE;
-	goalPos.x = castleNS::X + castleNS::WIDTH / 2;
-	goalPos.y = castleNS::Y + castleNS::HEIGHT / 2;
 	// 範囲内にはいない状態からスタート
 	inCertainRange = false;
 	canMakeDecesionMove = false;
+	attackAnimationMode = imageNS::VERTICAL;
+	moveUpStartFrame = enemyNS::MOVE_UP_START_FRAME;
+	moveUpEndFrame = enemyNS::MOVE_UP_END_FRAME;
+	moveRightStartFrame = enemyNS::MOVE_RIGHT_START_FRAME;
+	moveRightEndFrame = enemyNS::MOVE_RIGHT_END_FRAME;
+	moveDownStartFrame = enemyNS::MOVE_DOWN_START_FRAME;
+	moveDownEndFrame = enemyNS::MOVE_DOWN_END_FRAME;
+	moveLeftStartFrame = enemyNS::MOVE_LEFT_START_FRAME;
+	moveLeftEndFrame = enemyNS::MOVE_LEFT_END_FRAME;
+	moveAnimationDelay = enemyNS::MOVE_ANIMATION_DELAY;
+	attackUpStartFrame = enemyNS::ATTACK_UP_START_FRAME;
+	attackUpEndFrame = enemyNS::ATTACK_UP_END_FRAME;
+	attackRightStartFrame = enemyNS::ATTACK_RIGHT_START_FRAME;
+	attackRightEndFrame = enemyNS::ATTACK_RIGHT_END_FRAME;
+	attackDownStartFrame = enemyNS::ATTACK_DOWN_START_FRAME;
+	attackDownEndFrame = enemyNS::ATTACK_DOWN_END_FRAME;
+	attackLeftStartFrame = enemyNS::ATTACK_LEFT_START_FRAME;
+	attackLeftEndFrame = enemyNS::ATTACK_LEFT_END_FRAME;
+	attackTime = enemyNS::ATTACK_TIME;
+	continueAttackTime = enemyNS::CONTINUE_ATTACK_TIME;
+	attackDamage = enemyNS::ATTACK_DAMAGE;
 }
 
 //==========================================================
@@ -46,15 +65,13 @@ void Enemy::reset()
 	// 初期の方向は右
 	oldDirection = direction;
 	goalDirection = characterNS::RIGHT;
-	startFrame = enemyNS::MOVE_RIGHT_START_FRAME;
-	endFrame = enemyNS::MOVE_RIGHT_END_FRAME;
+	startFrame = moveRightStartFrame;
+	endFrame = moveRightEndFrame;
 	oldStartFrame = startFrame;
 	oldEndFrame = endFrame;
 	currentFrame = startFrame;
 	// 初期の状態は移動
 	stateDeteil = enemyNS::MOVE_CASTLE;
-	goalPos.x = castleNS::X + castleNS::WIDTH / 2;
-	goalPos.y = castleNS::Y + castleNS::HEIGHT / 2;
 	// 範囲内にはいない状態からスタート
 	inCertainRange = false;
 	canMakeDecesionMove = false;
@@ -133,14 +150,14 @@ void Enemy::update(float frameTime)
 	case characterNS::PRE_ATTACK:
 		// タイマーを加算、一定時間を超えたら攻撃に移る
 		attackTimer += frameTime;
-		if (isAttacked && attackTimer > enemyNS::CONTINUE_ATTACK_TIME)
+		if (isAttacked && attackTimer > continueAttackTime)
 		{
 			attackTimer = 0.0f;
 			stateDeteil = attackState;
 			state = characterNS::ATTACK;
 			attackCollisionFlag = true;
 		}
-		else if (!isAttacked && attackTimer > enemyNS::ATTACK_TIME)
+		else if (!isAttacked && attackTimer > attackTime)
 		{
 			attackTimer = 0.0f;
 			stateDeteil = attackState;
@@ -441,17 +458,17 @@ void Enemy::changeAttack(VECTOR2 &collisionVector)
 		if (yPerx > -hPerw && yPerx < hPerw)
 		{
 			goalDirection = characterNS::RIGHT;
-			changeDirection(enemyNS::MOVE_RIGHT_START_FRAME, enemyNS::MOVE_RIGHT_END_FRAME);
+			changeDirection(moveRightStartFrame, moveRightEndFrame);
 		}
 		else if (yPerx < -hPerw)
 		{
 			goalDirection = characterNS::UP;
-			changeDirection(enemyNS::MOVE_UP_START_FRAME, enemyNS::MOVE_UP_END_FRAME);
+			changeDirection(moveUpStartFrame, moveUpEndFrame);
 		}
 		else
 		{
 			goalDirection = characterNS::DOWN;
-			changeDirection(enemyNS::MOVE_DOWN_START_FRAME, enemyNS::MOVE_DOWN_END_FRAME);
+			changeDirection(moveDownStartFrame, moveDownEndFrame);
 		}
 	}
 	else
@@ -459,23 +476,23 @@ void Enemy::changeAttack(VECTOR2 &collisionVector)
 		if (yPerx > -hPerw && yPerx < hPerw)
 		{
 			goalDirection = characterNS::LEFT;
-			changeDirection(enemyNS::MOVE_LEFT_START_FRAME, enemyNS::MOVE_LEFT_END_FRAME);
+			changeDirection(moveLeftStartFrame, moveLeftEndFrame);
 		}
 		else if (yPerx < -hPerw)
 		{
 			goalDirection = characterNS::DOWN;
-			changeDirection(enemyNS::MOVE_DOWN_START_FRAME, enemyNS::MOVE_DOWN_END_FRAME);
+			changeDirection(moveDownStartFrame, moveDownEndFrame);
 		}
 		else
 		{
 			goalDirection = characterNS::UP;
-			changeDirection(enemyNS::MOVE_UP_START_FRAME, enemyNS::MOVE_UP_END_FRAME);
+			changeDirection(moveUpStartFrame, moveUpEndFrame);
 		}
 	}
 	goalDirection = characterNS::NONE;
 	stateDeteil = enemyNS::PRE_ATTACK;
 	state = characterNS::PRE_ATTACK;
-	mode = imageNS::VERTICAL;
+	mode = attackAnimationMode;
 	// アニメーション終了時にフレームを戻すために保存
 	oldStartFrame = startFrame;
 	oldEndFrame = endFrame;
@@ -484,20 +501,20 @@ void Enemy::changeAttack(VECTOR2 &collisionVector)
 	switch (direction)
 	{
 	case characterNS::LEFT:
-		startFrame = enemyNS::ATTACK_LEFT_START_FRAME;
-		endFrame = enemyNS::ATTACK_LEFT_END_FRAME;
+		startFrame = attackLeftStartFrame;
+		endFrame = attackLeftEndFrame;
 		break;
 	case characterNS::RIGHT:
-		startFrame = enemyNS::ATTACK_RIGHT_START_FRAME;
-		endFrame = enemyNS::ATTACK_RIGHT_END_FRAME;
+		startFrame = attackRightStartFrame;
+		endFrame = attackRightEndFrame;
 		break;
 	case characterNS::UP:
-		startFrame = enemyNS::ATTACK_UP_START_FRAME;
-		endFrame = enemyNS::ATTACK_UP_END_FRAME;
+		startFrame = attackUpStartFrame;
+		endFrame = attackUpEndFrame;
 		break;
 	case characterNS::DOWN:
-		startFrame = enemyNS::ATTACK_DOWN_START_FRAME;
-		endFrame = enemyNS::ATTACK_DOWN_END_FRAME;
+		startFrame = attackDownStartFrame;
+		endFrame = attackDownEndFrame;
 		break;
 	default:
 		break;
@@ -519,16 +536,16 @@ void Enemy::changeAttack(characterNS::DIRECTION dir)
 	switch (dir)
 	{
 	case characterNS::LEFT:
-		changeDirection(enemyNS::MOVE_LEFT_START_FRAME, enemyNS::MOVE_LEFT_END_FRAME);
+		changeDirection(moveLeftStartFrame, moveLeftEndFrame);
 		break;
 	case characterNS::RIGHT:
-		changeDirection(enemyNS::MOVE_RIGHT_START_FRAME, enemyNS::MOVE_RIGHT_END_FRAME);
+		changeDirection(moveRightStartFrame, moveRightEndFrame);
 		break;
 	case characterNS::UP:
-		changeDirection(enemyNS::MOVE_UP_START_FRAME, enemyNS::MOVE_UP_END_FRAME);
+		changeDirection(moveUpStartFrame, moveUpEndFrame);
 		break;
 	case characterNS::DOWN:
-		changeDirection(enemyNS::MOVE_DOWN_START_FRAME, enemyNS::MOVE_DOWN_END_FRAME);
+		changeDirection(moveDownStartFrame, moveDownEndFrame);
 		break;
 	case characterNS::NONE:
 		break;
@@ -547,20 +564,20 @@ void Enemy::changeAttack(characterNS::DIRECTION dir)
 	switch (direction)
 	{
 	case characterNS::LEFT:
-		startFrame = enemyNS::ATTACK_LEFT_START_FRAME;
-		endFrame = enemyNS::ATTACK_LEFT_END_FRAME;
+		startFrame = attackLeftStartFrame;
+		endFrame = attackLeftEndFrame;
 		break;
 	case characterNS::RIGHT:
-		startFrame = enemyNS::ATTACK_RIGHT_START_FRAME;
-		endFrame = enemyNS::ATTACK_RIGHT_END_FRAME;
+		startFrame = attackRightStartFrame;
+		endFrame = attackRightEndFrame;
 		break;
 	case characterNS::UP:
-		startFrame = enemyNS::ATTACK_UP_START_FRAME;
-		endFrame = enemyNS::ATTACK_UP_END_FRAME;
+		startFrame = attackUpStartFrame;
+		endFrame = attackUpEndFrame;
 		break;
 	case characterNS::DOWN:
-		startFrame = enemyNS::ATTACK_DOWN_START_FRAME;
-		endFrame = enemyNS::ATTACK_DOWN_END_FRAME;
+		startFrame = attackDownStartFrame;
+		endFrame = attackDownEndFrame;
 		break;
 	default:
 		break;
@@ -576,11 +593,29 @@ void Enemy::changeAttack(characterNS::DIRECTION dir)
 //==========================================================
 bool Enemy::checkCanMove(float x, float y)
 {
-	if (!canMove)
+	// 1マス32pixelのため32で割る
+	// -16はめり込みを防止するために半マス分引いてる
+	// +αは微調整…
+	int map_x = (int)((x - 8) / 32) + 1;
+	int map_y = (int)((y - 8) / 32) + 2;
+
+	if (map_x <= 0)
+		map_x = 0;
+	if (map_x >= mapNS::MAP_WIDTH)
+		map_x = mapNS::MAP_WIDTH - 1;
+	if (map_y <= 0)
+		map_y = 0;
+	if (map_y >= mapNS::MAP_HEIGHT)
+		map_y = mapNS::MAP_HEIGHT - 1;
+
+	if (map->getMapCol(map_y, map_x) >= 1)
 	{
 		return false;
 	}
-	return Character::checkCanMove(x, y);
+	else
+	{
+		return true;
+	}
 }
 
 //==========================================================
