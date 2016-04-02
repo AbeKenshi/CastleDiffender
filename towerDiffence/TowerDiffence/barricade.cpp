@@ -27,6 +27,7 @@ Barricade::Barricade() : Entity()
 	death = false;
 	isDamaged = false;
 	drawFlag = true;
+	damagePer = 1.0f;
 }
 
 //==========================================================
@@ -92,7 +93,8 @@ void Barricade::update(float frameTime)
 //==========================================================
 void Barricade::damage()
 {
-	health -= 5;
+	health -= 10 * damagePer;
+
 	if (health <= 0)
 	{
 		visible = false;

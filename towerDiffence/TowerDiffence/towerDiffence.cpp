@@ -424,6 +424,9 @@ void TowerDiffence::collisions()
 			if (enemyAttackCollision[i].collidesWith(brave, collisionVector))
 			{
 				// プレイヤーにダメージを与える
+				if (enemy[i].getEnemyType() == enemyNS::NORMAL) brave.setDamagePer(1.0f);
+				else if (enemy[i].getEnemyType() == enemyNS::RED) brave.setDamagePer(1.2f);
+				else if (enemy[i].getEnemyType() == enemyNS::BLUE) brave.setDamagePer(1.1f);
 				brave.damage(ENEMY_ATTACK);
 				// 敵の攻撃コリジョンをなくす
 				enemyAttackCollision[i].setVisible(false);
@@ -433,6 +436,9 @@ void TowerDiffence::collisions()
 			if (enemyAttackCollision[i].collidesWith(castle, collisionVector))
 			{
 				// 城にダメージを与える
+				if (enemy[i].getEnemyType() == enemyNS::NORMAL) castle.setDamagePer(1.0f);
+				else if (enemy[i].getEnemyType() == enemyNS::RED) castle.setDamagePer(1.2f);
+				else if (enemy[i].getEnemyType() == enemyNS::BLUE) castle.setDamagePer(1.1f);
 				castle.damage(ENEMY_ATTACK);
 				// 敵の攻撃コリジョンをなくす
 				enemyAttackCollision[i].setVisible(false);
@@ -662,6 +668,7 @@ void TowerDiffence::collisions()
 		if (midBossAttackCollision.collidesWith(brave, collisionVector))
 		{
 			// プレイヤーにダメージを与える
+			brave.setDamagePer(1.5f);
 			brave.damage(ENEMY_ATTACK);
 			// 敵の攻撃コリジョンをなくす
 			midBossAttackCollision.setVisible(false);
@@ -671,6 +678,7 @@ void TowerDiffence::collisions()
 		if (midBossAttackCollision.collidesWith(castle, collisionVector))
 		{
 			// 城にダメージを与える
+			castle.setDamagePer(1.5f);
 			castle.damage(ENEMY_ATTACK);
 			// 敵の攻撃コリジョンをなくす
 			midBossAttackCollision.setVisible(false);
@@ -958,14 +966,19 @@ void TowerDiffence::render()
 		graphics->spriteBegin();	// スプライトの描画を開始
 
 		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
-			// 敵の描画、色は適当に分けてるので…
-			if (i % 3 == 0)
+			// 敵の描画、色は適当に分けてる、色によって能力値を分ける
+			if (i % 3 == 0) {
 				enemy[i].draw(graphicsNS::WHITE);
-			else if (i % 3 == 1)
+				enemy[i].setEnemyType(enemyNS::NORMAL);
+			}
+			else if (i % 3 == 1) {
 				enemy[i].draw(graphicsNS::RED);
-			else if (i % 3 == 2)
+				enemy[i].setEnemyType(enemyNS::RED);
+			}
+			else if (i % 3 == 2) {
 				enemy[i].draw(graphicsNS::BLUE);
-
+				enemy[i].setEnemyType(enemyNS::BLUE);
+			}
 			enemyAttackCollision[i].draw();
 		}
 		braveHpText.draw();
