@@ -104,7 +104,7 @@ void Castle::damage(WEAPON weapon)
 	case BRAVE_SECOND_ATTACK:
 		break;
 	case ENEMY_ATTACK:
-		health -= enemyNS::ATTACK_DAMAGE;
+		health -= enemyNS::ATTACK_DAMAGE * damagePer;
 		break;
 	default:
 		break;

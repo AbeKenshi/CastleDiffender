@@ -390,7 +390,7 @@ void Brave::damage(WEAPON weapon)
 			magicPoint -= 25;
 		else
 		{
-			health -= enemyNS::ATTACK_DAMAGE;
+			health -= enemyNS::ATTACK_DAMAGE * damagePer;
 			isDamaged = true;
 		}
 		break;

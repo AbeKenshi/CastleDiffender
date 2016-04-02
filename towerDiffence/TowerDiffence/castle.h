@@ -23,6 +23,7 @@ private:
 	bool death;						// 城が死亡時にtrue
 	bool isDamaged;					// ダメージを受けている状態かどうか
 	bool drawFlag;					// 描画フラグ、true時に描画
+	float damagePer;                // ダメージを受ける時に掛ける割合
 public:
 	// コンストラクタ
 	Castle();
@@ -38,6 +39,7 @@ public:
 
 	// setter
 	void setDeath(bool d) { death = d; }
+	void setDamagePer(float per) { damagePer = per; }
 };
 
 #endif // !_CASTLE_H

@@ -51,6 +51,8 @@ Enemy::Enemy() : Character()
 	attackTime = enemyNS::ATTACK_TIME;
 	continueAttackTime = enemyNS::CONTINUE_ATTACK_TIME;
 	attackDamage = enemyNS::ATTACK_DAMAGE;
+	// ダメージを受ける時に掛ける割合は1.0
+	damagePer = 1.0f;
 }
 
 //==========================================================
@@ -229,13 +231,20 @@ void Enemy::update(float frameTime)
 //==========================================================
 void Enemy::damage(WEAPON weapon)
 {
+	if (type == enemyNS::NORMAL)
+		setDamagerPer(1.0f);
+	else if (type == enemyNS::RED)
+		setDamagerPer(0.8f);
+	else if (type == enemyNS::BLUE)
+		setDamagerPer(0.9f);
+
 	switch (weapon)
 	{
 	case FIRE:
-		health -= braveNS::FIRE_DAMAGE;
+		health -= braveNS::FIRE_DAMAGE * damagePer;
 		break;
 	case BRAVE_ATTACK:
-		health -= braveNS::ATTACK_DAMAGE;
+		health -= braveNS::ATTACK_DAMAGE * damagePer;
 		break;
 	case BRAVE_SECOND_ATTACK:
 		break;
@@ -691,4 +700,28 @@ bool Enemy::canMoveTo(characterNS::DIRECTION dir)
 		break;
 	}
 	return true;
+}
+
+//==========================================================
+// 敵の種類をセットする関数
+//==========================================================
+void Enemy::setEnemyType(enemyNS::TYPE t)
+{
+	type = t;
+}
+
+//==========================================================
+// 敵の種類を取得する関数
+//==========================================================
+enemyNS::TYPE Enemy::getEnemyType()
+{
+	return type;
+}
+
+//==========================================================
+// ダメージを受ける時に掛ける割合の更新
+//==========================================================
+void Enemy::setDamagerPer(float per)
+{
+	damagePer = per;
 }
