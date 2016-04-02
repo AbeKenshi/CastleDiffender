@@ -62,7 +62,7 @@ const UCHAR BRAVE_LEFT_KEY = VK_LEFT;		// 左移動キー
 const UCHAR BRAVE_RIGHT_KEY = VK_RIGHT;		// 右移動キー
 const UCHAR BRAVE_UP_KEY = VK_UP;			// 上移動キー
 const UCHAR BRAVE_DOWN_KEY = VK_DOWN;		// 下移動キー
-const UCHAR BRAVE_ATTACK_KEY = VK_RETURN;	// 攻撃キー
+const UCHAR BRAVE_ATTACK_KEY = 'A';			// 攻撃キー
 const UCHAR BRAVE_GAURD_KEY = 'G';			// ガードキー
 const UCHAR BRAVE_FIRE_KEY = 'F';			// 必殺技キー
 

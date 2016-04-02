@@ -447,6 +447,9 @@ void TowerDiffence::collisions()
 			// 敵の攻撃コリジョンとバリケードの衝突の場合
 			if (enemyAttackCollision[i].collidesWith(barricades[enemy[i].getNearBarricadeIndex()], collisionVector)) {
 				// バリケードにダメージを与える（barricades[enemy[i].getNearBarricadeIndex()]が攻撃対象になるはず）
+				if (enemy[i].getEnemyType() == enemyNS::NORMAL) barricades[enemy[i].getNearBarricadeIndex()].setDamagerPer(1.0f);
+				else if (enemy[i].getEnemyType() == enemyNS::RED) barricades[enemy[i].getNearBarricadeIndex()].setDamagerPer(1.2f);
+				else if (enemy[i].getEnemyType() == enemyNS::BLUE) barricades[enemy[i].getNearBarricadeIndex()].setDamagerPer(1.1f);
 				barricades[enemy[i].getNearBarricadeIndex()].damage();
 				// 敵の攻撃コリジョンをなくす
 				enemyAttackCollision[i].setVisible(false);
