@@ -78,9 +78,9 @@ void Map::updateMapObjInt(int y, int x, int val)
 //==========================================================
 void Map::readMapFile(int stageNum)
 {
-	string mapDataFilename = "stageData\\stage" + std::to_string(stageNum) + "_mapdata.csv";
-	string colDataFilename = "stageData\\stage" + std::to_string(stageNum) + "_coldata.csv";
-	string objDataFilename = "stageData\\stage" + std::to_string(stageNum) + "_objdata.csv";
+	string mapDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\mapdata.csv";
+	string colDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\coldata.csv";
+	string objDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\objdata.csv";
 
 	ifstream* ifs = new ifstream(mapDataFilename);
 	if (!ifs)
