@@ -41,6 +41,7 @@ namespace enemyNS
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けている場合、DAMAGE_TIMEごとに画像が点滅
 	const int ATTACK_DAMAGE = 5.0f;
 	enum STATE { MOVE_CASTLE, MOVE_BARRICADE, ATTACK_BRAVE, ATTACK_CASTLE, ATTACK_BARRICADE, PRE_ATTACK, GAURD };	// 雑魚敵の状態
+	enum TYPE {NORMAL, RED, BLUE};                  // 敵の種類
 }
 
 // Enemyクラス
@@ -60,7 +61,8 @@ protected:
 	bool inCertainRange;					// プレイヤーが一定範囲内にいるか
 	bool canMove;							// 行きたい方向に進むことができるかどうか
 	Barricade* barricades;					// バリケードの配列へのポインタ
-
+	enemyNS::TYPE type;                     // 敵の種類
+	float damagePer;                        // ダメージを受ける時に掛ける値
 public:
 	// コンストラクタ
 	Enemy();
@@ -98,6 +100,10 @@ public:
 	void setBarricadesPointer(Barricade *b) { barricades = b; }
 	// 行きたい方向に進めるかどうかをセットする関数
 	void setCanMove(bool cm) { canMove = cm; }
+	// 敵の種類をセットする関数
+	void setEnemyType(enemyNS::TYPE t);
+	// ダメージを受ける時に掛ける割合の更新
+	void setDamagerPer(float per);
 
 	//==========================================================
 	// getter
@@ -119,5 +125,7 @@ public:
 	bool checkBarricadeOnLine(float x, float y);
 	// 攻撃モードにチェンジするときに呼び出す関数
 	virtual void changeAttack(VECTOR2 &collisionVector);
+	// 敵の種類を取得する関数
+    enemyNS::TYPE getEnemyType();
 };
 #endif

@@ -384,6 +384,9 @@ void TowerDiffence::collisions()
 			// 敵の攻撃コリジョンとプレイヤーの衝突の場合
 			if (enemyAttackCollision[i].collidesWith(brave, collisionVector))
 			{
+				if (enemy[i].getEnemyType() == enemyNS::NORMAL) brave.setDamagePer(1.0f);
+				else if (enemy[i].getEnemyType() == enemyNS::RED) brave.setDamagePer(1.2f);
+				else if (enemy[i].getEnemyType() == enemyNS::BLUE) brave.setDamagePer(1.1f);
 				brave.damage(ENEMY_ATTACK);
 				enemyAttackCollision[i].setVisible(false);
 				enemyAttackCollision[i].setActive(false);
@@ -391,6 +394,9 @@ void TowerDiffence::collisions()
 			// 敵の攻撃コリジョンと城の衝突の場合
 			if (enemyAttackCollision[i].collidesWith(castle, collisionVector))
 			{
+				if (enemy[i].getEnemyType() == enemyNS::NORMAL) castle.setDamagePer(1.0f);
+				else if (enemy[i].getEnemyType() == enemyNS::RED) castle.setDamagePer(1.2f);
+				else if (enemy[i].getEnemyType() == enemyNS::BLUE) castle.setDamagePer(1.1f);
 				castle.damage(ENEMY_ATTACK);
 				enemyAttackCollision[i].setVisible(false);
 				enemyAttackCollision[i].setActive(false);
@@ -399,6 +405,9 @@ void TowerDiffence::collisions()
 			for (int j = 0; j < mapNS::BARRICADE_NUM; j++)
 			{
 				if (enemyAttackCollision[i].collidesWith(barricades[j], collisionVector)) {
+					if (enemy[i].getEnemyType() == enemyNS::NORMAL) barricades[j].setDamagerPer(1.0f);
+					else if (enemy[i].getEnemyType() == enemyNS::RED) barricades[j].setDamagerPer(1.2f);
+					else if (enemy[i].getEnemyType() == enemyNS::BLUE) barricades[j].setDamagerPer(1.1f);
 					barricades[j].damage();
 					enemyAttackCollision[i].setVisible(false);
 					enemyAttackCollision[i].setActive(false);
@@ -492,6 +501,7 @@ void TowerDiffence::collisions()
 		// 中ボスの攻撃コリジョンとプレイヤーの衝突の場合
 		if (midBossAttackCollision.collidesWith(brave, collisionVector))
 		{
+			brave.setDamagePer(1.5f);
 			brave.damage(ENEMY_ATTACK);
 			midBossAttackCollision.setVisible(false);
 			midBossAttackCollision.setActive(false);
@@ -499,6 +509,7 @@ void TowerDiffence::collisions()
 		// 中ボスの攻撃コリジョンと城の衝突の場合
 		if (midBossAttackCollision.collidesWith(castle, collisionVector))
 		{
+			castle.setDamagePer(1.5f);
 			castle.damage(ENEMY_ATTACK);
 			midBossAttackCollision.setVisible(false);
 			midBossAttackCollision.setActive(false);
@@ -583,6 +594,7 @@ void TowerDiffence::collisions()
 	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
 		if (midBossAttackCollision.collidesWith(barricades[i], collisionVector)) {
+			barricades[i].setDamagerPer(1.5f);
 			barricades[i].damage();
 			midBossAttackCollision.setVisible(false);
 			midBossAttackCollision.setActive(false);
@@ -655,14 +667,19 @@ void TowerDiffence::render()
 		graphics->spriteBegin();	// スプライトの描画を開始
 
 		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
-			// 敵の描画、色は適当に分けてるので…
-			if (i % 3 == 0)
+			// 敵の描画、色は適当に分けてる、色によって能力値を分ける
+			if (i % 3 == 0) {
 				enemy[i].draw(graphicsNS::WHITE);
-			else if (i % 3 == 1)
+				enemy[i].setEnemyType(enemyNS::NORMAL);
+			}
+			else if (i % 3 == 1) {
 				enemy[i].draw(graphicsNS::RED);
-			else if (i % 3 == 2)
+				enemy[i].setEnemyType(enemyNS::RED);
+			}
+			else if (i % 3 == 2) {
 				enemy[i].draw(graphicsNS::BLUE);
-
+				enemy[i].setEnemyType(enemyNS::BLUE);
+			}
 			enemyAttackCollision[i].draw();
 		}
 		braveHpText.draw();
