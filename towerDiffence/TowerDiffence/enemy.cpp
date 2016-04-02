@@ -77,6 +77,8 @@ void Enemy::reset()
 	// 範囲内にはいない状態からスタート
 	inCertainRange = false;
 	canMakeDecesionMove = false;
+	// ダメージを受ける時に掛ける割合は1.0
+	damagePer = 1.0f;
 }
 
 //=============================================================================
@@ -101,18 +103,26 @@ void Enemy::update(float frameTime)
 		switch (goalDirection)
 		{
 		case characterNS::LEFT:
+			if (direction != goalDirection)
+				changeDirection(moveLeftStartFrame, moveLeftEndFrame);
 			// 左に移動
 			spriteData.x -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case characterNS::RIGHT:
+			if (direction != goalDirection)
+				changeDirection(moveRightStartFrame, moveRightEndFrame);
 			// 右に移動
 			spriteData.x += enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case characterNS::UP:
+			if (direction != goalDirection)
+				changeDirection(moveUpStartFrame, moveUpEndFrame);
 			// 上に移動
 			spriteData.y -= enemyNS::MOVE_SPEED * frameTime;
 			break;
 		case characterNS::DOWN:
+			if (direction != goalDirection)
+				changeDirection(moveDownStartFrame, moveDownEndFrame);
 			// 左に移動
 			spriteData.y += enemyNS::MOVE_SPEED * frameTime;
 			break;
@@ -509,6 +519,7 @@ void Enemy::changeAttack(VECTOR2 &collisionVector)
 	oldStartFrame = startFrame;
 	oldEndFrame = endFrame;
 	oldDirection = direction;
+
 	// 方向に応じてアニメーションを切り替え
 	switch (direction)
 	{

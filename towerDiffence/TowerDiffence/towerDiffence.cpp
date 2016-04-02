@@ -376,14 +376,14 @@ void TowerDiffence::checkCurrentEnemyNum()
 			enemy[i].setX(GAME_WIDTH - (rand() % 200));
 			enemy[i].setY(GAME_HEIGHT - (rand() % 200));
 		}
-		enemy[i].setActive(true);
+		enemy[i].initTileXY();
 	}
 
 	// 中ボスの初期化
+	midBoss.reset();
 	midBoss.setX(GAME_WIDTH / 2 - 600);
 	midBoss.setY(GAME_HEIGHT / 2 - 80);
-	midBoss.reset();
-	midBoss.setActive(true);
+	midBoss.initTileXY();
 }
 
 //==========================================================
@@ -636,21 +636,21 @@ void TowerDiffence::collisions()
 					else
 						enemy[i].setGoalDirection(yDirection);
 				}
-				// 進みたい方向に進めない場合、ランダムに方向を決めなおす
-				if (changeGoalDirectionFlag)
+			}
+			// 進みたい方向に進めない場合、ランダムに方向を決めなおす
+			if (changeGoalDirectionFlag)
+			{
+				// ランダムに進みたい方向を修正
+				characterNS::DIRECTION newDirection = (characterNS::DIRECTION) (rand() % 4);
+				// それでも進めない場合、敵を待機状態にして静止させる
+				if (enemy[i].canMoveTo(newDirection))
 				{
-					// ランダムに進みたい方向を修正
-					characterNS::DIRECTION newDirection = (characterNS::DIRECTION) (rand() % 4);
-					// それでも進めない場合、敵を待機状態にして静止させる
-					if (enemy[i].canMoveTo(newDirection))
-					{
-						enemy[i].setGoalDirection(newDirection);
-					}
-					else
-					{
-						enemy[i].setState(characterNS::WAIT);
-						enemy[i].setStateDetail(enemyNS::WAIT);
-					}
+					enemy[i].setGoalDirection(newDirection);
+				}
+				else
+				{
+					enemy[i].setState(characterNS::WAIT);
+					enemy[i].setStateDetail(enemyNS::WAIT);
 				}
 			}
 		}
