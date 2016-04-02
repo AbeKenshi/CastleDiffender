@@ -164,6 +164,7 @@
     <ClInclude Include="midBoss.h" />
     <ClInclude Include="mpTextImage.h" />
     <ClInclude Include="rect.h" />
+    <ClInclude Include="stage.h" />
     <ClInclude Include="text.h" />
     <ClInclude Include="textDX.h" />
     <ClInclude Include="textureManager.h" />

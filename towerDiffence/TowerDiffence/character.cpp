@@ -45,6 +45,8 @@ void Character::reset()
 	attackCollisionFlag = false;
 	// 状態は何もしない状態からスタート
 	state = characterNS::STATE::MOVE;
+	// アニメーションはループ状態からスタート
+	loop = true;
 }
 
 //==========================================================

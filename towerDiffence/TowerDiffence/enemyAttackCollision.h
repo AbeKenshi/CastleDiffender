@@ -4,8 +4,7 @@
 
 #include "entity.h"
 #include "constants.h"
-#include "brave.h"
-#include "enemy.h"
+#include "character.h"
 
 namespace enemyCollisionNS
 {
@@ -26,7 +25,7 @@ public:
 	void update(float frameTime);
 
 	// V‚µ‚¢ƒƒ“ƒo[ŠÖ”
-	void attack(Enemy *enemy);	// G‹›“G‚©‚ç‚ÌUŒ‚
+	void attack(float centerX, float centerY, float width, float height, characterNS::DIRECTION direction);	// G‹›“G‚©‚ç‚ÌUŒ‚
 };
 
 #endif // !_ATTACK_COLLISION_H

@@ -12,6 +12,8 @@ TowerDiffence::TowerDiffence()
 	roundOver = false;
 	rect = NULL;
 	remainingTime = 1500.0f;
+	enemyNum = 0;
+	enemy = new Enemy*[0];
 }
 
 //==========================================================
@@ -21,6 +23,13 @@ TowerDiffence::~TowerDiffence()
 {
 	safeDelete(rect);
 	safeDelete(fontCK);
+	for (int i = 0; i < enemyNum; ++i)
+	{
+		safeDelete(enemy[i]);
+	}
+	safeDeleteArray(enemy);
+	safeDeleteArray(enemyX);
+	safeDeleteArray(enemyY);
 	releaseAll();	// すべてのグラフィックスアイテムについて、onLostDevice()を呼び出す
 }
 
@@ -112,9 +121,6 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 勇者のあたり判定用
 	if (!braveAttackCollision.initialize(this, braveAttackCollisionNS::WIDTH, braveAttackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision"));
-	// 中ボスの当たり判定用
-	if (!midBossAttackCollision.initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
 	
 	// 炎のテクスチャ
 	if (!fireTexture.initialize(graphics, FIRE_IMAGE))
@@ -126,28 +132,30 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 雑魚敵のテクスチャ
 	if (!enemyTexture.initialize(graphics, ENEMY_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy texture"));
-	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
-		if (!enemy[i].initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
-			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
-		enemy[i].setScale(1.0);
-		enemy[i].setMapPointer(&map);
-		enemy[i].setBarricadesPointer(barricades);
-
-		// 雑魚敵の当たり判定用
-		if (!enemyAttackCollision[i].initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
-			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
-	}
-	// 中ボス
+	// 中ボスのテクスチャ
 	if (!midBossTexture.initialize(graphics, MID_BOSS_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss texture"));
-	if (!midBoss.initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
-	midBoss.setScale(1.0);
-	midBoss.setMapPointer(&map);
-	midBoss.setBarricadesPointer(barricades);
-	// 雑魚敵の当たり判定用
-	if (!midBossAttackCollision.initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
-		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
+	readEnemyFile(1);
+	for (int i = 0; i < enemyNum; i++) {
+		if (typeid(*enemy[i]) == typeid(Enemy))
+		{
+			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
+				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
+		}
+		else if (typeid(*enemy[i]) == typeid(MidBoss))
+		{
+			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
+				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
+		}
+		enemy[i]->setScale(1.0);
+		enemy[i]->setMapPointer(&map);
+		enemy[i]->setBarricadesPointer(barricades);
+
+		// 雑魚敵の当たり判定用
+		if (!enemy[i]->getAttackCollision().initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
+	}
+
 
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
@@ -174,10 +182,10 @@ void TowerDiffence::initialize(HWND hwnd)
 	audio->playCue("title");
 
 	// 敵の位置初期化
-	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
+	for (int i = 0; i < enemyNum; i++)
 	{
-		enemy[i].setX(enemyNS::X[i]);
-		enemy[i].setY(enemyNS::Y[i]);
+		enemy[i]->setX(enemyX[i]);
+		enemy[i]->setY(enemyY[i]);
 	}
 
 	return;
@@ -223,25 +231,15 @@ void TowerDiffence::update()
 		if (brave.getAttackCollisionFlag())
 			braveAttackCollision.attack(&brave);
 		// それぞれの敵を更新
-		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
-			if (enemy[i].getAttackCollisionFlag()) {
-				enemyAttackCollision[i].attack(&enemy[i]);
-			}
-			enemy[i].update(frameTime);
-			enemyAttackCollision[i].update(frameTime);
+		for (int i = 0; i < enemyNum; i++) {
+			enemy[i]->update(frameTime);
 		}
-		if (midBoss.getAttackCollisionFlag())
-			midBossAttackCollision.attack(&midBoss);
-		midBoss.update(frameTime);
-		midBossAttackCollision.update(frameTime);
 		// 勇者を更新
 		brave.update(frameTime);
 		// 炎を更新
 		fire.update(frameTime);
 		// 勇者の攻撃コリジョンを更新
 		braveAttackCollision.update(frameTime);
-		// 敵の攻撃コリジョンを更新
-		midBossAttackCollision.update(frameTime);
 		// 城を更新
 		castle.update(frameTime);
 		// 勇者のアイコン画像を更新
@@ -307,18 +305,13 @@ void TowerDiffence::roundStart()
 	// 勇者を初期化
 	brave.reset();
 	// 各敵を初期化
-	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
+	for (int i = 0; i < enemyNum; i++)
 	{
-		enemy[i].reset();
-		enemy[i].setX(enemyNS::X[i]);
-		enemy[i].setY(enemyNS::Y[i]);
-		enemy[i].initTileXY();
+		enemy[i]->reset();
+		enemy[i]->setX(enemyX[i]);
+		enemy[i]->setY(enemyY[i]);
+		enemy[i]->initTileXY();
 	}
-	// 中ボスを初期化
-	midBoss.reset();
-	midBoss.setX(GAME_WIDTH / 2 - 500);
-	midBoss.setY(GAME_HEIGHT / 2 - 80);
-	midBoss.initTileXY();
 	// 城を初期化
 	castle.reset();
 	// 炎を初期化
@@ -340,50 +333,40 @@ void TowerDiffence::roundStart()
 void TowerDiffence::checkCurrentEnemyNum()
 {
 	// 雑魚敵が存在したら
-	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
+	for (int i = 0; i < enemyNum; i++)
 	{
-		if (enemy[i].getActive())
+		if (enemy[i]->getActive())
 			return;
 	}
 
-	// 中ボスが存在したら
-	if (midBoss.getActive())
-		return;
-
 	// 敵が存在していないため全て初期化
 	// 雑魚敵の初期化
-	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
+	for (int i = 0; i < enemyNum; i++)
 	{
-		enemy[i].reset();
+		enemy[i]->reset();
 		// 位置はランダム
 		if (i % 4 == 0) // 左上
 		{
-			enemy[i].setX(rand() % 200);
-			enemy[i].setY(rand() % 200);
+			enemy[i]->setX(rand() % 200);
+			enemy[i]->setY(rand() % 200);
 		}
 		else if (i % 4 == 1) // 右上
 		{
-			enemy[i].setX(GAME_WIDTH - (rand() % 200));
-			enemy[i].setY(rand()% 200);
+			enemy[i]->setX(GAME_WIDTH - (rand() % 200));
+			enemy[i]->setY(rand()% 200);
 		}
 		else if (i % 4 == 2) // 左下
 		{
-			enemy[i].setX(rand() % 200);
-			enemy[i].setY(GAME_HEIGHT - (rand() % 200));
+			enemy[i]->setX(rand() % 200);
+			enemy[i]->setY(GAME_HEIGHT - (rand() % 200));
 		}
 		else if (i % 4 == 3) // 右下
 		{
-			enemy[i].setX(GAME_WIDTH - (rand() % 200));
-			enemy[i].setY(GAME_HEIGHT - (rand() % 200));
+			enemy[i]->setX(GAME_WIDTH - (rand() % 200));
+			enemy[i]->setY(GAME_HEIGHT - (rand() % 200));
 		}
-		enemy[i].initTileXY();
+		enemy[i]->initTileXY();
 	}
-
-	// 中ボスの初期化
-	midBoss.reset();
-	midBoss.setX(GAME_WIDTH / 2 - 600);
-	midBoss.setY(GAME_HEIGHT / 2 - 80);
-	midBoss.initTileXY();
 }
 
 //==========================================================
@@ -392,10 +375,8 @@ void TowerDiffence::checkCurrentEnemyNum()
 void TowerDiffence::ai()
 {
 	// 各敵を更新
-	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++)
-		enemy[i].ai(frameTime, brave);
-	// 中ボスを更新
-	midBoss.ai(frameTime, brave);
+	for (int i = 0; i < enemyNum; i++)
+		enemy[i]->ai(frameTime, brave);
 }
 
 //==========================================================
@@ -406,169 +387,173 @@ void TowerDiffence::collisions()
 	VECTOR2 collisionVector;	// 衝突判定したときの衝突相手へのベクトル
 	bool braveAttackCollidesWithAnyEnemy = false;
 	// 各敵について衝突判定
-	for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
+	for (int i = 0; i < enemyNum; i++) {
 
 		// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
-		if (braveAttackCollision.collidesWith(enemy[i], collisionVector))
+		if (braveAttackCollision.collidesWith(*enemy[i], collisionVector))
 		{
 			// 敵にダメージを与える
-			enemy[i].damage(BRAVE_ATTACK);
+			enemy[i]->damage(BRAVE_ATTACK);
 			// いずれかの敵に攻撃があたったのでループを抜けた後に攻撃コリジョンをなくす
 			braveAttackCollidesWithAnyEnemy = true;
 		}
 
 		// 敵が攻撃時は、城とプレイヤーとバリケードとの当たり判定をそれぞれチェック
-		if (enemy[i].getState() == characterNS::ATTACK)
+		if (enemy[i]->getState() == characterNS::ATTACK)
 		{
 			// 敵の攻撃コリジョンとプレイヤーの衝突の場合
-			if (enemyAttackCollision[i].collidesWith(brave, collisionVector))
+			if (enemy[i]->getAttackCollision().collidesWith(brave, collisionVector))
 			{
 				// プレイヤーにダメージを与える
-				if (enemy[i].getEnemyType() == enemyNS::NORMAL) brave.setDamagePer(1.0f);
-				else if (enemy[i].getEnemyType() == enemyNS::RED) brave.setDamagePer(1.2f);
-				else if (enemy[i].getEnemyType() == enemyNS::BLUE) brave.setDamagePer(1.1f);
+				if (enemy[i]->getEnemyType() == enemyNS::NORMAL) brave.setDamagePer(1.0f);
+				else if (enemy[i]->getEnemyType() == enemyNS::RED) brave.setDamagePer(1.2f);
+				else if (enemy[i]->getEnemyType() == enemyNS::BLUE) brave.setDamagePer(1.1f);
 				brave.damage(ENEMY_ATTACK);
 				// 敵の攻撃コリジョンをなくす
-				enemyAttackCollision[i].setVisible(false);
-				enemyAttackCollision[i].setActive(false);
+				enemy[i]->getAttackCollision().setVisible(false);
+				enemy[i]->getAttackCollision().setActive(false);
 			}
 			// 敵の攻撃コリジョンと城の衝突の場合
-			if (enemyAttackCollision[i].collidesWith(castle, collisionVector))
+			if (enemy[i]->getAttackCollision().collidesWith(castle, collisionVector))
 			{
 				// 城にダメージを与える
-				if (enemy[i].getEnemyType() == enemyNS::NORMAL) castle.setDamagePer(1.0f);
-				else if (enemy[i].getEnemyType() == enemyNS::RED) castle.setDamagePer(1.2f);
-				else if (enemy[i].getEnemyType() == enemyNS::BLUE) castle.setDamagePer(1.1f);
+				if (enemy[i]->getEnemyType() == enemyNS::NORMAL) castle.setDamagePer(1.0f);
+				else if (enemy[i]->getEnemyType() == enemyNS::RED) castle.setDamagePer(1.2f);
+				else if (enemy[i]->getEnemyType() == enemyNS::BLUE) castle.setDamagePer(1.1f);
 				castle.damage(ENEMY_ATTACK);
 				// 敵の攻撃コリジョンをなくす
-				enemyAttackCollision[i].setVisible(false);
-				enemyAttackCollision[i].setActive(false);
+				enemy[i]->getAttackCollision().setVisible(false);
+				enemy[i]->getAttackCollision().setActive(false);
 			}
 			// 敵の攻撃コリジョンとバリケードの衝突の場合
-			if (enemyAttackCollision[i].collidesWith(barricades[enemy[i].getNearBarricadeIndex()], collisionVector)) {
+			if (enemy[i]->getAttackCollision().collidesWith(barricades[enemy[i]->getNearBarricadeIndex()], collisionVector)) {
 				// バリケードにダメージを与える（barricades[enemy[i].getNearBarricadeIndex()]が攻撃対象になるはず）
-				if (enemy[i].getEnemyType() == enemyNS::NORMAL) barricades[enemy[i].getNearBarricadeIndex()].setDamagerPer(1.0f);
-				else if (enemy[i].getEnemyType() == enemyNS::RED) barricades[enemy[i].getNearBarricadeIndex()].setDamagerPer(1.2f);
-				else if (enemy[i].getEnemyType() == enemyNS::BLUE) barricades[enemy[i].getNearBarricadeIndex()].setDamagerPer(1.1f);
-				barricades[enemy[i].getNearBarricadeIndex()].damage();
+				if (enemy[i]->getEnemyType() == enemyNS::NORMAL) barricades[enemy[i]->getNearBarricadeIndex()].setDamagerPer(1.0f);
+				else if (enemy[i]->getEnemyType() == enemyNS::RED) barricades[enemy[i]->getNearBarricadeIndex()].setDamagerPer(1.2f);
+				else if (enemy[i]->getEnemyType() == enemyNS::BLUE) barricades[enemy[i]->getNearBarricadeIndex()].setDamagerPer(1.1f);
+				barricades[enemy[i]->getNearBarricadeIndex()].damage();
 				// 敵の攻撃コリジョンをなくす
-				enemyAttackCollision[i].setVisible(false);
-				enemyAttackCollision[i].setActive(false);
+				enemy[i]->getAttackCollision().setVisible(false);
+				enemy[i]->getAttackCollision().setActive(false);
 				// 攻撃されたバリケードが破壊された場合、
-				if (!barricades[enemy[i].getNearBarricadeIndex()].getActive())
+				if (!barricades[enemy[i]->getNearBarricadeIndex()].getActive())
 				{
 					// マップデータを更新
-					map.updateMapObjInt(barricades[enemy[i].getNearBarricadeIndex()].getTileY(), barricades[enemy[i].getNearBarricadeIndex()].getTileX(), 1);
-					if (map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 + 1) != 0 && map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 + 1) != 1)
+					map.updateMapObjInt(barricades[enemy[i]->getNearBarricadeIndex()].getTileY(), barricades[enemy[i]->getNearBarricadeIndex()].getTileX(), 1);
+					if (map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 0 
+						&& map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 1)
 					{
-						map.updateMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY(), barricades[enemy[i].getNearBarricadeIndex()].getX() + 32, -1);
+						map.updateMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY(), barricades[enemy[i]->getNearBarricadeIndex()].getX() + 32, -1);
 					}
-					if (map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 - 1) != 0 && map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 - 1) != 1)
+					if (map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != 0 
+						&& map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != 1)
 					{
-						map.updateMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY(), barricades[enemy[i].getNearBarricadeIndex()].getX() - 32, -1);
+						map.updateMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY(), barricades[enemy[i]->getNearBarricadeIndex()].getX() - 32, -1);
 					}
-					if (map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 + 1, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32) != 0 && map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 + 1, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32) != 1)
+					if (map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 0 
+						&& map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 1)
 					{
-						map.updateMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() + 32, barricades[enemy[i].getNearBarricadeIndex()].getX(), -1);
+						map.updateMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() + 32, barricades[enemy[i]->getNearBarricadeIndex()].getX(), -1);
 					}
-					if (map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 - 1, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32) != 0 && map.getMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 - 1, barricades[enemy[i].getNearBarricadeIndex()].getX() / 32) != 0)
+					if (map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 0 
+						&& map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 0)
 					{
-						map.updateMapObj(barricades[enemy[i].getNearBarricadeIndex()].getY() - 32, barricades[enemy[i].getNearBarricadeIndex()].getX(), -1);
+						map.updateMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() - 32, barricades[enemy[i]->getNearBarricadeIndex()].getX(), -1);
 					}
 				}
 			}
 		}
 
 		// 炎と雑魚敵の衝突の場合
-		if (fire.collidesWith(enemy[i], collisionVector))
+		if (fire.collidesWith(*enemy[i], collisionVector))
 		{
-			enemy[i].damage(FIRE);
+			enemy[i]->damage(FIRE);
 			fire.setVisible(false);
 			fire.setActive(false);
 		}
 
 		// 攻撃中ならば行動選択は行わない
-		if (enemy[i].getState() == characterNS::ATTACK)
+		if (enemy[i]->getState() == characterNS::ATTACK)
 		{
 		}
-		else if (enemy[i].collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーが衝突している場合、
+		else if (enemy[i]->collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーが衝突している場合、
 		{
 			// 敵の状態を勇者攻撃状態に変更
-			enemy[i].setAttackState(enemyNS::ATTACK_BRAVE);
+			enemy[i]->setAttackState(enemyNS::ATTACK_BRAVE);
 			// 勇者がいる方向に応じて攻撃する方向を変更
-			enemy[i].changeAttack(collisionVector);
+			enemy[i]->changeAttack(collisionVector);
 		}
-		else if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX()) == -1)	// 雑魚敵と城が衝突していたら攻撃、
+		else if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX()) == -1)	// 雑魚敵と城が衝突していたら攻撃、
 		{
 			// 城がある方向に応じて攻撃する方向を変更
-			if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() + 1) == 2)
+			if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) == 2)
 			{
-				enemy[i].changeAttack(characterNS::RIGHT);
+				enemy[i]->changeAttack(characterNS::RIGHT);
 			}
-			else if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() - 1) == 2)
+			else if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) == 2)
 			{
-				enemy[i].changeAttack(characterNS::LEFT);
+				enemy[i]->changeAttack(characterNS::LEFT);
 			}
-			else if (map.getMapCol(enemy[i].getTileY() + 1, enemy[i].getTileX()) == 2)
+			else if (map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) == 2)
 			{
-				enemy[i].changeAttack(characterNS::DOWN);
+				enemy[i]->changeAttack(characterNS::DOWN);
 			}
-			else if (map.getMapCol(enemy[i].getTileY() - 1, enemy[i].getTileX()) == 2)
+			else if (map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) == 2)
 			{
-				enemy[i].changeAttack(characterNS::UP);
+				enemy[i]->changeAttack(characterNS::UP);
 			}
 			// 敵の状態を城攻撃状態に変更
-			enemy[i].setAttackState(enemyNS::ATTACK_CASTLE);
+			enemy[i]->setAttackState(enemyNS::ATTACK_CASTLE);
 		}
-		else if (map.getMapObj(enemy[i].getTileY(), enemy[i].getTileX()) == -2)	// 最近接のバリケードに衝突していたら攻撃
+		else if (map.getMapObj(enemy[i]->getTileY(), enemy[i]->getTileX()) == -2)	// 最近接のバリケードに衝突していたら攻撃
 		{
 			// バリケードがある方向に応じて攻撃する方向を変更
-			if (enemy[i].getTileX() < (int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32)
-				enemy[i].changeAttack(characterNS::RIGHT);
-			else if (enemy[i].getTileX() > (int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32)
-				enemy[i].changeAttack(characterNS::LEFT);
-			else if (enemy[i].getTileY() < (int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32)
-				enemy[i].changeAttack(characterNS::DOWN);
-			else if (enemy[i].getTileY() > (int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32)
-				enemy[i].changeAttack(characterNS::UP);
+			if (enemy[i]->getTileX() < (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32)
+				enemy[i]->changeAttack(characterNS::RIGHT);
+			else if (enemy[i]->getTileX() > (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32)
+				enemy[i]->changeAttack(characterNS::LEFT);
+			else if (enemy[i]->getTileY() < (int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32)
+				enemy[i]->changeAttack(characterNS::DOWN);
+			else if (enemy[i]->getTileY() > (int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32)
+				enemy[i]->changeAttack(characterNS::UP);
 			else
 				throw(GameError(gameErrorNS::FATAL_ERROR, "Error enemy and barricades"));
 			// 敵の状態をバリケード攻撃状態に変更
-			enemy[i].setAttackState(enemyNS::ATTACK_BARRICADE);
+			enemy[i]->setAttackState(enemyNS::ATTACK_BARRICADE);
 		}
-		else if (enemy[i].canMakeDecesionMoving())	// 敵が方向転換可能な状態にあるとき、意思決定を行い進む方向を決める
+		else if (enemy[i]->canMakeDecesionMoving())	// 敵が方向転換可能な状態にあるとき、意思決定を行い進む方向を決める
 		{
 			bool changeGoalDirectionFlag = false;	// 進みたい方向を変える必要があるかどうか
 			// 最近接のバリケードを探索
-			enemy[i].searchNearBarricadeIndex();
-			if (!enemy[i].checkBarricadeOnLine())	// 城までの直線上にバリケードがない場合、城へと進行する
+			enemy[i]->searchNearBarricadeIndex();
+			if (!enemy[i]->checkBarricadeOnLine())	// 城までの直線上にバリケードがない場合、城へと進行する
 			{
 				// 敵の状態を城移動中へと変更
-				enemy[i].setStateDetail(enemyNS::MOVE_CASTLE);
-				enemy[i].setState(characterNS::MOVE);
+				enemy[i]->setStateDetail(enemyNS::MOVE_CASTLE);
+				enemy[i]->setState(characterNS::MOVE);
 				// 進みたい方向に進めない場合、方向を進みたい方向をランダムに変換
-				switch (enemy[i].getGoalDirection())
+				switch (enemy[i]->getGoalDirection())
 				{
 				case characterNS::LEFT:
-					if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() - 1) >= 1)
+					if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) >= 1)
 					{
 						changeGoalDirectionFlag = true;
 					}
 					break;
 				case characterNS::RIGHT:
-					if (map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() + 1) >= 1)
+					if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) >= 1)
 					{
 						changeGoalDirectionFlag = true;
 					}
 					break;
 				case characterNS::UP:
-					if (map.getMapCol(enemy[i].getTileY() - 1, enemy[i].getTileX()) >= 1)
+					if (map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) >= 1)
 					{
 						changeGoalDirectionFlag = true;
 					}
 					break;
 				case characterNS::DOWN:
-					if (map.getMapCol(enemy[i].getTileY() + 1, enemy[i].getTileX()) >= 1)
+					if (map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) >= 1)
 					{
 						changeGoalDirectionFlag = true;
 					}
@@ -578,52 +563,52 @@ void TowerDiffence::collisions()
 			else // 城までの直線状にバリケードが存在する場合、
 			{
 				// 敵の状態をバリケードに進行中へと変更
-				enemy[i].setStateDetail(enemyNS::MOVE_BARRICADE);
-				enemy[i].setState(characterNS::MOVE);
+				enemy[i]->setStateDetail(enemyNS::MOVE_BARRICADE);
+				enemy[i]->setState(characterNS::MOVE);
 				// 確率50%でx方向に進むかどうかを先に決定し、そのあとにy方向に進むかどうかを決定
 				bool canMoveXDirection = false;
 				bool canMoveYDirection = false;
 				characterNS::DIRECTION xDirection;
 				characterNS::DIRECTION yDirection;
-				if ((int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 < enemy[i].getTileX())
+				if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 < enemy[i]->getTileX())
 				{
-					if (!map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() - 1) >= 1)
+					if (!map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) >= 1)
 					{
 						xDirection = characterNS::LEFT;
-						enemy[i].setGoalDirection(characterNS::LEFT);
+						enemy[i]->setGoalDirection(characterNS::LEFT);
 						canMoveXDirection = true;
 					}
 					else
 						changeGoalDirectionFlag = true;
 				}
-				else if ((int)barricades[enemy[i].getNearBarricadeIndex()].getX() / 32 > enemy[i].getTileX())
+				else if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 > enemy[i]->getTileX())
 				{
-					if (!map.getMapCol(enemy[i].getTileY(), enemy[i].getTileX() + 1) >= 1)
+					if (!map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) >= 1)
 					{
 						xDirection = characterNS::RIGHT;
-						enemy[i].setGoalDirection(characterNS::RIGHT);
+						enemy[i]->setGoalDirection(characterNS::RIGHT);
 						canMoveXDirection = true;
 					}
 					else
 						changeGoalDirectionFlag = true;
 				}
-				if ((int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 < enemy[i].getTileY())
+				if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 < enemy[i]->getTileY())
 				{
-					if (!map.getMapCol(enemy[i].getTileY() - 1, enemy[i].getTileX()) >= 1)
+					if (!map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) >= 1)
 					{
 						yDirection = characterNS::UP;
-						enemy[i].setGoalDirection(characterNS::UP);
+						enemy[i]->setGoalDirection(characterNS::UP);
 						canMoveYDirection = true;
 					}
 					else
 						changeGoalDirectionFlag = true;
 				}
-				else if ((int)barricades[enemy[i].getNearBarricadeIndex()].getY() / 32 > enemy[i].getTileY())
+				else if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 > enemy[i]->getTileY())
 				{
-					if (!map.getMapCol(enemy[i].getTileY() + 1, enemy[i].getTileX()) >= 1)
+					if (!map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) >= 1)
 					{
 						yDirection = characterNS::DOWN;
-						enemy[i].setGoalDirection(characterNS::DOWN);
+						enemy[i]->setGoalDirection(characterNS::DOWN);
 						canMoveYDirection = true;
 					}
 					else
@@ -632,9 +617,9 @@ void TowerDiffence::collisions()
 				if (canMoveXDirection && canMoveYDirection)
 				{
 					if (rand() % 2 == 0)
-						enemy[i].setGoalDirection(xDirection);
+						enemy[i]->setGoalDirection(xDirection);
 					else
-						enemy[i].setGoalDirection(yDirection);
+						enemy[i]->setGoalDirection(yDirection);
 				}
 			}
 			// 進みたい方向に進めない場合、ランダムに方向を決めなおす
@@ -643,261 +628,19 @@ void TowerDiffence::collisions()
 				// ランダムに進みたい方向を修正
 				characterNS::DIRECTION newDirection = (characterNS::DIRECTION) (rand() % 4);
 				// それでも進めない場合、敵を待機状態にして静止させる
-				if (enemy[i].canMoveTo(newDirection))
+				if (enemy[i]->canMoveTo(newDirection))
 				{
-					enemy[i].setGoalDirection(newDirection);
+					enemy[i]->setGoalDirection(newDirection);
 				}
 				else
 				{
-					enemy[i].setState(characterNS::WAIT);
-					enemy[i].setStateDetail(enemyNS::WAIT);
-				}
-			}
-		}
-	}
-	// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
-	if (braveAttackCollision.collidesWith(midBoss, collisionVector))
-	{
-		// 敵にダメージを与える
-		midBoss.damage(BRAVE_ATTACK);
-		// いずれかの敵に攻撃があたったのでループを抜けた後に攻撃コリジョンをなくす
-		braveAttackCollidesWithAnyEnemy = true;
-	}
-
-	// 敵が攻撃時は、城とプレイヤーとバリケードとの当たり判定をそれぞれチェック
-	if (midBoss.getState() == characterNS::ATTACK)
-	{
-		// 敵の攻撃コリジョンとプレイヤーの衝突の場合
-		if (midBossAttackCollision.collidesWith(brave, collisionVector))
-		{
-			// プレイヤーにダメージを与える
-			brave.setDamagePer(1.5f);
-			brave.damage(ENEMY_ATTACK);
-			// 敵の攻撃コリジョンをなくす
-			midBossAttackCollision.setVisible(false);
-			midBossAttackCollision.setActive(false);
-		}
-		// 敵の攻撃コリジョンと城の衝突の場合
-		if (midBossAttackCollision.collidesWith(castle, collisionVector))
-		{
-			// 城にダメージを与える
-			castle.setDamagePer(1.5f);
-			castle.damage(ENEMY_ATTACK);
-			// 敵の攻撃コリジョンをなくす
-			midBossAttackCollision.setVisible(false);
-			midBossAttackCollision.setActive(false);
-		}
-		// 敵の攻撃コリジョンとバリケードの衝突の場合
-		if (midBossAttackCollision.collidesWith(barricades[midBoss.getNearBarricadeIndex()], collisionVector)) {
-			// バリケードにダメージを与える（barricades[enemy[i].getNearBarricadeIndex()]が攻撃対象になるはず）
-			barricades[midBoss.getNearBarricadeIndex()].damage();
-			// 敵の攻撃コリジョンをなくす
-			midBossAttackCollision.setVisible(false);
-			midBossAttackCollision.setActive(false);
-			// 攻撃されたバリケードが破壊された場合、
-			if (!barricades[midBoss.getNearBarricadeIndex()].getActive())
-			{
-				// マップデータを更新
-				map.updateMapObjInt(barricades[midBoss.getNearBarricadeIndex()].getTileY(), barricades[midBoss.getNearBarricadeIndex()].getTileX(), 1);
-				if (map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32, barricades[midBoss.getNearBarricadeIndex()].getX() / 32 + 1) != 0 
-					&& map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32, barricades[midBoss.getNearBarricadeIndex()].getX() / 32 + 1) != 1)
-				{
-					map.updateMapObj(barricades[midBoss.getNearBarricadeIndex()].getY(), barricades[midBoss.getNearBarricadeIndex()].getX() + 32, -1);
-				}
-				if (map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32, barricades[midBoss.getNearBarricadeIndex()].getX() / 32 - 1) != 0 
-					&& map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32, barricades[midBoss.getNearBarricadeIndex()].getX() / 32 - 1) != 1)
-				{
-					map.updateMapObj(barricades[midBoss.getNearBarricadeIndex()].getY(), barricades[midBoss.getNearBarricadeIndex()].getX() - 32, -1);
-				}
-				if (map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32 + 1, barricades[midBoss.getNearBarricadeIndex()].getX() / 32) != 0 
-					&& map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32 + 1, barricades[midBoss.getNearBarricadeIndex()].getX() / 32) != 1)
-				{
-					map.updateMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() + 32, barricades[midBoss.getNearBarricadeIndex()].getX(), -1);
-				}
-				if (map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32 - 1, barricades[midBoss.getNearBarricadeIndex()].getX() / 32) != 0 
-					&& map.getMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() / 32 - 1, barricades[midBoss.getNearBarricadeIndex()].getX() / 32) != 0)
-				{
-					map.updateMapObj(barricades[midBoss.getNearBarricadeIndex()].getY() - 32, barricades[midBoss.getNearBarricadeIndex()].getX(), -1);
+					enemy[i]->setState(characterNS::WAIT);
+					enemy[i]->setStateDetail(enemyNS::WAIT);
 				}
 			}
 		}
 	}
 
-	// 炎と雑魚敵の衝突の場合
-	if (fire.collidesWith(midBoss, collisionVector))
-	{
-		midBoss.damage(FIRE);
-		fire.setVisible(false);
-		fire.setActive(false);
-	}
-
-	// 攻撃中ならば行動選択は行わない
-	if (midBoss.getState() == characterNS::ATTACK)
-	{
-	}
-	else if (midBoss.collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーが衝突している場合、
-	{
-		// 敵の状態を勇者攻撃状態に変更
-		midBoss.setAttackState(enemyNS::ATTACK_BRAVE);
-		// 勇者がいる方向に応じて攻撃する方向を変更
-		midBoss.changeAttack(collisionVector);
-	}
-	else if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX()) == -1)	// 雑魚敵と城が衝突していたら攻撃、
-	{
-		// 城がある方向に応じて攻撃する方向を変更
-		if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX() + 1) == 2)
-		{
-			midBoss.changeAttack(characterNS::RIGHT);
-		}
-		else if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX() - 1) == 2)
-		{
-			midBoss.changeAttack(characterNS::LEFT);
-		}
-		else if (map.getMapCol(midBoss.getTileY() + 1, midBoss.getTileX()) == 2)
-		{
-			midBoss.changeAttack(characterNS::DOWN);
-		}
-		else if (map.getMapCol(midBoss.getTileY() - 1, midBoss.getTileX()) == 2)
-		{
-			midBoss.changeAttack(characterNS::UP);
-		}
-		// 敵の状態を城攻撃状態に変更
-		midBoss.setAttackState(enemyNS::ATTACK_CASTLE);
-	}
-	else if (map.getMapObj(midBoss.getTileY(), midBoss.getTileX()) == -2)	// 最近接のバリケードに衝突していたら攻撃
-	{
-		// バリケードがある方向に応じて攻撃する方向を変更
-		if (midBoss.getTileX() < (int)barricades[midBoss.getNearBarricadeIndex()].getX() / 32)
-			midBoss.changeAttack(characterNS::RIGHT);
-		else if (midBoss.getTileX() > (int)barricades[midBoss.getNearBarricadeIndex()].getX() / 32)
-			midBoss.changeAttack(characterNS::LEFT);
-		else if (midBoss.getTileY() < (int)barricades[midBoss.getNearBarricadeIndex()].getY() / 32)
-			midBoss.changeAttack(characterNS::DOWN);
-		else if (midBoss.getTileY() > (int)barricades[midBoss.getNearBarricadeIndex()].getY() / 32)
-			midBoss.changeAttack(characterNS::UP);
-		else
-			throw(GameError(gameErrorNS::FATAL_ERROR, "Error enemy and barricades"));
-		// 敵の状態をバリケード攻撃状態に変更
-		midBoss.setAttackState(enemyNS::ATTACK_BARRICADE);
-	}
-	else if (midBoss.canMakeDecesionMoving())	// 敵が方向転換可能な状態にあるとき、意思決定を行い進む方向を決める
-	{
-		bool changeGoalDirectionFlag = false;	// 進みたい方向を変える必要があるかどうか
-												// 最近接のバリケードを探索
-		midBoss.searchNearBarricadeIndex();
-		if (!midBoss.checkBarricadeOnLine())	// 城までの直線上にバリケードがない場合、城へと進行する
-		{
-			// 敵の状態を城移動中へと変更
-			midBoss.setStateDetail(enemyNS::MOVE_CASTLE);
-			midBoss.setState(characterNS::MOVE);
-			// 進みたい方向に進めない場合、方向を進みたい方向をランダムに変換
-			switch (midBoss.getGoalDirection())
-			{
-			case characterNS::LEFT:
-				if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX() - 1) >= 1)
-				{
-					changeGoalDirectionFlag = true;
-				}
-				break;
-			case characterNS::RIGHT:
-				if (map.getMapCol(midBoss.getTileY(), midBoss.getTileX() + 1) >= 1)
-				{
-					changeGoalDirectionFlag = true;
-				}
-				break;
-			case characterNS::UP:
-				if (map.getMapCol(midBoss.getTileY() - 1, midBoss.getTileX()) >= 1)
-				{
-					changeGoalDirectionFlag = true;
-				}
-				break;
-			case characterNS::DOWN:
-				if (map.getMapCol(midBoss.getTileY() + 1, midBoss.getTileX()) >= 1)
-				{
-					changeGoalDirectionFlag = true;
-				}
-				break;
-			}
-		}
-		else // 城までの直線状にバリケードが存在する場合、
-		{
-			// 敵の状態をバリケードに進行中へと変更
-			midBoss.setStateDetail(enemyNS::MOVE_BARRICADE);
-			midBoss.setState(characterNS::MOVE);
-			// 確率50%でx方向に進むかどうかを先に決定し、そのあとにy方向に進むかどうかを決定
-			bool canMoveXDirection = false;
-			bool canMoveYDirection = false;
-			characterNS::DIRECTION xDirection;
-			characterNS::DIRECTION yDirection;
-			if ((int)barricades[midBoss.getNearBarricadeIndex()].getX() / 32 < midBoss.getTileX())
-			{
-				if (!map.getMapCol(midBoss.getTileY(), midBoss.getTileX() - 1) >= 1)
-				{
-					xDirection = characterNS::LEFT;
-					midBoss.setGoalDirection(characterNS::LEFT);
-					canMoveXDirection = true;
-				}
-				else
-					changeGoalDirectionFlag = true;
-			}
-			else if ((int)barricades[midBoss.getNearBarricadeIndex()].getX() / 32 > midBoss.getTileX())
-			{
-				if (!map.getMapCol(midBoss.getTileY(), midBoss.getTileX() + 1) >= 1)
-				{
-					xDirection = characterNS::RIGHT;
-					midBoss.setGoalDirection(characterNS::RIGHT);
-					canMoveXDirection = true;
-				}
-				else
-					changeGoalDirectionFlag = true;
-			}
-			if ((int)barricades[midBoss.getNearBarricadeIndex()].getY() / 32 < midBoss.getTileY())
-			{
-				if (!map.getMapCol(midBoss.getTileY() - 1, midBoss.getTileX()) >= 1)
-				{
-					yDirection = characterNS::UP;
-					midBoss.setGoalDirection(characterNS::UP);
-					canMoveYDirection = true;
-				}
-				else
-					changeGoalDirectionFlag = true;
-			}
-			else if ((int)barricades[midBoss.getNearBarricadeIndex()].getY() / 32 > midBoss.getTileY())
-			{
-				if (!map.getMapCol(midBoss.getTileY() + 1, midBoss.getTileX()) >= 1)
-				{
-					yDirection = characterNS::DOWN;
-					midBoss.setGoalDirection(characterNS::DOWN);
-					canMoveYDirection = true;
-				}
-				else
-					changeGoalDirectionFlag = true;
-			}
-			if (canMoveXDirection && canMoveYDirection)
-			{
-				if (rand() % 2 == 0)
-					midBoss.setGoalDirection(xDirection);
-				else
-					midBoss.setGoalDirection(yDirection);
-			}
-			// 進みたい方向に進めない場合、ランダムに方向を決めなおす
-			if (changeGoalDirectionFlag)
-			{
-				// ランダムに進みたい方向を修正
-				characterNS::DIRECTION newDirection = (characterNS::DIRECTION) (rand() % 4);
-				// それでも進めない場合、敵を待機状態にして静止させる
-				if (midBoss.canMoveTo(newDirection))
-				{
-					midBoss.setGoalDirection(newDirection);
-				}
-				else
-				{
-					midBoss.setState(characterNS::WAIT);
-					midBoss.setStateDetail(enemyNS::WAIT);
-				}
-			}
-		}
-	}
 	// 勇者の攻撃がいずれかの敵に当たった場合、攻撃コリジョンをなくす
 	if (braveAttackCollidesWithAnyEnemy)
 	{
@@ -968,21 +711,21 @@ void TowerDiffence::render()
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
 
-		for (int i = 0; i < towerDiffenceNS::ENEMY_NUM; i++) {
+		for (int i = 0; i < enemyNum; i++) {
 			// 敵の描画、色は適当に分けてる、色によって能力値を分ける
 			if (i % 3 == 0) {
-				enemy[i].draw(graphicsNS::WHITE);
-				enemy[i].setEnemyType(enemyNS::NORMAL);
+				enemy[i]->draw(graphicsNS::WHITE);
+				enemy[i]->setEnemyType(enemyNS::NORMAL);
 			}
 			else if (i % 3 == 1) {
-				enemy[i].draw(graphicsNS::RED);
-				enemy[i].setEnemyType(enemyNS::RED);
+				enemy[i]->draw(graphicsNS::RED);
+				enemy[i]->setEnemyType(enemyNS::RED);
 			}
 			else if (i % 3 == 2) {
-				enemy[i].draw(graphicsNS::BLUE);
-				enemy[i].setEnemyType(enemyNS::BLUE);
+				enemy[i]->draw(graphicsNS::BLUE);
+				enemy[i]->setEnemyType(enemyNS::BLUE);
 			}
-			enemyAttackCollision[i].draw();
+			enemy[i]->getAttackCollision().draw();
 		}
 		braveHpText.draw();
 		braveMpText.draw();
@@ -990,8 +733,6 @@ void TowerDiffence::render()
 		braveIcon.draw();
 		castleIcon.draw();
 		castle.draw();
-		midBoss.draw(graphicsNS::WHITE);
-		midBossAttackCollision.draw();
 		fire.draw();
 		brave.draw(graphicsNS::WHITE);
 		braveAttackCollision.draw();
@@ -1045,4 +786,69 @@ void TowerDiffence::resetAll()
 	safeOnResetDevice(rect);
 	Game::resetAll();
 	return;
+}
+
+//==========================================================
+// 指定されたステージの敵データを読み込む
+//==========================================================
+void TowerDiffence::readEnemyFile(int stageNum)
+{
+	string enemyDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\enemydata.csv";
+
+	ifstream* ifs = new ifstream(enemyDataFilename);
+	//csvファイルを1行ずつ読み込む
+	string str;
+	if (getline(*ifs, str))
+	{
+		string token;
+		istringstream stream(str);
+		if (getline(stream, token, ','))
+		{
+			enemyNum = stof(token);
+			enemy = new Enemy*[enemyNum];
+			enemyX = new float[enemyNum];
+			enemyY = new float[enemyNum];
+		}
+	}
+	if (getline(*ifs, str)) 
+	{
+		string token;
+		istringstream stream(str);
+		for (int i = 0; i < enemyNum; ++i)
+		{
+			if (getline(stream, token, ','))
+			{
+				if ((int)stof(token) == 1)
+					enemy[i] = new Enemy();
+				else if ((int)stof(token) == 2)
+					enemy[i] = new MidBoss();
+			}
+		}
+	}
+	if (getline(*ifs, str))
+	{
+		string token;
+		istringstream stream(str);
+		for (int i = 0; i < enemyNum; ++i)
+		{
+			if (getline(stream, token, ','))
+			{
+				enemyX[i] = stof(token);
+			}
+		}
+	}
+	if (getline(*ifs, str))
+	{
+		string token;
+		istringstream stream(str);
+		for (int i = 0; i < enemyNum; ++i)
+		{
+			if (getline(stream, token, ','))
+			{
+				enemyY[i] = stof(token);
+			}
+		}
+	}
+
+	safeDelete(ifs);
 }

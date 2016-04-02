@@ -7,8 +7,6 @@ Enemy::Enemy() : Character()
 {
 	spriteData.width = enemyNS::WIDTH;			// 雑魚敵のサイズ
 	spriteData.height = enemyNS::HEIGHT;
-	// spriteData.x = enemyNS::X;					// 画面上の位置
-	// spriteData.y = enemyNS::Y;
 	spriteData.rect.bottom = enemyNS::HEIGHT;	// 画面の一部を選択
 	spriteData.rect.right = enemyNS::WIDTH;
 	frameDelay = enemyNS::MOVE_ANIMATION_DELAY;
@@ -61,8 +59,6 @@ Enemy::Enemy() : Character()
 void Enemy::reset()
 {
 	Character::reset();
-	// spriteData.x = enemyNS::X;					// 画面上の位置
-	// spriteData.y = enemyNS::Y;
 	frameDelay = enemyNS::MOVE_ANIMATION_DELAY;
 	// 初期の方向は右
 	oldDirection = direction;
@@ -91,6 +87,10 @@ void Enemy::update(float frameTime)
 	// 非アクティブなら何もしない
 	if (!active)
 		return;
+	
+	if (attackCollisionFlag) {
+		attackCollision.attack(getCenterX(), getCenterY(), getWidth(), getHeight(), direction);
+	}
 	// 攻撃中の当たり判定を出すフラグをオフ
 	attackCollisionFlag = false;
 	canMakeDecesionMove = false;
@@ -234,6 +234,7 @@ void Enemy::update(float frameTime)
 	if (spriteData.y > GAME_HEIGHT - enemyNS::HEIGHT * getScale())  // 画面下端を超えたら
 		spriteData.y = GAME_HEIGHT - enemyNS::HEIGHT * getScale();	// 画面下端に移動
 
+	attackCollision.update(frameTime);
 }
 
 //==========================================================
