@@ -254,7 +254,10 @@ void Enemy::damage(WEAPON weapon)
 		break;
 	}
 	if (health <= 0)
+	{
 		dead();
+		map->resetMapCol(tileY, tileX);
+	}
 	isDamaged = true;
 }
 

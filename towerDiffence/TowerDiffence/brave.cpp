@@ -155,7 +155,7 @@ void Brave::update(float frameTime)
 			}
 			Entity::updateOnlyImage(frameTime);
 		}
-		else if (input->isKeyDown(BRAVE_ATTACK_KEY))	// 攻撃キーが押された場合、
+		if (input->isKeyDown(BRAVE_ATTACK_KEY))	// 攻撃キーが押された場合、
 		{
 			audio->playCue("kill");
 			// アニメーションをリセット

@@ -5,14 +5,7 @@
 //==========================================================
 Map::Map() : Entity()
 {
-	// データ初期化
-	for (int i = 0; i < mapNS::MAP_HEIGHT; i++) {
-		for (int j = 0; j < mapNS::MAP_WIDTH; j++) {
-			tileMap[i][j] = mapNS::mapData[i][j];
-			tileCol[i][j] = mapNS::colData[i][j];
-			tileObj[i][j] = mapNS::objData[i][j];
-		}
-	}
+	readMapFile(1);
 };
 
 ////==========================================================
@@ -78,4 +71,92 @@ void Map::updateMapObjInt(int y, int x, int val)
 {
 	// 座標値を更新
 	tileObj[y][x] = val;
+}
+
+//==========================================================
+// 指定されたステージのマップデータを読み込む
+//==========================================================
+void Map::readMapFile(int stageNum)
+{
+	string mapDataFilename = "stageData\\stage" + std::to_string(stageNum) + "_mapdata.csv";
+	string colDataFilename = "stageData\\stage" + std::to_string(stageNum) + "_coldata.csv";
+	string objDataFilename = "stageData\\stage" + std::to_string(stageNum) + "_objdata.csv";
+
+	ifstream* ifs = new ifstream(mapDataFilename);
+	if (!ifs)
+		exit(1);
+	//csvファイルを1行ずつ読み込む
+	string str;
+	int y = 0, x = 0;
+	while (getline(*ifs, str)) {
+		string token;
+		istringstream stream(str);
+		x = 0;
+		//1行のうち、文字列とコンマを分割する
+		while (getline(stream, token, ',')) {
+			//すべて文字列として読み込まれるため
+			//数値は変換が必要
+			int temp = stof(token); //stof(string str) : stringをfloatに変換
+			tileMap[y][x] = temp;
+			x += 1;
+			if (x == mapNS::MAP_WIDTH)
+				break;
+		}
+		y += 1;
+		if (y == mapNS::MAP_HEIGHT)
+			break;
+	}
+
+	ifs = new ifstream(colDataFilename);
+	if (!ifs)
+		exit(1);
+	//csvファイルを1行ずつ読み込む
+	y = 0;
+	x = 0;
+	while (getline(*ifs, str)) {
+		string token;
+		istringstream stream(str);
+		x = 0;
+		//1行のうち、文字列とコンマを分割する
+		while (getline(stream, token, ',')) {
+			//すべて文字列として読み込まれるため
+			//数値は変換が必要
+			int temp = stof(token); //stof(string str) : stringをfloatに変換
+			tileCol[y][x] = temp;
+			tileColInit[y][x] = temp;
+			x += 1;
+			if (x == mapNS::MAP_WIDTH)
+				break;
+		}
+		y += 1;
+		if (y == mapNS::MAP_HEIGHT)
+			break;
+	}
+
+	ifs = new ifstream(objDataFilename);
+	if (!ifs)
+		exit(1);
+	//csvファイルを1行ずつ読み込む
+	y = 0;
+	x = 0;
+	while (getline(*ifs, str)) {
+		string token;
+		istringstream stream(str);
+		x = 0;
+		//1行のうち、文字列とコンマを分割する
+		while (getline(stream, token, ',')) {
+			//すべて文字列として読み込まれるため
+			//数値は変換が必要
+			int temp = stof(token); //stof(string str) : stringをfloatに変換
+			tileObj[y][x] = temp;
+			x += 1;
+			if (x == mapNS::MAP_WIDTH)
+				break;
+		}
+		y += 1;
+		if (y == mapNS::MAP_HEIGHT)
+			break;
+	}
+
+	safeDelete(ifs);
 }
