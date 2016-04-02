@@ -92,7 +92,7 @@ void Barricade::update(float frameTime)
 //==========================================================
 void Barricade::damage()
 {
-	health -= 10;
+	health -= 10 * damagePer;
 
 	if (health <= 0)
 	{
