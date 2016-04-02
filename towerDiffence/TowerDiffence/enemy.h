@@ -8,15 +8,12 @@
 #include "map.h"
 #include "barricade.h"
 #include "castle.h"
+#include "enemyAttackCollision.h"
 
 namespace enemyNS
 {
 	const int WIDTH = 32;							// 画像の幅（各フレーム）
 	const int HEIGHT = 32;							// 画像の高さ
-	const int X[] = { 200, 100, 800, 600,1000,
-	                   50, 350, 750,1100,1200};
-	const int Y[] = {   0, 400, 100, 700, 700,
-	                  600,  20, 600, 350,  10};
 	const int MOVE_SPEED = 100;						// 移動速度（ピクセル）
 	const int TEXTURE_COLS = 12;					// テクスチャは12列
 	const int MOVE_UP_START_FRAME = 54;				// 上方向移動のアニメーションはフレーム54から開始
@@ -65,6 +62,7 @@ protected:
 	imageNS::MODE attackAnimationMode;
 	enemyNS::TYPE type;                     // 敵の種類
 	float damagePer;                        // ダメージを受ける時に掛ける値
+	EnemyCollision attackCollision;			// 攻撃判定用のコリジョン
 public:
 	// コンストラクタ
 	Enemy();
@@ -114,6 +112,8 @@ public:
 	bool canMakeDecesionMoving() { return canMakeDecesionMove; }
 	// 最近接のバリケードのインデックスを返す
 	int getNearBarricadeIndex() { return nearBarricadeIndex; }
+	// 攻撃判定用のコリジョンを返す
+	EnemyCollision& getAttackCollision() { return attackCollision; }
 	
 	// 向きをgoalDirectionへとアップデートする関数
 	void changeDirection(int strF, int endF);

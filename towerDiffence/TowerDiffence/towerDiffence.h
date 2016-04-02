@@ -60,8 +60,6 @@ private:
 	BraveIcon braveIcon;								// 勇者のアイコン
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
 	BraveAttackCollision braveAttackCollision;			// 勇者の攻撃の当たり判定用
-	EnemyCollision enemyAttackCollision[towerDiffenceNS::ENEMY_NUM]; // 雑魚敵の攻撃の当たり判定用
-	EnemyCollision midBossAttackCollision;				// 中ボスの攻撃の当たり判定用
 	TextureManager tileTexture;							// タイルのテクスチャ
 	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ
@@ -73,9 +71,10 @@ private:
 	TextureManager fireTexture;							// 炎のテクスチャ
 	Fire fire;											// 炎
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
-	Enemy enemy[towerDiffenceNS::ENEMY_NUM];	    	// 雑魚敵
+	Enemy **enemy;	    								// 敵へのポインタの配列
+	float *enemyX;										// 敵の初期位置Xの配列
+	float *enemyY;										// 敵の初期位置Yの配列
 	TextureManager midBossTexture;						// 中ボスのテクスチャ
-	MidBoss midBoss;									// 中ボス
 	TextureManager dashboardTextures;					// ダッシュボードテクスチャ
 	BarGraph braveHealthBar;							// 勇者の体力バー
 	BarGraph braveMpBar;								// 勇者のMPバー
@@ -89,6 +88,7 @@ private:
 	float remainingTime;								// ゲーム内の残り時間
 	bool    roundOver;									// ラウンドが終了した場合、true
 	float   roundTimer;									// 新しいラウンドが開始するまでの時間
+	int enemyNum;										// ステージ上に存在する敵の数
 public:
 	// コンストラクタ
 	TowerDiffence();
@@ -119,5 +119,7 @@ public:
 	// すべてのサーフェイスを再作成
 	void resetAll();
 
+	// 指定されたステージの敵データを読み込む
+	void readEnemyFile(int stageNum);
 };
 #endif
