@@ -742,7 +742,13 @@ void TowerDiffence::render()
 		castleIcon.draw();
 		castle.draw();
 		fire.draw();
+		float tmpX = brave.getX();
+		float tmpY = brave.getY();
+		brave.setX(tmpX - brave.getWidth() * (brave.getScale() - 1) / 2.0);
+		brave.setY(tmpY - brave.getHeight() * (brave.getScale() - 1) / 2.0 - 10);
 		brave.draw(graphicsNS::WHITE);
+		brave.setX(tmpX);
+		brave.setY(tmpY);
 		braveAttackCollision.draw();
 		braveHealthBar.set(brave.getHealth());
 		braveMpBar.set(brave.getMP());
