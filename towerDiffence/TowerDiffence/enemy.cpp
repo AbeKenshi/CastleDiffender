@@ -180,6 +180,10 @@ void Enemy::update(float frameTime)
 	case characterNS::WAIT:
 		canMakeDecesionMove = true;
 		break;
+	case characterNS::DEATH:
+		drawFlag = true;
+		isDamaged = false;
+		velocity.y += frameTime * 2000.0f;
 	default:
 		break;
 	}
@@ -224,16 +228,25 @@ void Enemy::update(float frameTime)
 			isDamaged = false;
 		}
 	}
-	// 画面の端まで来たら進めない
-	if (spriteData.x > GAME_WIDTH - enemyNS::WIDTH * getScale())	// 画面右端を超えたら
-		spriteData.x = GAME_WIDTH - enemyNS::WIDTH * getScale();	// 画面右端に移動
-	if (spriteData.x < 0)											// 画面左端を超えたら
-		spriteData.x = 0;											// 画面左端に移動
-	if (spriteData.y < rectNS::HEIGHT - 10)								// 画面上端を超えたら
-		spriteData.y = rectNS::HEIGHT - 10;								// 画面上端に移動
-	if (spriteData.y > GAME_HEIGHT - enemyNS::HEIGHT * getScale())  // 画面下端を超えたら
-		spriteData.y = GAME_HEIGHT - enemyNS::HEIGHT * getScale();	// 画面下端に移動
-
+	if (state != characterNS::DEATH)
+	{
+		// 画面の端まで来たら進めない
+		if (spriteData.x > GAME_WIDTH - enemyNS::WIDTH * getScale())	// 画面右端を超えたら
+			spriteData.x = GAME_WIDTH - enemyNS::WIDTH * getScale();	// 画面右端に移動
+		if (spriteData.x < 0)											// 画面左端を超えたら
+			spriteData.x = 0;											// 画面左端に移動
+		if (spriteData.y < rectNS::HEIGHT - 10)								// 画面上端を超えたら
+			spriteData.y = rectNS::HEIGHT - 10;								// 画面上端に移動
+		if (spriteData.y > GAME_HEIGHT - enemyNS::HEIGHT * getScale())  // 画面下端を超えたら
+			spriteData.y = GAME_HEIGHT - enemyNS::HEIGHT * getScale();	// 画面下端に移動
+	}
+	else
+	{
+		spriteData.x += frameTime * velocity.x;
+		spriteData.y += frameTime * velocity.y;
+		if (spriteData.y > GAME_HEIGHT)
+			dead();
+	}
 	attackCollision.update(frameTime);
 }
 
@@ -266,7 +279,12 @@ void Enemy::damage(WEAPON weapon)
 	}
 	if (health <= 0)
 	{
-		dead();
+		state = characterNS::DEATH;
+		if (rand() % 2 == 0)
+			velocity.x = 32.0f;
+		else
+			velocity.x = -32.0f;
+		velocity.y = -sqrt(2 * 2000.0f * 96 * 2);
 		map->resetMapCol(tileY, tileX);
 	}
 	isDamaged = true;

@@ -390,7 +390,6 @@ void TowerDiffence::collisions()
 	bool braveAttackCollidesWithAnyEnemy = false;
 	// 各敵について衝突判定
 	for (int i = 0; i < enemyNum; i++) {
-
 		// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
 		if (braveAttackCollision.collidesWith(*enemy[i], collisionVector))
 		{
@@ -398,6 +397,11 @@ void TowerDiffence::collisions()
 			enemy[i]->damage(BRAVE_ATTACK);
 			// いずれかの敵に攻撃があたったのでループを抜けた後に攻撃コリジョンをなくす
 			braveAttackCollidesWithAnyEnemy = true;
+		}
+
+		if (enemy[i]->getState() == characterNS::DEATH)
+		{
+			continue;
 		}
 
 		// 敵が攻撃時は、城とプレイヤーとバリケードとの当たり判定をそれぞれチェック
