@@ -291,7 +291,7 @@ void TowerDiffence::roundStart()
 				map.setCurrentFrame(map.getMapData(row, col));                       // タイルのテクスチャを設定
 				map.setX((float)(col*mapNS::TEXTURE_SIZE));                    // タイルのXを設定
 			}
-			if (map.getMapObj(row, col) >= 0)
+			if (map.getMapObj(row, col) == 0)
 			{
 				barricades[count].setX((float)(col*mapNS::TEXTURE_SIZE));								// オブジェクトのXを設定
 				barricades[count].setY((float)(row*mapNS::TEXTURE_SIZE));										// オブジェクトのYを設定
@@ -349,6 +349,7 @@ void TowerDiffence::checkCurrentEnemyNum()
 	safeDeleteArray(enemy);
 	safeDeleteArray(enemyX);
 	safeDeleteArray(enemyY);
+	map.resetMapCol();
 	readEnemyFile(1, 2);
 
 	for (int i = 0; i < enemyNum; i++)
@@ -524,7 +525,7 @@ void TowerDiffence::collisions()
 			// 勇者がいる方向に応じて攻撃する方向を変更
 			enemy[i]->changeAttack(collisionVector);
 		}
-		else if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX()) == -1)	// 雑魚敵と城が衝突していたら攻撃、
+		else if (map.getMapObj(enemy[i]->getTileY(), enemy[i]->getTileX()) == 1)	// 雑魚敵と城が衝突していたら攻撃、
 		{
 			// 城がある方向に応じて攻撃する方向を変更
 			if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) == 2)
@@ -739,10 +740,6 @@ void TowerDiffence::render()
 				if (map.getMapObj(row, col) == 0)
 				{
 					barricades[count].draw();   // オブジェクトを描画
-					count++;
-				}
-				else if (map.getMapObj(row, col) == 1)
-				{
 					count++;
 				}
 			}
