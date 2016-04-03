@@ -120,6 +120,6 @@ public:
 	void resetAll();
 
 	// 指定されたステージの敵データを読み込む
-	void readEnemyFile(int stageNum);
+	void readEnemyFile(int stageNum, int enemyWave);
 };
 #endif

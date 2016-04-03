@@ -137,7 +137,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 中ボスのテクスチャ
 	if (!midBossTexture.initialize(graphics, MID_BOSS_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss texture"));
-	readEnemyFile(1);
+	readEnemyFile(1, 1);
 	for (int i = 0; i < enemyNum; i++) {
 		if (typeid(*enemy[i]) == typeid(Enemy))
 		{
@@ -341,6 +341,41 @@ void TowerDiffence::checkCurrentEnemyNum()
 			return;
 	}
 
+	// 第2波
+	for (int i = 0; i < enemyNum; i++)
+	{
+		safeDelete(enemy[i]);
+	}
+	safeDeleteArray(enemy);
+	safeDeleteArray(enemyX);
+	safeDeleteArray(enemyY);
+	readEnemyFile(1, 2);
+
+	for (int i = 0; i < enemyNum; i++)
+	{
+		if (typeid(*enemy[i]) == typeid(Enemy))
+		{
+			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
+				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
+		}
+		else if (typeid(*enemy[i]) == typeid(MidBoss))
+		{
+			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
+				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
+		}
+		enemy[i]->setScale(1.5);
+		enemy[i]->setMapPointer(&map);
+		enemy[i]->setBarricadesPointer(barricades);
+
+		// 雑魚敵の当たり判定用
+		if (!enemy[i]->getAttackCollision().initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
+		enemy[i]->reset();
+		enemy[i]->setX(enemyX[i]);
+		enemy[i]->setY(enemyY[i]);
+		enemy[i]->initTileXY();
+	}
+	/*
 	// 敵が存在していないため全て初期化
 	// 雑魚敵の初期化
 	for (int i = 0; i < enemyNum; i++)
@@ -368,7 +403,7 @@ void TowerDiffence::checkCurrentEnemyNum()
 			enemy[i]->setY(GAME_HEIGHT - (rand() % 200));
 		}
 		enemy[i]->initTileXY();
-	}
+	}*/
 }
 
 //==========================================================
@@ -809,9 +844,9 @@ void TowerDiffence::resetAll()
 //==========================================================
 // 指定されたステージの敵データを読み込む
 //==========================================================
-void TowerDiffence::readEnemyFile(int stageNum)
+void TowerDiffence::readEnemyFile(int stageNum, int enemyWave)
 {
-	string enemyDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\enemydata.csv";
+	string enemyDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\enemy" + std::to_string(enemyWave) + "\\enemydata.csv";
 
 	ifstream* ifs = new ifstream(enemyDataFilename);
 	//csvファイルを1行ずつ読み込む
