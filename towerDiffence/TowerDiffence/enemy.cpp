@@ -134,7 +134,7 @@ void Enemy::update(float frameTime)
 		if (isCenterOfTile())	// タイルの中央に来たらマップを更新
 		{
 			// マップに自分の位置を追加
-			map->updateMapCol(tileY * mapNS::TEXTURE_SIZE, tileX * mapNS::TEXTURE_SIZE, 3);
+			map->updateMapCol(tileY * mapNS::TEXTURE_SIZE, tileX * mapNS::TEXTURE_SIZE, map->getMapCol(tileY, tileX) + 3);
 			canMakeDecesionMove = true;
 		}
 		break;
@@ -229,7 +229,7 @@ void Enemy::update(float frameTime)
 		}
 	}
 	if (state != characterNS::DEATH)
-	{
+	{/*
 		// 画面の端まで来たら進めない
 		if (spriteData.x > GAME_WIDTH - enemyNS::WIDTH * getScale())	// 画面右端を超えたら
 			spriteData.x = GAME_WIDTH - enemyNS::WIDTH * getScale();	// 画面右端に移動
@@ -239,6 +239,7 @@ void Enemy::update(float frameTime)
 			spriteData.y = rectNS::HEIGHT - 10;								// 画面上端に移動
 		if (spriteData.y > GAME_HEIGHT - enemyNS::HEIGHT * getScale())  // 画面下端を超えたら
 			spriteData.y = GAME_HEIGHT - enemyNS::HEIGHT * getScale();	// 画面下端に移動
+			*/
 	}
 	else
 	{
@@ -285,7 +286,7 @@ void Enemy::damage(WEAPON weapon)
 		else
 			velocity.x = -32.0f;
 		velocity.y = -sqrt(2 * 2000.0f * 96 * 2);
-		map->resetMapCol(tileY, tileX);
+		map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
 	}
 	isDamaged = true;
 }
