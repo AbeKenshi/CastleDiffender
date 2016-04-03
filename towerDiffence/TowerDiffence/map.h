@@ -78,6 +78,7 @@ public:
 		}
 	}
 	void resetMapCol(int y, int x) {
+		if (x < 0 || x >= mapNS::MAP_WIDTH || y < 0 || y >= mapNS::MAP_HEIGHT) { return; }
 		tileCol[y][x] = tileColInit[y][x];
 	}
 
