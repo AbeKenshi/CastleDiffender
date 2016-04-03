@@ -13,7 +13,9 @@ TowerDiffence::TowerDiffence()
 	rect = NULL;
 	remainingTime = 1500.0f;
 	enemyNum = 0;
-	enemy = new Enemy*[0];
+	enemy = NULL;
+	enemyX = NULL;
+	enemyY = NULL;
 }
 
 //==========================================================
@@ -102,7 +104,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 勇者
 	if (!brave.initialize(this, braveNS::WIDTH, braveNS::HEIGHT, braveNS::TEXTURE_COLS, &braveTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave_move"));
-	brave.setScale(1.0);
+	brave.setScale(1.5);
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
 	brave.setMapPointer(&map);
@@ -147,7 +149,7 @@ void TowerDiffence::initialize(HWND hwnd)
 			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
 				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
 		}
-		enemy[i]->setScale(1.0);
+		enemy[i]->setScale(1.5);
 		enemy[i]->setMapPointer(&map);
 		enemy[i]->setBarricadesPointer(barricades);
 
@@ -712,6 +714,10 @@ void TowerDiffence::render()
 		graphics->spriteBegin();	// スプライトの描画を開始
 
 		for (int i = 0; i < enemyNum; i++) {
+			float tmpX = enemy[i]->getX();
+			float tmpY = enemy[i]->getY();
+			enemy[i]->setX(tmpX - enemy[i]->getWidth() * (enemy[i]->getScale() - 1) / 2.0);
+			enemy[i]->setY(tmpY - enemy[i]->getHeight() * (enemy[i]->getScale() - 1) / 2.0 - 10);
 			// 敵の描画、色は適当に分けてる、色によって能力値を分ける
 			if (i % 3 == 0) {
 				enemy[i]->draw(graphicsNS::WHITE);
@@ -726,6 +732,8 @@ void TowerDiffence::render()
 				enemy[i]->setEnemyType(enemyNS::BLUE);
 			}
 			enemy[i]->getAttackCollision().draw();
+			enemy[i]->setX(tmpX);
+			enemy[i]->setY(tmpY);
 		}
 		braveHpText.draw();
 		braveMpText.draw();

@@ -106,7 +106,7 @@ void Map::readMapFile(int stageNum)
 		if (y == mapNS::MAP_HEIGHT)
 			break;
 	}
-
+	safeDelete(ifs);
 	ifs = new ifstream(colDataFilename);
 	if (!ifs)
 		exit(1);
@@ -133,6 +133,7 @@ void Map::readMapFile(int stageNum)
 			break;
 	}
 
+	safeDelete(ifs);
 	ifs = new ifstream(objDataFilename);
 	if (!ifs)
 		exit(1);
