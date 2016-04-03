@@ -19,10 +19,10 @@ Enemy::Enemy() : Character()
 	oldEndFrame = endFrame;
 	currentFrame = startFrame;
 	// Boxの衝突判定用
-	edge.left = -enemyNS::WIDTH / 2.0;
-	edge.right = enemyNS::WIDTH / 2.0;
-	edge.top = -enemyNS::HEIGHT / 8.0;
-	edge.bottom = enemyNS::HEIGHT / 2.0;
+	edge.left = -enemyNS::WIDTH * spriteData.scale / 2.0;
+	edge.right = enemyNS::WIDTH * spriteData.scale / 2.0;
+	edge.top = -enemyNS::HEIGHT * spriteData.scale / 2.0;
+	edge.bottom = enemyNS::HEIGHT * spriteData.scale / 2.0;
 	// 初期の状態は城に向かって移動
 	stateDeteil = enemyNS::MOVE_CASTLE;
 	// 範囲内にはいない状態からスタート

@@ -8,8 +8,8 @@
 
 namespace enemyCollisionNS
 {
-	const int ATTACK_WIDTH = 32;				// 画像の幅（各フレーム）
-	const int ATTACK_HEIGHT = 1;				// 画像の高さ
+	const int ATTACK_WIDTH = 15;				// 画像の幅（各フレーム）
+	const int ATTACK_HEIGHT = 40;				// 画像の高さ
 	const float COLLISION_TIME = 0.3f;	// 攻撃の当たり判定が出ている時間
 }
 
