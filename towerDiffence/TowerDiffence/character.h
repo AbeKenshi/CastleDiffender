@@ -8,7 +8,7 @@
 namespace characterNS
 {
 	enum DIRECTION { LEFT = 0, RIGHT = 1, UP = 2, DOWN = 3, NONE = 4};	// キャラクターの向き（上下左右）
-	enum STATE { MOVE, ATTACK, SECOND_ATTACK, GAURD , PRE_ATTACK , WAIT };			// 状態
+	enum STATE { MOVE, ATTACK, SECOND_ATTACK, GAURD , PRE_ATTACK , WAIT , DEATH };			// 状態
 }
 
 // Characterクラス
