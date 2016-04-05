@@ -14,7 +14,7 @@ namespace enemyNS
 {
 	const int WIDTH = 32;							// 画像の幅（各フレーム）
 	const int HEIGHT = 32;							// 画像の高さ
-	const int MOVE_SPEED = 100;						// 移動速度（ピクセル）
+	const int MOVE_SPEED = 80;						// 移動速度（ピクセル）
 	const int TEXTURE_COLS = 12;					// テクスチャは12列
 	const int MOVE_UP_START_FRAME = 54;				// 上方向移動のアニメーションはフレーム54から開始
 	const int MOVE_UP_END_FRAME = 56;				// 上方向移動のアニメーションフレームは54、55、56

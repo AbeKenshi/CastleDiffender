@@ -376,35 +376,6 @@ void TowerDiffence::checkCurrentEnemyNum()
 		enemy[i]->setY(enemyY[i]);
 		enemy[i]->initTileXY();
 	}
-	/*
-	// 敵が存在していないため全て初期化
-	// 雑魚敵の初期化
-	for (int i = 0; i < enemyNum; i++)
-	{
-		enemy[i]->reset();
-		// 位置はランダム
-		if (i % 4 == 0) // 左上
-		{
-			enemy[i]->setX(rand() % 200);
-			enemy[i]->setY(rand() % 200);
-		}
-		else if (i % 4 == 1) // 右上
-		{
-			enemy[i]->setX(GAME_WIDTH - (rand() % 200));
-			enemy[i]->setY(rand()% 200);
-		}
-		else if (i % 4 == 2) // 左下
-		{
-			enemy[i]->setX(rand() % 200);
-			enemy[i]->setY(GAME_HEIGHT - (rand() % 200));
-		}
-		else if (i % 4 == 3) // 右下
-		{
-			enemy[i]->setX(GAME_WIDTH - (rand() % 200));
-			enemy[i]->setY(GAME_HEIGHT - (rand() % 200));
-		}
-		enemy[i]->initTileXY();
-	}*/
 }
 
 //==========================================================
@@ -566,6 +537,56 @@ void TowerDiffence::collisions()
 		else if (enemy[i]->canMakeDecesionMoving())	// 敵が方向転換可能な状態にあるとき、意思決定を行い進む方向を決める
 		{
 			bool changeGoalDirectionFlag = false;	// 進みたい方向を変える必要があるかどうか
+			if (rand() % 3 == 0)
+			{
+				enemy[i]->setStateDetail(enemyNS::MOVE_CASTLE);
+				enemy[i]->setState(characterNS::MOVE);
+				enemy[i]->setGoalDirection((characterNS::DIRECTION) (rand() % 4));
+				switch (enemy[i]->getGoalDirection())
+				{
+				case characterNS::LEFT:
+					if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) >= 1)
+					{
+						changeGoalDirectionFlag = true;
+					}
+					break;
+				case characterNS::RIGHT:
+					if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) >= 1)
+					{
+						changeGoalDirectionFlag = true;
+					}
+					break;
+				case characterNS::UP:
+					if (map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) >= 1)
+					{
+						changeGoalDirectionFlag = true;
+					}
+					break;
+				case characterNS::DOWN:
+					if (map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) >= 1)
+					{
+						changeGoalDirectionFlag = true;
+					}
+					break;
+				}
+				// 進みたい方向に進めない場合、ランダムに方向を決めなおす
+				if (changeGoalDirectionFlag)
+				{
+					// ランダムに進みたい方向を修正
+					characterNS::DIRECTION newDirection = (characterNS::DIRECTION) (rand() % 4);
+					// それでも進めない場合、敵を待機状態にして静止させる
+					if (enemy[i]->canMoveTo(newDirection))
+					{
+						enemy[i]->setGoalDirection(newDirection);
+					}
+					else
+					{
+						enemy[i]->setState(characterNS::WAIT);
+						enemy[i]->setStateDetail(enemyNS::WAIT);
+					}
+				}
+				continue;
+			}
 			// 最近接のバリケードを探索
 			enemy[i]->searchNearBarricadeIndex();
 			if (!enemy[i]->checkBarricadeOnLine())	// 城までの直線上にバリケードがない場合、城へと進行する
