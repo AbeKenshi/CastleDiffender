@@ -74,7 +74,7 @@ void Brave::update(float frameTime)
 	switch (state)
 	{
 	case characterNS::MOVE:		// 移動時はすべてのキーの入力を受け付ける
-							// 上下左右キーが入力された場合、
+		// 上下左右キーが入力された場合、
 		if (input->isKeyDown(BRAVE_LEFT_KEY) || input->isKeyDown(BRAVE_RIGHT_KEY) || input->isKeyDown(BRAVE_UP_KEY) || input->isKeyDown(BRAVE_DOWN_KEY))
 		{
 			// 左キーが入力された場合、
@@ -85,9 +85,9 @@ void Brave::update(float frameTime)
 				{
 					direction = characterNS::DIRECTION::LEFT;
 					startFrame = moveLeftStartFrame;
+					currentFrame = endFrame - currentFrame + moveLeftStartFrame;
 					endFrame = moveLeftEndFrame;
-					currentFrame = startFrame;
-					animTimer = 0.0f;
+					//animTimer = 0.0f;
 					setRect();
 				}
 				// 移動可能だったら
@@ -104,9 +104,9 @@ void Brave::update(float frameTime)
 				{
 					direction = characterNS::DIRECTION::RIGHT;
 					startFrame = moveRightStartFrame;
+					currentFrame = endFrame - currentFrame + moveRightStartFrame;
 					endFrame = moveRightEndFrame;
-					currentFrame = startFrame;
-					animTimer = 0.0f;
+					//animTimer = 0.0f;
 					setRect();
 				}
 				// 移動可能だったら
@@ -123,9 +123,9 @@ void Brave::update(float frameTime)
 				{
 					direction = characterNS::DIRECTION::UP;
 					startFrame = moveUpStartFrame;
+					currentFrame = endFrame - currentFrame + moveUpStartFrame;
 					endFrame = moveUpEndFrame;
-					currentFrame = startFrame;
-					animTimer = 0.0f;
+					//animTimer = 0.0f;
 					setRect();
 				}
 				// 移動可能だったら
@@ -142,9 +142,9 @@ void Brave::update(float frameTime)
 				{
 					direction = characterNS::DIRECTION::DOWN;
 					startFrame = moveDownStartFrame;
+					currentFrame = endFrame - currentFrame + moveDownStartFrame;
 					endFrame = moveDownEndFrame;
-					currentFrame = startFrame;
-					animTimer = 0.0f;
+					//animTimer = 0.0f;
 					setRect();
 				}
 				// 移動可能だったら
@@ -223,6 +223,87 @@ void Brave::update(float frameTime)
 		}
 		break;
 	case characterNS::ATTACK:	// 攻撃時はアニメーションが終了するまで第二段攻撃の入力しか受け付けない
+								// 上下左右キーが入力された場合、
+		if (input->isKeyDown(BRAVE_LEFT_KEY) || input->isKeyDown(BRAVE_RIGHT_KEY) || input->isKeyDown(BRAVE_UP_KEY) || input->isKeyDown(BRAVE_DOWN_KEY))
+		{
+			// 左キーが入力された場合、
+			if (input->isKeyDown(BRAVE_LEFT_KEY))
+			{
+				// 左方向を向いていなければ左方向にアニメーションをリセット
+				if (direction != characterNS::DIRECTION::LEFT)
+				{
+					direction = characterNS::DIRECTION::LEFT;
+					startFrame = moveLeftStartFrame;
+					currentFrame = endFrame - currentFrame + moveLeftStartFrame;
+					endFrame = moveLeftEndFrame;
+					//animTimer = 0.0f;
+					setRect();
+				}
+				// 移動可能だったら
+				if (checkCanMove(spriteData.x - braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
+					// 左に移動
+					spriteData.x -= braveNS::MOVE_SPEED  / 2 * frameTime;
+				}
+			}
+			// 右キーが入力された場合、
+			if (input->isKeyDown(BRAVE_RIGHT_KEY))
+			{
+				// 右方向を向いていなければ右方向にアニメーションをリセット
+				if (direction != characterNS::DIRECTION::RIGHT)
+				{
+					direction = characterNS::DIRECTION::RIGHT;
+					startFrame = moveRightStartFrame;
+					currentFrame = endFrame - currentFrame + moveRightStartFrame;
+					endFrame = moveRightEndFrame;
+					//animTimer = 0.0f;
+					setRect();
+				}
+				// 移動可能だったら
+				if (checkCanMove(spriteData.x + braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
+					// 右に移動
+					spriteData.x += braveNS::MOVE_SPEED / 2 * frameTime;
+				}
+			}
+			// 上キーが入力された場合、
+			if (input->isKeyDown(BRAVE_UP_KEY))
+			{
+				// 上方向を向いていなければ上方向にアニメーションをリセット
+				if (direction != characterNS::DIRECTION::UP)
+				{
+					direction = characterNS::DIRECTION::UP;
+					startFrame = moveUpStartFrame;
+					currentFrame = endFrame - currentFrame + moveUpStartFrame;
+					endFrame = moveUpEndFrame;
+					//animTimer = 0.0f;
+					setRect();
+				}
+				// 移動可能だったら
+				if (checkCanMove(spriteData.x, spriteData.y - braveNS::MOVE_SPEED * frameTime)) {
+					// 上に移動
+					spriteData.y -= braveNS::MOVE_SPEED / 2* frameTime;
+				}
+			}
+			// 下キーが入力された場合、
+			if (input->isKeyDown(BRAVE_DOWN_KEY))
+			{
+				// 下方向を向いていなければ下方向にアニメーションをリセット
+				if (direction != characterNS::DIRECTION::DOWN)
+				{
+					direction = characterNS::DIRECTION::DOWN;
+					startFrame = moveDownStartFrame;
+					currentFrame = endFrame - currentFrame + moveDownStartFrame;
+					endFrame = moveDownEndFrame;
+					//animTimer = 0.0f;
+					setRect();
+				}
+				// 移動可能だったら
+				if (checkCanMove(spriteData.x, spriteData.y + braveNS::MOVE_SPEED * frameTime)) {
+					// 下に移動
+					spriteData.y += braveNS::MOVE_SPEED / 2 * frameTime;
+				}
+			}
+			Entity::updateOnlyImage(frameTime);
+		}
 		if (input->isKeyDown(BRAVE_ATTACK_KEY) && currentFrame > startFrame + 2)
 		{
 			secondAttackFlag = true;

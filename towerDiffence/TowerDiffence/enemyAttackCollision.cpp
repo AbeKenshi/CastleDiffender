@@ -71,7 +71,7 @@ void EnemyCollision::attack(float centerX, float centerY, float width, float hei
 		edge.top = -enemyCollisionNS::ATTACK_WIDTH / 2.0;
 		edge.bottom = enemyCollisionNS::ATTACK_WIDTH / 2.0;
 		spriteData.x = centerX - width / 2;
-		spriteData.y = centerY - height / 2 - spriteData.height;
+		spriteData.y = centerY - height / 2 - spriteData.height - 10;
 		break;
 	case characterNS::LEFT:
 		spriteData.width = enemyCollisionNS::ATTACK_WIDTH;	// ‚P‚Â‚Ì‰æ‘œ‚ÌƒTƒCƒY
