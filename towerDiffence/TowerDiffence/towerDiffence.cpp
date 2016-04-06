@@ -76,12 +76,16 @@ void TowerDiffence::initialize(HWND hwnd)
 	// バリケードのテクスチャ
 	if (!barricadeTexture.initialize(graphics, BARRICADE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade texture"));
+	if (!hitEffectTexture.initialize(graphics, HIT_EFFECT_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hit effect texture"));
 	// バリケードの画像
 	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
 		if (!barricades[i].initialize(this, barricadeNS::WIDTH, barricadeNS::HEIGHT, barricadeNS::TEXTURE_COLS, &barricadeTexture))
 			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade"));
 		barricades[i].setScale(1);
+		if (!barricades[i].getHitEffect().initialize(graphics, hitEffectNS::WIDTH, hitEffectNS::HEIGHT, hitEffectNS::TEXTURE_COLS, &hitEffectTexture))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hitEffect"));
 	}
 
 	// 城のテクスチャ
@@ -764,6 +768,10 @@ void TowerDiffence::render()
 					count++;
 				}
 			}
+		}
+		for (int i = 0; i < 8; ++i)
+		{
+			barricades[i].getHitEffect().draw();
 		}
 
 		graphics->spriteEnd();		// スプライトの描画を開始

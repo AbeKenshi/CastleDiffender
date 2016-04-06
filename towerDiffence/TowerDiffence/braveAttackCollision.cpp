@@ -101,6 +101,6 @@ void BraveAttackCollision::attack(Brave * brave)
 			break;
 	}
 	collisionTimer = 0.0f;
-	visible = true;							// UŒ‚‚ğ•\¦
+	//visible = true;							// UŒ‚‚ğ•\¦
 	active = true;							// Õ“Ë‰Â”\‚É‚·‚é
 }

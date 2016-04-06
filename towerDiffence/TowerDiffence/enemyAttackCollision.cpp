@@ -101,7 +101,7 @@ void EnemyCollision::attack(float centerX, float centerY, float width, float hei
 		break;
 	}
 	collisionTimer = 0.0f;
-	visible = true;							// UŒ‚‚ğ•\¦
+	//visible = true;							// UŒ‚‚ğ•\¦
 	active = true;							// Õ“Ë‰Â”\‚É‚·‚é
 	setRect();
 }
