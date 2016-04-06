@@ -282,9 +282,9 @@ void Enemy::damage(WEAPON weapon)
 	{
 		state = characterNS::DEATH;
 		if (rand() % 2 == 0)
-			velocity.x = 32.0f;
+			velocity.x = 32.0f * 2.0;
 		else
-			velocity.x = -32.0f;
+			velocity.x = -32.0f * 2.0;
 		velocity.y = -sqrt(2 * 2000.0f * 96 * 2);
 		map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
 	}

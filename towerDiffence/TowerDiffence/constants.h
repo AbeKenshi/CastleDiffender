@@ -32,6 +32,7 @@ const char MID_BOSS_IMAGE[] = "pictures\\enemy\\midBoss2.png";
 const char TILE_IMAGES[] = "pictures\\map\\ground.png";					// マップ画像
 const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";			// ダッシュボード画像
 const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";			// バリケードの画像
+const char HIT_EFFECT_IMAGE[] = "pictures\\effect\\hitEffect.png";
 const char COLLISION_IMAGE[] = "pictures\\alex\\attackCollision.png";	// 攻撃用のテクスチャ
 const char CASTLE_IMAGE[] = "pictures\\map\\castle.png";				// 城画像
 const char BRAVE_ICON_IMAGE[] = "pictures\\alex\\icon.png";				// 勇者のアイコン画像

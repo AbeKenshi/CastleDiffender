@@ -21,6 +21,7 @@
 #include "castleIcon.h"
 #include "hpTextImage.h"
 #include "mpTextImage.h"
+#include "hitEffect.h"
 #include <string>
 
 namespace towerDiffenceNS
@@ -64,6 +65,7 @@ private:
 	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ
 	Barricade barricades[mapNS::BARRICADE_NUM];         // バリケードの配列
+	TextureManager hitEffectTexture;					// 攻撃がヒットしたときのアニメーション画像のテクスチャ
 	TextureManager castleTexture;						// 城のテクスチャ
 	Castle castle;										// 城
 	TextureManager castleIconTexture;					// 城のアイコンのテクスチャ

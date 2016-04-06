@@ -31,6 +31,7 @@
     <ClCompile Include="text.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="midBoss.cpp" />
+    <ClCompile Include="hitEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="audio.h" />
@@ -65,5 +66,6 @@
     <ClInclude Include="character.h" />
     <ClInclude Include="midBoss.h" />
     <ClInclude Include="stage.h" />
+    <ClInclude Include="hitEffect.h" />
   </ItemGroup>
 </Project>

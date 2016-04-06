@@ -55,7 +55,9 @@ void Barricade::reset()
 void Barricade::draw()
 {
 	if (drawFlag)
+	{
 		Image::draw();	// é‚ğ•`‰æ
+	}
 }
 
 //==========================================================
@@ -68,7 +70,6 @@ void Barricade::update(float frameTime)
 	if (visible == false)
 		return;
 
-	
 	if ((currentFrame == barricadeNS::START_FRAME && health < 66) || (currentFrame == barricadeNS::START_FRAME + 1 && health < 33))
 	{
 		currentFrame++;
@@ -84,6 +85,7 @@ void Barricade::update(float frameTime)
 		}
 		setRect();                      // set spriteData.rect
 	}
+	hitEffect.update(frameTime);
 	updateWithoutImage(frameTime);
 	
 }
@@ -93,12 +95,14 @@ void Barricade::update(float frameTime)
 //==========================================================
 void Barricade::damage()
 {
+	hitEffect.hit(getCenterX(), getCenterY());
 	health -= 10 * damagePer;
 
 	if (health <= 0)
 	{
 		visible = false;
 		active = false;
+		hitEffect.setVisible(false);
 	}
 
 	isDamaged = true;
