@@ -56,7 +56,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	// メニューの画像
 	if (!menu.initialize(graphics, 0, 0, 0, &menuTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing menu"));
-	menu.setScale(2);
+	menu.setScale(1);
 
 	// リザルトのテクスチャ
 	if (!resultTexture.initialize(graphics, RESULT_IMAGE))
