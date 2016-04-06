@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="attackEffect.h" />
     <ClInclude Include="hitEffect.h" />
     <ClInclude Include="braveAttackCollision.h" />
     <ClInclude Include="audio.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="towerDiffence.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="attackEffect.cpp" />
     <ClCompile Include="hitEffect.cpp" />
     <ClCompile Include="braveAttackCollision.cpp" />
     <ClCompile Include="audio.cpp" />

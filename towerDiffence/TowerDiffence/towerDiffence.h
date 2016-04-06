@@ -22,6 +22,7 @@
 #include "hpTextImage.h"
 #include "mpTextImage.h"
 #include "hitEffect.h"
+#include "attackEffect.h"
 #include <string>
 
 namespace towerDiffenceNS
@@ -57,6 +58,7 @@ private:
 	Image result;                                       // リザルト画像
 	TextureManager braveTexture;						// 勇者のテクスチャ
 	Brave brave;										// 勇者
+	TextureManager attackEffectTexture;					// 攻撃の衝撃波のテクスチャ
 	TextureManager braveIconTexture;					// 勇者のアイコンのテクスチャ
 	BraveIcon braveIcon;								// 勇者のアイコン
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
