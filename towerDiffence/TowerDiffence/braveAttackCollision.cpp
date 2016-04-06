@@ -27,6 +27,7 @@ BraveAttackCollision::BraveAttackCollision() : Entity()
 //==========================================================
 void BraveAttackCollision::update(float frameTime)
 {
+	attackEffect.update(frameTime);
 	if (visible == false)
 		return;
 	collisionTimer += frameTime;
@@ -43,9 +44,10 @@ void BraveAttackCollision::update(float frameTime)
 // Attack
 // —EŽÒ‚©‚çUŒ‚‚ð”­“®
 //==========================================================
-void BraveAttackCollision::attack(Brave * brave)
+void BraveAttackCollision::attack(Brave &brave)
 {
-	switch (brave->getDirection())
+	attackEffect.attack(brave);
+	switch (brave.getDirection())
 	{
 		case characterNS::RIGHT:
 			spriteData.width = braveAttackCollisionNS::WIDTH;	// ‚P‚Â‚Ì‰æ‘œ‚ÌƒTƒCƒY
@@ -57,8 +59,8 @@ void BraveAttackCollision::attack(Brave * brave)
 			edge.right = braveAttackCollisionNS::WIDTH / 2.0;
 			edge.top = -braveAttackCollisionNS::HEIGHT / 2.0;
 			edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
-			spriteData.x = brave->getCenterX() + brave->getWidth() / 2;
-			spriteData.y = brave->getCenterY() - spriteData.height / 2;
+			spriteData.x = brave.getCenterX() + brave.getWidth() / 2;
+			spriteData.y = brave.getCenterY() - spriteData.height / 2;
 			break;
 		case characterNS::UP:
 			spriteData.width = braveAttackCollisionNS::HEIGHT;	// ‚P‚Â‚Ì‰æ‘œ‚ÌƒTƒCƒY
@@ -70,8 +72,8 @@ void BraveAttackCollision::attack(Brave * brave)
 			edge.right = braveAttackCollisionNS::HEIGHT / 2.0;
 			edge.top = -braveAttackCollisionNS::WIDTH / 2.0;
 			edge.bottom = braveAttackCollisionNS::WIDTH / 2.0;
-			spriteData.x = brave->getCenterX() - spriteData.width / 2;
-			spriteData.y = brave->getCenterY() - brave->getHeight() / 2 - spriteData.height;
+			spriteData.x = brave.getCenterX() - spriteData.width / 2;
+			spriteData.y = brave.getCenterY() - brave.getHeight() / 2 - spriteData.height;
 			break;
 		case characterNS::LEFT:
 			spriteData.width = braveAttackCollisionNS::WIDTH;	// ‚P‚Â‚Ì‰æ‘œ‚ÌƒTƒCƒY
@@ -83,8 +85,8 @@ void BraveAttackCollision::attack(Brave * brave)
 			edge.right = braveAttackCollisionNS::WIDTH / 2.0;
 			edge.top = -braveAttackCollisionNS::HEIGHT / 2.0;
 			edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
-			spriteData.x = brave->getCenterX() - spriteData.width / 2 - brave->getWidth();
-			spriteData.y = brave->getCenterY() - spriteData.height / 2;
+			spriteData.x = brave.getCenterX() - spriteData.width / 2 - brave.getWidth();
+			spriteData.y = brave.getCenterY() - spriteData.height / 2;
 			break;
 		case characterNS::DOWN:
 			spriteData.width = braveAttackCollisionNS::HEIGHT;	// ‚P‚Â‚Ì‰æ‘œ‚ÌƒTƒCƒY
@@ -96,8 +98,8 @@ void BraveAttackCollision::attack(Brave * brave)
 			edge.right = braveAttackCollisionNS::HEIGHT / 2.0;
 			edge.top = -braveAttackCollisionNS::WIDTH / 2.0;
 			edge.bottom = braveAttackCollisionNS::WIDTH / 2.0;
-			spriteData.x = brave->getCenterX() - spriteData.width / 2;
-			spriteData.y = brave->getCenterY() + 10;
+			spriteData.x = brave.getCenterX() - spriteData.width / 2;
+			spriteData.y = brave.getCenterY() + 10;
 			break;
 	}
 	collisionTimer = 0.0f;

@@ -8,9 +8,9 @@ namespace hitEffectNS
 {
 	const int WIDTH = 108;				// 画像の幅（各フレーム）
 	const int HEIGHT = 108;				// 画像の高さ
-	const int TEXTURE_COLS = 3;		// テクスチャは10列
+	const int TEXTURE_COLS = 3;			// テクスチャは3列
 	const int START_FRAME = 0;			// アニメーションはフレーム0から開始
-	const int END_FRAME = 2;
+	const int END_FRAME = 2;			// アニメーションフレームは0、1、2
 	const float ANIMATION_DELAY = 0.1;	// アニメーションのフレーム間の時間
 }
 
@@ -23,7 +23,7 @@ public:
 	// Update
 	void update(float frameTime);
 
-	// Attack
+	// Hit
 	void hit(float x, float y);
 };
 #endif // !_ATTACK_EFFECT_H

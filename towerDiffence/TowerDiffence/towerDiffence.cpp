@@ -127,7 +127,11 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 勇者のあたり判定用
 	if (!braveAttackCollision.initialize(this, braveAttackCollisionNS::WIDTH, braveAttackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision"));
-	
+	if (!attackEffectTexture.initialize(graphics, ATTACK_EFFECT_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack effect texture"));
+	if (!braveAttackCollision.getAttackEffect().initialize(graphics, attackEffectNS::WIDTH, attackEffectNS::HEIGHT, attackEffectNS::TEXTURE_COLS, &attackEffectTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack effect"));
+
 	// 炎のテクスチャ
 	if (!fireTexture.initialize(graphics, FIRE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire texture"));
@@ -235,7 +239,7 @@ void TowerDiffence::update()
 			fire.fire(&brave);
 		// 勇者の攻撃判定がでている場合はコリジョンを生成して当たり判定をとる
 		if (brave.getAttackCollisionFlag())
-			braveAttackCollision.attack(&brave);
+			braveAttackCollision.attack(brave);
 		// それぞれの敵を更新
 		for (int i = 0; i < enemyNum; i++) {
 			enemy[i]->update(frameTime);
@@ -815,6 +819,7 @@ void TowerDiffence::render()
 		brave.setX(tmpX);
 		brave.setY(tmpY);
 		braveAttackCollision.draw();
+		braveAttackCollision.getAttackEffect().draw();
 		braveHealthBar.set(brave.getHealth());
 		braveMpBar.set(brave.getMP());
 		castleHealthBar.set(castle.getHealth());

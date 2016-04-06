@@ -6,6 +6,7 @@
 #include "constants.h"
 #include "brave.h"
 #include "enemy.h"
+#include "attackEffect.h"
 
 namespace braveAttackCollisionNS
 {
@@ -18,7 +19,8 @@ namespace braveAttackCollisionNS
 class BraveAttackCollision : public Entity
 {
 private:
-	float collisionTimer;				// 攻撃の当たり判定が出ている時間を計測するタイマー
+	float collisionTimer;			// 攻撃の当たり判定が出ている時間を計測するタイマー
+	AttackEffect attackEffect;		// 攻撃の衝撃派
 public:
 	// コンストラクタ
 	BraveAttackCollision();
@@ -27,7 +29,12 @@ public:
 	void update(float frameTime);
 
 	// 新しいメンバー関数
-	void attack(Brave *brave);	// 勇者からの攻撃
+	void attack(Brave &brave);	// 勇者からの攻撃
+
+	//==========================================================
+	// getter
+	//==========================================================
+	AttackEffect& getAttackEffect() { return attackEffect; }
 };
 
 #endif // !_ATTACK_COLLISION_H

@@ -47,4 +47,5 @@ void HitEffect::hit(float x, float y)
 	currentFrame = startFrame;
 	animTimer = 0.0f;
 	animComplete = false;
+	setRect();
 }
