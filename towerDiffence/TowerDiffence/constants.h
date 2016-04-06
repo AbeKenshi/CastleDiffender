@@ -23,8 +23,8 @@ const float MIN_FRAME_TIME = 1.0f / FRAME_RATE;			// 1フレームに要する最小の時間
 const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1フレームに要する最大の時間
 
 // 画像
-const char MENU_IMAGE[] = "pictures\\menu.png";							// メニュー画像
-const char RESULT_IMAGE[] = "pictures\\result.png";                      // リザルト画像
+const char MENU_IMAGE[] = "pictures\\title.png";						// メニュー画像
+const char RESULT_IMAGE[] = "pictures\\result.png";                     // リザルト画像
 const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main2.png";		// 勇者の歩行画像
 const char FIRE_IMAGE[] = "pictures\\alex\\fire.png";					// 炎の画像
 const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy2.png";				// 雑魚敵の画像
