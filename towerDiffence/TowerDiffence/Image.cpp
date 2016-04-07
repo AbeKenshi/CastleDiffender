@@ -34,6 +34,18 @@ Image::Image()
 	mode = imageNS::MODE::HORIZONTAL;		// 通常は水平でアニメーションが進む
 }
 
+//==========================================================
+// パラメータ初期化
+//==========================================================
+void Image::reset()
+{
+	visible = true;
+	setCurrentFrame(startFrame);
+	mode = imageNS::HORIZONTAL;
+	// アニメーションはループ状態からスタート
+	loop = true;
+}
+
 //=============================================================================
 // デストラクタ
 //=============================================================================
@@ -185,6 +197,7 @@ void Image::setCurrentFrame(int c)
 {
 	if (c >= 0)
 	{
+		animTimer = 0.0f;
 		currentFrame = c;
 		animComplete = false;
 		setRect();                          // set spriteData.rect

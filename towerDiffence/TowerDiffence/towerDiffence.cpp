@@ -154,27 +154,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 中ボスのテクスチャ
 	if (!midBossTexture.initialize(graphics, MID_BOSS_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss texture"));
-	readEnemyFile(1, 1);
-	for (int i = 0; i < enemyNum; i++) {
-		if (typeid(*enemy[i]) == typeid(Enemy))
-		{
-			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
-				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
-		}
-		else if (typeid(*enemy[i]) == typeid(MidBoss))
-		{
-			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
-				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
-		}
-		enemy[i]->setScale(1.5);
-		enemy[i]->setMapPointer(&map);
-		enemy[i]->setBarricadesPointer(barricades);
-
-		// 雑魚敵の当たり判定用
-		if (!enemy[i]->getAttackCollision().initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
-			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
-	}
-
+	initializeEnemies(1, 1);
 
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
@@ -199,13 +179,6 @@ void TowerDiffence::initialize(HWND hwnd)
 
 	// タイトルBGM再生
 	audio->playCue("title");
-
-	// 敵の位置初期化
-	for (int i = 0; i < enemyNum; i++)
-	{
-		enemy[i]->setX(enemyX[i]);
-		enemy[i]->setY(enemyY[i]);
-	}
 
 	return;
 }
@@ -310,6 +283,12 @@ void TowerDiffence::update()
 //==========================================================
 void TowerDiffence::roundStart()
 {
+	map.readMapFile(1);
+	// 各バリケードを初期化
+	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
+	{
+		barricades[i].reset();
+	}
 	// 初期化
 	// マップとバリケードを初期化
 	int count = 0;  // バリケードの数数える用
@@ -350,11 +329,6 @@ void TowerDiffence::roundStart()
 	castle.reset();
 	// 炎を初期化
 	fire.reset();
-	// 各バリケードを初期化
-	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
-	{
-		barricades[i].reset();
-	}
 	// 残り時間を初期化
 	remainingTime = 1500.0f;
 	// ゲームオーバーのフラグを初期化
@@ -382,32 +356,7 @@ void TowerDiffence::checkCurrentEnemyNum()
 	safeDeleteArray(enemyX);
 	safeDeleteArray(enemyY);
 	map.resetMapCol();
-	readEnemyFile(1, 2);
-
-	for (int i = 0; i < enemyNum; i++)
-	{
-		if (typeid(*enemy[i]) == typeid(Enemy))
-		{
-			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
-				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
-		}
-		else if (typeid(*enemy[i]) == typeid(MidBoss))
-		{
-			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
-				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
-		}
-		enemy[i]->setScale(1.5);
-		enemy[i]->setMapPointer(&map);
-		enemy[i]->setBarricadesPointer(barricades);
-
-		// 雑魚敵の当たり判定用
-		if (!enemy[i]->getAttackCollision().initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
-			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
-		enemy[i]->reset();
-		enemy[i]->setX(enemyX[i]);
-		enemy[i]->setY(enemyY[i]);
-		enemy[i]->initTileXY();
-	}
+	initializeEnemies(1, 2);
 }
 
 //==========================================================
@@ -484,7 +433,7 @@ void TowerDiffence::collisions()
 				if (!barricades[enemy[i]->getNearBarricadeIndex()].getActive())
 				{
 					// マップデータを更新
-					map.updateMapObjInt(barricades[enemy[i]->getNearBarricadeIndex()].getTileY(), barricades[enemy[i]->getNearBarricadeIndex()].getTileX(), 1);
+					map.updateMapObjInt(barricades[enemy[i]->getNearBarricadeIndex()].getTileY(), barricades[enemy[i]->getNearBarricadeIndex()].getTileX(), -1);
 					if (map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 0 
 						&& map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 1)
 					{
@@ -617,120 +566,122 @@ void TowerDiffence::collisions()
 						enemy[i]->setStateDetail(enemyNS::WAIT);
 					}
 				}
-				continue;
 			}
-			// 最近接のバリケードを探索
-			enemy[i]->searchNearBarricadeIndex();
-			if (!enemy[i]->checkBarricadeOnLine())	// 城までの直線上にバリケードがない場合、城へと進行する
+			else
 			{
-				// 敵の状態を城移動中へと変更
-				enemy[i]->setStateDetail(enemyNS::MOVE_CASTLE);
-				enemy[i]->setState(characterNS::MOVE);
-				// 進みたい方向に進めない場合、方向を進みたい方向をランダムに変換
-				switch (enemy[i]->getGoalDirection())
+				// 最近接のバリケードを探索
+				enemy[i]->searchNearBarricadeIndex();
+				if (!enemy[i]->checkBarricadeOnLine())	// 城までの直線上にバリケードがない場合、城へと進行する
 				{
-				case characterNS::LEFT:
-					if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) >= 1)
+					// 敵の状態を城移動中へと変更
+					enemy[i]->setStateDetail(enemyNS::MOVE_CASTLE);
+					enemy[i]->setState(characterNS::MOVE);
+					// 進みたい方向に進めない場合、方向を進みたい方向をランダムに変換
+					switch (enemy[i]->getGoalDirection())
 					{
-						changeGoalDirectionFlag = true;
+					case characterNS::LEFT:
+						if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) >= 1)
+						{
+							changeGoalDirectionFlag = true;
+						}
+						break;
+					case characterNS::RIGHT:
+						if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) >= 1)
+						{
+							changeGoalDirectionFlag = true;
+						}
+						break;
+					case characterNS::UP:
+						if (map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) >= 1)
+						{
+							changeGoalDirectionFlag = true;
+						}
+						break;
+					case characterNS::DOWN:
+						if (map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) >= 1)
+						{
+							changeGoalDirectionFlag = true;
+						}
+						break;
 					}
-					break;
-				case characterNS::RIGHT:
-					if (map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) >= 1)
-					{
-						changeGoalDirectionFlag = true;
-					}
-					break;
-				case characterNS::UP:
-					if (map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) >= 1)
-					{
-						changeGoalDirectionFlag = true;
-					}
-					break;
-				case characterNS::DOWN:
-					if (map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) >= 1)
-					{
-						changeGoalDirectionFlag = true;
-					}
-					break;
 				}
-			}
-			else // 城までの直線状にバリケードが存在する場合、
-			{
-				// 敵の状態をバリケードに進行中へと変更
-				enemy[i]->setStateDetail(enemyNS::MOVE_BARRICADE);
-				enemy[i]->setState(characterNS::MOVE);
-				// 確率50%でx方向に進むかどうかを先に決定し、そのあとにy方向に進むかどうかを決定
-				bool canMoveXDirection = false;
-				bool canMoveYDirection = false;
-				characterNS::DIRECTION xDirection;
-				characterNS::DIRECTION yDirection;
-				if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 < enemy[i]->getTileX())
+				else // 城までの直線状にバリケードが存在する場合、
 				{
-					if (!map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) >= 1)
+					// 敵の状態をバリケードに進行中へと変更
+					enemy[i]->setStateDetail(enemyNS::MOVE_BARRICADE);
+					enemy[i]->setState(characterNS::MOVE);
+					// 確率50%でx方向に進むかどうかを先に決定し、そのあとにy方向に進むかどうかを決定
+					bool canMoveXDirection = false;
+					bool canMoveYDirection = false;
+					characterNS::DIRECTION xDirection;
+					characterNS::DIRECTION yDirection;
+					if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 < enemy[i]->getTileX())
 					{
-						xDirection = characterNS::LEFT;
-						enemy[i]->setGoalDirection(characterNS::LEFT);
-						canMoveXDirection = true;
+						if (!map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) >= 1)
+						{
+							xDirection = characterNS::LEFT;
+							enemy[i]->setGoalDirection(characterNS::LEFT);
+							canMoveXDirection = true;
+						}
+						else
+							changeGoalDirectionFlag = true;
+					}
+					else if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 > enemy[i]->getTileX())
+					{
+						if (!map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) >= 1)
+						{
+							xDirection = characterNS::RIGHT;
+							enemy[i]->setGoalDirection(characterNS::RIGHT);
+							canMoveXDirection = true;
+						}
+						else
+							changeGoalDirectionFlag = true;
+					}
+					if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 < enemy[i]->getTileY())
+					{
+						if (!map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) >= 1)
+						{
+							yDirection = characterNS::UP;
+							enemy[i]->setGoalDirection(characterNS::UP);
+							canMoveYDirection = true;
+						}
+						else
+							changeGoalDirectionFlag = true;
+					}
+					else if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 > enemy[i]->getTileY())
+					{
+						if (!map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) >= 1)
+						{
+							yDirection = characterNS::DOWN;
+							enemy[i]->setGoalDirection(characterNS::DOWN);
+							canMoveYDirection = true;
+						}
+						else
+							changeGoalDirectionFlag = true;
+					}
+					if (canMoveXDirection && canMoveYDirection)
+					{
+						if (rand() % 2 == 0)
+							enemy[i]->setGoalDirection(xDirection);
+						else
+							enemy[i]->setGoalDirection(yDirection);
+					}
+				}
+				// 進みたい方向に進めない場合、ランダムに方向を決めなおす
+				if (changeGoalDirectionFlag)
+				{
+					// ランダムに進みたい方向を修正
+					characterNS::DIRECTION newDirection = (characterNS::DIRECTION) (rand() % 4);
+					// それでも進めない場合、敵を待機状態にして静止させる
+					if (enemy[i]->canMoveTo(newDirection))
+					{
+						enemy[i]->setGoalDirection(newDirection);
 					}
 					else
-						changeGoalDirectionFlag = true;
-				}
-				else if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 > enemy[i]->getTileX())
-				{
-					if (!map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) >= 1)
 					{
-						xDirection = characterNS::RIGHT;
-						enemy[i]->setGoalDirection(characterNS::RIGHT);
-						canMoveXDirection = true;
+						enemy[i]->setState(characterNS::WAIT);
+						enemy[i]->setStateDetail(enemyNS::WAIT);
 					}
-					else
-						changeGoalDirectionFlag = true;
-				}
-				if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 < enemy[i]->getTileY())
-				{
-					if (!map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) >= 1)
-					{
-						yDirection = characterNS::UP;
-						enemy[i]->setGoalDirection(characterNS::UP);
-						canMoveYDirection = true;
-					}
-					else
-						changeGoalDirectionFlag = true;
-				}
-				else if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 > enemy[i]->getTileY())
-				{
-					if (!map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) >= 1)
-					{
-						yDirection = characterNS::DOWN;
-						enemy[i]->setGoalDirection(characterNS::DOWN);
-						canMoveYDirection = true;
-					}
-					else
-						changeGoalDirectionFlag = true;
-				}
-				if (canMoveXDirection && canMoveYDirection)
-				{
-					if (rand() % 2 == 0)
-						enemy[i]->setGoalDirection(xDirection);
-					else
-						enemy[i]->setGoalDirection(yDirection);
-				}
-			}
-			// 進みたい方向に進めない場合、ランダムに方向を決めなおす
-			if (changeGoalDirectionFlag)
-			{
-				// ランダムに進みたい方向を修正
-				characterNS::DIRECTION newDirection = (characterNS::DIRECTION) (rand() % 4);
-				// それでも進めない場合、敵を待機状態にして静止させる
-				if (enemy[i]->canMoveTo(newDirection))
-				{
-					enemy[i]->setGoalDirection(newDirection);
-				}
-				else
-				{
-					enemy[i]->setState(characterNS::WAIT);
-					enemy[i]->setStateDetail(enemyNS::WAIT);
 				}
 			}
 		}
@@ -797,7 +748,6 @@ void TowerDiffence::render()
 	else
 	{
 		// マップとバリケードは初めだけ描画
-		int count = 0;  // バリケードの数数える用
 		for (int row = 0; row<mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
 		{
 			map.setY((float)(row*mapNS::TEXTURE_SIZE));       // タイルのYを設定
@@ -810,15 +760,11 @@ void TowerDiffence::render()
 					if (map.getX() > -mapNS::TEXTURE_SIZE && map.getX() < GAME_WIDTH)     // タイルが画面上にあるかどうか
 						map.draw();    // タイルを描画
 				}
-				if (map.getMapObj(row, col) == 0)
-				{
-					barricades[count].draw();   // オブジェクトを描画
-					count++;
-				}
 			}
 		}
 		for (int i = 0; i < 8; ++i)
 		{
+			barricades[i].draw();   // オブジェクトを描画
 			barricades[i].getHitEffect().draw();
 		}
 
@@ -932,7 +878,7 @@ void TowerDiffence::readEnemyFile(int stageNum, int enemyWave)
 		istringstream stream(str);
 		if (getline(stream, token, ','))
 		{
-			enemyNum = stof(token);
+			enemyNum = (int)stof(token);
 			enemy = new Enemy*[enemyNum];
 			enemyX = new float[enemyNum];
 			enemyY = new float[enemyNum];
@@ -979,4 +925,101 @@ void TowerDiffence::readEnemyFile(int stageNum, int enemyWave)
 	}
 
 	safeDelete(ifs);
+}
+
+//==========================================================
+// 指定されたステージ、派の敵データを読み込み敵を初期化する
+//==========================================================
+void TowerDiffence::initializeEnemies(int stageNum, int enemyWave)
+{
+	readEnemyFile(stageNum, enemyWave);
+	for (int i = 0; i < enemyNum; i++) {
+		if (typeid(*enemy[i]) == typeid(Enemy))
+		{
+			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
+				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
+		}
+		else if (typeid(*enemy[i]) == typeid(MidBoss))
+		{
+			if (!enemy[i]->initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
+				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
+		}
+		enemy[i]->setScale(1.5);
+		enemy[i]->setMapPointer(&map);
+		enemy[i]->setBarricadesPointer(barricades);
+
+		// 雑魚敵の当たり判定用
+		if (!enemy[i]->getAttackCollision().initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
+			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
+		enemy[i]->reset();
+		enemy[i]->setX(enemyX[i]);
+		enemy[i]->setY(enemyY[i]);
+		enemy[i]->initTileXY();
+	}
+}
+
+//=============================================================================
+// コンソールコマンドを処理
+//=============================================================================
+void TowerDiffence::consoleCommand()
+{
+	command = console->getCommand();    // コンソールからのコマンドを取得
+	if (command == "")                  // コマンドがない場合
+		return;
+
+	if (command == "help")              // 「help」コマンドの場合
+	{
+		console->print("Console Commands:");
+		console->print("fps - toggle display of frames per second");
+		console->print("mapobj - display map object data");
+		console->print("mapcol - display map collision data");
+		console->print("mapdata - display map data");
+		return;
+	}
+	if (command == "fps")
+	{
+		fpsOn = !fpsOn;                 // フレームレートの表示を切り替える
+		if (fpsOn)
+			console->print("fps On");
+		else
+			console->print("fps Off");
+	}
+	if (command == "mapobj")
+	{
+		for (int i = 0; i < mapNS::MAP_HEIGHT; ++i)
+		{
+			string str = "";
+			for (int j = 0; j < mapNS::MAP_WIDTH; ++j)
+			{
+				if (map.getMapObj(i, j) >= 0)
+				{
+					str += " " + to_string(map.getMapObj(i, j)) + ",";
+				}
+				else
+				{
+					str += to_string(map.getMapObj(i, j)) + ",";
+				}
+			}
+			console->print(str);
+		}
+	}
+	if (command == "mapcol")
+	{
+		for (int i = 0; i < mapNS::MAP_HEIGHT; ++i)
+		{
+			string str = "";
+			for (int j = 0; j < mapNS::MAP_WIDTH; ++j)
+			{	
+				str += to_string(map.getMapCol(i, j)) + ",";
+			}
+			console->print(str);
+		}
+	}
+	if (command == "barricade")
+	{
+		for (int i = 0; i < 8; ++i)
+		{
+			console->print(to_string(barricades[i].getActive()));
+		}
+	}
 }

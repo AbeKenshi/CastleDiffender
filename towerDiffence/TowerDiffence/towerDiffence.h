@@ -117,6 +117,8 @@ public:
 	// 敵の数をチェックし、マップ上に敵がいなければ新たに生成
 	void checkCurrentEnemyNum();
 
+	void consoleCommand();	// コンソールコマンドを処理
+
 	// グラフィックスデバイスが消失した場合
 	// グラフィックスデバイスをリセット可能にするため、
 	// 予約されていたビデオメモリをすべて解放
@@ -128,5 +130,8 @@ public:
 
 	// 指定されたステージの敵データを読み込む
 	void readEnemyFile(int stageNum, int enemyWave);
+
+	// 指定されたステージ、派の敵データを読み込み敵を初期化する
+	void initializeEnemies(int stageNum, int enemyWave);
 };
 #endif

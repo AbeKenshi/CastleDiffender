@@ -22,8 +22,6 @@ protected:
 	int oldEndFrame;					// 攻撃アニメーション終了後に戻るべきアニメーションフレーム保存用
 	float damageTimer;					// ダメージ時のアニメーション用のタイマー
 	float totalDamageTime;				// ダメージ時のアニメーション用のタイマー
-	bool drawFlag;						// 描画フラグ、オンのときだけ画像を描画する。ダメージを受けている状態時に使用。ダメージ時は一定時間おきに反転。ダメージ時以外は常にオン
-	bool isDamaged;						// ダメージを受けている状態ならtrue、それ以外ならfalse
 	bool attackCollisionFlag;			// 攻撃用の衝突判定を出現させるフラグ。攻撃を開始してから一定時間後にtrueとなる。時間を調整することによってアニメーションと同期させるのが目的。
 	Map *map;							// ステージマップへのポインタ
 	characterNS::STATE state;			// 状態

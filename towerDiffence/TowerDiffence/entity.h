@@ -52,6 +52,9 @@ protected:
 	bool    rotatedBoxReady;    // true when rotated collision box is ready
 	DWORD   pixelsColliding;    // number of pixels colliding in pixel perfect collision
 	int tileX, tileY;						// 自分が存在するタイルの位置
+	bool isDamaged;					// ダメージを受けている状態かどうか
+	bool drawFlag;					// 描画フラグ、true時に描画
+	float damagePer;                // ダメージを受ける時に掛ける割合
 
 								// --- The following functions are protected because they are not intended to be
 								// --- called from outside the class.
@@ -200,6 +203,9 @@ public:
 	// アニメーションのみ更新するメソッド
 	// アニメーションを毎時間更新したくない場合はこのメソッドを使用する。
 	virtual void updateOnlyImage(float frameTime);
+
+	// パラメータリセット
+	virtual void reset();
 
 	// Initialize Entity
 	// Pre: *gamePtr = pointer to Game object

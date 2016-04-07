@@ -64,7 +64,6 @@ private:
 	int magicPoint;					// MP、必殺技を使うと減少。
 	float mpTimer;					// MP回復用のタイマー
 	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
-	float damagePer;                // ダメージの時に掛ける割合、敵から取得する
 public:
 	// コンストラクタ
 	Brave();

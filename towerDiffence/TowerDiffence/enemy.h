@@ -61,7 +61,6 @@ protected:
 	float attackDamage;
 	imageNS::MODE attackAnimationMode;
 	enemyNS::TYPE type;                     // 敵の種類
-	float damagePer;                        // ダメージを受ける時に掛ける値
 	EnemyCollision attackCollision;			// 攻撃判定用のコリジョン
 public:
 	// コンストラクタ
