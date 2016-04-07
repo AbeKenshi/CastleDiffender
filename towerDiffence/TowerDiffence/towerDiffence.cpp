@@ -9,6 +9,7 @@ TowerDiffence::TowerDiffence()
 	initialized = false;
 	fontCK = new Text();   // sprite based font
 	menuOn = true;
+	descriptionOn = false;
 	roundOver = false;
 	rect = NULL;
 	remainingTime = 1500.0f;
@@ -65,6 +66,14 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!result.initialize(graphics, 0, 0, 0, &resultTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing result"));
 	result.setScale(2);
+
+	// 操作説明のテクスチャ
+	if (!descriptionTexture.initialize(graphics, DESCRIPTION_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing description texture"));
+	// 操作説明の画像
+	if (!description.initialize(graphics, 0, 0, 0, &descriptionTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing description"));
+	description.setScale(1);
 
 	// マップのテクスチャ
 	if (!tileTexture.initialize(graphics, TILE_IMAGES))
@@ -206,15 +215,30 @@ void TowerDiffence::initialize(HWND hwnd)
 //==========================================================
 void TowerDiffence::update()
 {
-	if (menuOn)		// メニュー画面表示中にいずれかのキーが押されるまではメニュー画面を表示し続ける
+	if (menuOn)		// メニュー画面表示中にZキーが押されるまではメニュー画面を表示し続ける
 	{
-		if (input->anyKeyPressed())
+		if (input->isKeyDown('Z')) // Zキーでゲームスタート
 		{
 			menuOn = false;
 			input->clearAll();
 			audio->stopCue("title");
 			audio->playCue("stage");
 			roundStart();
+		}
+		else if (input->isKeyDown('X')) // Xキーで操作説明表示
+		{
+			descriptionOn = true;
+			menuOn = false;
+			input->clearAll();
+		}
+	}
+	else if (descriptionOn) // 操作説明中はXキーでタイトルに戻る
+	{
+		if (input->isKeyDown('X'))
+		{
+			descriptionOn = false;
+			menuOn = true;
+			input->clearAll();
 		}
 	}
 	else if (roundOver)	// ゲームオーバー中にZが押されたらメニュー画面に戻る、Xが押されたらプログラム終了
@@ -745,6 +769,26 @@ void TowerDiffence::render()
 	if (menuOn)
 	{
 		menu.draw();
+
+		char str[128]  = "PUSH Z KEY TO START!";
+		char str2[128] = "PUSH X KEY TO THE OPERATION DESCRIPTION";
+		fontCK->setFontHeight(35);
+		fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		fontCK->print(str, 373, 453);
+		fontCK->setFontHeight(20);
+		fontCK->print(str2, 343, 553);
+		fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+		fontCK->setFontHeight(35);
+		fontCK->print(str, 370, 450);
+		fontCK->setFontHeight(20);
+		fontCK->print(str2, 340, 550);
+	}
+	else if (descriptionOn)
+	{
+		menu.draw();
+		description.setX(160);
+		description.setY(90);
+		description.draw();
 	}
 	else if (roundOver)
 	{

@@ -56,6 +56,8 @@ private:
 	Image menu;											// タイトル画像
 	TextureManager resultTexture;                       // リザルトのテクスチャ
 	Image result;                                       // リザルト画像
+	TextureManager descriptionTexture;                  // 操作説明のテクスチャ
+	Image description;                                  // 操作説明画像
 	TextureManager braveTexture;						// 勇者のテクスチャ
 	Brave brave;										// 勇者
 	TextureManager attackEffectTexture;					// 攻撃の衝撃波のテクスチャ
@@ -89,6 +91,7 @@ private:
 	HpTextImage castleHpText;							// 城のＨＰテキスト
 	Rect *rect;											// Rectへのポインター
 	bool menuOn;										// メニューフラグ
+	bool descriptionOn;                                 // 操作説明フラグ
 	float remainingTime;								// ゲーム内の残り時間
 	bool    roundOver;									// ラウンドが終了した場合、true
 	float   roundTimer;									// 新しいラウンドが開始するまでの時間
