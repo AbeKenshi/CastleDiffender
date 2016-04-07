@@ -624,73 +624,47 @@ void Enemy::changeAttack(characterNS::DIRECTION dir)
 }
 
 //==========================================================
-// 移動可能かチェック
-//==========================================================
-bool Enemy::checkCanMove(float x, float y)
-{
-	// 1マス32pixelのため32で割る
-	// -16はめり込みを防止するために半マス分引いてる
-	// +αは微調整…
-	int map_x = (int)((x - 8) / 32) + 1;
-	int map_y = (int)((y - 8) / 32) + 2;
-
-	if (map_x <= 0)
-		map_x = 0;
-	if (map_x >= mapNS::MAP_WIDTH)
-		map_x = mapNS::MAP_WIDTH - 1;
-	if (map_y <= 0)
-		map_y = 0;
-	if (map_y >= mapNS::MAP_HEIGHT)
-		map_y = mapNS::MAP_HEIGHT - 1;
-
-	if (map->getMapCol(map_y, map_x) >= 1)
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
-}
-
-//==========================================================
 // タイルの中央にキャラクターがいるかどうか
 //==========================================================
 bool Enemy::isCenterOfTile()
 {
-	map->resetMapCol(tileY, tileX);
+	bool isCenter = false;
 	switch (goalDirection)
 	{
 	case characterNS::RIGHT:
-		if (spriteData.x / 32 > tileX + 1)
+		if (spriteData.x / 32 >= tileX + 1)
 		{
+			map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
 			tileX += 1;
-			return true;
+			isCenter = true;
 		}
 		break;
 	case characterNS::LEFT:
-		if (spriteData.x / 32 < tileX - 1)
+		if (spriteData.x / 32 <= tileX - 1)
 		{
+			map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
 			tileX -= 1;
-			return true;
+			isCenter = true;
 		}
 		break;
 	case characterNS::UP:
-		if (spriteData.y / 32 < tileY - 1)
+		if (spriteData.y / 32 <= tileY - 1)
 		{
+			map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
 			tileY -= 1;
-			return true;
+			isCenter = true;
 		}
 		break;
 	case characterNS::DOWN:
-		if (spriteData.y / 32 > tileY + 1)
+		if (spriteData.y / 32 >= tileY + 1)
 		{
+			map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
 			tileY += 1;
-			return true;
+			isCenter = true;
 		}
 		break;
 	}
-	return false;
+	return isCenter;
 }
 
 //==========================================================

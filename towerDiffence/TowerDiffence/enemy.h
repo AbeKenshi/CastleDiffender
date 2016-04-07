@@ -79,8 +79,6 @@ public:
 	virtual void damage(WEAPON);
 	// パラメータリセット
 	virtual void reset();
-	// 移動可能かチェック
-	virtual bool checkCanMove(float x, float y);
 
 	//==========================================================
 	// setter
