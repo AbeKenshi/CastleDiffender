@@ -23,30 +23,6 @@ Barricade::Barricade() : Entity()
 	edge.top = -barricadeNS::HEIGHT / 2.0;
 	edge.bottom = barricadeNS::HEIGHT / 2.0;
 	collisionType = entityNS::BOX;
-	health = 100;
-	death = false;
-	isDamaged = false;
-	drawFlag = true;
-	damagePer = 1.0f;
-}
-
-//==========================================================
-// パラメータ初期化
-//==========================================================
-void Barricade::reset()
-{
-	active = true;
-	visible = true;
-	health = 100;
-	// アニメーションの最初のフレーム
-	startFrame = barricadeNS::START_FRAME;
-	// アニメーションの最後のフレーム
-	endFrame = barricadeNS::END_FRAME;
-	currentFrame = startFrame;
-	death = false;
-	isDamaged = false;
-	drawFlag = true;
-	mode = imageNS::HORIZONTAL;
 }
 
 //==========================================================
@@ -54,10 +30,7 @@ void Barricade::reset()
 //==========================================================
 void Barricade::draw()
 {
-	if (drawFlag)
-	{
-		Image::draw();	// 城を描画
-	}
+	Image::draw();	// 城を描画
 }
 
 //==========================================================
@@ -67,7 +40,7 @@ void Barricade::draw()
 //==========================================================
 void Barricade::update(float frameTime)
 {
-	if (visible == false)
+	if (active == false)
 		return;
 
 	if ((currentFrame == barricadeNS::START_FRAME && health < 66) || (currentFrame == barricadeNS::START_FRAME + 1 && health < 33))
@@ -95,6 +68,8 @@ void Barricade::update(float frameTime)
 //==========================================================
 void Barricade::damage()
 {
+	if (!active)
+		return;
 	hitEffect.hit(getCenterX(), getCenterY());
 	health -= 10 * damagePer;
 

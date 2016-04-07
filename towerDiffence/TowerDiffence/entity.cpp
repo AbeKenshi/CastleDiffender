@@ -27,6 +27,24 @@ Entity::Entity() : Image()
     health = 100;
     gravity = entityNS::GRAVITY;
     pixelsColliding = 0;
+	isDamaged = false;
+	drawFlag = true;
+	damagePer = 1.0f;
+}
+
+//==========================================================
+// ƒpƒ‰ƒ[ƒ^‰Šú‰»
+//==========================================================
+void Entity::reset()
+{
+	rotatedBoxReady = false;
+	pixelsColliding = 0;
+	active = true;
+	health = 100;
+	isDamaged = false;
+	drawFlag = true;
+	damagePer = 1.0f;
+	Image::reset();
 }
 
 //=============================================================================

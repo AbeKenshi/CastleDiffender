@@ -20,10 +20,6 @@ class Barricade : public Entity		// Entityクラスを継承
 private:
 	float timeCounter;				// ダメージアニメーション用のタイマー
 	float totalTimeCounter;
-	bool death;						// 城が死亡時にtrue
-	bool isDamaged;					// ダメージを受けている状態かどうか
-	bool drawFlag;					// 描画フラグ、true時に描画
-	float damagePer;                // ダメージを受ける時に掛ける割合
 	HitEffect hitEffect;			// 攻撃がヒットしたときのアニメーション画像
 public:
 	// コンストラクタ
@@ -31,7 +27,6 @@ public:
 
 	// 継承されたメンバー関数
 	virtual void draw();
-	void reset();
 	void update(float frameTime);
 	void damage();
 

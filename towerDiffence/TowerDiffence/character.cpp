@@ -9,13 +9,9 @@ Character::Character() : Entity()
 	direction = characterNS::RIGHT;
 	// Boxの衝突判定を使用
 	collisionType = entityNS::BOX;
-	// ダメージは受けていない状態からスタート
-	isDamaged = false;
 	// ダメージ時に使用するタイマーをリセット
 	damageTimer = 0.0f;
 	totalDamageTime = 0.0f;
-	// 描画フラグはオン
-	drawFlag = true;
 	// 攻撃判定のコリジョンは最初はなし
 	attackCollisionFlag = false;
 	// 状態は何もしない状態からスタート
@@ -27,26 +23,18 @@ Character::Character() : Entity()
 //==========================================================
 void Character::reset()
 {
-	// キャラクターをアクティブにする
-	active = true;
-	visible = true;
-	// 体力はMAX100
-	health = 100;
+	oldStartFrame = startFrame;
+	oldEndFrame = endFrame;
 	// 初期の方向は右
 	direction = characterNS::RIGHT;
-	// ダメージは受けていない状態にリセット
-	isDamaged = false;
 	// ダメージ時に使用するタイマーをリセット
 	damageTimer = 0.0f;
 	totalDamageTime = 0.0f;
-	// 描画フラグをオンにリセット
-	drawFlag = true;
 	// 攻撃判定のコリジョンはなしでリセット
 	attackCollisionFlag = false;
 	// 状態は何もしない状態からスタート
 	state = characterNS::STATE::MOVE;
-	// アニメーションはループ状態からスタート
-	loop = true;
+	Entity::reset();
 }
 
 //==========================================================
@@ -97,7 +85,7 @@ bool Character::checkCanMove(float x, float y)
 	// -16はめり込みを防止するために半マス分引いてる
 	// +αは微調整…
 	int map_x = (int)((x - 16) / 32) + 1;
-	int map_y = (int)((y - 0) / 32) + 1;
+	int map_y = (int)((y - 16) / 32) + 1;
 
 	if (map_x <= 0)
 		map_x = 0;

@@ -271,5 +271,8 @@ public:
 	virtual void draw(SpriteData sd, COLOR_ARGB color = graphicsNS::WHITE, UINT textureN = 0);
 
 	virtual void update(float frameTime);
+
+	// パラメータリセット
+	virtual void reset();
 };
 #endif

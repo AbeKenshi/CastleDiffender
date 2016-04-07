@@ -59,22 +59,14 @@ Enemy::Enemy() : Character()
 void Enemy::reset()
 {
 	Character::reset();
-	frameDelay = enemyNS::MOVE_ANIMATION_DELAY;
 	// 初期の方向は右
 	oldDirection = direction;
 	goalDirection = characterNS::RIGHT;
-	startFrame = moveRightStartFrame;
-	endFrame = moveRightEndFrame;
-	oldStartFrame = startFrame;
-	oldEndFrame = endFrame;
-	currentFrame = startFrame;
 	// 初期の状態は移動
 	stateDeteil = enemyNS::MOVE_CASTLE;
 	// 範囲内にはいない状態からスタート
 	inCertainRange = false;
 	canMakeDecesionMove = false;
-	// ダメージを受ける時に掛ける割合は1.0
-	damagePer = 1.0f;
 }
 
 //=============================================================================
@@ -409,25 +401,25 @@ int Enemy::searchNearBarricadeIndex()
 
 	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
-		// もしバリケードnがアクティブなら
+		// もしバリケードがアクティブなら
 		if (barricades[i].getActive())
 		{
 			// 探索1つ目の場合
 			if (count == 0)
 			{
-				minX = (int)abs(barricades[i].getX() - getX());
-				minY = (int)abs(barricades[i].getY() - getY());
+				minX = (int)abs(barricades[i].getTileX() - getTileX());
+				minY = (int)abs(barricades[i].getTileY() - getTileY());
 				minIndex = i;
 			}
 			else // 2つ目以降
 			{
-				if ((barricades[i].getX() - getX())*(barricades[i].getX() - getX()) +
-					(barricades[i].getY() - getY())*(barricades[i].getY() - getY()) <
+				if ((barricades[i].getTileX() - getTileX())*(barricades[i].getTileX() - getTileX()) +
+					(barricades[i].getTileY() - getTileY())*(barricades[i].getTileY() - getTileY()) <
 					minX * minX + minY * minY)
 				{
 					// 新たに代入
-					minX = (int)abs(barricades[i].getX() - getX());
-					minY = (int)abs(barricades[i].getY() - getY());
+					minX = (int)abs(barricades[i].getTileX() - getTileX());
+					minY = (int)abs(barricades[i].getTileY() - getTileY());
 					minIndex = i;
 				}
 			}
