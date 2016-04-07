@@ -1009,8 +1009,15 @@ void TowerDiffence::consoleCommand()
 		{
 			string str = "";
 			for (int j = 0; j < mapNS::MAP_WIDTH; ++j)
-			{	
-				str += to_string(map.getMapCol(i, j)) + ",";
+			{
+				if (map.getMapCol(i, j) >= 0)
+				{
+					str += " " + to_string(map.getMapCol(i, j)) + ",";
+				}
+				else
+				{
+					str += to_string(map.getMapCol(i, j)) + ",";
+				}
 			}
 			console->print(str);
 		}
@@ -1020,6 +1027,20 @@ void TowerDiffence::consoleCommand()
 		for (int i = 0; i < 8; ++i)
 		{
 			console->print(to_string(barricades[i].getActive()));
+		}
+	}
+	if (command == "enemystate")
+	{
+		for (int i = 0; i < enemyNum; ++i)
+		{
+			console->print(to_string(enemy[i]->getState()));
+		}
+	}
+	if (command == "enemytile")
+	{
+		for (int i = 0; i < enemyNum; ++i)
+		{
+			console->print(to_string(enemy[i]->getTileX()) + "," + to_string(enemy[i]->getTileY()));
 		}
 	}
 }

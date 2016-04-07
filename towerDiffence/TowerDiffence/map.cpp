@@ -42,7 +42,7 @@ void Map::updateMapData(float x, float y, int val)
 //==========================================================
 void Map::updateMapCol(float x, float y, int val)
 {
-	if (x < 0 || x >= mapNS::MAP_WIDTH * 32 || y < 0 || y >= mapNS::MAP_HEIGHT * 32) { return; }
+	if (x < 0 || x >= mapNS::MAP_HEIGHT * 32 || y < 0 || y >= mapNS::MAP_WIDTH * 32) { return; }
 
 	// 座標値をインデックスに変更
 	int px = (int)(x / 32);
