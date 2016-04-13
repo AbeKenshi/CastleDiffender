@@ -54,6 +54,8 @@ private:
 	Text    *fontCK;									// sprite based font
 	TextureManager menuTexture;							// タイトルのテクスチャ
 	Image menu;											// タイトル画像
+	TextureManager stageSelectTexture;					// ステージ選択画面のテクスチャ
+	Image stageSelect;									// ステージ選択画面の画像
 	TextureManager resultTexture;                       // リザルトのテクスチャ
 	Image result;                                       // リザルト画像
 	TextureManager descriptionTexture;                  // 操作説明のテクスチャ
@@ -91,11 +93,13 @@ private:
 	HpTextImage castleHpText;							// 城のＨＰテキスト
 	Rect *rect;											// Rectへのポインター
 	bool menuOn;										// メニューフラグ
+	bool stageSelectOn;									// ステージ選択フラグ
 	bool descriptionOn;                                 // 操作説明フラグ
 	float remainingTime;								// ゲーム内の残り時間
 	bool    roundOver;									// ラウンドが終了した場合、true
 	float   roundTimer;									// 新しいラウンドが開始するまでの時間
 	int enemyNum;										// ステージ上に存在する敵の数
+	int stageNum;										// 選択しているステージの番号
 public:
 	// コンストラクタ
 	TowerDiffence();

@@ -9,6 +9,7 @@ TowerDiffence::TowerDiffence()
 	initialized = false;
 	fontCK = new Text();   // sprite based font
 	menuOn = true;
+	stageSelectOn = false;
 	descriptionOn = false;
 	roundOver = false;
 	rect = NULL;
@@ -17,6 +18,7 @@ TowerDiffence::TowerDiffence()
 	enemy = NULL;
 	enemyX = NULL;
 	enemyY = NULL;
+	stageNum = 0;
 }
 
 //==========================================================
@@ -57,7 +59,13 @@ void TowerDiffence::initialize(HWND hwnd)
 	// メニューの画像
 	if (!menu.initialize(graphics, 0, 0, 0, &menuTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing menu"));
-	menu.setScale(1);
+
+	// ステージ選択画面のテクスチャ
+	if (!stageSelectTexture.initialize(graphics, STAGE_SELECT_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing stage select texture"));
+	// ステージ選択画面の画像
+	if (!stageSelect.initialize(graphics, 0, 0, 0, &stageSelectTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing stage select"));
 
 	// リザルトのテクスチャ
 	if (!resultTexture.initialize(graphics, RESULT_IMAGE))
@@ -73,7 +81,6 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 操作説明の画像
 	if (!description.initialize(graphics, 0, 0, 0, &descriptionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing description"));
-	description.setScale(1);
 
 	// マップのテクスチャ
 	if (!tileTexture.initialize(graphics, TILE_IMAGES))
@@ -154,7 +161,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 中ボスのテクスチャ
 	if (!midBossTexture.initialize(graphics, MID_BOSS_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss texture"));
-	initializeEnemies(1, 1);
+	initializeEnemies(stageNum + 1, 1);
 
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
@@ -190,18 +197,61 @@ void TowerDiffence::update()
 {
 	if (menuOn)		// メニュー画面表示中にZキーが押されるまではメニュー画面を表示し続ける
 	{
-		if (input->isKeyDown('Z')) // Zキーでゲームスタート
+		if (input->isKeyDown('Z')) // Zキーでステージ選択画面に以降
 		{
 			menuOn = false;
 			input->clearAll();
 			audio->stopCue("title");
-			audio->playCue("stage");
-			roundStart();
+			stageSelectOn = true;
+			stageNum = 0;
+
+			rect->setX(380);
+			rect->setY(80);
+			rect->setWidth(510);
+			rect->setHeight(81);
+			rect->setBackColor(SETCOLOR_ARGB(50, 120, 120, 255));
+			rect->reset();
 		}
 		else if (input->isKeyDown('X')) // Xキーで操作説明表示
 		{
 			descriptionOn = true;
 			menuOn = false;
+			input->clearAll();
+		}
+	}
+	else if (stageSelectOn)
+	{
+		if (input->isKeyDown('Z'))	// Zキーでステージ決定
+		{
+			stageSelectOn = false;
+			audio->playCue("stage");
+			roundStart();
+
+			rect->setX(rectNS::X);
+			rect->setY(rectNS::Y);
+			rect->setWidth(rectNS::WIDTH);
+			rect->setHeight(rectNS::HEIGHT);
+			rect->setBackColor(rectNS::BACK_COLOR);
+			rect->reset();
+		}
+		else if (input->isKeyDown(BRAVE_DOWN_KEY))
+		{
+			if (stageNum < 3 - 1)
+			{
+				stageNum += 1;
+				rect->setY(rect->getY() + 240);
+				rect->reset();
+			}
+			input->clearAll();
+		}
+		else if (input->isKeyDown(BRAVE_UP_KEY))
+		{
+			if (stageNum > 0)
+			{
+				stageNum -= 1;
+				rect->setY(rect->getY() - 240);
+				rect->reset();
+			}
 			input->clearAll();
 		}
 	}
@@ -283,7 +333,7 @@ void TowerDiffence::update()
 //==========================================================
 void TowerDiffence::roundStart()
 {
-	map.readMapFile(1);
+	map.readMapFile(stageNum + 1);
 	// 各バリケードを初期化
 	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
@@ -734,11 +784,23 @@ void TowerDiffence::render()
 		fontCK->setFontHeight(20);
 		fontCK->print(str2, 340, 550);
 	}
+	else if (stageSelectOn)
+	{
+		stageSelect.draw();
+		graphics->spriteEnd();		// スプライトの描画を開始
+		rect->draw();
+		graphics->spriteBegin();	// スプライトの描画を開始
+		char str[128] = "PUSH Z KEY TO START!";
+		fontCK->setFontHeight(35);
+		fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		fontCK->print(str, 373, 653);
+		fontCK->setFontHeight(35);
+		fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+		fontCK->print(str, 370, 650);
+	}
 	else if (descriptionOn)
 	{
 		menu.draw();
-		description.setX(160);
-		description.setY(90);
 		description.draw();
 	}
 	else if (roundOver)
@@ -840,6 +902,7 @@ void TowerDiffence::releaseAll()
 {
 	SAFE_ON_LOST_DEVICE(fontCK);
 	menuTexture.onLostDevice();
+	stageSelectTexture.onLostDevice();
 	braveTexture.onLostDevice();
 	dashboardTextures.onLostDevice();
 	safeOnLostDevice(rect);
@@ -857,6 +920,7 @@ void TowerDiffence::resetAll()
 	dashboardTextures.onLostDevice();
 	braveTexture.onResetDevice();
 	menuTexture.onResetDevice();
+	stageSelectTexture.onResetDevice();
 	safeOnResetDevice(rect);
 	Game::resetAll();
 	return;

@@ -24,6 +24,7 @@ const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1ƒtƒŒ[ƒ€‚É—v‚·‚éÅ‘å‚Ì
 
 // ‰æ‘œ
 const char MENU_IMAGE[] = "pictures\\title.png";						// ƒƒjƒ…[‰æ‘œ
+const char STAGE_SELECT_IMAGE[] = "pictures\\stageselect.png";			// ƒXƒe[ƒW‘I‘ğ‰æ–Ê‰æ‘œ
 const char RESULT_IMAGE[] = "pictures\\result.png";                     // ƒŠƒUƒ‹ƒg‰æ‘œ
 const char DESCRIPTION_IMAGE[] = "pictures\\description.png";           // ‘€ìà–¾‰æ‘œ
 const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main2.png";		// —EÒ‚Ì•às‰æ‘œ
