@@ -28,7 +28,8 @@ class Rect
 {
 private:
 	Graphics    *graphics;              // graphics system
-	float       x, y;                    // console location (dynamic)
+	float       x, y;                   // console location (dynamic)
+	int width, height;					// 幅、高さ（ピクセル単位）
 	COLOR_ARGB  backColor;              // background color (a,r,g,b)
 	VertexC vtx[4];                     // vertex data for background
 	LP_VERTEXBUFFER vertexBuffer;       // buffer to hold vertex data
@@ -53,6 +54,19 @@ public:
 
 	// Call when graphics device is reset.
 	void onResetDevice();
+
+	void reset();
+	// setter
+	void setX(float nx) { x = nx; }
+	void setY(float ny) { y = ny; }
+	void setWidth(int w) { width = w; }
+	void setHeight(int h) { height = h; }
+
+	// getter
+	float getX() { return x; }
+	float getY() { return y; }
+	// 背景色をセット
+	void setBackColor(COLOR_ARGB clr) { backColor = clr; }
 };
 
 #endif
