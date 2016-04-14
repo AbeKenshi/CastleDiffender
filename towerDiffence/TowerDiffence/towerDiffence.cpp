@@ -73,7 +73,8 @@ void TowerDiffence::initialize(HWND hwnd)
 	// リザルトの画像
 	if (!result.initialize(graphics, 0, 0, 0, &resultTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing result"));
-	result.setScale(2);
+	result.setX(GAME_WIDTH / 2.0f - result.getWidth() / 2.0f);
+	result.setY(-result.getHeight());
 
 	// 操作説明のテクスチャ
 	if (!descriptionTexture.initialize(graphics, DESCRIPTION_IMAGE))
@@ -218,6 +219,10 @@ void TowerDiffence::update()
 			menuOn = false;
 			input->clearAll();
 		}
+		else if (input->isKeyDown('E'))
+		{
+			exit(1);
+		}
 	}
 	else if (stageSelectOn)
 	{
@@ -266,17 +271,30 @@ void TowerDiffence::update()
 	}
 	else if (roundOver)	// ゲームオーバー中にZが押されたらメニュー画面に戻る、Xが押されたらプログラム終了
 	{
-		if (input->isKeyDown('Z'))
+		if (result.getY() > 50)
 		{
-			menuOn = true;
-			input->clearAll();
-			audio->stopCue("gameover");
-			audio->playCue("title");
-			roundStart();
+			if (input->isKeyDown('X'))
+			{
+				menuOn = true;
+				input->clearAll();
+				audio->stopCue("gameover");
+				audio->playCue("title");
+				roundStart();
+			}
+			else if (input->isKeyDown('E'))
+			{
+				exit(1);
+			}
+			else if (input->isKeyDown('Z'))
+			{
+				input->clearAll();
+				audio->stopCue("gameover");
+				roundStart();
+			}
 		}
-		else if (input->isKeyDown('X'))
+		else
 		{
-			exit(1);
+			result.setY(result.getY() + frameTime * 120.0f);
 		}
 	}
 	else				// ゲーム中の場合、
@@ -314,7 +332,7 @@ void TowerDiffence::update()
 		{
 			audio->stopCue("stage");
 			audio->playCue("gameover");
-			roundOver = true;
+			gameOver();
 			// roundTimer = towerDiffenceNS::ROUND_TIME;
 		}
 		/*
@@ -365,6 +383,7 @@ void TowerDiffence::roundStart()
 			}
 		}
 	}
+	result.setY(-result.getHeight());
 	// 勇者を初期化
 	brave.reset();
 	// 各敵を初期化
@@ -475,7 +494,7 @@ void TowerDiffence::collisions()
 				if (enemy[i]->getEnemyType() == enemyNS::NORMAL) barricades[enemy[i]->getNearBarricadeIndex()].setDamagerPer(1.0f);
 				else if (enemy[i]->getEnemyType() == enemyNS::RED) barricades[enemy[i]->getNearBarricadeIndex()].setDamagerPer(1.2f);
 				else if (enemy[i]->getEnemyType() == enemyNS::BLUE) barricades[enemy[i]->getNearBarricadeIndex()].setDamagerPer(1.1f);
-				barricades[enemy[i]->getNearBarricadeIndex()].damage();
+				barricades[enemy[i]->getNearBarricadeIndex()].damage(ENEMY_ATTACK);
 				// 敵の攻撃コリジョンをなくす
 				enemy[i]->getAttackCollision().setVisible(false);
 				enemy[i]->getAttackCollision().setActive(false);
@@ -736,6 +755,17 @@ void TowerDiffence::collisions()
 			}
 		}
 	}
+	for (int i = 0; i < 8; ++i)
+	{
+		// プレイヤーの攻撃コリジョンとの衝突の場合
+		if (braveAttackCollision.collidesWith(barricades[i], collisionVector))
+		{
+			// バリケードにダメージを与える
+			barricades[i].damage(BRAVE_ATTACK);
+			// いずれかのバリケードに攻撃があたったのでループを抜けた後に攻撃コリジョンをなくす
+			braveAttackCollidesWithAnyEnemy = true;
+		}
+	}
 
 	// 勇者の攻撃がいずれかの敵に当たった場合、攻撃コリジョンをなくす
 	if (braveAttackCollidesWithAnyEnemy)
@@ -749,14 +779,7 @@ void TowerDiffence::collisions()
 	{
 		audio->stopCue("stage");
 		audio->playCue("gameover");
-		roundOver = true;
-		/*
-		if (roundOver == false)
-		{
-			roundOver = towerDiffenceNS::ROUND_TIME;
-			roundOver = true;
-		}
-		*/
+		gameOver();
 	}
 }
 
@@ -771,18 +794,18 @@ void TowerDiffence::render()
 	{
 		menu.draw();
 
-		char str[128]  = "PUSH Z KEY TO START!";
-		char str2[128] = "PUSH X KEY TO THE OPERATION DESCRIPTION";
+		char str[128]  = "PUSH Z KEY : STAGE SELECT";
+		char str2[128] = "PUSH X KEY : OPERATION DESCRIPTION";
+		char str3[128] = "PUSH E KEY : EXIT";
 		fontCK->setFontHeight(35);
 		fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-		fontCK->print(str, 373, 453);
-		fontCK->setFontHeight(20);
-		fontCK->print(str2, 343, 553);
+		fontCK->print(str, 273, 353);
+		fontCK->print(str2, 273, 453);
+		fontCK->print(str3, 273, 553);
 		fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
-		fontCK->setFontHeight(35);
-		fontCK->print(str, 370, 450);
-		fontCK->setFontHeight(20);
-		fontCK->print(str2, 340, 550);
+		fontCK->print(str, 273, 350);
+		fontCK->print(str2, 273, 450);
+		fontCK->print(str3, 273, 550);
 	}
 	else if (stageSelectOn)
 	{
@@ -790,7 +813,7 @@ void TowerDiffence::render()
 		graphics->spriteEnd();		// スプライトの描画を開始
 		rect->draw();
 		graphics->spriteBegin();	// スプライトの描画を開始
-		char str[128] = "PUSH Z KEY TO START!";
+		char str[128] = "PUSH Z KEY : START STAGE!";
 		fontCK->setFontHeight(35);
 		fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
 		fontCK->print(str, 373, 653);
@@ -802,10 +825,6 @@ void TowerDiffence::render()
 	{
 		menu.draw();
 		description.draw();
-	}
-	else if (roundOver)
-	{
-		result.draw();
 	}
 	else
 	{
@@ -889,6 +908,41 @@ void TowerDiffence::render()
 		fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
 		fontCK->print(str, 505, 7);
 		fontCK->setFontHeight(14);
+	}
+	if (roundOver)
+	{
+		result.draw();
+		if (result.getY() > 50)
+		{
+			char str[128] = "CONTINUE?";
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, result.getHeight() + result.getY());
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, result.getHeight() + result.getY() - 3);
+			char str2[128] = "PUSH Z KEY : RETRY STAGE";
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() + 55);
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() - 3 + 55);
+			char str3[128] = "PUSH X KEY : RETURN TITLE";
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() + 55 * 2);
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() - 3 + 55 * 2);
+			char str4[128] = "PUSH E KEY : EXIT";
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() + 55 * 3);
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() - 3 + 55 * 3);
+		}
 	}
 	graphics->spriteEnd();		// スプライトの描画を開始
 }
@@ -1107,4 +1161,12 @@ void TowerDiffence::consoleCommand()
 			console->print(to_string(enemy[i]->getTileX()) + "," + to_string(enemy[i]->getTileY()));
 		}
 	}
+}
+
+//==========================================================
+// GameOver時に呼び出す
+//==========================================================
+void TowerDiffence::gameOver()
+{
+	roundOver = true;
 }
