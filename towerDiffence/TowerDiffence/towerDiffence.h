@@ -137,5 +137,8 @@ public:
 
 	// 指定されたステージ、派の敵データを読み込み敵を初期化する
 	void initializeEnemies(int stageNum, int enemyWave);
+
+	// ゲームオーバー時に呼び出す
+	void gameOver();
 };
 #endif

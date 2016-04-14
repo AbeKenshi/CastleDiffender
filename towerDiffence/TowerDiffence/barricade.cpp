@@ -58,6 +58,21 @@ void Barricade::update(float frameTime)
 		}
 		setRect();                      // set spriteData.rect
 	}
+	if ((currentFrame == barricadeNS::END_FRAME && health >= 33) || (currentFrame == barricadeNS::START_FRAME + 1 && health >= 66))
+	{
+		currentFrame--;
+		if (currentFrame < startFrame || currentFrame > endFrame)
+		{
+			if (loop == true)            // if looping animation
+				currentFrame = startFrame;
+			else                        // not looping animation
+			{
+				currentFrame = endFrame;
+				animComplete = true;    // animation complete
+			}
+		}
+		setRect();                      // set spriteData.rect
+	}
 	hitEffect.update(frameTime);
 	updateWithoutImage(frameTime);
 	
@@ -66,19 +81,37 @@ void Barricade::update(float frameTime)
 //==========================================================
 // É_ÉÅÅ[ÉWèàóù
 //==========================================================
-void Barricade::damage()
+void Barricade::damage(WEAPON weapon)
 {
 	if (!active)
 		return;
-	hitEffect.hit(getCenterX(), getCenterY());
-	health -= 10 * damagePer;
-
-	if (health <= 0)
+	switch (weapon)
 	{
-		visible = false;
-		active = false;
-		hitEffect.setVisible(false);
-	}
+	case FIRE:
+		break;
+	case BRAVE_ATTACK:
+	case BRAVE_SECOND_ATTACK:
+		hitEffect.hit(getCenterX(), getCenterY());
+		health += 20;
+		if (health > 100)
+		{
+			health = 100;
+		}
+		break;
+	case ENEMY_ATTACK:
+		hitEffect.hit(getCenterX(), getCenterY());
+		health -= 10 * damagePer;
 
-	isDamaged = true;
+		if (health <= 0)
+		{
+			visible = false;
+			active = false;
+			hitEffect.setVisible(false);
+		}
+
+		isDamaged = true;
+		break;
+	default:
+		break;
+	}
 }
