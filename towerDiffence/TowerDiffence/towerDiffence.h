@@ -58,6 +58,8 @@ private:
 	Image stageSelect;									// ステージ選択画面の画像
 	TextureManager resultTexture;                       // リザルトのテクスチャ
 	Image result;                                       // リザルト画像
+	TextureManager stageClearTexture;					// ステージクリア画面のテクスチャ
+	Image stageClear;									// ステージクリア画像
 	TextureManager descriptionTexture;                  // 操作説明のテクスチャ
 	Image description;                                  // 操作説明画像
 	TextureManager braveTexture;						// 勇者のテクスチャ
@@ -97,9 +99,11 @@ private:
 	bool descriptionOn;                                 // 操作説明フラグ
 	float remainingTime;								// ゲーム内の残り時間
 	bool    roundOver;									// ラウンドが終了した場合、true
+	bool clearedStage;									// ステージをクリアした場合、true
 	float   roundTimer;									// 新しいラウンドが開始するまでの時間
 	int enemyNum;										// ステージ上に存在する敵の数
 	int stageNum;										// 選択しているステージの番号
+	int enemyWaveNum;									// 現在の敵の波の番号（第一波、第二波、、、）
 public:
 	// コンストラクタ
 	TowerDiffence();
@@ -133,12 +137,15 @@ public:
 	void resetAll();
 
 	// 指定されたステージの敵データを読み込む
-	void readEnemyFile(int stageNum, int enemyWave);
+	bool readEnemyFile(int stageNum, int enemyWave);
 
 	// 指定されたステージ、派の敵データを読み込み敵を初期化する
 	void initializeEnemies(int stageNum, int enemyWave);
 
 	// ゲームオーバー時に呼び出す
 	void gameOver();
+
+	// ステージクリア時に呼び出す
+	void clearStage();
 };
 #endif
