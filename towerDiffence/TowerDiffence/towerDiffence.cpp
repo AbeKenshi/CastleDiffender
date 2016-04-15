@@ -12,6 +12,7 @@ TowerDiffence::TowerDiffence()
 	stageSelectOn = false;
 	descriptionOn = false;
 	roundOver = false;
+	clearedStage = false;
 	rect = NULL;
 	remainingTime = 1500.0f;
 	enemyNum = 0;
@@ -19,6 +20,7 @@ TowerDiffence::TowerDiffence()
 	enemyX = NULL;
 	enemyY = NULL;
 	stageNum = 0;
+	enemyWaveNum = 0;
 }
 
 //==========================================================
@@ -75,6 +77,15 @@ void TowerDiffence::initialize(HWND hwnd)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing result"));
 	result.setX(GAME_WIDTH / 2.0f - result.getWidth() / 2.0f);
 	result.setY(-result.getHeight());
+
+	// ステージクリア画面のテクスチャ
+	if (!stageClearTexture.initialize(graphics, STAGE_CLEAR_IMAGE))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing stage clear texture"));
+	// ステージクリア画像
+	if (!stageClear.initialize(graphics, 0, 0, 0, &stageClearTexture))
+		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing stage clear"));
+	stageClear.setX(GAME_WIDTH / 2.0f - stageClear.getWidth() / 2.0f);
+	stageClear.setY(GAME_HEIGHT);
 
 	// 操作説明のテクスチャ
 	if (!descriptionTexture.initialize(graphics, DESCRIPTION_IMAGE))
@@ -162,7 +173,6 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 中ボスのテクスチャ
 	if (!midBossTexture.initialize(graphics, MID_BOSS_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss texture"));
-	initializeEnemies(stageNum + 1, 1);
 
 	// ダッシュボード
 	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
@@ -297,6 +307,32 @@ void TowerDiffence::update()
 			result.setY(result.getY() + frameTime * 120.0f);
 		}
 	}
+	else if (clearedStage)
+	{
+		if (stageClear.getY() < 250)
+		{
+			if (input->isKeyDown('X'))
+			{
+				menuOn = true;
+				input->clearAll();
+				audio->playCue("title");
+				roundStart();
+			}
+			else if (input->isKeyDown('E'))
+			{
+				exit(1);
+			}
+			else if (input->isKeyDown('Z'))
+			{
+				input->clearAll();
+				roundStart();
+			}
+		}
+		else
+		{
+			stageClear.setY(stageClear.getY() - frameTime * 320.0f);
+		}
+	}
 	else				// ゲーム中の場合、
 	{
 		if (roundTimer > 0.0f)
@@ -349,6 +385,9 @@ void TowerDiffence::update()
 void TowerDiffence::roundStart()
 {
 	map.readMapFile(stageNum + 1);
+	enemyWaveNum = 0;
+	enemyNum = 0;
+	initializeEnemies(stageNum + 1, enemyWaveNum + 1);
 	// 各バリケードを初期化
 	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
@@ -381,6 +420,7 @@ void TowerDiffence::roundStart()
 		}
 	}
 	result.setY(-result.getHeight());
+	stageClear.setY(GAME_HEIGHT);
 	// 勇者を初期化
 	brave.reset();
 	// 各敵を初期化
@@ -400,6 +440,7 @@ void TowerDiffence::roundStart()
 	// ゲームオーバーのフラグを初期化
 	roundOver = false;
 	roundTimer = towerDiffenceNS::ROUND_TIME;
+	clearedStage = false;
 }
 
 //==========================================================
@@ -423,7 +464,8 @@ void TowerDiffence::checkCurrentEnemyNum()
 	safeDeleteArray(enemyX);
 	safeDeleteArray(enemyY);
 	map.resetMapCol();
-	initializeEnemies(1, 2);
+	enemyWaveNum += 1;
+	initializeEnemies(stageNum + 1, enemyWaveNum + 1);
 }
 
 //==========================================================
@@ -983,6 +1025,41 @@ void TowerDiffence::render()
 			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() - 3 + 55 * 3);
 		}
 	}
+	else if (clearedStage)
+	{
+		stageClear.draw();
+		if (stageClear.getY() < 250)
+		{
+			char str[128] = "CONTINUE?";
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, stageSelect.getHeight() + stageSelect.getY());
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, stageSelect.getHeight() + stageSelect.getY() - 3);
+			char str2[128] = "PUSH Z KEY : RETRY STAGE";
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() + 55);
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() - 3 + 55);
+			char str3[128] = "PUSH X KEY : RETURN TITLE";
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() + 55 * 2);
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() - 3 + 55 * 2);
+			char str4[128] = "PUSH E KEY : EXIT";
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() + 55 * 3);
+			fontCK->setFontHeight(35);
+			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() - 3 + 55 * 3);
+		}
+	}
 	graphics->spriteEnd();		// スプライトの描画を開始
 }
 
@@ -1022,11 +1099,16 @@ void TowerDiffence::resetAll()
 //==========================================================
 // 指定されたステージの敵データを読み込む
 //==========================================================
-void TowerDiffence::readEnemyFile(int stageNum, int enemyWave)
+bool TowerDiffence::readEnemyFile(int stageNum, int enemyWave)
 {
 	string enemyDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\enemy" + std::to_string(enemyWave) + "\\enemydata.csv";
 
 	ifstream* ifs = new ifstream(enemyDataFilename);
+	if (!*ifs)
+	{
+		clearedStage = true;
+		return false;
+	}
 	//csvファイルを1行ずつ読み込む
 	string str;
 	if (getline(*ifs, str))
@@ -1082,6 +1164,7 @@ void TowerDiffence::readEnemyFile(int stageNum, int enemyWave)
 	}
 
 	safeDelete(ifs);
+	return true;
 }
 
 //==========================================================
@@ -1089,7 +1172,10 @@ void TowerDiffence::readEnemyFile(int stageNum, int enemyWave)
 //==========================================================
 void TowerDiffence::initializeEnemies(int stageNum, int enemyWave)
 {
-	readEnemyFile(stageNum, enemyWave);
+	if (!readEnemyFile(stageNum, enemyWave))
+	{
+		return;
+	}
 	for (int i = 0; i < enemyNum; i++) {
 		if (typeid(*enemy[i]) == typeid(Enemy))
 		{
@@ -1209,3 +1295,12 @@ void TowerDiffence::gameOver()
 {
 	roundOver = true;
 }
+
+//==========================================================
+// ステージクリア時に呼び出す
+//==========================================================
+void TowerDiffence::clearStage()
+{
+	clearedStage = true;
+}
+
