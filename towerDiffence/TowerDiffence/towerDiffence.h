@@ -39,7 +39,7 @@ namespace towerDiffenceNS
 	const int CASTLE_HEALTH_BAR_Y = 0;
 	const int COUNT_DOWN_X = GAME_WIDTH / 2 - FONT_BIG_SIZE / 4;
 	const int COUNT_DOWN_Y = GAME_HEIGHT / 2 - FONT_BIG_SIZE / 2;
-	const int ROUND_TIME = 5;           // 新しいラウンドが開始するまでの時間
+	const int ROUND_TIME = 3;           // 新しいラウンドが開始するまでの時間
 	const int ENEMY_NUM = 10;  // 雑魚敵の数
 }
 

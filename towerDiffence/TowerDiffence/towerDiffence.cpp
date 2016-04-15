@@ -299,6 +299,11 @@ void TowerDiffence::update()
 	}
 	else				// ƒQ[ƒ€’†‚Ìê‡A
 	{
+		if (roundTimer > 0.0f)
+		{
+			roundTimer -= frameTime;
+			return;
+		}
 		// FIRE_KEY‚É‘Î‰ž‚·‚éƒL[‚ª‰Ÿ‚³‚ê‚½‚ç—EŽÒ‚©‚ç‰Š‚ð”­ŽË
 		if (input->isKeyDown(BRAVE_FIRE_KEY))
 			fire.fire(&brave);
@@ -333,16 +338,8 @@ void TowerDiffence::update()
 			audio->stopCue("stage");
 			audio->playCue("gameover");
 			gameOver();
-			// roundTimer = towerDiffenceNS::ROUND_TIME;
+			roundTimer = towerDiffenceNS::ROUND_TIME;
 		}
-		/*
-		if (roundOver)
-		{
-			roundTimer -= frameTime;
-			if (roundTimer <= 0)
-				roundStart();
-		}
-		*/
 	}
 }
 
@@ -402,6 +399,7 @@ void TowerDiffence::roundStart()
 	remainingTime = 1500.0f;
 	// ƒQ[ƒ€ƒI[ƒo[‚Ìƒtƒ‰ƒO‚ð‰Šú‰»
 	roundOver = false;
+	roundTimer = towerDiffenceNS::ROUND_TIME;
 }
 
 //==========================================================
@@ -908,6 +906,47 @@ void TowerDiffence::render()
 		fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
 		fontCK->print(str, 505, 7);
 		fontCK->setFontHeight(14);
+		if (roundTimer > 0.0f)
+		{
+			string str1 = "STAGE" + to_string(stageNum + 1);
+			char str2[128] = "START!";
+			float fontSize = 60.0f;
+			float fastSpeed = 900.0f;
+			float secondSpeed = 50.0f;
+			float initX = -fontSize * 6.0f;
+			fontCK->setFontHeight(fontSize);
+			float T = (GAME_WIDTH - initX * 2.0f - fontSize * 6) / (2.0f * fastSpeed);
+			if (roundTimer > towerDiffenceNS::ROUND_TIME - T)
+			{
+				fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // ‰e
+				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed, 303);
+				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed, 403);
+				fontCK->setFontColor(graphicsNS::BLUE);
+				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed, 300);
+				fontCK->setFontColor(graphicsNS::RED);
+				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed, 400);
+			}
+			else if (roundTimer > towerDiffenceNS::ROUND_TIME - T * 2.0f)
+			{
+				fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // ‰e
+				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T, 303);
+				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T, 403);
+				fontCK->setFontColor(graphicsNS::BLUE);
+				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T, 300);
+				fontCK->setFontColor(graphicsNS::RED);
+				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T, 400);
+			}
+			else 
+			{
+				fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // ‰e
+				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T , 303);
+				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T, 403);
+				fontCK->setFontColor(graphicsNS::BLUE);
+				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T, 300);
+				fontCK->setFontColor(graphicsNS::RED);
+				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T, 400);
+			}
+		}
 	}
 	if (roundOver)
 	{
