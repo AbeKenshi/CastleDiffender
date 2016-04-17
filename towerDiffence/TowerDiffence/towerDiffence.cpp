@@ -212,7 +212,6 @@ void TowerDiffence::update()
 		{
 			menuOn = false;
 			input->clearAll();
-			audio->stopCue("title");
 			stageSelectOn = true;
 			stageNum = 0;
 
@@ -239,7 +238,7 @@ void TowerDiffence::update()
 		if (input->isKeyDown('Z'))	// Zキーでステージ決定
 		{
 			stageSelectOn = false;
-			audio->playCue("stage");
+			audio->stopCue("title");
 			roundStart();
 
 			rect->setX(rectNS::X);
@@ -289,7 +288,6 @@ void TowerDiffence::update()
 				input->clearAll();
 				audio->stopCue("gameover");
 				audio->playCue("title");
-				roundStart();
 			}
 			else if (input->isKeyDown('E'))
 			{
@@ -315,8 +313,9 @@ void TowerDiffence::update()
 			{
 				menuOn = true;
 				input->clearAll();
+				audio->stopCue("clear");
 				audio->playCue("title");
-				roundStart();
+				clearedStage = false;
 			}
 			else if (input->isKeyDown('E'))
 			{
@@ -325,6 +324,7 @@ void TowerDiffence::update()
 			else if (input->isKeyDown('Z'))
 			{
 				input->clearAll();
+				audio->stopCue("clear");
 				roundStart();
 			}
 		}
@@ -371,8 +371,6 @@ void TowerDiffence::update()
 		remainingTime -= frameTime;
 		if (remainingTime < 0)
 		{
-			audio->stopCue("stage");
-			audio->playCue("gameover");
 			gameOver();
 			roundTimer = towerDiffenceNS::ROUND_TIME;
 		}
@@ -441,6 +439,8 @@ void TowerDiffence::roundStart()
 	roundOver = false;
 	roundTimer = towerDiffenceNS::ROUND_TIME;
 	clearedStage = false;
+
+	audio->playCue("stage");
 }
 
 //==========================================================
@@ -817,8 +817,6 @@ void TowerDiffence::collisions()
 	// 死亡チェック
 	if ((castle.isDeath() || brave.getActive() == false) && !roundOver)
 	{
-		audio->stopCue("stage");
-		audio->playCue("gameover");
 		gameOver();
 	}
 }
@@ -898,18 +896,17 @@ void TowerDiffence::render()
 			float tmpY = enemy[i]->getY();
 			enemy[i]->setX(tmpX - enemy[i]->getWidth() * (enemy[i]->getScale() - 1) / 2.0);
 			enemy[i]->setY(tmpY - enemy[i]->getHeight() * (enemy[i]->getScale() - 1) / 2.0 - 10);
-			// 敵の描画、色は適当に分けてる、色によって能力値を分ける
-			if (i % 3 == 0) {
-				enemy[i]->draw(graphicsNS::WHITE);
-				enemy[i]->setEnemyType(enemyNS::NORMAL);
-			}
-			else if (i % 3 == 1) {
+			switch (enemy[i]->getEnemyType())
+			{
+			case enemyNS::RED:
 				enemy[i]->draw(graphicsNS::RED);
-				enemy[i]->setEnemyType(enemyNS::RED);
-			}
-			else if (i % 3 == 2) {
+				break;
+			case enemyNS::BLUE:
 				enemy[i]->draw(graphicsNS::BLUE);
-				enemy[i]->setEnemyType(enemyNS::BLUE);
+				break;
+			default:
+				enemy[i]->draw(graphicsNS::WHITE);
+				break;
 			}
 			enemy[i]->getAttackCollision().draw();
 			enemy[i]->setX(tmpX);
@@ -1033,31 +1030,31 @@ void TowerDiffence::render()
 			char str[128] = "CONTINUE?";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, stageSelect.getHeight() + stageSelect.getY());
+			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, stageClear.getHeight() + stageClear.getY());
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, stageSelect.getHeight() + stageSelect.getY() - 3);
+			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, stageClear.getHeight() + stageClear.getY() - 3);
 			char str2[128] = "PUSH Z KEY : RETRY STAGE";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() + 55);
+			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() + 55);
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() - 3 + 55);
+			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() - 3 + 55);
 			char str3[128] = "PUSH X KEY : RETURN TITLE";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() + 55 * 2);
+			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() + 55 * 2);
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() - 3 + 55 * 2);
+			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() - 3 + 55 * 2);
 			char str4[128] = "PUSH E KEY : EXIT";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() + 55 * 3);
+			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() + 55 * 3);
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, stageSelect.getHeight() + stageSelect.getY() - 3 + 55 * 3);
+			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() - 3 + 55 * 3);
 		}
 	}
 	graphics->spriteEnd();		// スプライトの描画を開始
@@ -1103,10 +1100,11 @@ bool TowerDiffence::readEnemyFile(int stageNum, int enemyWave)
 {
 	string enemyDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\enemy" + std::to_string(enemyWave) + "\\enemydata.csv";
 
+	enemyNum = 0;
 	ifstream* ifs = new ifstream(enemyDataFilename);
 	if (!*ifs)
 	{
-		clearedStage = true;
+		clearStage();
 		return false;
 	}
 	//csvファイルを1行ずつ読み込む
@@ -1131,9 +1129,22 @@ bool TowerDiffence::readEnemyFile(int stageNum, int enemyWave)
 		{
 			if (getline(stream, token, ','))
 			{
-				if ((int)stof(token) == 1)
+				if ((int)stof(token) <= 3)
+				{
 					enemy[i] = new Enemy();
-				else if ((int)stof(token) == 2)
+					switch ((int)stof(token))
+					{
+					case 1:
+						enemy[i]->setEnemyType(enemyNS::NORMAL);
+						break;
+					case 2:
+						enemy[i]->setEnemyType(enemyNS::RED);
+						break;
+					case 3:
+						enemy[i]->setEnemyType(enemyNS::BLUE);
+					}
+				}
+				else if ((int)stof(token) == 4)
 					enemy[i] = new MidBoss();
 			}
 		}
@@ -1293,6 +1304,8 @@ void TowerDiffence::consoleCommand()
 //==========================================================
 void TowerDiffence::gameOver()
 {
+	audio->stopCue("stage");
+	audio->playCue("gameover");
 	roundOver = true;
 }
 
@@ -1301,6 +1314,8 @@ void TowerDiffence::gameOver()
 //==========================================================
 void TowerDiffence::clearStage()
 {
+	audio->stopCue("stage");
+	audio->playCue("clear");
 	clearedStage = true;
 }
 
