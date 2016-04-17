@@ -230,7 +230,6 @@ void TowerDiffence::update()
 		}
 		else if (input->isKeyDown('E'))
 		{
-//			exit(1);
 			exitGame();
 		}
 	}
@@ -292,7 +291,7 @@ void TowerDiffence::update()
 			}
 			else if (input->isKeyDown('E'))
 			{
-				exit(1);
+				exitGame();
 			}
 			else if (input->isKeyDown('Z'))
 			{
@@ -320,7 +319,7 @@ void TowerDiffence::update()
 			}
 			else if (input->isKeyDown('E'))
 			{
-				exit(1);
+				exitGame();
 			}
 			else if (input->isKeyDown('Z'))
 			{

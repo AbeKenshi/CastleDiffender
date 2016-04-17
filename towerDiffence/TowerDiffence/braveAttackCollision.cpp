@@ -12,10 +12,10 @@ BraveAttackCollision::BraveAttackCollision() : Entity()
 	spriteData.rect.right = braveAttackCollisionNS::WIDTH;
 	visible = false;
 	// Boxの衝突判定用
-	edge.left = -braveAttackCollisionNS::WIDTH / 2.0;
-	edge.right = braveAttackCollisionNS::WIDTH / 2.0;
-	edge.top = -braveAttackCollisionNS::HEIGHT / 2.0;
-	edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
+	edge.left = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+	edge.right = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
+	edge.top = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+	edge.bottom = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
 	collisionType = entityNS::BOX;
 	collisionTimer = 0.0f;
 }
@@ -55,10 +55,10 @@ void BraveAttackCollision::attack(Brave &brave)
 			spriteData.rect.bottom = braveAttackCollisionNS::HEIGHT;
 			spriteData.rect.right = braveAttackCollisionNS::WIDTH;
 			// Boxの衝突判定用
-			edge.left = -braveAttackCollisionNS::WIDTH / 2.0;
-			edge.right = braveAttackCollisionNS::WIDTH / 2.0;
-			edge.top = -braveAttackCollisionNS::HEIGHT / 2.0;
-			edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
+			edge.left = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+			edge.right = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
+			edge.top = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+			edge.bottom = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
 			spriteData.x = brave.getCenterX() + brave.getWidth() / 2;
 			spriteData.y = brave.getCenterY() - spriteData.height / 2;
 			break;
@@ -68,10 +68,10 @@ void BraveAttackCollision::attack(Brave &brave)
 			spriteData.rect.bottom = braveAttackCollisionNS::WIDTH;
 			spriteData.rect.right = braveAttackCollisionNS::HEIGHT;
 			// Boxの衝突判定用
-			edge.left = -braveAttackCollisionNS::HEIGHT / 2.0;
-			edge.right = braveAttackCollisionNS::HEIGHT / 2.0;
-			edge.top = -braveAttackCollisionNS::WIDTH / 2.0;
-			edge.bottom = braveAttackCollisionNS::WIDTH / 2.0;
+			edge.left = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+			edge.right = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
+			edge.top = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+			edge.bottom = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
 			spriteData.x = brave.getCenterX() - spriteData.width / 2;
 			spriteData.y = brave.getCenterY() - brave.getHeight() / 2 - spriteData.height;
 			break;
@@ -81,10 +81,10 @@ void BraveAttackCollision::attack(Brave &brave)
 			spriteData.rect.bottom = braveAttackCollisionNS::HEIGHT;
 			spriteData.rect.right = braveAttackCollisionNS::WIDTH;
 			// Boxの衝突判定用
-			edge.left = -braveAttackCollisionNS::WIDTH / 2.0;
-			edge.right = braveAttackCollisionNS::WIDTH / 2.0;
-			edge.top = -braveAttackCollisionNS::HEIGHT / 2.0;
-			edge.bottom = braveAttackCollisionNS::HEIGHT / 2.0;
+			edge.left = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+			edge.right = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
+			edge.top = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+			edge.bottom = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
 			spriteData.x = brave.getCenterX() - spriteData.width / 2 - brave.getWidth();
 			spriteData.y = brave.getCenterY() - spriteData.height / 2;
 			break;
@@ -94,10 +94,10 @@ void BraveAttackCollision::attack(Brave &brave)
 			spriteData.rect.bottom = braveAttackCollisionNS::WIDTH;
 			spriteData.rect.right = braveAttackCollisionNS::HEIGHT;
 			// Boxの衝突判定用
-			edge.left = -braveAttackCollisionNS::HEIGHT / 2.0;
-			edge.right = braveAttackCollisionNS::HEIGHT / 2.0;
-			edge.top = -braveAttackCollisionNS::WIDTH / 2.0;
-			edge.bottom = braveAttackCollisionNS::WIDTH / 2.0;
+			edge.left = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+			edge.right = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
+			edge.top = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+			edge.bottom = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
 			spriteData.x = brave.getCenterX() - spriteData.width / 2;
 			spriteData.y = brave.getCenterY() + 10;
 			break;

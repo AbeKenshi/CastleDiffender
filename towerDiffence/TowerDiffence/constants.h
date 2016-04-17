@@ -17,7 +17,7 @@ const UINT GAME_HEIGHT = 720;							// ゲーム画面の高さ（ピクセル単位）
 
 // ゲーム内の定数
 const double PI = 3.14159265;							// 円周率
-const float FRAME_RATE = 60.0f;						// フレームレート (frames/sec)
+const float FRAME_RATE = 60.0f;							// フレームレート (frames/sec)
 const float MIN_FRAME_RATE = 10.0f;						// 最小のフレームレート
 const float MIN_FRAME_TIME = 1.0f / FRAME_RATE;			// 1フレームに要する最小の時間
 const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1フレームに要する最大の時間
@@ -33,21 +33,21 @@ const char STAGE_SELECT_IMAGE[] = "pictures\\stageselect.png";			// ステージ選択
 const char RESULT_IMAGE[] = "pictures\\gameover.png";                   // リザルト画像
 const char STAGE_CLEAR_IMAGE[] = "pictures\\stageclear.png";			// ステージクリア画像
 const char DESCRIPTION_IMAGE[] = "pictures\\description.png";           // 操作説明画像
-const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main2.png";		// 勇者の歩行画像
+const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main.png";		// 勇者の歩行画像
 const char FIRE_IMAGE[] = "pictures\\alex\\fire.png";					// 炎の画像
-const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy2.png";				// 雑魚敵の画像
-const char MID_BOSS_IMAGE[] = "pictures\\enemy\\midBoss2.png";
+const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy.png";				// 雑魚敵の画像
+const char MID_BOSS_IMAGE[] = "pictures\\enemy\\midBoss.png";			// 中ボスの画像
 const char TILE_IMAGES[] = "pictures\\map\\ground.png";					// マップ画像
 const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";			// ダッシュボード画像
 const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";			// バリケードの画像
-const char HIT_EFFECT_IMAGE[] = "pictures\\effect\\hitEffect.png";
-const char ATTACK_EFFECT_IMAGE[] = "pictures\\effect\\attackEffect.png";
+const char HIT_EFFECT_IMAGE[] = "pictures\\effect\\hitEffect.png";		// ダメージエフェクトの画像
+const char ATTACK_EFFECT_IMAGE[] = "pictures\\effect\\attackEffect.png";// 攻撃エフェクトの画像
 const char COLLISION_IMAGE[] = "pictures\\alex\\attackCollision.png";	// 攻撃用のテクスチャ
 const char CASTLE_IMAGE[] = "pictures\\map\\castle.png";				// 城画像
 const char BRAVE_ICON_IMAGE[] = "pictures\\alex\\icon.png";				// 勇者のアイコン画像
 const char TEXT_IMAGE[] = "pictures\\systemGraphics\\text.png";			// テキスト（ＭＰ、ＨＰ）画像
 const char CASTLE_ICON_IMAGE[] = "pictures\\map\\castleIcon.png";		// 城のアイコンの画像
-const char FONT_IMAGE[] = "pictures\\CKfont.png";
+const char FONT_IMAGE[] = "pictures\\CKfont.png";						// スプライトテキストの画像
 
 // 音声
 // WAVE_BANK must be location of .xwb file.

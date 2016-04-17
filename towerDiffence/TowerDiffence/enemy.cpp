@@ -19,10 +19,10 @@ Enemy::Enemy() : Character()
 	oldEndFrame = endFrame;
 	currentFrame = startFrame;
 	// Boxの衝突判定用
-	edge.left = -enemyNS::WIDTH * spriteData.scale / 2.0;
-	edge.right = enemyNS::WIDTH * spriteData.scale / 2.0;
-	edge.top = -enemyNS::HEIGHT * spriteData.scale / 2.0;
-	edge.bottom = enemyNS::HEIGHT * spriteData.scale / 2.0;
+	edge.left = (LONG)(-enemyNS::WIDTH * spriteData.scale / 2.0);
+	edge.right = (LONG)(enemyNS::WIDTH * spriteData.scale / 2.0);
+	edge.top = (LONG)(-enemyNS::HEIGHT * spriteData.scale / 2.0);
+	edge.bottom = (LONG)(enemyNS::HEIGHT * spriteData.scale / 2.0);
 	// 初期の状態は城に向かって移動
 	stateDeteil = enemyNS::MOVE_CASTLE;
 	// 範囲内にはいない状態からスタート
@@ -81,7 +81,7 @@ void Enemy::update(float frameTime)
 		return;
 	
 	if (attackCollisionFlag) {
-		attackCollision.attack(getCenterX(), getCenterY(), getWidth(), getHeight(), direction);
+		attackCollision.attack(getCenterX(), getCenterY(), (float)getWidth(), (float)getHeight(), direction);
 	}
 	// 攻撃中の当たり判定を出すフラグをオフ
 	attackCollisionFlag = false;
@@ -126,7 +126,7 @@ void Enemy::update(float frameTime)
 		if (isCenterOfTile())	// タイルの中央に来たらマップを更新
 		{
 			// マップに自分の位置を追加
-			map->updateMapCol(tileY * mapNS::TEXTURE_SIZE, tileX * mapNS::TEXTURE_SIZE, map->getMapCol(tileY, tileX) + 3);
+			map->updateMapCol((float)(tileY * mapNS::TEXTURE_SIZE), (float)(tileX * mapNS::TEXTURE_SIZE), map->getMapCol(tileY, tileX) + 3);
 			canMakeDecesionMove = true;
 		}
 		break;
@@ -278,7 +278,7 @@ void Enemy::damage(WEAPON weapon)
 		else
 			velocity.x = -32.0f * 2.0;
 		velocity.y = -sqrt(2 * 2000.0f * 96 * 2);
-		map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
+		map->updateMapCol((float)tileY * 32, (float)tileX * 32, map->getMapCol(tileY, tileX) - 3);
 	}
 	isDamaged = true;
 }
@@ -313,8 +313,8 @@ void Enemy::changeDirection(int strF, int endF)
 //==========================================================
 bool Enemy::checkDistancePlayer(int px, int py)
 {
-	int subX = px - getX();
-	int subY = py - getY();
+	int subX = (int)(px - getX());
+	int subY = (int)(py - getY());
 
 	int dist = (int)sqrt(subX * subX + subY * subY);
 
@@ -374,8 +374,8 @@ VECTOR2 Enemy::searchNearBarricade(Entity &ent)
 	// もしバリケードが1つ以上存在したら
 	if (count > 0) {
 		// 最小値を代入
-		vec.x = minBariPosiX;
-		vec.y = minBariPosiY;
+		vec.x = (FLOAT)minBariPosiX;
+		vec.y = (FLOAT)minBariPosiY;
 	}
 	else {
 		// プレイヤーの位置を代入
@@ -634,7 +634,7 @@ bool Enemy::isCenterOfTile()
 	case characterNS::RIGHT:
 		if (spriteData.x / 32 >= tileX + 1)
 		{
-			map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
+			map->updateMapCol((float)tileY * 32, (float)tileX * 32, map->getMapCol(tileY, tileX) - 3);
 			tileX += 1;
 			isCenter = true;
 		}
@@ -642,7 +642,7 @@ bool Enemy::isCenterOfTile()
 	case characterNS::LEFT:
 		if (spriteData.x / 32 <= tileX - 1)
 		{
-			map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
+			map->updateMapCol((float)tileY * 32, (float)tileX * 32, map->getMapCol(tileY, tileX) - 3);
 			tileX -= 1;
 			isCenter = true;
 		}
@@ -650,7 +650,7 @@ bool Enemy::isCenterOfTile()
 	case characterNS::UP:
 		if (spriteData.y / 32 <= tileY - 1)
 		{
-			map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
+			map->updateMapCol((float)tileY * 32, (float)tileX * 32, map->getMapCol(tileY, tileX) - 3);
 			tileY -= 1;
 			isCenter = true;
 		}
@@ -658,7 +658,7 @@ bool Enemy::isCenterOfTile()
 	case characterNS::DOWN:
 		if (spriteData.y / 32 >= tileY + 1)
 		{
-			map->updateMapCol(tileY * 32, tileX * 32, map->getMapCol(tileY, tileX) - 3);
+			map->updateMapCol((float)tileY * 32, (float)tileX * 32, map->getMapCol(tileY, tileX) - 3);
 			tileY += 1;
 			isCenter = true;
 		}
