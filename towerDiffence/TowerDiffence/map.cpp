@@ -97,7 +97,7 @@ void Map::readMapFile(int stageNum)
 		while (getline(stream, token, ',')) {
 			//すべて文字列として読み込まれるため
 			//数値は変換が必要
-			int temp = stof(token); //stof(string str) : stringをfloatに変換
+			int temp = (int)stof(token); //stof(string str) : stringをfloatに変換
 			tileMap[y][x] = temp;
 			x += 1;
 			if (x == mapNS::MAP_WIDTH)
@@ -122,7 +122,7 @@ void Map::readMapFile(int stageNum)
 		while (getline(stream, token, ',')) {
 			//すべて文字列として読み込まれるため
 			//数値は変換が必要
-			int temp = stof(token); //stof(string str) : stringをfloatに変換
+			int temp = (int)stof(token); //stof(string str) : stringをfloatに変換
 			tileCol[y][x] = temp;
 			tileColInit[y][x] = temp;
 			x += 1;
@@ -149,7 +149,7 @@ void Map::readMapFile(int stageNum)
 		while (getline(stream, token, ',')) {
 			//すべて文字列として読み込まれるため
 			//数値は変換が必要
-			int temp = stof(token); //stof(string str) : stringをfloatに変換
+			int temp = (int)stof(token); //stof(string str) : stringをfloatに変換
 			tileObj[y][x] = temp;
 			x += 1;
 			if (x == mapNS::MAP_WIDTH)

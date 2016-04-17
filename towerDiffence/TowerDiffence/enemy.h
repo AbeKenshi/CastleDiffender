@@ -34,7 +34,7 @@ namespace enemyNS
 	const float ATTACK_TIME = 0.8f;					// プレイヤーに隣接してから攻撃に移るまでの溜め時間
 	const float CONTINUE_ATTACK_TIME = 0.8f;		// 連続で攻撃する場合の溜め時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けている場合、DAMAGE_TIMEごとに画像が点滅
-	const float ATTACK_DAMAGE = 5.0f;
+	const float ATTACK_DAMAGE = 2.5f;
 	enum STATE_DETAIL { MOVE_CASTLE, MOVE_BARRICADE, ATTACK_BRAVE, ATTACK_CASTLE, ATTACK_BARRICADE, PRE_ATTACK, GAURD , WAIT };	// 雑魚敵の状態
 	enum TYPE {NORMAL, RED, BLUE};                  // 敵の種類
 }

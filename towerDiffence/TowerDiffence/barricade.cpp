@@ -18,10 +18,10 @@ Barricade::Barricade() : Entity()
 	endFrame = barricadeNS::END_FRAME;
 	currentFrame = startFrame;	
 	// BoxÇÃè’ìÀîªíËóp
-	edge.left = -barricadeNS::WIDTH / 2.0;
-	edge.right = barricadeNS::WIDTH / 2.0;
-	edge.top = -barricadeNS::HEIGHT / 2.0;
-	edge.bottom = barricadeNS::HEIGHT / 2.0;
+	edge.left = (LONG)(-barricadeNS::WIDTH / 2.0);
+	edge.right = (LONG)(barricadeNS::WIDTH / 2.0);
+	edge.top = (LONG)(-barricadeNS::HEIGHT / 2.0);
+	edge.bottom = (LONG)(barricadeNS::HEIGHT / 2.0);
 	collisionType = entityNS::BOX;
 }
 

@@ -12,10 +12,10 @@ EnemyCollision::EnemyCollision() : Entity()
 	spriteData.rect.right = enemyCollisionNS::ATTACK_WIDTH;
 	visible = false;
 	// Boxの衝突判定用
-	edge.left = -enemyCollisionNS::ATTACK_WIDTH / 2.0;
-	edge.right = enemyCollisionNS::ATTACK_WIDTH / 2.0;
-	edge.top = -enemyCollisionNS::ATTACK_HEIGHT / 2.0;
-	edge.bottom = enemyCollisionNS::ATTACK_HEIGHT / 2.0;
+	edge.left = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+	edge.right = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
+	edge.top = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+	edge.bottom = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
 	collisionType = entityNS::BOX;
 	collisionTimer = 0.0f;
 }
@@ -53,10 +53,10 @@ void EnemyCollision::attack(float centerX, float centerY, float width, float hei
 		spriteData.rect.bottom = enemyCollisionNS::ATTACK_HEIGHT;
 		spriteData.rect.right = enemyCollisionNS::ATTACK_WIDTH;
 		// Boxの衝突判定用
-		edge.left = -enemyCollisionNS::ATTACK_WIDTH / 2.0;
-		edge.right = enemyCollisionNS::ATTACK_WIDTH / 2.0;
-		edge.top = -enemyCollisionNS::ATTACK_HEIGHT / 2.0;
-		edge.bottom = enemyCollisionNS::ATTACK_HEIGHT / 2.0;
+		edge.left = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		edge.right = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		edge.top = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		edge.bottom = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
 		spriteData.x = centerX + width / 2;
 		spriteData.y = centerY - height / 2;
 		break;
@@ -66,10 +66,10 @@ void EnemyCollision::attack(float centerX, float centerY, float width, float hei
 		spriteData.rect.bottom = enemyCollisionNS::ATTACK_WIDTH;
 		spriteData.rect.right = enemyCollisionNS::ATTACK_HEIGHT;
 		// Boxの衝突判定用
-		edge.left = -enemyCollisionNS::ATTACK_HEIGHT / 2.0;
-		edge.right = enemyCollisionNS::ATTACK_HEIGHT / 2.0;
-		edge.top = -enemyCollisionNS::ATTACK_WIDTH / 2.0;
-		edge.bottom = enemyCollisionNS::ATTACK_WIDTH / 2.0;
+		edge.left = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		edge.right = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		edge.top = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		edge.bottom = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
 		spriteData.x = centerX - width / 2;
 		spriteData.y = centerY - height / 2 - spriteData.height - 10;
 		break;
@@ -79,10 +79,10 @@ void EnemyCollision::attack(float centerX, float centerY, float width, float hei
 		spriteData.rect.bottom = enemyCollisionNS::ATTACK_HEIGHT;
 		spriteData.rect.right = enemyCollisionNS::ATTACK_WIDTH;
 		// Boxの衝突判定用
-		edge.left = -enemyCollisionNS::ATTACK_WIDTH / 2.0;
-		edge.right = enemyCollisionNS::ATTACK_WIDTH / 2.0;
-		edge.top = -enemyCollisionNS::ATTACK_HEIGHT / 2.0;
-		edge.bottom = enemyCollisionNS::ATTACK_HEIGHT / 2.0;
+		edge.left = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		edge.right = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		edge.top = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		edge.bottom = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
 		spriteData.x = centerX - width / 2 - spriteData.width;
 		spriteData.y = centerY - height / 2;
 		break;
@@ -92,10 +92,10 @@ void EnemyCollision::attack(float centerX, float centerY, float width, float hei
 		spriteData.rect.bottom = enemyCollisionNS::ATTACK_WIDTH;
 		spriteData.rect.right = enemyCollisionNS::ATTACK_HEIGHT;
 		// Boxの衝突判定用
-		edge.left = -enemyCollisionNS::ATTACK_HEIGHT / 2.0;
-		edge.right = enemyCollisionNS::ATTACK_HEIGHT / 2.0;
-		edge.top = -enemyCollisionNS::ATTACK_WIDTH / 2.0;
-		edge.bottom = enemyCollisionNS::ATTACK_WIDTH / 2.0;
+		edge.left = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		edge.right = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		edge.top = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		edge.bottom = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
 		spriteData.x = centerX - width / 2;
 		spriteData.y = centerY + height / 2;
 		break;

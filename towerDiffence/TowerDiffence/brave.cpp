@@ -17,10 +17,10 @@ Brave::Brave() : Character()
 	endFrame = braveNS::MOVE_UP_END_FRAME;
 	currentFrame = startFrame;
 	// Boxの衝突判定用
-	edge.left = -braveNS::WIDTH * spriteData.scale / 2.0;
-	edge.right = braveNS::WIDTH * spriteData.scale / 2.0;
-	edge.top = -braveNS::HEIGHT * spriteData.scale / 2.0;
-	edge.bottom = braveNS::HEIGHT * spriteData.scale / 2.0;
+	edge.left = (LONG)(-braveNS::WIDTH * spriteData.scale / 2.0);
+	edge.right = (LONG)(braveNS::WIDTH * spriteData.scale / 2.0);
+	edge.top = (LONG)(-braveNS::HEIGHT * spriteData.scale / 2.0);
+	edge.bottom = (LONG)(braveNS::HEIGHT * spriteData.scale / 2.0);
 	secondAttackFlag = false;
 	mpTimer = 0.0;
 	magicPoint = 100;							// MPはMAX100でスタート

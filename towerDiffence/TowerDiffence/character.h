@@ -33,7 +33,7 @@ protected:
 	int moveDownEndFrame;
 	int moveLeftStartFrame;
 	int moveLeftEndFrame;
-	int moveAnimationDelay; 
+    float moveAnimationDelay; 
 	int attackUpStartFrame;
 	int attackUpEndFrame;
 	int attackRightStartFrame;
