@@ -22,6 +22,11 @@ const float MIN_FRAME_RATE = 10.0f;						// 最小のフレームレート
 const float MIN_FRAME_TIME = 1.0f / FRAME_RATE;			// 1フレームに要する最小の時間
 const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1フレームに要する最大の時間
 
+// ゲーム内のパラメータ
+// 勇者関係
+static const int braveAttackDamage = 50;
+static const int braveFireDamage = 100;
+
 // 画像
 const char MENU_IMAGE[] = "pictures\\title.png";						// メニュー画像
 const char STAGE_SELECT_IMAGE[] = "pictures\\stageselect.png";			// ステージ選択画面画像
@@ -72,7 +77,7 @@ const UCHAR BRAVE_GAURD_KEY = 'D';			// ガードキー
 const UCHAR BRAVE_FIRE_KEY = 'S';			// 必殺技キー
 
 // weapon types
-enum WEAPON { FIRE, BRAVE_ATTACK, BRAVE_SECOND_ATTACK, ENEMY_ATTACK };
+enum WEAPON { FIRE, BRAVE_ATTACK, BRAVE_SECOND_ATTACK, ENEMY_ATTACK , MIDBOSS_ATTACK};
 
 //=============================================================================
 // Function templates for safely dealing with pointer referenced items.

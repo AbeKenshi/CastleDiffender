@@ -78,7 +78,7 @@ void Castle::update(float frameTime)
 				drawFlag = true;
 			timeCounter = 0.0f;
 		}
-		if (totalTimeCounter > braveNS::DAMAGE_TIME)
+		if (totalTimeCounter > 1.0f)
 		{
 			timeCounter = 0.0f;
 			totalTimeCounter = 0.0f;
@@ -105,6 +105,9 @@ void Castle::damage(WEAPON weapon)
 		break;
 	case ENEMY_ATTACK:
 		health -= enemyNS::ATTACK_DAMAGE * damagePer;
+		break;
+	case MIDBOSS_ATTACK:
+		health -= midBossNS::ATTACK_DAMAGE * damagePer;
 		break;
 	default:
 		break;

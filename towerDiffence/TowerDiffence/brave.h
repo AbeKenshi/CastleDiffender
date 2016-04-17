@@ -5,8 +5,8 @@
 #include "constants.h"
 #include "map.h"
 #include "enemy.h"
+#include "midBoss.h"
 #include "rect.h"
-#include "character.h"
 
 namespace braveNS
 {

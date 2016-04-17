@@ -511,7 +511,14 @@ void TowerDiffence::collisions()
 				if (enemy[i]->getEnemyType() == enemyNS::NORMAL) brave.setDamagePer(1.0f);
 				else if (enemy[i]->getEnemyType() == enemyNS::RED) brave.setDamagePer(1.2f);
 				else if (enemy[i]->getEnemyType() == enemyNS::BLUE) brave.setDamagePer(1.1f);
-				brave.damage(ENEMY_ATTACK);
+				if (typeid(*enemy[i]) == typeid(Enemy))
+				{
+					brave.damage(ENEMY_ATTACK);
+				}
+				else
+				{
+					brave.damage(MIDBOSS_ATTACK);
+				}
 				// 敵の攻撃コリジョンをなくす
 				enemy[i]->getAttackCollision().setVisible(false);
 				enemy[i]->getAttackCollision().setActive(false);
@@ -523,7 +530,14 @@ void TowerDiffence::collisions()
 				if (enemy[i]->getEnemyType() == enemyNS::NORMAL) castle.setDamagePer(1.0f);
 				else if (enemy[i]->getEnemyType() == enemyNS::RED) castle.setDamagePer(1.2f);
 				else if (enemy[i]->getEnemyType() == enemyNS::BLUE) castle.setDamagePer(1.1f);
-				castle.damage(ENEMY_ATTACK);
+				if (typeid(*enemy[i]) == typeid(Enemy))
+				{
+					castle.damage(ENEMY_ATTACK);
+				}
+				else
+				{
+					castle.damage(MIDBOSS_ATTACK);
+				}
 				// 敵の攻撃コリジョンをなくす
 				enemy[i]->getAttackCollision().setVisible(false);
 				enemy[i]->getAttackCollision().setActive(false);
@@ -534,7 +548,14 @@ void TowerDiffence::collisions()
 				if (enemy[i]->getEnemyType() == enemyNS::NORMAL) barricades[enemy[i]->getNearBarricadeIndex()].setDamagerPer(1.0f);
 				else if (enemy[i]->getEnemyType() == enemyNS::RED) barricades[enemy[i]->getNearBarricadeIndex()].setDamagerPer(1.2f);
 				else if (enemy[i]->getEnemyType() == enemyNS::BLUE) barricades[enemy[i]->getNearBarricadeIndex()].setDamagerPer(1.1f);
-				barricades[enemy[i]->getNearBarricadeIndex()].damage(ENEMY_ATTACK);
+				if (typeid(*enemy[i]) == typeid(Enemy))
+				{
+					barricades[enemy[i]->getNearBarricadeIndex()].damage(ENEMY_ATTACK);
+				}
+				else
+				{
+					barricades[enemy[i]->getNearBarricadeIndex()].damage(MIDBOSS_ATTACK);
+				}
 				// 敵の攻撃コリジョンをなくす
 				enemy[i]->getAttackCollision().setVisible(false);
 				enemy[i]->getAttackCollision().setActive(false);
@@ -845,7 +866,7 @@ void TowerDiffence::render()
 		fontCK->print(str2, 273, 450);
 		fontCK->print(str3, 273, 550);
 	}
-	else if (stageSelectOn)
+	else if (stageSelectOn) 
 	{
 		stageSelect.draw();
 		graphics->spriteEnd();		// スプライトの描画を開始
