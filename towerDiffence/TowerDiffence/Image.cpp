@@ -136,54 +136,54 @@ void Image::draw(SpriteData sd, COLOR_ARGB color, UINT textureN)
 
 //=============================================================================
 // update
-// typically called once per frame
-// frameTime is used to regulate the speed of movement and animation
+// 通常、フレームごとに1回呼び出す
+// frameTimeは、移動とアニメーションの速さを制御するために使用
 //=============================================================================
 void Image::update(float frameTime)
 {
 	switch (mode)
 	{
-	case imageNS::HORIZONTAL:
-		if (endFrame - startFrame > 0)          // if animated sprite
+	case imageNS::HORIZONTAL:					// 読み込んだ画像ファイルに対して水平方向にアニメーションが進む場合、
+		if (endFrame - startFrame > 0)          // アニメーション化するスプライトの場合
 		{
-			animTimer += frameTime;             // total elapsed time
+			animTimer += frameTime;             // 合計の経過時間
 			if (animTimer > frameDelay)
 			{
 				animTimer -= frameDelay;
 				currentFrame++;
 				if (currentFrame < startFrame || currentFrame > endFrame)
 				{
-					if (loop == true)            // if looping animation
+					if (loop == true)           // ループするアニメーションの場合
 						currentFrame = startFrame;
-					else                        // not looping animation
+					else                        // ループしないアニメーションの場合
 					{
 						currentFrame = endFrame;
-						animComplete = true;    // animation complete
+						animComplete = true;    // アニメーションの完了
 					}
 				}
-				setRect();                      // set spriteData.rect
+				setRect();                      // spriteData.rectを設定
 			}
 		}
 		break;
-	case imageNS::VERTICAL:
-		if (endFrame - startFrame > 0)          // if animated sprite
+	case imageNS::VERTICAL:						// 読み込んだ画像ファイルに対して水平方向にアニメーションが進む場合、
+		if (endFrame - startFrame > 0)          // アニメーション化するスプライトの場合
 		{
-			animTimer += frameTime;             // total elapsed time
+			animTimer += frameTime;             // 合計の経過時間
 			if (animTimer > frameDelay)
 			{
 				animTimer -= frameDelay;
 				currentFrame += cols;
 				if (currentFrame < startFrame || currentFrame > endFrame)
 				{
-					if (loop == true)            // if looping animation
+					if (loop == true)           // ループするアニメーションの場合
 						currentFrame = startFrame;
-					else                        // not looping animation
+					else                        // ループしないアニメーションの場合
 					{
 						currentFrame = endFrame;
-						animComplete = true;    // animation complete
+						animComplete = true;    // アニメーションの完了
 					}
 				}
-				setRect();                      // set spriteData.rect
+				setRect();                      // spriteData.rectを設定
 			}
 		}
 		break;
@@ -191,7 +191,7 @@ void Image::update(float frameTime)
 }
 
 //=============================================================================
-// Set the current frame of the image
+// 画像の現在のフレームを設定
 //=============================================================================
 void Image::setCurrentFrame(int c)
 {
@@ -200,7 +200,7 @@ void Image::setCurrentFrame(int c)
 		animTimer = 0.0f;
 		currentFrame = c;
 		animComplete = false;
-		setRect();                          // set spriteData.rect
+		setRect();                          // spriteData.rectを設定
 	}
 }
 

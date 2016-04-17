@@ -85,7 +85,7 @@ enum WEAPON { FIRE, BRAVE_ATTACK, BRAVE_SECOND_ATTACK, ENEMY_ATTACK , MIDBOSS_AT
 // function call syntax. The compiler will create a function that replaces T
 // with the type of the calling parameter.
 //=============================================================================
-// Safely release pointer referenced item
+// ポインタ参照されるアイテムを安全に解放
 template <typename T>
 inline void safeRelease(T& ptr)
 {
@@ -97,7 +97,7 @@ inline void safeRelease(T& ptr)
 }
 #define SAFE_RELEASE safeRelease            // for backward compatiblility
 
-// Safely delete pointer referenced item
+// ポインタ参照されるアイテムを安全に削除
 template <typename T>
 inline void safeDelete(T& ptr)
 {

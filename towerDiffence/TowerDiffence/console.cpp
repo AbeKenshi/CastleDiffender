@@ -1,7 +1,10 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// console.cpp v1.0
+//==========================================================
+/// @file
+/// @brief    console.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
 #include "console.h"
 
@@ -228,7 +231,7 @@ std::string Console::getCommand()
 
 
 //=============================================================================
-// called when graphics device is lost
+// グラフィックスデバイスが消失したときに呼び出される
 //=============================================================================
 void Console::onLostDevice()
 {
@@ -239,7 +242,7 @@ void Console::onLostDevice()
 }
 
 //=============================================================================
-// called when graphics device is reset
+// グラフィックスデバイスがリセットされたときに呼び出される
 //=============================================================================
 void Console::onResetDevice()
 {

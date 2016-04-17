@@ -1,13 +1,15 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// entity.cpp v2.0
-// Last modification: Apr-14-2013
+//==========================================================
+/// @file
+/// @brief    entity.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
 #include "entity.h"
 
 //=============================================================================
-// constructor
+// コンストラクタ
 //=============================================================================
 Entity::Entity() : Image()
 {
@@ -21,12 +23,11 @@ Entity::Entity() : Image()
     velocity.y = 0.0;
     deltaV.x = 0.0;
     deltaV.y = 0.0;
-    active = true;                  // the entity is active
+    active = true;                  // エンティティはアクティブ
     rotatedBoxReady = false;
     collisionType = entityNS::CIRCLE;
     health = 100;
     gravity = entityNS::GRAVITY;
-    pixelsColliding = 0;
 	isDamaged = false;
 	drawFlag = true;
 	damagePer = 1.0f;
@@ -38,7 +39,6 @@ Entity::Entity() : Image()
 void Entity::reset()
 {
 	rotatedBoxReady = false;
-	pixelsColliding = 0;
 	active = true;
 	health = 100;
 	isDamaged = false;
@@ -48,24 +48,24 @@ void Entity::reset()
 }
 
 //=============================================================================
-// Initialize the Entity.
-// Pre: *gamePtr = pointer to Game object
-//      width = width of Image in pixels  (0 = use full texture width)
-//      height = height of Image in pixels (0 = use full texture height)
-//      ncols = number of columns in texture (1 to n) (0 same as 1)
-//      *textureM = pointer to TextureManager object
-// Post: returns true if successful, false if failed
+// Entityを初期化
+// 実行前：*gamePtr = Gameオブジェクトへのポインタ
+//		   width = Imageの幅（ピクセル単位）（0 = テクスチャ全体の幅を使用）
+//		   height = Imageの高さ（ピクセル単位）（0 = テクスチャ全体の高さを使用）
+//         ncols = テクスチャ内の列数（1からnまで）（0は1と同じ）
+//         *textureM = Texturemanagerオブジェクトへのポインタ
+// 実行後：成功した場合はtrue、失敗した場合はfalseを戻す
 //=============================================================================
 bool Entity::initialize(Game *gamePtr, int width, int height, int ncols,
                             TextureManager *textureM)
 {
-    input = gamePtr->getInput();                // the input system
-    audio = gamePtr->getAudio();                // the audio system
+    input = gamePtr->getInput();                // 入力システム
+    audio = gamePtr->getAudio();                // オーディオシステム
     return(Image::initialize(gamePtr->getGraphics(), width, height, ncols, textureM));
 }
 
 //=============================================================================
-// activate the entity
+// エンティティをアクティブ化
 //=============================================================================
 void Entity::activate()
 {
@@ -74,8 +74,8 @@ void Entity::activate()
 
 //=============================================================================
 // update
-// typically called once per frame
-// frameTime is used to regulate the speed of movement and animation
+// 通常、フレームごとに1回呼び出す
+// frameTimeは、移動とアニメーションの速さを制御するために使用
 //=============================================================================
 void Entity::update(float frameTime)
 {
@@ -83,19 +83,20 @@ void Entity::update(float frameTime)
     deltaV.x = 0;
     deltaV.y = 0;
     Image::update(frameTime);
-    rotatedBoxReady = false;    // for rotatedBox collision detection
+    rotatedBoxReady = false;    // rotateBoxの衝突判定のため
 }
 
 //==========================================================
 // エンティティを更新 
 // アニメーションを毎時間更新したくない場合はこのメソッドを使用する。
+// frameTimeは、移動とアニメーションの速さを制御するために使用
 //==========================================================
 void Entity::updateWithoutImage(float frameTime)
 {
 	velocity += deltaV;
 	deltaV.x = 0;
 	deltaV.y = 0;
-	rotatedBoxReady = false;	// for ratateBox collision detection
+	rotatedBoxReady = false;	// rotateBoxの衝突判定のため
 }
 
 //==========================================================
@@ -108,44 +109,41 @@ void Entity::updateOnlyImage(float frameTime)
 }
 
 //=============================================================================
-// ai (artificial intelligence)
-// typically called once per frame
-// performs ai calculations, ent is passed for interaction
+// AI（人工知能）
+// 通常、フレームごとに1回呼び出す
+// 人工知能計算を実行、entは相互作用のために渡される
 //=============================================================================
 void Entity::ai(float frameTime, Entity &ent)
 {}
 
 //=============================================================================
-// Perform collision detection between this entity and the other Entity.
-// Each entity must use a single collision type. Complex shapes that require
-// multiple collision types may be done by treating each part as a separate
-// entity or by using PIXEL_PERFECT collision.
-// Typically called once per frame.
-// The collision types: CIRCLE, BOX, ROTATED_BOX or PIXEL_PERFECT.
-// Post: returns true if collision, false otherwise
-//       sets collisionVector if collision
+// このエンティティともう一方のエンティティの衝突を判定
+// 各エンティティは必ず1種類の衝突を使用します。
+// 衝突の種類を複数必要とする複雑な図形は、
+// 各部分を別個のエンティティとして扱うことにより処理できます。
+// 通常、フレームごとに1回呼び出す
+// 衝突の種類：CIRCLE、BOX、ROTATED_BOX
+//			   衝突している場合は、collisionVectorを設定
 //=============================================================================
 bool Entity::collidesWith(Entity &ent, VECTOR2 &collisionVector)
 { 
-    // if either entity is not active then no collision may occcur
+	// どちらかのエンティティがアクティブでない場合、衝突は起こらない
     if (!active || !ent.getActive())    
         return false;
 
-    // If both entities are using CIRCLE collision
+	// 両方のエンティティがCIRCLE衝突である場合
     if (collisionType == entityNS::CIRCLE && ent.getCollisionType() == entityNS::CIRCLE)
         return collideCircle(ent, collisionVector);
-    // If both entities are using BOX collision
+	// 両方のエンティティがBOX衝突である場合
     if (collisionType == entityNS::BOX && ent.getCollisionType() == entityNS::BOX)
         return collideBox(ent, collisionVector);
-    // If either entity is using PIXEL_PERFECT collision
-    if (collisionType == entityNS::PIXEL_PERFECT || ent.getCollisionType() == entityNS::PIXEL_PERFECT)
-        return collidePixelPerfect(ent, collisionVector);
-    // All other combinations use separating axis test
-    // If neither entity uses CIRCLE collision
+	// 他のすべての組み合わせが使用する分離軸テスト
+	// どちらのエンティティもCIRCLE衝突を使用しない場合
     if (collisionType != entityNS::CIRCLE && ent.getCollisionType() != entityNS::CIRCLE)
         return collideRotatedBox(ent, collisionVector);
-    else    // one of the entities is a circle
-        if (collisionType == entityNS::CIRCLE)  // if this entity uses CIRCLE collision
+    else    // どちらか1つのエンティティが円の場合
+		// このエンティティがCIRCLE衝突を使用する場合
+        if (collisionType == entityNS::CIRCLE)
         {
             // Check for collision from other box with our circle
             bool collide = ent.collideRotatedBoxCircle(*this, collisionVector); 
@@ -153,57 +151,57 @@ bool Entity::collidesWith(Entity &ent, VECTOR2 &collisionVector)
             collisionVector *= -1;              // reverse collision vector
             return collide;
         }
-        else    // the other entity uses CIRCLE collision
+        else    // もう一方のエンティティがCIRCLE衝突を使用する場合
             return collideRotatedBoxCircle(ent, collisionVector);
     return false;
 }
 
 //=============================================================================
-// Circular collision detection method
-// Called by collision(), default collision detection method
-// Post: returns true if collision, false otherwise
-//       sets collisionVector if collision
+// 円の衝突判定メソッド
+// collision()によって呼び出される、デフォルトの衝突判定メソッド
+// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+// 衝突している場合は、collisionVectorを設定
 //=============================================================================
 bool Entity::collideCircle(Entity &ent, VECTOR2 &collisionVector)
 {
-    // difference between centers
+	// 中心と中心の間の差
     distSquared = *getCenter() - *ent.getCenter();
-    distSquared.x = distSquared.x * distSquared.x;      // difference squared
+    distSquared.x = distSquared.x * distSquared.x;      // 差を2乗
     distSquared.y = distSquared.y * distSquared.y;
 
-    // Calculate the sum of the radii (adjusted for scale)
+	// 半径の合計を計算（拡大縮小の倍率を調整）
     sumRadiiSquared = (radius*getScale()) + (ent.radius*ent.getScale());
-    sumRadiiSquared *= sumRadiiSquared;                 // square it
+    sumRadiiSquared *= sumRadiiSquared;                 // 2乗する
 
-    // if entities are colliding
+	// エンティティが衝突している場合
     if(distSquared.x + distSquared.y <= sumRadiiSquared)
     {
-        // set collision vector
+		// 衝突ベクトルを設定
         collisionVector = *ent.getCenter() - *getCenter();
         return true;
     }
-    return false;   // not colliding
+    return false;   // 衝突していない場合
 }
 
 //=============================================================================
-// Axis aligned bounding box collision detection method
-// Called by collision()
-// Post: returns true if collision, false otherwise
-//       sets collisionVector if collision
+// 軸平行境界ボックスの衝突判定メソッド
+// collision()によって呼び出される、デフォルトの衝突判定メソッド
+// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+// 衝突している場合は、collisionVectorを設定
 //=============================================================================
 bool Entity::collideBox(Entity &ent, VECTOR2 &collisionVector)
 {
-    // if either entity is not active then no collision may occcur
+	// どちらかのエンティティがアクティブでない場合、衝突は怒らない
     if (!active || !ent.getActive())
         return false;
 
-    // Check for collision using Axis Aligned Bounding Box.
+	// 軸平行境界ボックスを使って衝突をチェック
     if( (getCenterX() + edge.right*getScale() >= ent.getCenterX() + ent.getEdge().left*ent.getScale()) && 
         (getCenterX() + edge.left*getScale() <= ent.getCenterX() + ent.getEdge().right*ent.getScale()) &&
         (getCenterY() + edge.bottom*getScale() >= ent.getCenterY() + ent.getEdge().top*ent.getScale()) && 
         (getCenterY() + edge.top*getScale() <= ent.getCenterY() + ent.getEdge().bottom*ent.getScale()) )
     {
-        // set collision vector
+		// 衝突ベクトルを設定
         collisionVector = *ent.getCenter() - *getCenter();
         return true;
     }
@@ -211,20 +209,19 @@ bool Entity::collideBox(Entity &ent, VECTOR2 &collisionVector)
 }
 
 //=============================================================================
-// Rotated Box collision detection method
-// Called by collision()
-// Uses Separating Axis Test to detect collision. 
-// The separating axis test:
-//   Two boxes are not colliding if their projections onto a line do not overlap.
-// The current entity is A the other entity is B
-// Post: returns true if collision, false otherwise
-//       sets collisionVector if collision
+// 回転するボックスの衝突判定メソッド
+// collision()によって呼び出される、デフォルトの衝突判定メソッド
+// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+// 衝突している場合は、collisionVectorを設定
+// 分離軸テストを使用して衝突を判定
+// 分離軸テスト：
+// 2つのボックスは、特定の直線への投影が重なっていなければ衝突していない
 //=============================================================================
 bool Entity::collideRotatedBox(Entity &entB, VECTOR2 &collisionVector)
 {
     float overlap01, overlap03;
-    computeRotatedBox();                    // prepare rotated box
-    entB.computeRotatedBox();               // prepare rotated box
+    computeRotatedBox();                    // 回転するボックスを準備
+    entB.computeRotatedBox();               // 回転するボックスを準備
     if (projectionsOverlap(entB, collisionVector) && entB.projectionsOverlap(*this, collisionVector))
     {
         // If we get to here the entities are colliding. The edge with the
@@ -276,59 +273,63 @@ bool Entity::collideRotatedBox(Entity &entB, VECTOR2 &collisionVector)
 }
 
 //=============================================================================
-// Projects other box onto this edge01 and edge03.
-// Called by collideRotatedBox()
-// The current entity is A the other entity is B
-// Post: returns true if projections overlap, false otherwise
+// 相手のボックスを、このエンティティのedge01およびedge03に投影
+// collideRotateBos()によって呼び出される
+// 実行後：投影が重なっている場合はtrue、それ以外の場合はfalseを戻す
 //=============================================================================
 bool Entity::projectionsOverlap(Entity &entB, VECTOR2 &collisionVector)
 {
-    float projection;
+	float projection;
 
-    // project other box onto edge01
-    projection = graphics->Vector2Dot(&edge01, entB.getCorner(0)); // project corner 0
-    entB01min = projection;
-    entB01max = projection;
-    // for each remaining corner
-    for(int c=1; c<4; c++)
-    {
-        // project corner onto edge01
-        projection = graphics->Vector2Dot(&edge01, entB.getCorner(c));
-        if (projection < entB01min)
-            entB01min = projection;
-        else if (projection > entB01max)
-            entB01max = projection;
-    }
-    // if projections do not overlap
-    if (entB01min > entA01max || entB01max < entA01min)
-        return false;                       // no collision is possible
-    // project other box onto edge03
-    projection = graphics->Vector2Dot(&edge03, entB.getCorner(0)); // project corner 0
-    entB03min = projection;
-    entB03max = projection;
-    // for each remaining corner
-    for(int c=1; c<4; c++)
-    {
-        // project corner onto edge03
-        projection = graphics->Vector2Dot(&edge03, entB.getCorner(c));
-        if (projection < entB03min)
-            entB03min = projection;
-        else if (projection > entB03max)
-            entB03max = projection;
-    }
-    if (entB03min > entA03max || entB03max < entA03min) // if projections do not overlap
-        return false;                       // no collision is possible
-    return true;                            // projections overlap
+	// 相手のボックスをedge01に投影
+	projection = graphics->Vector2Dot(&edge01, entB.getCorner(0));
+	// 頂点0を投影
+	entB01min = projection;
+	entB01max = projection;
+	// 残りの頂点それぞれを処理
+	for (int c = 1; c < 4; c++)
+	{
+		// 頂点をedge01に投影
+		projection = graphics->Vector2Dot(&edge01, entB.getCorner(c));
+		if (projection < entB01min)
+			entB01min = projection;
+		else if (projection > entB01max)
+			entB01max = projection;
+	}
+	// 投影が重ならない場合
+	if (entB01min > entA01max || entB01max < entA01min)
+		return false;                       // 衝突の可能性なし
+	// 相手のボックスをedge03に投影
+	projection = graphics->Vector2Dot(&edge03, entB.getCorner(0));
+	// 頂点0を投影
+	entB03min = projection;
+	entB03max = projection;
+	// 残りの頂点それぞれを処理
+	for (int c = 1; c < 4; c++)
+	{
+		// 頂点をedge03に投影
+		projection = graphics->Vector2Dot(&edge03, entB.getCorner(c));
+		if (projection < entB03min)
+			entB03min = projection;
+		else if (projection > entB03max)
+			entB03max = projection;
+	}
+	// 投影が重ならない場合
+	if (entB03min > entA03max || entB03max < entA03min)
+		return false;                       // 衝突の可能性なし
+	return true;                            // 投影が重なっている場合
 }
 
 //=============================================================================
-// Rotated Box and Circle collision detection method
-// Called by collision()
-// Uses separating axis test on edges of box and radius of circle.
-// If the circle center is outside the lines extended from the collision box
-// edges (also known as the Voronoi region) then the nearest box corner is checked
-// for collision using a distance check.
-// The nearest corner is determined from the overlap tests.
+// 回転するボックスと円の衝突判定メソッド
+// collision()によって呼び出される、デフォルトの衝突判定メソッド
+// ボックスの辺と円の半径で分離軸テストを使用
+// 円の中心が衝突ボックスの各辺を伸ばした直線の外側
+// （ボロノイ領域）にある場合、ボックスの最も近い頂点と
+// 衝突がないかを距離のチェックで判定します。
+// 最も近い頂点は、重なりのテストから判断できます。
+// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+// 衝突している場合は、collisionVectorを設定
 //
 //   Voronoi0 |   | Voronoi1
 //         ---0---1---
@@ -336,39 +337,46 @@ bool Entity::projectionsOverlap(Entity &entB, VECTOR2 &collisionVector)
 //         ---3---2---
 //   Voronoi3 |   | Voronoi2
 //
-// Pre: This entity (entA) must be rotated box and other entity (entB) must be circle.
-// Post: returns true if collision, false otherwise
-//       sets collisionVector if collision
+// 実行前：このエンティティは必ずボックス、相手のエンティティ（ent）は必ず円
+// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+// 衝突している場合は、collisionVectorを設定
 //=============================================================================
 bool Entity::collideRotatedBoxCircle(Entity &entB, VECTOR2 &collisionVector)
 {
     float center01, center03, overlap01, overlap03;
 
-    computeRotatedBox();                    // prepare rotated box
+    computeRotatedBox();                    // 回転するボックスを準備
 
-    // project circle center onto edge01
+	// 円の中心をedge01に投影
     center01 = graphics->Vector2Dot(&edge01, entB.getCenter());
-    entB01min = center01 - entB.getRadius()*entB.getScale(); // min and max are Radius from center
+	// 最小値と最大値は中心からの半径
+    entB01min = center01 - entB.getRadius()*entB.getScale();
     entB01max = center01 + entB.getRadius()*entB.getScale();
-    if (entB01min > entA01max || entB01max < entA01min) // if projections do not overlap
-        return false;                       // no collision is possible
+    if (entB01min > entA01max || entB01max < entA01min) // 投影が重ならない場合
+        return false;                       // 衝突の可能性なし
         
-    // project circle center onto edge03
+	// 円の中心をedge03に投影
     center03 = graphics->Vector2Dot(&edge03, entB.getCenter());
-    entB03min = center03 - entB.getRadius()*entB.getScale(); // min and max are Radius from center
+	// 最小値と最大値は中心からの半径
+    entB03min = center03 - entB.getRadius()*entB.getScale();
     entB03max = center03 + entB.getRadius()*entB.getScale();
-    if (entB03min > entA03max || entB03max < entA03min) // if projections do not overlap
-        return false;                       // no collision is possible
+    if (entB03min > entA03max || entB03max < entA03min) // 投影が重ならない場合
+        return false;                       // 衝突の可能性なし
 
-    // circle projection overlaps box projection
-    // check to see if circle is in voronoi region of collision box
-    if(center01 < entA01min && center03 < entA03min)    // if circle in Voronoi0
+	// 円の投影がボックスの投影に重なる場合
+	// 円が衝突ボックスのボロノイ領域にあるかどうかをチェック
+
+	// 中心がVoronoi0にある場合
+    if(center01 < entA01min && center03 < entA03min)
         return collideCornerCircle(corners[0], entB, collisionVector);
-    if(center01 > entA01max && center03 < entA03min)    // if circle in Voronoi1
+	// 中心がVoronoi1にある場合
+    if(center01 > entA01max && center03 < entA03min)
         return collideCornerCircle(corners[1], entB, collisionVector);
-    if(center01 > entA01max && center03 > entA03max)    // if circle in Voronoi2
+	// 中心がVoronoi2にある場合
+    if(center01 > entA01max && center03 > entA03max)
         return collideCornerCircle(corners[2], entB, collisionVector);
-    if(center01 < entA01min && center03 > entA03max)    // if circle in Voronoi3
+	// 中心がVoronoi3にある場合
+    if(center01 < entA01min && center03 > entA03max)
         return collideCornerCircle(corners[3], entB, collisionVector);
 
     // Circle not in voronoi region so it is colliding with edge of box.
@@ -418,25 +426,25 @@ bool Entity::collideRotatedBoxCircle(Entity &entB, VECTOR2 &collisionVector)
 }
 
 //=============================================================================
-// The box corner is checked for collision with circle using a distance check.
-// Called by collideRotatedBoxCircle()
-// Post: returns true if collision, false otherwise
-//       sets collisionVector if collision
+// ボックスの頂点が円と衝突していないかを、距離のチェックを使用して判定
+// collideRotateBosCircle()によって呼び出される
+// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+// 衝突している場合は、collisionVectorを設定
 //=============================================================================
 bool Entity::collideCornerCircle(VECTOR2 corner, Entity &ent, VECTOR2 &collisionVector)
 {
-    distSquared = corner - *ent.getCenter();            // corner - circle
-    distSquared.x = distSquared.x * distSquared.x;      // difference squared
+    distSquared = corner - *ent.getCenter();            // 頂点 - 円
+    distSquared.x = distSquared.x * distSquared.x;      // 差を2乗
     distSquared.y = distSquared.y * distSquared.y;
 
-    // Calculate the sum of the radii, then square it
-    sumRadiiSquared = ent.getRadius()*ent.getScale();   // (0 + circleR)
-    sumRadiiSquared *= sumRadiiSquared;                 // square it
+    // 半径の合計を計算してから、それを2乗
+	sumRadiiSquared = ent.getRadius()*ent.getScale();   // (0 + 円の半径)
+    sumRadiiSquared *= sumRadiiSquared;                 // 2乗する
 
-    // if corner and circle are colliding
+	// 頂点と円が衝突している場合
     if(distSquared.x + distSquared.y <= sumRadiiSquared)
     {
-        // set collision vector
+		// 衝突ベクトルを設定
         collisionVector = *ent.getCenter() - corner;
         return true;
     }
@@ -444,8 +452,8 @@ bool Entity::collideCornerCircle(VECTOR2 corner, Entity &ent, VECTOR2 &collision
 }
 
 //=============================================================================
-// Compute corners of rotated box, projection edges and min and max projections
-// 0---1  corner numbers
+// 回転するボックスの頂点、投影線、投影の最小値と最大値を計算
+// 0---1  頂点の番号
 // |   |
 // 3---2
 //=============================================================================
@@ -468,24 +476,24 @@ void Entity::computeRotatedBox()
     corners[3] = *center + rotatedX * ((float)edge.left*getScale())  +
                            rotatedY * ((float)edge.bottom*getScale());
 
-    // corners[0] is used as origin
-    // The two edges connected to corners[0] are used as the projection lines
+    // corners[0]を基点として使用
+	// corners[0]に接する2辺を投影線として使用
     edge01 = VECTOR2(corners[1].x - corners[0].x, corners[1].y - corners[0].y);
     graphics->Vector2Normalize(&edge01);
     edge03 = VECTOR2(corners[3].x - corners[0].x, corners[3].y - corners[0].y);
     graphics->Vector2Normalize(&edge03);
 
-    // this entities min and max projection onto edges
+	// このエンティティを投影線上に投影したときの最小値と最大値
     projection = graphics->Vector2Dot(&edge01, &corners[0]);
     entA01min = projection;
     entA01max = projection;
-    // project onto edge01
+	// edge01への投影
     projection = graphics->Vector2Dot(&edge01, &corners[1]);
     if (projection < entA01min)
         entA01min = projection;
     else if (projection > entA01max)
         entA01max = projection;
-    // project onto edge03
+	// edge03への投影
     projection = graphics->Vector2Dot(&edge03, &corners[0]);
     entA03min = projection;
     entA03max = projection;
@@ -499,36 +507,8 @@ void Entity::computeRotatedBox()
 }
 
 //=============================================================================
-// Pixel Perfect collision detection method
-// Called by collision()
-// If the graphics card does not support a stencil buffer then CIRCLE
-// collision is used.
-// Post: returns true if collision, false otherwise
-//       sets collisionVector if collision
-//=============================================================================
-bool Entity::collidePixelPerfect(Entity &ent, VECTOR2 &collisionVector)
-{
-    if(graphics->getStencilSupport() == false)  // if stencil not supported
-        return (collideCircle(ent, collisionVector));   // use CIRCLE collision
-
-    // get fresh texture because they may have been released
-    ent.spriteData.texture = ent.textureManager->getTexture();
-    spriteData.texture = textureManager->getTexture();
-
-    // if pixels are colliding
-    pixelsColliding = graphics->pixelCollision(ent.getSpriteData(), this->getSpriteData());
-    if(pixelsColliding > 0)
-    {
-        // set collision vector to center of entity
-        collisionVector = *ent.getCenter() - *getCenter();
-        return true;
-    }
-    return false;
-}
-
-//=============================================================================
-// Is this Entity outside the specified rectangle
-// Post: returns true if outside rect, false otherwise
+// このエンティティが指定された矩形の外側にあるか
+// 実行後：矩形の外側にある場合はtrue、それ以外の場合はfalseを戻す
 //=============================================================================
 bool Entity::outsideRect(RECT rect)
 {
@@ -542,20 +522,20 @@ bool Entity::outsideRect(RECT rect)
 
 //=============================================================================
 // damage
-// This entity has been damaged by a weapon.
-// Override this function in the inheriting class.
+// このエンティティが、武器によってダメージを受ける
+// 継承する側のクラスでこの関数をオーバーライド
 //=============================================================================
 void Entity::damage(int weapon)
 {}
 
 //=============================================================================
-// Entity bounces after collision with another entity
+// 他のエンティティとの衝突後の跳ね返り
 //=============================================================================
 void Entity::bounce(VECTOR2 &collisionVector, Entity &ent)
 {
     float cUVdotVdiff;
     VECTOR2 Vdiff = ent.getVelocity() - velocity;
-    VECTOR2 cUV = collisionVector;              // collision unit vector
+    VECTOR2 cUV = collisionVector;              // 衝突単位ベクトル
     Graphics::Vector2Normalize(&cUV);
     if(collisionType == entityNS::ROTATED_BOX)  // if ROTATED_BOX collision
         // The collision vector is perpendicular to the edge. 
@@ -568,7 +548,7 @@ void Entity::bounce(VECTOR2 &collisionVector, Entity &ent)
     if(massRatio < 0.1f)
         massRatio = 0.1f;
 
-    // Move entities out of collision along collision vector
+	// エンティティをcollisionVectorに沿って離れる方向に移動
     VECTOR2 cv;
     int count=10;   // loop limit
     do
@@ -584,15 +564,15 @@ void Entity::bounce(VECTOR2 &collisionVector, Entity &ent)
 }
 
 //=============================================================================
-// Force of gravity on this entity from other entity
-// Adds the gravitational force to the velocity vector of this entity
+// 相手のエンティティからこのエンティティへの重力
+// 重力をこのエンティティの速度ベクトルに加算
 // force = GRAVITY * m1 * m2 / r*r
 //                    2              2
 //  r*r  =   (Ax - Bx)   +  (Ay - By)
 //=============================================================================
 void Entity::gravityForce(Entity *ent, float frameTime)
 {
-    // if either entity is not active then no gravity effect
+	// どちらかのエンティティがアクティブでない場合、重力の影響はない
     if (!active || !ent->getActive())
         return ;
 
@@ -600,15 +580,15 @@ void Entity::gravityForce(Entity *ent, float frameTime)
             pow((ent->getCenterY() - getCenterY()),2);
     force = gravity * ent->getMass() * mass/rr;
 
-    // --- Using vector math to create gravity vector ---
-    // Create vector between entities
+    // --- ベクトル計算を使って重力ベクトルを作成 ---
+    // エンティティ間のベクトルを作成
     VECTOR2 gravityV(ent->getCenterX() - getCenterX(),
                         ent->getCenterY() - getCenterY());
-    // Normalize the vector
+    // ベクトルを正規化
     Graphics::Vector2Normalize(&gravityV);
-    // Multipy by force of gravity to create gravity vector
+	// 重力で乗算して、重力ベクトルを作成
     gravityV *= force * frameTime;
-    // Add gravity vector to moving velocity vector to change direction
+	// 重力ベクトルを、移動中の速度ベクトルに加算して、方向を変える
     velocity += gravityV;
 }
 

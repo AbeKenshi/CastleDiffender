@@ -1,10 +1,13 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// console.h v1.0
+//==========================================================
+/// @file
+/// @brief    Consoleクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
-#ifndef _CONSOLE_H              // Prevent multiple definitions if this 
-#define _CONSOLE_H              // file is included in more than one place
+#ifndef _CONSOLE_H              // このファイルが複数の箇所でインクルードされる場合に、
+#define _CONSOLE_H              // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 #include <string>
@@ -32,22 +35,22 @@ namespace consoleNS
 class Console
 {
 private:
-    Graphics    *graphics;              // graphics system
-    Input       *input;                 // input system
-    TextDX      dxFont;                 // DirectX font
-    float       x,y;                    // console location (dynamic)
-    int         rows;                   // number of rows of text that will fit on console
-    std::string commandStr;             // console command
-    std::string inputStr;               // console text input
-    std::deque<std::string> text;       // console text
-    RECT        textRect;               // text rectangle
-    COLOR_ARGB  fontColor;              // font color (a,r,g,b)
-    COLOR_ARGB  backColor;              // background color (a,r,g,b)
-    VertexC vtx[4];                     // vertex data for background
-    LP_VERTEXBUFFER vertexBuffer;       // buffer to hold vertex data
-    int         scrollAmount;           // number of lines to scroll the display up
-    bool        initialized;            // true when initialized successfully
-    bool        visible;                // true to display
+    Graphics    *graphics;              // グラフィックシステムへのポインタ
+    Input       *input;                 // 入力システムへのポインタ
+    TextDX      dxFont;                 // DirectXフォント
+    float       x,y;                    // コンソールの位置
+    int         rows;                   // コンソールに収まるテキストの行数
+    std::string commandStr;             // コンソールコマンド
+    std::string inputStr;               // コンソールへの入力テキスト
+    std::deque<std::string> text;       // デックtext
+    RECT        textRect;               // テキスト表示rect
+    COLOR_ARGB  fontColor;              // フォントカラー(a,r,g,b)
+    COLOR_ARGB  backColor;              // 背景色(a,r,g,b)
+    VertexC vtx[4];                     // 背景用のvertexデータ
+    LP_VERTEXBUFFER vertexBuffer;       // vertexデータ保存用のバッファ
+    int         scrollAmount;           // スクロールされている行数
+    bool        initialized;            // 初期化に成功した場合、true
+    bool        visible;                // コンソールを表示させる場合、true
 
 public:
 	// コンストラクタ
@@ -90,10 +93,10 @@ public:
 	// コンソールの入力テキストをクリアします
     void clearInput()   {inputStr = "";}
 
-    // Call when graphics device is lost.
+	// グラフィックスデバイスが消失したときに呼び出される
     void onLostDevice();
 
-    // Call when graphics device is reset.
+	// グラフィックスデバイスがリセットされたときに呼び出される
     void onResetDevice();
 };
 

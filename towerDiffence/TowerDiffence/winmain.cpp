@@ -16,12 +16,14 @@ bool AnotherInstance();
 TowerDiffence *game = NULL;
 HWND hwnd = NULL;
 
+//==========================================================
 // Windowsアプリケーションの開始点
 // パラメータ
 //		hInstance：アプリケーションの現在のインスタンスへのハンドル
 //		hPrevInstance：常にNULL（廃止されたパラメータ）
 //		lpCmdLine：コマンドライン引数のNULL終端文字へのポインタ
 //		nCmdShow：ウィンドウをどのように表示するかを指定
+//==========================================================
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	// デバッグビルドの場合、メモリリークをチェック
@@ -43,7 +45,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInstance, LPSTR lpCmdLine,
 		return 1;
 
 	try {
-		game->initialize(hwnd);
+		game->initialize(hwnd);	// GameErrorをスロー
 
 		// メインのメッセージループ
 		int done = 0;

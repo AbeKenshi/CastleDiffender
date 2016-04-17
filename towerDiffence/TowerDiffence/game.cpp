@@ -1,128 +1,133 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// game.cpp v1.2
-// Last modified Feb-11-2013
+//==========================================================
+/// @file
+/// @brief    game.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
 #include "game.h"
 
 // The primary class should inherit from Game class
 
 //=============================================================================
-// Constructor
+// コンストラクタ
 //=============================================================================
 Game::Game()
 {
-	input = new Input();        // initialize keyboard input immediately
-								// additional initialization is handled in later call to input->initialize()
-	paused = false;             // game is not paused
+	input = new Input();        // キーボード入力を即時に初期化
+	// その他の初期化は、後で
+	// input->initialize()を呼び出して処理
+	paused = false;             // ゲームは一時停止中でない
 	graphics = NULL;
 	audio = NULL;
 	console = NULL;
 	messageDialog = NULL;
 	inputDialog = NULL;
 	fps = 100;
-	fpsOn = false;              // default to fps display off
+	fpsOn = false;              // デフォルトではフレームレートを表示しない
 	initialized = false;
 }
 
 //=============================================================================
-// Destructor
+// デストラクタ
 //=============================================================================
 Game::~Game()
 {
-	deleteAll();                // free all reserved memory
-	ShowCursor(true);           // show cursor
+	deleteAll();                // 予約されていたメモリをすべて解放
+	ShowCursor(true);           // カーソルを表示
 }
 
 //=============================================================================
-// Window message handler
+// Windowメッセージハンドラ
 //=============================================================================
 LRESULT Game::messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	if (initialized)     // do not process messages if not initialized
+	if (initialized)     // 初期化されていない場合はメッセージを処理しない
 	{
 		switch (msg)
 		{
 		case WM_DESTROY:
-			PostQuitMessage(0);        //tell Windows to kill this program
+			// Windowsにこのプログラムを終了するように伝える
+			PostQuitMessage(0);
 			return 0;
-		case WM_KEYDOWN: case WM_SYSKEYDOWN:    // key down
+		case WM_KEYDOWN: case WM_SYSKEYDOWN:    // キーが押された
 			input->keyDown(wParam);
 			return 0;
-		case WM_KEYUP: case WM_SYSKEYUP:        // key up
+		case WM_KEYUP: case WM_SYSKEYUP:        // キーが離された
 			input->keyUp(wParam);
 			return 0;
-		case WM_CHAR:                           // character entered
+		case WM_CHAR:                           // 文字が入力された
 			input->keyIn(wParam);
 			return 0;
-		case WM_MOUSEMOVE:                      // mouse moved
+		case WM_MOUSEMOVE:                      // マウスが移動された
 			input->mouseIn(lParam);
 			return 0;
-		case WM_INPUT:                          // raw mouse data in
+		case WM_INPUT:                          // マウスからのローデータ入力
 			input->mouseRawIn(lParam);
 			return 0;
-		case WM_LBUTTONDOWN:                    // left mouse button down
+		case WM_LBUTTONDOWN:                    // 左マウスボタンが押された
 			input->setMouseLButton(true);
-			input->mouseIn(lParam);             // mouse position
+			input->mouseIn(lParam);             // マウスの位置
 			return 0;
-		case WM_LBUTTONUP:                      // left mouse button up
+		case WM_LBUTTONUP:                      // 左マウスボタンが離された
 			input->setMouseLButton(false);
-			input->mouseIn(lParam);             // mouse position
+			input->mouseIn(lParam);             // マウスの位置
 			return 0;
-		case WM_MBUTTONDOWN:                    // middle mouse button down
+		case WM_MBUTTONDOWN:                    // 中央マウスボタンが押された
 			input->setMouseMButton(true);
-			input->mouseIn(lParam);             // mouse position
+			input->mouseIn(lParam);             // マウスの位置
 			return 0;
-		case WM_MBUTTONUP:                      // middle mouse button up
+		case WM_MBUTTONUP:                      // 中央マウスボタンが離された
 			input->setMouseMButton(false);
-			input->mouseIn(lParam);             // mouse position
+			input->mouseIn(lParam);             // マウスの位置
 			return 0;
-		case WM_RBUTTONDOWN:                    // right mouse button down
+		case WM_RBUTTONDOWN:                    // 右マウスボタンが押された
 			input->setMouseRButton(true);
-			input->mouseIn(lParam);             // mouse position
+			input->mouseIn(lParam);             // マウスの位置
 			return 0;
-		case WM_RBUTTONUP:                      // right mouse button up
+		case WM_RBUTTONUP:                      // 右マウスボタンが離された
 			input->setMouseRButton(false);
-			input->mouseIn(lParam);             // mouse position
+			input->mouseIn(lParam);             // マウスの位置
 			return 0;
-		case WM_XBUTTONDOWN: case WM_XBUTTONUP: // mouse X button down/up
+		case WM_XBUTTONDOWN: case WM_XBUTTONUP:	// マウスのXボタンが押された/離された
 			input->setMouseXButton(wParam);
-			input->mouseIn(lParam);             // mouse position
+			input->mouseIn(lParam);             // マウスの位置
 			return 0;
-		case WM_MOUSEWHEEL:                     // mouse wheel move
+		case WM_MOUSEWHEEL:                     // マウスホイールが動いた
 			input->mouseWheelIn(wParam);
 			return 0;
-		case WM_DEVICECHANGE:                   // check for controller insert
+		case WM_DEVICECHANGE:                   // コントローラーをチェック
 			input->checkControllers();
 			return 0;
 		}
 	}
-	return DefWindowProc(hwnd, msg, wParam, lParam);    // let Windows handle it
+	// Windowsに処理を任せる
+	return DefWindowProc(hwnd, msg, wParam, lParam);
 }
 
 //=============================================================================
-// Initializes the game
-// throws GameError on error
+// ゲームを初期化
+// エラー時にGameErrorをスロー
 //=============================================================================
 void Game::initialize(HWND hw)
 {
-	hwnd = hw;                                  // save window handle
+	hwnd = hw;                                  // ウィンドウハンドルを保存
 
-												// initialize graphics
+	// グラフィックスを初期化
 	graphics = new Graphics();
-	// throws GameError
+	// GameErrorをスロー
 	graphics->initialize(hwnd, GAME_WIDTH, GAME_HEIGHT, FULLSCREEN);
 
-	// initialize input, do not capture mouse
-	input->initialize(hwnd, false);             // throws GameError
+	// 入力を初期化、マウスをキャプチャしない
+	input->initialize(hwnd, false);             // GameErrorをスロー
 
-	// initialize console
+	// コンソールを初期化
 	console = new Console();
-	console->initialize(graphics, input);       // prepare console
+	console->initialize(graphics, input);       // コンソールを準備
 	console->print("---Console---");
 
-	// initialize messageDialog
+	// messageDialogを初期化
 	messageDialog = new MessageDialog();
 	messageDialog->initialize(graphics, input, hwnd);
 
@@ -130,15 +135,16 @@ void Game::initialize(HWND hw)
 	inputDialog = new InputDialog();
 	inputDialog->initialize(graphics, input, hwnd);
 
-	// initialize DirectX font
+	// DirectXフォントを初期化
 	if (dxFont.initialize(graphics, gameNS::POINT_SIZE, false, false, gameNS::FONT) == false)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Failed to initialize DirectX font."));
 
 	dxFont.setFontColor(gameNS::FONT_COLOR);
 
-	// init sound system
+	// サウンドシステムを初期化
 	audio = new Audio();
-	if (*WAVE_BANK != '\0' && *SOUND_BANK != '\0')  // if sound files defined
+	// サウンドファイルが定義されている場合
+	if (*WAVE_BANK != '\0' && *SOUND_BANK != '\0')
 	{
 		if (FAILED(hr = audio->initialize()))
 		{
@@ -149,173 +155,177 @@ void Game::initialize(HWND hw)
 		}
 	}
 
-	// attempt to set up high resolution timer
+	// 高分解能タイマーの準備を試みる
 	if (QueryPerformanceFrequency(&timerFreq) == false)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing high resolution timer"));
 
-	QueryPerformanceCounter(&timeStart);        // get starting time
+	QueryPerformanceCounter(&timeStart);        // 開始時間を取得
 
 	initialized = true;
 }
 
 //=============================================================================
-// Render game items
+// ゲームアイテムをレンダー
 //=============================================================================
 void Game::renderGame()
 {
 	const int BUF_SIZE = 20;
 	static char buffer[BUF_SIZE];
 
-	//start rendering
+	// レンダリングを開始
 	if (SUCCEEDED(graphics->beginScene()))
 	{
-		render();           // call render() in derived object
+		// renderは、継承したクラス側で記述する必要のある純粋仮想関数です。
+		render();	// 派生クラスのrenderを呼び出す
 
-		graphics->spriteBegin();    // begin drawing sprites
-		if (fpsOn)           // if fps display requested
+		graphics->spriteBegin();    // スプライトの描画を開始
+		if (fpsOn)           // フレームレートの表示が要求されている場合
 		{
-			// convert fps to string
+			// fpsを文字列に変換
 			_snprintf_s(buffer, BUF_SIZE, "fps %d ", (int)fps);
 			dxFont.print(buffer, GAME_WIDTH - 100, GAME_HEIGHT - 28);
 		}
-		graphics->spriteEnd();      // end drawing sprites
+		graphics->spriteEnd();      // スプライトの描画を終了
 
-		console->draw();    // console is drawn here so it appears on top of game
-		messageDialog->draw();  // dialog is drawn on top
+		console->draw();    // コンソールは、ゲームの前面に表示されるようにここで描画
+		messageDialog->draw();  // ダイアログを前面に描画
 		inputDialog->draw();    // dialog is drawn on top
 
-								//stop rendering
+		// レンダリングを終了
 		graphics->endScene();
 	}
 	handleLostGraphicsDevice();
 
-	//display the back buffer on the screen
+	// バックバッファを画面に表示
 	graphics->showBackbuffer();
 }
 
 //=============================================================================
-// Handle lost graphics device
+// 消失したグラフィックスデバイスを処理
 //=============================================================================
 void Game::handleLostGraphicsDevice()
 {
-	// test for and handle lost device
+	// デバイスの消失をテストし、それに応じて処理を実行
 	hr = graphics->getDeviceState();
-	if (FAILED(hr))                  // if graphics device is not in a valid state
+	if (FAILED(hr))                  // グラフィックスデバイスが有効な状態でない場合
 	{
-		// if the device is lost and not available for reset
+		// デバイスが消失しており、リセットできる状態にない場合
 		if (hr == D3DERR_DEVICELOST)
 		{
-			Sleep(100);             // yield cpu time (100 mili-seconds)
+			Sleep(100);             // CPU時間を明け渡す（100ミリ秒）
 			return;
 		}
-		// the device was lost but is now available for reset
+		// デバイスが消失しているが、リセットできる状態にある場合
 		else if (hr == D3DERR_DEVICENOTRESET)
 		{
 			releaseAll();
-			hr = graphics->reset(); // attempt to reset graphics device
-			if (FAILED(hr))          // if reset failed
+			hr = graphics->reset(); // グラフィックスデバイスのリセットを試みる
+			if (FAILED(hr))          // リセットが失敗した場合
 				return;
 			resetAll();
 		}
 		else
-			return;                 // other device error
+			return;                 // 他のデバイスエラー
 	}
 }
 
 //=============================================================================
-// Toggle window or fullscreen mode
+// ディスプレイモードをセット（フルスクリーン、ウィンドウもしくはトグル）
 //=============================================================================
 void Game::setDisplayMode(graphicsNS::DISPLAY_MODE mode)
 {
-	releaseAll();                   // free all user created surfaces
+	// 予約されていたビデオメモリをすべて解放
+	releaseAll(); 
 	graphics->changeDisplayMode(mode);
-	resetAll();                     // recreate surfaces
+	// すべてのサーフェイスを再作成し、すべてのエンティティをリセット
+	resetAll();
 }
 
 //=============================================================================
-// Call repeatedly by the main message loop in WinMain
+// WimMain内のメインのメッセージループで繰り返し呼び出される
 //=============================================================================
 void Game::run(HWND hwnd)
 {
-	if (graphics == NULL)            // if graphics not initialized
+	if (graphics == NULL)            // グラフィックスが初期化されていない場合
 		return;
 
-	// calculate elapsed time of last frame, save in frameTime
+	// 最後のフレームからの経過時間を計算、frameTimeに保存
 	QueryPerformanceCounter(&timeEnd);
 	frameTime = (float)(timeEnd.QuadPart - timeStart.QuadPart) / (float)timerFreq.QuadPart;
 
-	// Power saving code, requires winmm.lib
-	// if not enough time has elapsed for desired frame rate
+	// 省電力コード（winmm.libが必要）
+	// 希望するフレームレートに対して経過時間が短い場合
 	if (frameTime < MIN_FRAME_TIME)
 	{
 		sleepTime = (DWORD)((MIN_FRAME_TIME - frameTime) * 1000);
-		timeBeginPeriod(1);         // Request 1mS resolution for windows timer
-		Sleep(sleepTime);           // release cpu for sleepTime
-		timeEndPeriod(1);           // End 1mS timer resolution
+		timeBeginPeriod(1);         // 1ミリ秒の分解能をWindowsタイマーに要求
+		Sleep(sleepTime);           // sleepTimeの間、CPUを解放
+		timeEndPeriod(1);           // 1ミリ秒のタイマー分解能を終了
 		return;
 	}
 
 	if (frameTime > 0.0)
-		fps = (fps*0.99f) + (0.01f / frameTime);  // average fps
-	if (frameTime > MAX_FRAME_TIME) // if frame rate is very slow
-		frameTime = MAX_FRAME_TIME; // limit maximum frameTime
+		fps = (fps*0.99f) + (0.01f / frameTime);	// 平均fps
+	if (frameTime > MAX_FRAME_TIME)					// フレームレートが非常に遅い場合
+		frameTime = MAX_FRAME_TIME;					// 最大frameTimeを制限
 	timeStart = timeEnd;
 
-	// update(), ai(), and collisions() are pure virtual functions.
-	// These functions must be provided in the class that inherits from Game.
-	if (!paused)                    // if not paused
+	// update()、ai()、collisions()は純粋仮想関数です。
+	// これらの関数は、Gameを継承しているクラス側で記述する必要があります。
+	if (!paused)								// 一時停止中でない場合
 	{
-		update();                   // update all game items
-		ai();                       // artificial intelligence
-		collisions();               // handle collisions
-		input->vibrateControllers(frameTime); // handle controller vibration
+		update();								// すべてのゲームアイテムを更新
+		ai();									// 人工知能
+		collisions();							// 衝突を処理
+		input->vibrateControllers(frameTime);	// コントローラーの振動を処理
 	}
-	renderGame();                   // draw all game items
+	renderGame();								// すべてのゲームアイテムを描画
 
-									//check for console key
+	// コンソールキーをチェック
 	if (input->getCharIn() == CONSOLE_KEY)
 	{
-		input->clearCharIn();       // clear last char
+		input->clearCharIn();       // 最後に入力された文字をクリア
 		console->showHide();
-		paused = console->getVisible(); // pause game when console is visible
+		// コンソールが表示されている間、ゲームを一時停止
+		paused = console->getVisible();
 	}
-	consoleCommand();               // process user entered console command
+	consoleCommand();               // ユーザーが入力したコンソールコマンドを処理
 
-	input->readControllers();       // read state of controllers
-
-	messageDialog->update();
+	input->readControllers();		// コントローターの状態を読み取る
+	messageDialog->update();		// ボタンクリックをチェック
 	inputDialog->update();
 
-	audio->run();                   // perform periodic sound engine tasks
+	audio->run();                   // サウンドエンジンの周期的タスクを実行
 
-									// if Alt+Enter toggle fullscreen/window
+	// Alt+Enterでフルスクリーンモードとウィンドウモードを切り替え
 	if (input->isKeyDown(ALT_KEY) && input->wasKeyPressed(ENTER_KEY))
-		setDisplayMode(graphicsNS::TOGGLE); // toggle fullscreen/window
+		setDisplayMode(graphicsNS::TOGGLE); // フルスクリーンモードとウィンドウモードを切り替え
 
-											// if Esc key, set window mode
+	// Escキーでウィンドウモードに設定
 	if (input->isKeyDown(ESC_KEY))
-		setDisplayMode(graphicsNS::WINDOW); // set window mode
+		setDisplayMode(graphicsNS::WINDOW); // ウィンドウモードに設定
 
-											// if Pause key
+	// ポーズキーが押された場合、一時停止
 	if (input->wasKeyPressed(VK_PAUSE))
 		paused = !paused;
 
-	// Clear input keys pressed
-	// Call this after all key checks are done
+	// 入力をクリア
+	// すべてのキーチェックが行われた後これを呼び出す
 	input->clear(inputNS::KEYS_PRESSED);
 }
 
 //=============================================================================
-// Process console commands
-// Override this function in the derived class if new console commands are added.
+// コンソールコマンドを処理
+// 新しいコンソールコマンドを追加する場合は、
+// この関数を派生クラスでオーバーライドする
 //=============================================================================
 void Game::consoleCommand()
 {
-	command = console->getCommand();    // get command from console
-	if (command == "")                   // if no command
+	command = console->getCommand();    // コンソールからのコマンドを取得
+	if (command == "")                   // コマンドがない場合
 		return;
 
-	if (command == "help")              // if "help" command
+	if (command == "help")              // 「help」コマンドの場合
 	{
 		console->print("Console Commands:");
 		console->print("fps - toggle display of frames per second");
@@ -324,7 +334,7 @@ void Game::consoleCommand()
 
 	if (command == "fps")
 	{
-		fpsOn = !fpsOn;                 // toggle display of fps
+		fpsOn = !fpsOn;                 // フレームレートの表示を切り替える
 		if (fpsOn)
 			console->print("fps On");
 		else
@@ -333,8 +343,9 @@ void Game::consoleCommand()
 }
 
 //=============================================================================
-// The graphics device was lost.
-// Release all reserved video memory so graphics device may be reset.
+// グラフィックスデバイスが消失した場合
+// グラフィックスデバイスをリセット可能にするため、
+// 予約されていたビデオメモリをすべて解放
 //=============================================================================
 void Game::releaseAll()
 {
@@ -346,7 +357,7 @@ void Game::releaseAll()
 }
 
 //=============================================================================
-// Recreate all surfaces and reset all entities.
+// すべてのサーフェイスを再作成し、すべてのエンティティをリセット
 //=============================================================================
 void Game::resetAll()
 {
@@ -358,11 +369,12 @@ void Game::resetAll()
 }
 
 //=============================================================================
-// Delete all reserved memory
+// 予約されていたメモリをすべて削除
 //=============================================================================
 void Game::deleteAll()
 {
-	releaseAll();               // call onLostDevice() for every graphics item
+	// すべてのグラフィックスアイテムについてonLostDevice()を呼び出す
+	releaseAll();
 	safeDelete(audio);
 	safeDelete(graphics);
 	safeDelete(input);

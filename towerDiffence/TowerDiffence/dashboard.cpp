@@ -1,7 +1,10 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// dashboard.cpp v1.0
+//==========================================================
+/// @file
+/// @brief    dashboard.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
 #include "dashboard.h"
 
@@ -315,14 +318,14 @@ void DialGauge::draw(COLOR_ARGB color)
 }
 
 //=============================================================================
-// Light constructor
+// Lightコンストラクタ
 //=============================================================================
 Light::Light()
 {
     flashDelay = 0;
     flashTimer = 0;
     onColor = graphicsNS::RED;
-    offColor = SETCOLOR_ARGB(255,32,0,0);   // dark RED
+    offColor = SETCOLOR_ARGB(255,32,0,0);   // ダークレッド
 }
 
 //=============================================================================
@@ -395,7 +398,7 @@ void Light::update(float frameTime)
 
 
 //=============================================================================
-//  ToggleSwitch Constructor
+//  ToggleSwitchコンストラクタ
 //=============================================================================
 ToggleSwitch::ToggleSwitch()
 {
@@ -475,7 +478,7 @@ void ToggleSwitch::update(float frameTime)
 }
 
 //=============================================================================
-// Constructor
+// PushButtonコンストラクタ
 //=============================================================================
 PushButton::PushButton()
 {
@@ -569,7 +572,7 @@ void PushButton::update(float frameTime)
 }
 
 //=============================================================================
-//  Constructor
+//  BarGraphコンストラクタ
 //=============================================================================
 BarGraph::BarGraph()
 {

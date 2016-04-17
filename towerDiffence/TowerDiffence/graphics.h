@@ -1,11 +1,13 @@
-// Programming 2D Games
-// Copyright (c) 2011 by:
-// Charles Kelly
-// graphics.h v1.6
-// Last modification: March-28-2013
+//==========================================================
+/// @file
+/// @brief    Graphicsクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
-#ifndef _GRAPHICS_H             // Prevent multiple definitions if this 
-#define _GRAPHICS_H             // file is included in more than one place
+#ifndef _GRAPHICS_H             // このファイルが複数の箇所でインクルードされる場合に、
+#define _GRAPHICS_H             // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 #ifdef _DEBUG
@@ -19,7 +21,7 @@ class Graphics;
 #include "constants.h"
 #include "gameError.h"
 
-// DirectX pointer types
+// DirectXポインタ型
 #define LP_TEXTURE  LPDIRECT3DTEXTURE9
 #define LP_SPRITE   LPD3DXSPRITE
 #define LP_3DDEVICE LPDIRECT3DDEVICE9
@@ -29,20 +31,21 @@ class Graphics;
 #define LP_DXFONT   LPD3DXFONT
 #define LP_VERTEXBUFFER LPDIRECT3DVERTEXBUFFER9
 
-// Color defines
-// ARGB numbers range from 0 through 255
-// a = Alpha channel (transparency where 255 is opaque)
-// r = Red, g = Green, b = Blue
+// 色の定義
+// 共通で使用する色
+// ARGBの数値の範囲は0から255まで
+// A = アルファチャネル（透明度、255は不透明）
+// R = 赤、G = 緑、B = 青
 #define COLOR_ARGB DWORD
 #define SETCOLOR_ARGB(a,r,g,b) \
     ((COLOR_ARGB)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
 namespace graphicsNS
 {
-	// Some common colors
-	// ARGB numbers range from 0 through 255
-	// A = Alpha channel (transparency where 255 is opaque)
-	// R = Red, G = Green, B = Blue
+	// 共通で使用する色
+	// ARGBの数値の範囲は0から255まで
+	// A = アルファチャネル（透明度、255は不透明）
+	// R = 赤、G = 緑、B = 青
 	const COLOR_ARGB ORANGE = D3DCOLOR_ARGB(255, 255, 165, 0);
 	const COLOR_ARGB BROWN = D3DCOLOR_ARGB(255, 139, 69, 19);
 	const COLOR_ARGB LTGRAY = D3DCOLOR_ARGB(255, 192, 192, 192);
@@ -61,206 +64,206 @@ namespace graphicsNS
 	const COLOR_ARGB LIME = D3DCOLOR_ARGB(255, 0, 255, 0);
 	const COLOR_ARGB BLUE = D3DCOLOR_ARGB(255, 0, 0, 255);
 	const COLOR_ARGB BLACK = D3DCOLOR_ARGB(255, 0, 0, 0);
-	const COLOR_ARGB FILTER = D3DCOLOR_ARGB(0, 0, 0, 0);  // use to specify drawing with colorFilter
-	const COLOR_ARGB ALPHA25 = D3DCOLOR_ARGB(64, 255, 255, 255);  // AND with color to get 25% alpha
-	const COLOR_ARGB ALPHA50 = D3DCOLOR_ARGB(128, 255, 255, 255);  // AND with color to get 50% alpha
+	// colorFilterで描画することを指定するために使用
+	const COLOR_ARGB FILTER = D3DCOLOR_ARGB(0, 0, 0, 0);
+	// 色とANDを実行して、25%アルファを取得
+	const COLOR_ARGB ALPHA25 = D3DCOLOR_ARGB(64, 255, 255, 255);
+	// 色とANDを実行して、50%アルファを取得
+	const COLOR_ARGB ALPHA50 = D3DCOLOR_ARGB(128, 255, 255, 255);
 	const COLOR_ARGB BACK_COLOR = NAVY;                         // background color of game
 	const COLOR_ARGB TRANSCOLOR = MAGENTA;                      // transparent color
 
 	enum DISPLAY_MODE { TOGGLE, FULLSCREEN, WINDOW };
 }
 
-struct VertexC              // Vertex with Color
+struct VertexC              // 頂点データ（座標と色）
 {
-	float x, y, z;          // vertex location
-	float rhw;              // reciprocal homogeneous W (set to 1)
-	unsigned long color;    // vertex color
+	float x, y, z;          // 座標値
+	float rhw;              // 同時座標 W (1に設定)
+	unsigned long color;    // 頂点の色
 };
 
-// Flexible Vertex Format Codes
-// D3DFVF_XYZRHW = The verticies are transformed
-// D3DFVF_DIFFUSE = The verticies contain diffuse color data 
+// 柔軟な頂点フォーマット
+// D3DFVF_XYZRHW = 変換済み頂点座標
+// D3DFVF_DIFFUSE = カラーデータ込みの頂点座標
 #define D3DFVF_VERTEX (D3DFVF_XYZRHW | D3DFVF_DIFFUSE)
 
-// SpriteData: The properties required by Graphics::drawSprite to draw a sprite
+// SpriteData：スプライトを描画するGraphics::drawSpriteが必要とするプロパティ
 struct SpriteData
 {
-	int         width;      // width of sprite in pixels
-	int         height;     // height of sprite in pixels
-	float       x;          // screen location (top left corner of sprite)
+	int         width;      // スプライトの幅（ピクセル単位）
+	int         height;     // スプライトの高さ（ピクセル単位）
+	float       x;          // 画面位置（スプライトの左上隅）
 	float       y;
-	float       scale;      // <1 smaller, >1 bigger
-	float       angle;      // rotation angle in radians
-	RECT        rect;       // used to select an image from a larger texture
-	LP_TEXTURE  texture;    // pointer to texture
-	bool        flipHorizontal; // true to flip sprite horizontally (mirror)
-	bool        flipVertical;   // true to flip sprite vertically
+	float       scale;      // <1は縮小、>1は拡大
+	float       angle;      // 回転角度（ラジアン単位）
+	RECT        rect;       // 大きなテクスチャから1つの画像を選択するときに使用
+	LP_TEXTURE  texture;    // テクスチャへのポインタ
+	bool        flipHorizontal; // スプライトを水平方向に反転する場合、true
+	bool        flipVertical;   // スプライトを垂直方向に反転する場合、true
 };
 
 class Graphics
 {
 private:
-	// DirectX pointers and stuff
+	// DirectXポインタなど
 	LP_3D       direct3d;
 	LP_3DDEVICE device3d;
 	LP_SPRITE   sprite;
 	D3DPRESENT_PARAMETERS d3dpp;
 	D3DDISPLAYMODE pMode;
-	IDirect3DQuery9* pOcclusionQuery;   // for pixel perfect collision detection
-	DWORD   numberOfPixelsColliding;    // for pixel perfect collision detection
 
-										// other variables
-	HRESULT     result;         // standard Windows return codes
+	// その他の変数
+	HRESULT     result;         // 標準のWindowsリターンコード
 	HWND        hwnd;
 	bool        fullscreen;
-	bool        stencilSupport; // true if device supports stencil buffer
 	int         width;
 	int         height;
-	COLOR_ARGB  backColor;      // background color
+	COLOR_ARGB  backColor;      // 背景色
 
-								// (For internal engine use only. No user serviceable parts inside.)
-								// Initialize D3D presentation parameters
+	// (エンジンの使用時に内部的にのみ使用します。
+	// 内部にはユーザーが使用するものはありません。）
+	// D3Dプレゼンテーションパラメータを初期化
 	void    initD3Dpp();
 
 public:
-	// Constructor
+	// コンストラクタ
 	Graphics();
 
-	// Destructor
+	// デストラクタ
 	virtual ~Graphics();
 
-	// Releases direct3d and device3d.
+	// direct3dとdevice3dを解放
 	void    releaseAll();
 
-	// Initialize DirectX graphics
-	// Throws GameError on error
-	// Pre: hw = handle to window
-	//      width = width in pixels
-	//      height = height in pixels
-	//      fullscreen = true for full screen, false for window
+	// DirectXグラフィックスを初期化
+	// hw = ウィンドウへのハンドル
+	// width = 幅（ピクセル単位）
+	// height = 高さ（ピクセル単位）
+	// fullscreen = 全画面表示の場合はtrue、ウィンドウの場合はfalse
+	// エラー時にGameErrorをスロー
 	void    initialize(HWND hw, int width, int height, bool fullscreen);
 
-	// Create a vertex buffer.
-	// Pre: verts[] contains vertex data.
-	//      size = size of verts[]
-	// Post: &vertexBuffer points to buffer if successful.
+	// 頂点バッファを作成
+	// 実行前：verts[]に頂点データが格納されている
+	//		   size = verts[]のサイズ
+	// 実行後：成功した場合、&vertexBufferがバッファを指す
 	HRESULT createVertexBuffer(VertexC verts[], UINT size, LP_VERTEXBUFFER &vertexBuffer);
 
-	// Display a quad (rectangle) with alpha transparency.
-	// Pre: createVertexBuffer was used to create vertexBuffer containing four
-	//      vertices defining the quad in clockwise order.
-	//      g3ddev->BeginScene was called
+	// 三角形ファンを使って、アルファ透過性を持つ四角形を表示
+	// 実行前：createVertexBufferを使ってvertexBufferを作成し、
+	//		   四角形を時計回りの順序で定義する4つの頂点を格納しておく
+	//		   g3ddev->BeginSceneを呼び出す
+	// 実行後：四角形が描画される
 	bool    drawQuad(LP_VERTEXBUFFER vertexBuffer);
 
-	// Load the texture into default D3D memory (normal texture use)
-	// For internal engine use only. Use the TextureManager class to load game textures.
-	// Pre: filename = name of texture file.
-	//      transcolor = transparent color
-	// Post: width and height = size of texture
-	//       texture points to texture
+	// テクスチャをデフォルトのD3Dメモリに読み込む（通常のテクスチャで使用）
+	// エンジンの使用時に内部的にのみ使用します。
+	// ゲームテクスチャの読み込みには、TextureManagerクラスを使用します。
+	// 実行前：filenameは、テクスチャファイルの名前
+	//		　 transcolorは、透明として扱う色
+	// 実行後：widthとheight = テクスチャの寸法
+	//         textureは、テクスチャを指す
 	HRESULT loadTexture(const char * filename, COLOR_ARGB transcolor, UINT &width, UINT &height, LP_TEXTURE &texture);
 
-	// Load the texture into system memory (system memory is lockable)
-	// Provides direct access to pixel data. Use the TextureManager class to load textures for display.
-	// Pre: filename = name of texture file.
-	//      transcolor = transparent color
-	// Post: width and height = size of texture
-	//       texture points to texture
+	// テクスチャをシステムメモリに読み込む（システムメモリはロック可能）
+	// ピクセルデータへの直接アクセスを可能にします。
+	// TextureManagerクラスを使って、表示するテクスチャを読み込みます。
+	// 実行前：filenameは、テクスチャファイルの名前
+	//		   transcolorは、透明として扱う色
+	// 実行後：widthとheight = テクスチャの寸法
+	//         textureは、テクスチャを指す
 	HRESULT loadTextureSystemMem(const char *filename, COLOR_ARGB transcolor, UINT &width, UINT &height, LP_TEXTURE &texture);
 
-	// Display the offscreen backbuffer to the screen.
+	// オフスクリーンバックバッファを画面に表示
 	HRESULT showBackbuffer();
 
-	// Checks the adapter to see if it is compatible with the BackBuffer height,
-	// width and refresh rate specified in d3dpp. Fills in the pMode structure with
-	// the format of the compatible mode, if found.
-	// Pre: d3dpp is initialized.
-	// Post: Returns true if compatible mode found and pMode structure is filled.
-	//       Returns false if no compatible mode found.
+	// アダプターをチェックして、d3dppで指定されたBackBufferの高さ、幅、
+	// リフレッシュレートに対応しているかどうかを確認します。
+	// 対応するものが見つかった場合は、pMode構造体に、
+	// 対応しているモードのフォーマットを設定します。
+	// 実行前：d3dppが初期化されている
+	// 実行後：対応しているモードが見つかり、pMode構造体にデータが
+	// 設定された場合、trueを戻します。
+	// 対応しているモードが見つからなかった場合、falseを戻します。
 	bool    isAdapterCompatible();
 
-	// Draw the sprite described in SpriteData structure.
-	// color is optional, it is applied as a filter, WHITE is default (no change).
-	// Creates a sprite Begin/End pair.
-	// Pre: spriteData.rect defines the portion of spriteData.texture to draw
-	//      spriteData.rect.right must be right edge + 1
-	//      spriteData.rect.bottom must be bottom edge + 1
-	void    drawSprite(const SpriteData &spriteData,           // sprite to draw
-		COLOR_ARGB color = graphicsNS::WHITE);      // default to white color filter (no change)
+	// SpriteData構造体に記述されたスプライトを描画
+	// color（オプション）は、フィルタのように適用される
+	// デフォルトは白（変化なし）
+	// 実行前：sprite->Begin()を呼び出す
+	// 実行後：sprite->End()を呼び出す
+	//		   spriteDate.rectは、描画するspriteDate.textureの部分を定義
+	//		   spriteData.rect.rightは、右端+1にする必要がある
+	//		   spriteDate.rect.bottomは、下端+1にする必要がある
+	void    drawSprite(const SpriteData &spriteData,	// 描画するスプライト
+		COLOR_ARGB color = graphicsNS::WHITE);			// デフォルトは白
 
-													// Reset the graphics device.
+	// グラフィックスデバイスをリセット
 	HRESULT reset();
 
-	// Toggle, fullscreen or window display mode
-	// Pre: All user created D3DPOOL_DEFAULT surfaces are freed.
-	// Post: All user surfaces are recreated.
+	// ウィンドウモードやフルスクリーンモードに設定
+	// 実行前：すべてのD3DPOOL_DEFAULTサーフェイスを解放する
+	// 実行後：すべてのサーフェイスを再作成
 	void    changeDisplayMode(graphicsNS::DISPLAY_MODE mode = graphicsNS::TOGGLE);
 
-	// Return length of vector v.
+	// ベクトルの長さを戻す
 	static float    Vector2Length(const VECTOR2 *v) { return D3DXVec2Length(v); }
 
-	// Return Dot product of vectors v1 and v2.
+	// ベクトル同士の内積を戻す
 	static float    Vector2Dot(const VECTOR2 *v1, const VECTOR2 *v2) { return D3DXVec2Dot(v1, v2); }
 
-	// Normalize vector v.
+	// ベクトルを正規化する
 	static void     Vector2Normalize(VECTOR2 *v) { D3DXVec2Normalize(v, v); }
 
-	// Transform vector v with matrix m.
+	// ベクトルvを行列mによって変換する
 	static VECTOR2* Vector2Transform(VECTOR2 *v, D3DXMATRIX *m) { return D3DXVec2TransformCoord(v, v, m); }
 
-	// Return the number of pixels colliding between the two sprites.
-	// Pre: The device supports a stencil buffer and pOcclusionQuery points to
-	// a valid occlusionQuery object.
-	// Post: Returns the number of pixels of overlap
-	DWORD pixelCollision(const SpriteData &sprite1, const SpriteData &sprite2);
 
-	// get functions
-	// Return direct3d.
+	////////////////////////////////////////
+	//           getter                   //
+	////////////////////////////////////////
+
+	// direct3dを戻す
 	LP_3D get3D() { return direct3d; }
 
-	// Return device3d.
+	// device3dを戻す
 	LP_3DDEVICE get3Ddevice() { return device3d; }
 
-	// Return sprite
+	// スプライトを戻す
 	LP_SPRITE getSprite() { return sprite; }
 
-	// Return handle to device context (window).
+	// デバイスコンテキストへのハンドルを戻す
 	HDC getDC() { return GetDC(hwnd); }
 
-	// Test for lost device
+	// デバイスが消失していないかをチェック
 	HRESULT getDeviceState();
 
-	// Return fullscreen
+	// フルスクリーンモードかどうかを戻す
 	bool getFullscreen() { return fullscreen; }
-
-	// Return pOcclusionQuery
-	IDirect3DQuery9* getPOcclusionQuery() { return pOcclusionQuery; }
-
-	// Returns true if the graphics card supports a stencil buffer
-	bool getStencilSupport() { return stencilSupport; }
 
 	// Set color used to clear screen
 	void setBackColor(COLOR_ARGB c) { backColor = c; }
 
 	//=============================================================================
-	// Clear backbuffer and BeginScene()
+	// バックバッファをクリアして、DirectXのBeginScene()を呼び出す
 	//=============================================================================
 	HRESULT beginScene()
 	{
 		result = E_FAIL;
 		if (device3d == NULL)
 			return result;
-		// Clear back buffer, stencil buffer and depth buffer
+		// バックバッファをbackColorでクリアする
 		device3d->Clear(0, 0,
 			D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
 			backColor, 1.0f, 0);
 
-		result = device3d->BeginScene();          // begin scene for drawing
+		result = device3d->BeginScene();          // 描画のためのシーンを開始する
 		return result;
 	}
 
 	//=============================================================================
-	// EndScene()
+	// DirectXのEndScene()を呼び出す
 	//=============================================================================
 	HRESULT endScene()
 	{

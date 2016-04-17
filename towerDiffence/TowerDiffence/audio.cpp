@@ -1,12 +1,15 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// audio.cpp v1.0
+//==========================================================
+/// @file
+/// @brief    audio.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
 #include "audio.h"
 
 //=============================================================================
-// default constructor
+// デフォルトコンストラクタ
 //=============================================================================
 Audio::Audio()
 {
@@ -14,7 +17,7 @@ Audio::Audio()
     waveBank = NULL;
     soundBank = NULL;
     cueI = 0;
-    mapWaveBank = NULL;         // Call UnmapViewOfFile() to release file
+    mapWaveBank = NULL;         // UnmapViewOfFile()を呼び出してファイルを解放
     soundBankData = NULL;
 
     HRESULT hr = CoInitializeEx( NULL, COINIT_MULTITHREADED );
@@ -51,12 +54,12 @@ Audio::~Audio()
 }
 
 //=============================================================================
-// initialize
-// This function does the following:
-//      1. Initialize XACT by calling xactEngine->Initialize 
-//      2. Create the XACT wave bank(s) you want to use
-//      3. Create the XACT sound bank(s) you want to use
-//      4. Store indices to the XACT cue(s) your game uses
+// 初期化
+// このメソッドは次に従って使用する必要があります。
+//		1. xactEngine->Initializeを呼び出すことによってXACTを初期化
+//		2. 使用したいXACT wave bankを作成
+//      3. 使用したいXACT sound bankを作成
+//		4. 使用するXACT cueへのインデックスを格納
 //=============================================================================
 HRESULT Audio::initialize()
 {

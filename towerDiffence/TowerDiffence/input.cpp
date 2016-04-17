@@ -1,37 +1,39 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// input.cpp v1.6
-// Last modified Feb-7-2013
+//==========================================================
+/// @file
+/// @brief    input.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
 #include "input.h"
 
 //=============================================================================
-// default constructor
+// デフォルトコンストラクタ
 //=============================================================================
 Input::Input()
 {
-	// clear key down array
+	// キーが押されている状態を示す配列をクリア
 	for (size_t i = 0; i < inputNS::KEYS_ARRAY_LEN; i++)
 		keysDown[i] = false;
-	// clear key pressed array
+	// キーが押されたことを示す配列をクリア
 	for (size_t i = 0; i < inputNS::KEYS_ARRAY_LEN; i++)
 		keysPressed[i] = false;
-	newLine = true;                     // start new line
-	textIn = "";                        // clear textIn
-	charIn = 0;                         // clear charIn
+	newLine = true;                     // 新しい行をクリア
+	textIn = "";                        // textInをクリア
+	charIn = 0;                         // charInをクリア
 
-										// mouse data
-	mouseX = 0;                         // screen X
-	mouseY = 0;                         // screen Y
-	mouseRawX = 0;                      // high-definition X
-	mouseRawY = 0;                      // high-definition Y
+	// マウスデータ
+	mouseX = 0;                         // 画面X
+	mouseY = 0;                         // 画面Y
+	mouseRawX = 0;                      // 高精細X
+	mouseRawY = 0;                      // 高精細Y
 	mouseWheel = 0;                     // mouse wheel position
-	mouseLButton = false;               // true if left mouse button is down
-	mouseMButton = false;               // true if middle mouse button is down
-	mouseRButton = false;               // true if right mouse button is down
-	mouseX1Button = false;              // true if X1 mouse button is down
-	mouseX2Button = false;              // true if X2 mouse button is down
+	mouseLButton = false;               // 左マウスボタンが押されている場合にtrue
+	mouseMButton = false;               // 中央マウスボタンが押されている場合にtrue
+	mouseRButton = false;               // 右マウスボタンが押されている場合にtrue
+	mouseX1Button = false;              // X1マウスボタンが押されている場合にtrue
+	mouseX2Button = false;              // X2マウスボタンが押されている場合にtrue
 
 	for (int i = 0; i<MAX_CONTROLLERS; i++)
 	{
@@ -43,25 +45,25 @@ Input::Input()
 }
 
 //=============================================================================
-// destructor
+// デストラクタ
 //=============================================================================
 Input::~Input()
 {
 	if (mouseCaptured)
-		ReleaseCapture();               // release mouse
+		ReleaseCapture();               // マウスを解放
 }
 
 //=============================================================================
-// Initialize mouse and controller input
-// Set capture=true to capture mouse
-// Throws GameError
+// マウスとコントローラーの入力を初期化
+// マウスをキャプチャする場合、capture=trueを設定
+// GameErrorをスロー
 //=============================================================================
 void Input::initialize(HWND hwnd, bool capture)
 {
 	try {
 		mouseCaptured = capture;
 
-		// register high-definition mouse
+		// 高精細マウスを登録
 		Rid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
 		Rid[0].usUsage = HID_USAGE_GENERIC_MOUSE;
 		Rid[0].dwFlags = RIDEV_INPUTSINK;
@@ -69,12 +71,12 @@ void Input::initialize(HWND hwnd, bool capture)
 		RegisterRawInputDevices(Rid, 1, sizeof(Rid[0]));
 
 		if (mouseCaptured)
-			SetCapture(hwnd);           // capture mouse
+			SetCapture(hwnd);           // マウスをキャプチャ
 
-										// Clear controllers state
+		// コントローラーの状態をクリア
 		ZeroMemory(controllers, sizeof(ControllerState) * MAX_CONTROLLERS);
 
-		checkControllers();             // check for connected controllers
+		checkControllers();             // 接続されているコントローラーをチェック
 	}
 	catch (...)
 	{
@@ -83,61 +85,61 @@ void Input::initialize(HWND hwnd, bool capture)
 }
 
 //=============================================================================
-// Set true in the keysDown and keysPessed array for this key
-// Pre: wParam contains the virtual key code (0--255)
+// このキーについて、keysDown配列とkeyPressed配列にtrueを設定
+// 実行前：wParamに、仮想キーコード（0~255）が格納されている
 //=============================================================================
 void Input::keyDown(WPARAM wParam)
 {
-	// make sure key code is within buffer range
+	// キーコードが、バッファ範囲内にあることを確認
 	if (wParam < inputNS::KEYS_ARRAY_LEN)
 	{
-		keysDown[wParam] = true;    // update keysDown array
-									// key has been "pressed, erased by clear()
-		keysPressed[wParam] = true; // update keysPressed array
+		keysDown[wParam] = true;    // keysDown配列を更新
+		// キーが既に押されていた、clear()で消去されていた
+		keysPressed[wParam] = true; // keysPressed配列を更新
 	}
 }
 
 //=============================================================================
-// Set false in the keysDown array for this key
-// Pre: wParam contains the virtual key code (0--255)
+// このキーについて、keysDown配列にfalseを設定
+// 実行前：wParamに、仮想キーコード（0~255）が格納されている
 //=============================================================================
 void Input::keyUp(WPARAM wParam)
 {
-	// make sure key code is within buffer range
+	// キーコードが、バッファ範囲内にあることを確認
 	if (wParam < inputNS::KEYS_ARRAY_LEN)
-		// update state table
+		// 状態テーブルを更新
 		keysDown[wParam] = false;
 }
 
 //=============================================================================
-// Save the char just entered in textIn string
-// Pre: wParam contains the char
+// 入力された文字をtextIn文字列に保存
+// 実行前：wParamに、文字が格納されている
 //=============================================================================
 void Input::keyIn(WPARAM wParam)
 {
-	if (newLine)                            // if start of new line
+	if (newLine)                            // 新しい行の開始の場合
 	{
 		textIn.clear();
 		newLine = false;
 	}
 
-	if (wParam == '\b')                     // if backspace
+	if (wParam == '\b')                     // バックスペースキーの場合
 	{
-		if (textIn.length() > 0)             // if characters exist
-			textIn.erase(textIn.size() - 1);  // erase last character entered
+		if (textIn.length() > 0)             // 文字が存在する場合
+			textIn.erase(textIn.size() - 1);  // 最後に入力された文字を消去
 	}
 	else
 	{
-		textIn += wParam;                   // add character to textIn
-		charIn = wParam;                    // save last char entered
+		textIn += wParam;                   // 文字をtextInに追加
+		charIn = wParam;                    // 最後の入力された文字を保存
 	}
 
-	if ((char)wParam == '\r')               // if return    
-		newLine = true;                     // start new line
+	if ((char)wParam == '\r')               // リターンキーの場合
+		newLine = true;                     // 新しい行を開始
 }
 
 //=============================================================================
-// Returns true if the specified VIRTUAL KEY is down, otherwise false.
+// 指定された仮想キーが押されている場合はtrue、それ以外の場合はfalseを戻す
 //=============================================================================
 bool Input::isKeyDown(UCHAR vkey) const
 {
@@ -148,8 +150,8 @@ bool Input::isKeyDown(UCHAR vkey) const
 }
 
 //=============================================================================
-// Return true if the specified VIRTUAL KEY has been pressed in the most recent
-// frame. Key presses are erased at the end of each frame.
+// 直近フレームにおいて、指定の仮想キーが押されたことがある場合、trueを戻します。
+// キーの押し下げの状態は、各フレームの終了時に消去されます。
 //=============================================================================
 bool Input::wasKeyPressed(UCHAR vkey) const
 {
@@ -160,8 +162,8 @@ bool Input::wasKeyPressed(UCHAR vkey) const
 }
 
 //=============================================================================
-// Return true if any key was pressed in the most recent frame.
-// Key presses are erased at the end of each frame.
+// 直近のフレームにおいて、何らかのキーが押された場合、trueを戻します。
+// キーの押し下げの状態は、各フレームの終了時に消去されます。
 //=============================================================================
 bool Input::anyKeyPressed() const
 {
@@ -172,7 +174,7 @@ bool Input::anyKeyPressed() const
 }
 
 //=============================================================================
-// Clear the specified key press
+// 指定されたキーの押し下げをクリア
 //=============================================================================
 void Input::clearKeyPress(UCHAR vkey)
 {
@@ -181,22 +183,25 @@ void Input::clearKeyPress(UCHAR vkey)
 }
 
 //=============================================================================
-// Clear specified input buffers
-// See input.h for what values
+// 指定の入力バッファをクリア
+// whatの値についてはinput.hを参照
 //=============================================================================
 void Input::clear(UCHAR what)
 {
-	if (what & inputNS::KEYS_DOWN)       // if clear keys down
+	// キーが押されているかどうかをクリアする場合
+	if (what & inputNS::KEYS_DOWN)
 	{
 		for (size_t i = 0; i < inputNS::KEYS_ARRAY_LEN; i++)
 			keysDown[i] = false;
 	}
-	if (what & inputNS::KEYS_PRESSED)    // if clear keys pressed
+	// キーが押されたかどうかをクリアする場合
+	if (what & inputNS::KEYS_PRESSED)
 	{
 		for (size_t i = 0; i < inputNS::KEYS_ARRAY_LEN; i++)
 			keysPressed[i] = false;
 	}
-	if (what & inputNS::MOUSE)           // if clear mouse
+	// マウスをクリアする場合
+	if (what & inputNS::MOUSE)
 	{
 		mouseX = 0;
 		mouseY = 0;
@@ -212,7 +217,7 @@ void Input::clear(UCHAR what)
 }
 
 //=============================================================================
-// Reads mouse screen position into mouseX, mouseY
+// マウスの画面位置を読み取り、mouseXとmouseYに保存
 //=============================================================================
 void Input::mouseIn(LPARAM lParam)
 {
@@ -221,8 +226,8 @@ void Input::mouseIn(LPARAM lParam)
 }
 
 //=============================================================================
-// Reads raw mouse data into mouseRawX, mouseRawY
-// This routine is compatible with a high-definition mouse
+// マウスからのローデータを読み取り、mouseRawXとmouseRawYに保存
+// このルーチンは、高精細マウスに対応しています。
 //=============================================================================
 void Input::mouseRawIn(LPARAM lParam)
 {
@@ -268,7 +273,7 @@ void Input::checkControllers()
 }
 
 //=============================================================================
-// Read state of connected controllers
+// 接続されているコントローラーの状態を読み取る
 //=============================================================================
 void Input::readControllers()
 {
@@ -278,7 +283,7 @@ void Input::readControllers()
 		if (controllers[i].connected)
 		{
 			result = XInputGetState(i, &controllers[i].state);
-			if (result == ERROR_DEVICE_NOT_CONNECTED)    // if controller disconnected
+			if (result == ERROR_DEVICE_NOT_CONNECTED)    // 接続されていない場合
 				controllers[i].connected = false;
 		}
 	}
@@ -403,7 +408,7 @@ SHORT Input::getGamepadThumbRY(UINT n)
 }
 
 //=============================================================================
-// Vibrate connected controllers
+// 接続されているコントローラーを振動させる
 //=============================================================================
 void Input::vibrateControllers(float frameTime)
 {

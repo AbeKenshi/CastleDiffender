@@ -104,28 +104,28 @@ void MessageDialog::prepareVerts()
 
     graphics->createVertexBuffer(vtx, sizeof vtx, borderVerts);
 
-    // background top left
+    // backgroundの左上
     vtx[0].x = x + messageDialogNS::BORDER;
     vtx[0].y = y + messageDialogNS::BORDER;
     vtx[0].z = 0.0f;
     vtx[0].rhw = 1.0f;
     vtx[0].color = backColor;
 
-    // background top right
+    // backgroundの右上
     vtx[1].x = x + width - messageDialogNS::BORDER;
     vtx[1].y = y + messageDialogNS::BORDER;
     vtx[1].z = 0.0f;
     vtx[1].rhw = 1.0f;
     vtx[1].color = backColor;
 
-    // background bottom right
+    // backgroundの右下
     vtx[2].x = x + width - messageDialogNS::BORDER;
     vtx[2].y = y + height - messageDialogNS::BORDER;
     vtx[2].z = 0.0f;
     vtx[2].rhw = 1.0f;
     vtx[2].color = backColor;
 
-    // background bottom left
+    // backgroundの左下
     vtx[3].x = x + messageDialogNS::BORDER;
     vtx[3].y = y + height - messageDialogNS::BORDER;
     vtx[3].z = 0.0f;
@@ -134,28 +134,28 @@ void MessageDialog::prepareVerts()
 
     graphics->createVertexBuffer(vtx, sizeof vtx, dialogVerts);
 
-    // button top left
+    // buttonの左上
     vtx[0].x = x + width/2.0f - messageDialogNS::BUTTON_WIDTH/2.0f;
     vtx[0].y = y + height - messageDialogNS::BORDER - messageDialogNS::MARGIN - messageDialogNS::BUTTON_HEIGHT;
     vtx[0].z = 0.0f;
     vtx[0].rhw = 1.0f;
     vtx[0].color = buttonColor;
 
-    // button top right
+    // buttonの右上
     vtx[1].x = x + width/2.0f + messageDialogNS::BUTTON_WIDTH/2.0f;
     vtx[1].y = vtx[0].y;
     vtx[1].z = 0.0f;
     vtx[1].rhw = 1.0f;
     vtx[1].color = buttonColor;
 
-    // button bottom right
+    // buttonの右下
     vtx[2].x =  vtx[1].x;
     vtx[2].y = vtx[0].y + messageDialogNS::BUTTON_HEIGHT;
     vtx[2].z = 0.0f;
     vtx[2].rhw = 1.0f;
     vtx[2].color = buttonColor;
 
-    // button bottom left
+    // buttonの左下
     vtx[3].x = vtx[0].x;
     vtx[3].y = vtx[2].y;
     vtx[3].z = 0.0f;
@@ -164,31 +164,31 @@ void MessageDialog::prepareVerts()
 
     graphics->createVertexBuffer(vtx, sizeof vtx, buttonVerts);
 
-    // set buttonRect
+    // buttonのRectを設定
     buttonRect.left   = (long)vtx[0].x;
     buttonRect.right  = (long)vtx[1].x;
     buttonRect.top    = (long)vtx[0].y;
     buttonRect.bottom = (long)vtx[2].y;
 
-    // button2 top left
+    // button2の左上
     vtx[0].x = x + width - messageDialogNS::BUTTON_WIDTH*1.2f;
     vtx[0].y = y + height - messageDialogNS::BORDER - messageDialogNS::MARGIN - messageDialogNS::BUTTON_HEIGHT;
     vtx[0].z = 0.0f;
     vtx[0].rhw = 1.0f;
     vtx[0].color = buttonColor;
-    // button2 top right
+    // button2の右上
     vtx[1].x = vtx[0].x + messageDialogNS::BUTTON_WIDTH;
     vtx[1].y = vtx[0].y;
     vtx[1].z = 0.0f;
     vtx[1].rhw = 1.0f;
     vtx[1].color = buttonColor;
-    // button2 bottom right
+    // button2の右下
     vtx[2].x =  vtx[1].x;
     vtx[2].y = vtx[0].y + messageDialogNS::BUTTON_HEIGHT;
     vtx[2].z = 0.0f;
     vtx[2].rhw = 1.0f;
     vtx[2].color = buttonColor;
-    // button2 bottom left
+    // button2の左下
     vtx[3].x = vtx[0].x;
     vtx[3].y = vtx[2].y;
     vtx[3].z = 0.0f;
@@ -196,7 +196,7 @@ void MessageDialog::prepareVerts()
     vtx[3].color = buttonColor;
     graphics->createVertexBuffer(vtx, sizeof vtx, button2Verts);
 
-    // set button2Rect
+	// button2のRectを設定
     button2Rect.left   = (long)vtx[0].x;
     button2Rect.right  = (long)vtx[1].x;
     button2Rect.top    = (long)vtx[0].y;
