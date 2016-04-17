@@ -1,10 +1,13 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// messageDialog.h v1.0
+//==========================================================
+/// @file
+/// @brief    MessageDialogクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
-#ifndef _MESSAGEDIALOG_H        // prevent multiple definitions if this 
-#define _MESSAGEDIALOG_H        // ..file is included in more than one place
+#ifndef _MESSAGEDIALOG_H        // このファイルが複数の箇所でインクルードされる場合に、
+#define _MESSAGEDIALOG_H        // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 #include <string>

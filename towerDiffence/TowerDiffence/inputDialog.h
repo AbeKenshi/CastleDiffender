@@ -1,7 +1,10 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// inputDialog.h v1.0
+//==========================================================
+/// @file
+/// @brief    InputDialogクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
 #ifndef _INPUTDIALOG_H          // Prevent multiple definitions if this 
 #define _INPUTDIALOG_H          // file is included in more than one place

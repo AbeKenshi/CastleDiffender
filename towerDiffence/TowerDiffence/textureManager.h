@@ -1,3 +1,10 @@
+//==========================================================
+/// @file
+/// @brief    TextureManagerクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 #ifndef _TEXTUREMANAGER_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _TEXTUREMANAGER_H		// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
@@ -12,10 +19,10 @@ class TextureManager
 {
 private:
 	// TextureManager プロパティ
-	std::vector<UINT>       width;      // width of texture in pixels
-	std::vector<UINT>       height;     // height of texture in pixels
-	std::vector<LP_TEXTURE> texture;    // pointer to textures
-	std::vector<std::string> fileNames; // texture file names
+	std::vector<UINT>       width;      // テクスチャの幅（ピクセル単位）
+	std::vector<UINT>       height;     // テクスチャの高さ（ピクセル単位）
+	std::vector<LP_TEXTURE> texture;    // テクスチャへのポインタ
+	std::vector<std::string> fileNames; // テクスチャのファイル名
 	Graphics *graphics;		// graphicsへのポインタ
 	bool initialized;		// 初期化に成功した場合、true
 	HRESULT hr;				// 標準の戻り値
@@ -59,7 +66,7 @@ public:
 	// グラフィックスデバイスがリセットされたときに呼び出される
 	virtual void onResetDevice();
 
-	// Safely release texture
+	// textureを安全に解放
 	void safeReleaseTexture(LP_TEXTURE& ptr)
 	{
 		if (ptr)

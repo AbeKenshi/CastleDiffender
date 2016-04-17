@@ -76,7 +76,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!result.initialize(graphics, 0, 0, 0, &resultTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing result"));
 	result.setX(GAME_WIDTH / 2.0f - result.getWidth() / 2.0f);
-	result.setY(-result.getHeight());
+	result.setY((float)-result.getHeight());
 
 	// ステージクリア画面のテクスチャ
 	if (!stageClearTexture.initialize(graphics, STAGE_CLEAR_IMAGE))
@@ -85,7 +85,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!stageClear.initialize(graphics, 0, 0, 0, &stageClearTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing stage clear"));
 	stageClear.setX(GAME_WIDTH / 2.0f - stageClear.getWidth() / 2.0f);
-	stageClear.setY(GAME_HEIGHT);
+	stageClear.setY((float)GAME_HEIGHT);
 
 	// 操作説明のテクスチャ
 	if (!descriptionTexture.initialize(graphics, DESCRIPTION_IMAGE))
@@ -180,7 +180,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	braveHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_HEALTH_BAR_X, towerDiffenceNS::BRAVE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::RED);
 	braveHealthBar.set(brave.getHealth());
 	braveMpBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_MP_BAR_X, towerDiffenceNS::BRAVE_MP_BAR_Y, 0.5f, 100, graphicsNS::GREEN);
-	braveMpBar.set(brave.getMP());
+	braveMpBar.set((float)brave.getMP());
 	castleHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::CASTLE_HEALTH_BAR_X + 40, towerDiffenceNS::CASTLE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::BLUE);
 	castleHealthBar.set(castle.getHealth());
 
@@ -230,6 +230,7 @@ void TowerDiffence::update()
 		}
 		else if (input->isKeyDown('E'))
 		{
+//			exit(1);
 			exitGame();
 		}
 	}
@@ -241,8 +242,8 @@ void TowerDiffence::update()
 			audio->stopCue("title");
 			roundStart();
 
-			rect->setX(rectNS::X);
-			rect->setY(rectNS::Y);
+			rect->setX((float)rectNS::X);
+			rect->setY((float)rectNS::Y);
 			rect->setWidth(rectNS::WIDTH);
 			rect->setHeight(rectNS::HEIGHT);
 			rect->setBackColor(rectNS::BACK_COLOR);
@@ -291,7 +292,7 @@ void TowerDiffence::update()
 			}
 			else if (input->isKeyDown('E'))
 			{
-				exitGame();
+				exit(1);
 			}
 			else if (input->isKeyDown('Z'))
 			{
@@ -319,7 +320,7 @@ void TowerDiffence::update()
 			}
 			else if (input->isKeyDown('E'))
 			{
-				exitGame();
+				exit(1);
 			}
 			else if (input->isKeyDown('Z'))
 			{
@@ -417,8 +418,8 @@ void TowerDiffence::roundStart()
 			}
 		}
 	}
-	result.setY(-result.getHeight());
-	stageClear.setY(GAME_HEIGHT);
+	result.setY((float)-result.getHeight());
+	stageClear.setY((float)GAME_HEIGHT);
 	// 勇者を初期化
 	brave.reset();
 	// 各敵を初期化
@@ -564,23 +565,23 @@ void TowerDiffence::collisions()
 				{
 					// マップデータを更新
 					map.updateMapObjInt(barricades[enemy[i]->getNearBarricadeIndex()].getTileY(), barricades[enemy[i]->getNearBarricadeIndex()].getTileX(), -1);
-					if (map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 0 
-						&& map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 1)
+					if (map.getMapObj((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 0 
+						&& map.getMapObj((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 1)
 					{
 						map.updateMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY(), barricades[enemy[i]->getNearBarricadeIndex()].getX() + 32, -1);
 					}
-					if (map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != 0 
-						&& map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != 1)
+					if (map.getMapObj((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != 0 
+						&& map.getMapObj((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32, (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != 1)
 					{
 						map.updateMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY(), barricades[enemy[i]->getNearBarricadeIndex()].getX() - 32, -1);
 					}
-					if (map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 0 
-						&& map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 1)
+					if (map.getMapObj((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 0
+						&& map.getMapObj((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 1)
 					{
 						map.updateMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() + 32, barricades[enemy[i]->getNearBarricadeIndex()].getX(), -1);
 					}
-					if (map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 0 
-						&& map.getMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 0)
+					if (map.getMapObj((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 0
+						&& map.getMapObj((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, (int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32) != 0)
 					{
 						map.updateMapObj(barricades[enemy[i]->getNearBarricadeIndex()].getY() - 32, barricades[enemy[i]->getNearBarricadeIndex()].getX(), -1);
 					}
@@ -747,7 +748,7 @@ void TowerDiffence::collisions()
 					characterNS::DIRECTION yDirection;
 					if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 < enemy[i]->getTileX())
 					{
-						if (!map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) >= 1)
+						if (!(map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() - 1) >= 1))
 						{
 							xDirection = characterNS::LEFT;
 							enemy[i]->setGoalDirection(characterNS::LEFT);
@@ -758,7 +759,7 @@ void TowerDiffence::collisions()
 					}
 					else if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getX() / 32 > enemy[i]->getTileX())
 					{
-						if (!map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) >= 1)
+						if (!(map.getMapCol(enemy[i]->getTileY(), enemy[i]->getTileX() + 1) >= 1))
 						{
 							xDirection = characterNS::RIGHT;
 							enemy[i]->setGoalDirection(characterNS::RIGHT);
@@ -769,7 +770,7 @@ void TowerDiffence::collisions()
 					}
 					if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 < enemy[i]->getTileY())
 					{
-						if (!map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) >= 1)
+						if (!(map.getMapCol(enemy[i]->getTileY() - 1, enemy[i]->getTileX()) >= 1))
 						{
 							yDirection = characterNS::UP;
 							enemy[i]->setGoalDirection(characterNS::UP);
@@ -780,7 +781,7 @@ void TowerDiffence::collisions()
 					}
 					else if ((int)barricades[enemy[i]->getNearBarricadeIndex()].getY() / 32 > enemy[i]->getTileY())
 					{
-						if (!map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) >= 1)
+						if (!(map.getMapCol(enemy[i]->getTileY() + 1, enemy[i]->getTileX()) >= 1))
 						{
 							yDirection = characterNS::DOWN;
 							enemy[i]->setGoalDirection(characterNS::DOWN);
@@ -915,8 +916,8 @@ void TowerDiffence::render()
 		for (int i = 0; i < enemyNum; i++) {
 			float tmpX = enemy[i]->getX();
 			float tmpY = enemy[i]->getY();
-			enemy[i]->setX(tmpX - enemy[i]->getWidth() * (enemy[i]->getScale() - 1) / 2.0);
-			enemy[i]->setY(tmpY - enemy[i]->getHeight() * (enemy[i]->getScale() - 1) / 2.0 - 10);
+			enemy[i]->setX((float)(tmpX - enemy[i]->getWidth() * (enemy[i]->getScale() - 1) / 2.0));
+			enemy[i]->setY((float)(tmpY - enemy[i]->getHeight() * (enemy[i]->getScale() - 1) / 2.0 - 10.0));
 			switch (enemy[i]->getEnemyType())
 			{
 			case enemyNS::RED:
@@ -942,15 +943,15 @@ void TowerDiffence::render()
 		fire.draw();
 		float tmpX = brave.getX();
 		float tmpY = brave.getY();
-		brave.setX(tmpX - brave.getWidth() * (brave.getScale() - 1) / 2.0);
-		brave.setY(tmpY - brave.getHeight() * (brave.getScale() - 1) / 2.0 - 10);
+		brave.setX((float)(tmpX - brave.getWidth() * (brave.getScale() - 1) / 2.0));
+		brave.setY((float)(tmpY - brave.getHeight() * (brave.getScale() - 1) / 2.0 - 10));
 		brave.draw(graphicsNS::WHITE);
 		brave.setX(tmpX);
 		brave.setY(tmpY);
 		braveAttackCollision.draw();
 		braveAttackCollision.getAttackEffect().draw();
 		braveHealthBar.set(brave.getHealth());
-		braveMpBar.set(brave.getMP());
+		braveMpBar.set((float)brave.getMP());
 		castleHealthBar.set(castle.getHealth());
 		braveHealthBar.draw(graphicsNS::FILTER);	// 体力バーを描画
 		braveMpBar.draw(graphicsNS::FILTER);
@@ -974,37 +975,37 @@ void TowerDiffence::render()
 			float fastSpeed = 900.0f;
 			float secondSpeed = 50.0f;
 			float initX = -fontSize * 6.0f;
-			fontCK->setFontHeight(fontSize);
+			fontCK->setFontHeight((UINT)fontSize);
 			float T = (GAME_WIDTH - initX * 2.0f - fontSize * 6) / (2.0f * fastSpeed);
 			if (roundTimer > towerDiffenceNS::ROUND_TIME - T)
 			{
 				fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed, 303);
-				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed, 403);
+				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed), 303);
+				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed), 403);
 				fontCK->setFontColor(graphicsNS::BLUE);
-				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed, 300);
+				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed), 300);
 				fontCK->setFontColor(graphicsNS::RED);
-				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed, 400);
+				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed), 400);
 			}
 			else if (roundTimer > towerDiffenceNS::ROUND_TIME - T * 2.0f)
 			{
 				fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T, 303);
-				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T, 403);
+				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T), 303);
+				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T), 403);
 				fontCK->setFontColor(graphicsNS::BLUE);
-				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T, 300);
+				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T), 300);
 				fontCK->setFontColor(graphicsNS::RED);
-				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T, 400);
+				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T), 400);
 			}
 			else 
 			{
 				fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T , 303);
-				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T, 403);
+				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T) , 303);
+				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 403);
 				fontCK->setFontColor(graphicsNS::BLUE);
-				fontCK->print(str1, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T, 300);
+				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 300);
 				fontCK->setFontColor(graphicsNS::RED);
-				fontCK->print(str2, initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T, 400);
+				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 400);
 			}
 		}
 	}
@@ -1016,31 +1017,31 @@ void TowerDiffence::render()
 			char str[128] = "CONTINUE?";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, result.getHeight() + result.getY());
+			fontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(result.getHeight() + result.getY()));
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, result.getHeight() + result.getY() - 3);
+			fontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(result.getHeight() + result.getY() - 3));
 			char str2[128] = "PUSH Z KEY : RETRY STAGE";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() + 55);
+			fontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() + 55));
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() - 3 + 55);
+			fontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() - 3 + 55));
 			char str3[128] = "PUSH X KEY : RETURN TITLE";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() + 55 * 2);
+			fontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() + 55 * 2));
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() - 3 + 55 * 2);
+			fontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() - 3 + 55 * 2));
 			char str4[128] = "PUSH E KEY : EXIT";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() + 55 * 3);
+			fontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() + 55 * 3));
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, result.getHeight() + result.getY() - 3 + 55 * 3);
+			fontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() - 3 + 55 * 3));
 		}
 	}
 	else if (clearedStage)
@@ -1051,31 +1052,31 @@ void TowerDiffence::render()
 			char str[128] = "CONTINUE?";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, stageClear.getHeight() + stageClear.getY());
+			fontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(stageClear.getHeight() + stageClear.getY()));
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str, GAME_WIDTH / 2 - 35 * 9 / 2, stageClear.getHeight() + stageClear.getY() - 3);
+			fontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(stageClear.getHeight() + stageClear.getY() - 3));
 			char str2[128] = "PUSH Z KEY : RETRY STAGE";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() + 55);
+			fontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() + 55));
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str2, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() - 3 + 55);
+			fontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() - 3 + 55));
 			char str3[128] = "PUSH X KEY : RETURN TITLE";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() + 55 * 2);
+			fontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() + 55 * 2));
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str3, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() - 3 + 55 * 2);
+			fontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() - 3 + 55 * 2));
 			char str4[128] = "PUSH E KEY : EXIT";
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() + 55 * 3);
+			fontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() + 55 * 3));
 			fontCK->setFontHeight(35);
 			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str4, GAME_WIDTH / 2 - 35 * 20 / 2, stageClear.getHeight() + stageClear.getY() - 3 + 55 * 3);
+			fontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() - 3 + 55 * 3));
 		}
 	}
 	graphics->spriteEnd();		// スプライトの描画を開始

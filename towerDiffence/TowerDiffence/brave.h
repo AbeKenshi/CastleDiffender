@@ -51,7 +51,7 @@ namespace braveNS
 	const int RIGHT_SECOND_ATTACK_END_FRAME = RIGHT_ATTACK_END_FRAME;
 	const int ATTACK_DAMAGE = 50;
 	const int FIRE_DAMAGE = 100;
-	const int RESERVOIR_TIME = 1.0f;				// 攻撃までのため時間
+	const float RESERVOIR_TIME = 1.0f;				// 攻撃までのため時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けて点滅する時間
 	const int MP_RECOVERY = 10;
 	const float MP_RECOVERY_TIME = 2.0f;			// MPはMP_RECOVERY_TIMEごとにMP_RECOVERYだけ回復

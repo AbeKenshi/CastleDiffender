@@ -1,7 +1,10 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// inputDialog.cpp v1.0
+//==========================================================
+/// @file
+/// @brief    inputDialog.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
 #include "inputDialog.h"
 
@@ -66,7 +69,7 @@ void InputDialog::prepareVerts()
 }
 
 //=============================================================================
-// Draw the InputDialog
+// InputDialogを描画
 //=============================================================================
 const void InputDialog::draw()
 {
@@ -106,7 +109,7 @@ const void InputDialog::draw()
 }
 
 //=============================================================================
-// Checks for DIALOG_CLOSE_KEY and mouse click on buttons
+// DIALOG_CLOSE_KEYとボタンのマウスクリックをチェック
 //=============================================================================
 void InputDialog::update()
 {
@@ -121,7 +124,7 @@ void InputDialog::update()
 }
 
 //=============================================================================
-// Set text string, size dialog bottom to fit text and set visible = true
+// テキストstrをInputDialogに表示
 //=============================================================================
 void InputDialog::print(const std::string &str)         
 {
@@ -148,7 +151,7 @@ void InputDialog::print(const std::string &str)
 }
 
 //=============================================================================
-// Called when graphics device is lost
+// グラフィックスデバイスが消失したときに呼び出す
 //=============================================================================
 void InputDialog::onLostDevice()
 {

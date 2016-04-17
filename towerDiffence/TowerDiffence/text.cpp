@@ -7,7 +7,7 @@
 #include "text.h"
 
 //=============================================================================
-// default constructor
+// デフォルトコンストラクタ
 //=============================================================================
 Text::Text() : Image()
 {
@@ -39,7 +39,7 @@ Text::Text() : Image()
 }
 
 //=============================================================================
-// destructor
+// デストラクタ
 //=============================================================================
 Text::~Text()
 {
@@ -147,7 +147,7 @@ bool Text::initialize(Graphics *g, const char *file)
 
 //=============================================================================
 // setXY
-// set x,y for text output
+// 表示する位置（XY座標）をセット
 //=============================================================================
 void Text::setXY(int x2, int y2)
 {
@@ -158,9 +158,9 @@ void Text::setXY(int x2, int y2)
 }
 
 //=============================================================================
-// print string at current x,y
-// pre: spriteBegin()
-// post: spriteEnd()
+// 文字列をX、Yに出力
+// 実行前：spriteBegin()
+// 実行後：spriteEnd()
 //=============================================================================
 void Text::print(const std::string &str)
 {
@@ -168,15 +168,15 @@ void Text::print(const std::string &str)
 }
 
 //=============================================================================
-// print with align at x,y
-// text is aligned as specified from:
+// 文字列をX、Yに出力
+// アラインメントは以下の通り：
 // LEFT, RIGHT, CENTER, CENTER_MIDDLE, CENTER_BOTTOM, LEFT_BOTTOM, RIGHT_BOTTOM
 // pre: spriteBegin()
 // post: spriteEnd()
 //=============================================================================
 void Text::print(const std::string &str, int x, int y, textNS::Alignment al)
 {
-	align = al;             // save alignment
+	align = al;             // アラインメントを保存
 	print(str, x, y);
 	align = textNS::LEFT;
 }
@@ -502,7 +502,7 @@ void Text::drawChar(UCHAR ch)
 
 
 //=============================================================================
-// called when graphics device is lost
+// グラフィックスデバイスが消失したときに呼び出される
 //=============================================================================
 void Text::onLostDevice()
 {
@@ -515,7 +515,7 @@ void Text::onLostDevice()
 }
 
 //=============================================================================
-// called when graphics device is reset
+// グラフィックスデバイスがリセットされたときに呼び出される
 //=============================================================================
 void Text::onResetDevice()
 {
