@@ -111,6 +111,19 @@ void Barricade::damage(WEAPON weapon)
 
 		isDamaged = true;
 		break;
+	case MIDBOSS_ATTACK:
+		hitEffect.hit(getCenterX(), getCenterY());
+		health -= 20 * damagePer;
+
+		if (health <= 0)
+		{
+			visible = false;
+			active = false;
+			hitEffect.setVisible(false);
+		}
+
+		isDamaged = true;
+		break;
 	default:
 		break;
 	}

@@ -3,11 +3,9 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include "character.h"
-#include "brave.h"
 #include "constants.h"
 #include "map.h"
 #include "barricade.h"
-#include "castle.h"
 #include "enemyAttackCollision.h"
 
 namespace enemyNS

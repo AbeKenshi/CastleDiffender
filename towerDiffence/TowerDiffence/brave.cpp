@@ -475,6 +475,15 @@ void Brave::damage(WEAPON weapon)
 			isDamaged = true;
 		}
 		break;
+	case MIDBOSS_ATTACK:
+		if (state == characterNS::GAURD)
+			magicPoint -= 35;
+		else
+		{
+			health -= midBossNS::ATTACK_DAMAGE * damagePer;
+			isDamaged = true;
+		}
+		break;
 	default:
 		break;
 	}

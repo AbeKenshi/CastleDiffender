@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "constants.h"
 #include "enemy.h"
+#include "midBoss.h"
 
 namespace castleNS
 {
