@@ -11,7 +11,7 @@ namespace hitEffectNS
 	const int TEXTURE_COLS = 3;			// テクスチャは3列
 	const int START_FRAME = 0;			// アニメーションはフレーム0から開始
 	const int END_FRAME = 2;			// アニメーションフレームは0、1、2
-	const float ANIMATION_DELAY = 0.1;	// アニメーションのフレーム間の時間
+	const float ANIMATION_DELAY = 0.1f;	// アニメーションのフレーム間の時間
 }
 
 class HitEffect : public Image

@@ -1,11 +1,13 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// text.h v1.0
-// Sprite based font
+//==========================================================
+/// @file
+/// @brief    Textクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
-#ifndef _text_h                 // Prevent multiple definitions if this 
-#define _text_h                 // file is included in more than one place
+#ifndef _TEXT_H                 // このファイルが複数の箇所でインクルードされる場合に、
+#define _TEXT_H                 // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 class Text;
@@ -23,132 +25,135 @@ namespace textNS
 		UINT left;
 		UINT right;
 	};
-	// Actual font width is 48, font height is 62
-	const int FONT_BORDER = 3;      // 1 pixel wide transparent border + visible cell border on right and bottom
+	// フォントの高さは62、幅は48ピクセル
+	const int FONT_BORDER = 3;      // 右と下に1ピクセル幅の透明な境界＋可視セル境界
 	const int FONT_WIDTH = 48;
-	const int FONT_HEIGHT = 62;     // font is 62 pixels high
+	const int FONT_HEIGHT = 62;     // フォントは62ピクセルの高さ
 	const int GRID_WIDTH = FONT_WIDTH + FONT_BORDER;
 	const int GRID_HEIGHT = FONT_HEIGHT + FONT_BORDER;
-	const int COLUMNS = 16;         // number of columns in font image
-	const int ROWS = 14;            // number of rows in font image
-	const int FRAMES = 1;           // how many frames of animation (1 = not animated)
-	const double ANIM_DELAY = 0.0;  // delay between animation frames
+	const int COLUMNS = 16;         // フォントの画像の行数
+	const int ROWS = 14;            // フォントの画像の列数
+	const int FRAMES = 1;           // アニメーションのフレーム数（1 = アニメーションなし）
+	const double ANIM_DELAY = 0.0;  // アニメーションのフレーム間の時間
 	const int MAX_FONT_HEIGHT = 1000;
-	const int MIN_CHAR = 0x0020;    // minimum character code
-	const int MAX_CHAR = 0x00FF;    // maximum character code
-	const int PROPORTIONAL_SPACING = 5; // pixels between 1:1 scaled characters
+	const int MIN_CHAR = 0x0020;    // 最小文字コード
+	const int MAX_CHAR = 0x00FF;    // 最大文字コード
+	const int PROPORTIONAL_SPACING = 5; // プロポーショナルフォントの1:1スケールの場合の文字間のスペース
 	const int TAB_SIZE = 8;
 	const char UNDERLINE = '_';
-	const char SOLID = 0x7F;        // solid block used for fill character ASCII $7F
-	const int BOLD_SIZE = 4;        // pixel shift for bold display
+	const char SOLID = 0x7F;        // コード$7Fの文字に使用される固定ブロック
+	const int BOLD_SIZE = 4;        // 太字表示のときのシフトするピクセル数
 }
 
 
 class Text : public Image
 {
 private:
-	TextureManager fontTexture;     // a texture for each font
-	LP_TEXTURE textureData;         // temp font texture
-	char    *file;                  // name of texture file
-	Graphics *graphics;             // save pointer to graphics
-	UINT width, height;             // width & height of 1 character
-	textNS::FontData fontData[textNS::ROWS][textNS::COLUMNS]; // left & right edge of each character in pixels
-	COLOR_ARGB color;               // font color (a,r,g,b)
-	COLOR_ARGB backColor;           // background color (a,r,g,b)
-	UINT  fontHeight;               // font height in pixels
-	UINT  tabSize;                  // character spacing for tab
-	UINT  proportionalSpacing;      // spacing in pixels between proportional characters
-	bool proportional;              // true for proportional spacing
+	TextureManager fontTexture;     // それぞれのフォントのテクスチャ
+	LP_TEXTURE textureData;         // 一時保存用テクスチャデータ
+	char    *file;                  // テクスチャファイル名
+	Graphics *graphics;             // graphicsへのポインタ
+	UINT width, height;             // 1文字の幅、高さ
+	textNS::FontData fontData[textNS::ROWS][textNS::COLUMNS]; // それぞれの文字の左端と右端
+	COLOR_ARGB color;               // フォントカラー(a,r,g,b)
+	COLOR_ARGB backColor;           // 背景色(a,r,g,b)
+	UINT  fontHeight;               // フォントの高さ
+	UINT  tabSize;                  // タブの幅
+	UINT  proportionalSpacing;      // プロポーショナルフォントの文字間のスペース
+	bool proportional;              // プロポーショナルフォントの場合、true
 	bool underline;
 	bool bold;
-	textNS::Alignment align;        // how is text aligned (center, left, etc)
+	textNS::Alignment align;        // アラインメント(center, left, etc)
 
 public:
-	// default constructor (sprite text)
+	// デフォルトコンストラクタ
 	Text();
 
-	// destructor
+	// デストラクタ
 	virtual ~Text();
 
 	//=============================================================
-	// inherited member functions
+	// 継承したメンバ関数
 	//=============================================================
 
-	// Initialize font using file texture image.
+	// Textを初期化
+	// フォント画像内の各文字の左端と右端を特定
+	// 実行後：成功した場合はtrue、失敗した場合はfalseを戻す
+	// fontData配列は、各文字と左端と右端を格納
 	virtual bool initialize(Graphics *g, const char *file);
-	// disable inherited update()
 	virtual void update(float frameTime) {};
 	virtual void onLostDevice();
 	virtual void onResetDevice();
 
 	//=============================================================
-	// new member functions
+	// 新しいメンバ関数
 	//=============================================================
 
-	// Position display point at x,y
+	// 表示する位置（XY座標）をセット
 	virtual void setXY(int x, int y);
 
-	// Print at current x,y. Call between spriteBegin()/spriteEnd()
+	// 文字列をX、Yに出力。spriteBegin()とspriteEnd()の間に呼び出す
 	virtual void print(const std::string &str);
 
-	// Print at x,y. Call between spriteBegin()/spriteEnd()
+	// 文字列をX、Yに出力。spriteBegin()とspriteEnd()の間に呼び出す
 	virtual void print(const std::string &str, int x, int y);
 
-	// Print at x,y using align. Call between spriteBegin()/spriteEnd()
+	// 文字列をX、Yに出力。spriteBegin()とspriteEnd()の間に呼び出す
 	virtual void print(const std::string &str, int x, int y, textNS::Alignment align);
 
-	// Determines width and height of string in pixels for current point size.
+	// 現在のフォントサイズでの文字列の幅と高さ（ピクセル単位）を取得
+	// 文字列は表示しない
 	virtual void getWidthHeight(const std::string &str, UINT &width, UINT &height);
 
-	// Set the font color. Use SETCOLOR_ARGB macro or colors from graphicsNS::
+	// フォントカラーをセット
 	virtual void setFontColor(COLOR_ARGB c) { color = c; }
 
-	// Returns font color
+	// フォントカラーを戻す
 	virtual COLOR_ARGB getFontColor() { return color; }
 
-	// Set background color
+	// 背景色をセット
 	virtual void setBackColor(COLOR_ARGB bc) { backColor = bc; }
 
-	// Returns background color
+	// 背景色を戻す
 	virtual COLOR_ARGB getBackColor() { return backColor; }
 
-	// Set height of font in pixels
+	// フォントの高さをセット
 	virtual void setFontHeight(UINT height)
 	{
-		if (height == 0 || height > textNS::MAX_FONT_HEIGHT)  // if invalid size
+		if (height == 0 || height > textNS::MAX_FONT_HEIGHT)  // 不可能な高さの場合
 			return;
 		fontHeight = height;
 		spriteData.scale = (float)height / (float)textNS::FONT_HEIGHT;
 	}
 
-	// Returns height of font
+	// フォントの高さを戻す
 	virtual UINT getFontHeight() { return fontHeight; }
 
-	// Set proportional spacing true/false
+	// プロポーショナルフォントかどうかをセット
 	virtual void setProportional(bool p) { proportional = p; }
 
-	// Returns proportional spacing setting
+	// プロポーショナルフォントかどうかを戻す
 	virtual bool getProportional() { return proportional; }
 
-	// Set the spacing used for proportional spacing
+	// プロポーショナルフォントの文字間のスペースをセット
 	virtual void setProportionalSpacing(UINT s) { proportionalSpacing = s; }
 
-	// Return proportional spacing size
+	// プロポーショナルフォントの文字間のスペースを戻す
 	virtual UINT getProportionalSpacing() { return proportionalSpacing; }
 
-	// Set underline true/false
+	// 下線を表示するかどうかをセット
 	virtual void setUnderline(bool u) { underline = u; }
 
-	// Returns underline setting
+	// 下線を表示するかどうかを戻す
 	virtual bool getUnderline() { return underline; }
 
-	// Set bold true/false
+	// 太字にするかどうかをセット
 	virtual void setBold(bool b) { bold = b; }
 
-	// Returns bold setting
+	// 太字にするかどうかを戻す
 	virtual bool getBold() { return bold; }
 
-	// Set tab size
+	// タブのサイズをセット
 	virtual void setTabSize(UINT size)
 	{
 		if (size == 0)
@@ -156,15 +161,15 @@ public:
 		tabSize = size;
 	}
 
-	// Return tab size
+	// タブのサイズを返す
 	virtual UINT getTabSize() { return tabSize; }
 
-	// Set spriteData.x,spriteData.y for current string and alignment.
-	// The default alignment is LEFT.
+	// 現在の文字列と配置の指定に合わせてspriteData.x、spriteData.yを設定
+	// デフォルトの配置はLEFT
 	virtual void doAlign(const std::string &str);
 
-	// Display character sprite described by spriteData using color and fill
-	// Does underline and bold
+	// spriteDateによって記述される文字スプライトを色と塗りつぶしを使って表示
+	// 下線と文字を表示する
 	virtual void drawChar(UCHAR ch);
 };
 

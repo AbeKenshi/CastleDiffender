@@ -10,7 +10,7 @@ namespace attackEffectNS
 	const int TEXTURE_COLS = 5;
 	const int START_FRAME = 0;
 	const int END_FRAME = 3;
-	const float ANIMATION_DELAY = 0.05;	// アニメーションのフレーム間の時間
+	const float ANIMATION_DELAY = 0.05f;	// アニメーションのフレーム間の時間
 }
 
 class AttackEffect : public Image

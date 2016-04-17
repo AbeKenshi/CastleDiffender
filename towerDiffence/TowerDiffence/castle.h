@@ -11,8 +11,8 @@ namespace castleNS
 	const int WIDTH = 120;			// 画像の幅（各フレーム）
 	const int HEIGHT = 120;			// 画像の高さ
 	const int TEXTURE_COLS = 2;
-	const int X = 18.3 * 30;	// 初期位置
-	const int Y = 9.5 * 30;
+	const int X = 549;	// 初期位置
+	const int Y = 285;
 	const int START_FRAME = 1;
 }
 

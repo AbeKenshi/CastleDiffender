@@ -1,3 +1,9 @@
+//==========================================================
+/// @file
+/// @brief    Imageクラス
+/// @author   阿部拳之
+///
+/// @attention  
 #ifndef _IMAGE_H	//このファイルが複数の箇所でインクルードされる場合に、
 #define _IMAGE_H	// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
@@ -109,7 +115,7 @@ public:
 
 	// アニメーションのフレーム間の間隔を戻す
 	virtual float getFrameDelay() {
-		return frameDelay;
+		return (float)frameDelay;
 	}
 
 	// 開始フレームの番号を戻す

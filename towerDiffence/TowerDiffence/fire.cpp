@@ -87,17 +87,17 @@ void Fire::fire(Brave *brave)
 		case characterNS::UP:
 			velocity.x = 0.0f;
 			velocity.y = -fireNS::SPEED;
-			spriteData.angle = PI / 2;
+			spriteData.angle = (float)PI / 2.0f;
 			break;
 		case characterNS::RIGHT:
 			velocity.x = fireNS::SPEED;
 			velocity.y = 0.0f;
-			spriteData.angle = -PI;
+			spriteData.angle = (float)-PI;
 			break;
 		case characterNS::DOWN:
 			velocity.x = 0.0f;
 			velocity.y = fireNS::SPEED;
-			spriteData.angle = -PI / 2;
+			spriteData.angle = (float)-PI / 2;
 			break;
 		case characterNS::LEFT:
 			velocity.x = -fireNS::SPEED;
@@ -105,8 +105,8 @@ void Fire::fire(Brave *brave)
 			spriteData.angle = 0.0f;
 			break;
 		}
-		spriteData.x = brave->getCenterX() - spriteData.width / 2;
-		spriteData.y = brave->getCenterY() - spriteData.height / 2;
+		spriteData.x = (float)(brave->getCenterX() - spriteData.width / 2 - brave->getWidth() * (brave->getScale() - 1) / 2.0);
+		spriteData.y = (float)(brave->getCenterY() - spriteData.height / 2 - brave->getHeight() * (brave->getScale() - 1) / 2.0f - 10.0f);
 		visible = true;									// ‰Š‚ğ•\¦
 		active = true;									// Õ“Ë‰Â”\‚É‚·‚é
 		fireTimer = fireNS::FIRE_DELAY;					// ”­Ë‚ÌŠÔŠu

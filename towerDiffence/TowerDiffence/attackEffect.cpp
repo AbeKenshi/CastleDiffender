@@ -17,7 +17,7 @@ AttackEffect::AttackEffect() : Image()
 	// アニメーションの最後のフレーム
 	endFrame = attackEffectNS::END_FRAME;
 	currentFrame = startFrame;
-	spriteData.scale = 0.8;
+	spriteData.scale = 0.8f;
 	loop = false;
 }
 
