@@ -1,10 +1,13 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// game.h v1.3
+//==========================================================
+/// @file
+/// @brief    Gameクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
-#ifndef _GAME_H                 // Prevent multiple definitions if this 
-#define _GAME_H                 // file is included in more than one place
+#ifndef _GAME_H                 // このファイルが複数の箇所でインクルードされる場合に、
+#define _GAME_H                 // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 class Game;
@@ -24,104 +27,105 @@ class Game;
 
 namespace gameNS
 {
-	const char FONT[] = "Courier New";  // font
-	const int POINT_SIZE = 14;          // point size
-	const COLOR_ARGB FONT_COLOR = SETCOLOR_ARGB(255, 255, 255, 255);    // white
+	const char FONT[] = "Courier New";  // フォント
+	const int POINT_SIZE = 14;          // ポイントサイズ
+	const COLOR_ARGB FONT_COLOR = SETCOLOR_ARGB(255, 255, 255, 255);    // 白
 }
 
 class Game
 {
 protected:
-	// common game properties
-	Graphics *graphics;             // pointer to Graphics
-	Input   *input;                 // pointer to Input
-	Audio   *audio;                 // pointer to Audio
-	Console *console;               // pointer to Console
-	MessageDialog *messageDialog;   // pointer to MessageDialog
+	// 共通のゲームプロパティ
+	Graphics *graphics;             // Graphicsへのポインタ
+	Input   *input;                 // Inputへのポインタ
+	Audio   *audio;                 // Audioへのポインタ
+	Console *console;               // Consoleへのポインタ
+	MessageDialog *messageDialog;   // MessageDialogへのポインタ
 	InputDialog *inputDialog;       // pointer to InputDialog
-	HWND    hwnd;                   // window handle
-	HRESULT hr;                     // standard return type
-	LARGE_INTEGER timeStart;        // Performance Counter start value
-	LARGE_INTEGER timeEnd;          // Performance Counter end value
-	LARGE_INTEGER timerFreq;        // Performance Counter frequency
-	float   frameTime;              // time required for last frame
-	float   fps;                    // frames per second
-	TextDX  dxFont;                 // DirectX font for fps
-	bool    fpsOn;                  // true to display fps
-	DWORD   sleepTime;              // number of milli-seconds to sleep between frames
-	bool    paused;                 // true if game is paused
+	HWND    hwnd;                   // ウィンドウハンドル
+	HRESULT hr;                     // 標準の戻り型
+	LARGE_INTEGER timeStart;        // パフォーマンスカウンターの開始値
+	LARGE_INTEGER timeEnd;          // パフォーマンスカウンターの終了値
+	LARGE_INTEGER timerFreq;        // パフォーマンスカウンターの周波数
+	float   frameTime;              // 最後のフレームに要した時間
+	float   fps;                    // フレームレート（1秒あたりのフレーム数）
+	TextDX  dxFont;                 // フレームレート用のDirectXフォント
+	bool    fpsOn;                  // trueの場合フレームレートを表示
+	DWORD   sleepTime;              // フレーム間でスリープする時間（ミリ秒）
+	bool    paused;                 // ゲームが一時停止されている場合、true
 	bool    initialized;
-	std::string  command;           // command from console
+	std::string  command;           // コンソールコマンド
 
 public:
-	// Constructor
+	// コンストラクタ
 	Game();
-	// Destructor
+	// デストラクタ
 	virtual ~Game();
 
-	// Member functions
+	// メンバー関数
 
-	// Window message handler
+	// Windowsメッセージハンドラ
 	LRESULT messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-	// Initialize the game
-	// Pre: hwnd is handle to window
+	// ゲームを初期化
+	// 実行前：hwndはウィンドウへのハンドル
 	virtual void initialize(HWND hwnd);
 
-	// Call run repeatedly by the main message loop in WinMain
+	// WinMain内のメインのメッセージループでrunを繰り返し呼び出す
 	virtual void run(HWND);
 
-	// Call when the graphics device was lost.
-	// Release all reserved video memory so graphics device may be reset.
+	// グラフィックスデバイスが消失したときに呼び出す
+	// グラフィックスデバイスをリセット可能にするため、
+	// 予約されていたビデオメモリをすべて解放
 	virtual void releaseAll();
 
-	// Recreate all surfaces and reset all entities.
+	// すべてのサーフェイスを再作成し、すべてのエンティティをリセット
 	virtual void resetAll();
 
-	// Delete all reserved memory.
+	// 予約されていたメモリをすべて削除
 	virtual void deleteAll();
 
-	// Process console commands.
+	// コンソールコマンドを処理
 	virtual void consoleCommand();
 
-	// Render game items.
+	// ゲームアイテムをレンダー
 	virtual void renderGame();
 
-	// Handle lost graphics device
+	// 消失したグラフィックスデバイスを処理
 	virtual void handleLostGraphicsDevice();
 
-	// Set display mode (fullscreen, window or toggle)
+	// ディスプレイモードをセット（フルスクリーン、ウィンドウもしくはトグル）
 	void setDisplayMode(graphicsNS::DISPLAY_MODE mode = graphicsNS::TOGGLE);
 
-	// Return pointer to Graphics.
+	// Grpahicsへのポインタを戻す
 	Graphics* getGraphics() { return graphics; }
 
-	// Return pointer to Input.
+	// Inputへのポインタを戻す
 	Input* getInput() { return input; }
 
-	// Exit the game
+	// ゲームを終了
 	void exitGame() { PostMessage(hwnd, WM_DESTROY, 0, 0); }
 
-	// Return pointer to Audio.
+	// Audioへのポインタを戻す
 	Audio* getAudio() { return audio; }
 
-	// Pure virtual function declarations
-	// These functions MUST be written in any class that inherits from Game
+	// 純粋仮想関数の宣言
+	// これらの関数は、Gameを継承するクラス内で記述する必要があります。
 
-	// Update game items.
+	// ゲームアイテムを更新
 	virtual void update() = 0;
 
-	// Perform AI calculations.
+	// AI計算を実行
 	virtual void ai() = 0;
 
-	// Check for collisions.
+	// 衝突をチェック
 	virtual void collisions() = 0;
 
-	// Render graphics.
-	// Call graphics->spriteBegin();
-	//   draw sprites
-	// Call graphics->spriteEnd();
-	//   draw non-sprites
+	// グラフィックスをレンダー
+	// graphics->spriteBegin();を呼び出す
+	// スプライト
+	// grpahics->spriteEnd();を呼び出す
+	// スプライト以外を描画
 	virtual void render() = 0;
 };
 

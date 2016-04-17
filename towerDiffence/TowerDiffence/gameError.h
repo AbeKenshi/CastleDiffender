@@ -1,5 +1,12 @@
-#ifndef _GAMEERROR_H            // prevent multiple definitions if this 
-#define _GAMEERROR_H            // ..file is included in more than one place
+//==========================================================
+/// @file
+/// @brief    GameErrorクラス
+/// @author   阿部拳之
+///
+/// @attention  ゲームエンジンによってスローされるErrorクラス
+
+#ifndef _GAMEERROR_H            // このファイルが複数の箇所でインクルードされる場合に、
+#define _GAMEERROR_H            // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 #include <string>
@@ -7,38 +14,38 @@
 
 namespace gameErrorNS
 {
-    // Error codes
-    // Negative numbers are fatal errors that may require the game to be shutdown.
-    // Positive numbers are warnings that do not require the game to be shutdown.
+	// エラーコード
+	// 負の数は、ゲームをシャットダウンする必要のある致命的なエラーを表します。
+	// 正の数は、ゲームをシャットダウンする必要のない警告を表します。
     const int FATAL_ERROR = -1;
     const int WARNING = 1;
 }
 
-// Game Error class. Thrown when an error is detected by the game engine.
-// Inherits from std::exception
+// GameErrorクラス。ゲームエンジンによってエラーが検知されたときにスローされます。
+// std::exceptionを継承
 class GameError : public std::exception
 {
 private:
     int     errorCode;
     std::string message;
 public:
-    // default constructor
+	// デフォルトコンストラクタ
     GameError() throw() :errorCode(gameErrorNS::FATAL_ERROR), message("Undefined Error in game.") {}
-    // copy constructor
+    // コピーコンストラクタ
     GameError(const GameError& e) throw(): std::exception(e), errorCode(e.errorCode), message(e.message) {}
-    // constructor with args
+    // 引数ありのコンストラクタ
     GameError(int code, const std::string &s) throw() :errorCode(code), message(s) {}
-    // assignment operator
+    // 代入演算子
     GameError& operator= (const GameError& rhs) throw() 
     {
         std::exception::operator=(rhs);
         this->errorCode = rhs.errorCode;
         this->message = rhs.message;
     }
-    // destructor
+	// デストラクタ
     virtual ~GameError() throw() {};
 
-    // override what from base class
+	// 基本クラスに対するオーバーライド
     virtual const char* what() const throw() { return this->getMessage(); }
 
     const char* getMessage() const throw() { return message.c_str(); }

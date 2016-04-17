@@ -1,11 +1,13 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// entity.h v1.8
-// Last modification: Mar-28-2013
+//==========================================================
+/// @file
+/// @brief    Entityクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
-#ifndef _ENTITY_H               // Prevent multiple definitions if this 
-#define _ENTITY_H               // file is included in more than one place
+#ifndef _ENTITY_H               // このファイルが複数の箇所でインクルードされる場合に、 
+#define _ENTITY_H               // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 class Entity;
@@ -16,100 +18,106 @@ class Entity;
 
 namespace entityNS
 {
-	enum COLLISION_TYPE { NONE, CIRCLE, BOX, ROTATED_BOX, PIXEL_PERFECT };
-	const float GRAVITY = 6.67428e-11f;         // gravitational constant
+	enum COLLISION_TYPE { NONE, CIRCLE, BOX, ROTATED_BOX };
+	const float GRAVITY = 6.67428e-11f;         // 重力定数
 }
 
 class Entity : public Image
 {
-	// Entity properties
+	// Entityプロパティ
 protected:
 	entityNS::COLLISION_TYPE collisionType;
-	VECTOR2 center;         // center of entity
-	float   radius;         // radius of collision circle
-	VECTOR2 distSquared;    // used for calculating circle collision
+	VECTOR2 center;				// エンティティの中心
+	float   radius;				// 円の衝突判定の大きさ
+	VECTOR2 distSquared;		// 円の衝突判定の計算に使用
 	float   sumRadiiSquared;
-	// edge specifies the collision box relative to the center of the entity.
-	// left and top are typically negative numbers
-	RECT    edge;           // for BOX and ROTATED_BOX collision detection
-	VECTOR2 corners[4];     // for ROTATED_BOX collision detection
-	VECTOR2 edge01, edge03;  // edges used for projection
-							 // min and max projections for this entity
+	RECT    edge;				// BOXとROTATED_BOXの衝突判定用のボックス
+	VECTOR2 corners[4];			// ROTATED_BOXの衝突判定用
+	VECTOR2 edge01, edge03;		// 投影用のエッジ
+	// このエンティティのボックスをedge01とedge03に投影した場合の最大と最小の投影
 	float   entA01min, entA01max, entA03min, entA03max;
-	// min and max projections for other entity
+	// 相手のボックスをedge01とedge03に投影した場合の最大と最小の投影
 	float   entB01min, entB01max, entB03min, entB03max;
-	VECTOR2 velocity;       // velocity
-	VECTOR2 deltaV;         // added to velocity during next call to update()
-	float   mass;           // Mass of entity
-	float   health;         // health 0 to 100
-	float   rr;             // Radius squared variable
-	float   force;          // Force of gravity
-	float   gravity;        // gravitational constant of the game universe
-	Input   *input;         // pointer to the input system
-	Audio   *audio;         // pointer to audio system
-	HRESULT hr;             // standard return type
-	bool    active;         // only active entities may collide
-	bool    rotatedBoxReady;    // true when rotated collision box is ready
-	DWORD   pixelsColliding;    // number of pixels colliding in pixel perfect collision
-	int tileX, tileY;						// 自分が存在するタイルの位置
-	bool isDamaged;					// ダメージを受けている状態かどうか
-	bool drawFlag;					// 描画フラグ、true時に描画
-	float damagePer;                // ダメージを受ける時に掛ける割合
+	VECTOR2 velocity;			// 速度
+	VECTOR2 deltaV;				// 次にupdate()が呼び出されたときの加速度
+	float   mass;				// エンティティの質量
+	float   health;				// 体力（0~100）
+	float   rr;					// このエンティティと相手のエンティティまでの距離
+	float   force;				// エンティティに働く力
+	float   gravity;			// ゲーム世界での重力定数
+	Input   *input;				// 入力システムへのポインタ
+	Audio   *audio;				// オーディオシステムへのポインタ
+	HRESULT hr;					// 標準の戻り値
+	bool    active;				// trueのときのみエンティティの衝突判定が有効
+	bool    rotatedBoxReady;    // 回転した衝突判定用のボックスが準備できた場合、true
+	int tileX, tileY;			// 自分が存在するタイルの位置
+	bool isDamaged;				// ダメージを受けている状態かどうか
+	bool drawFlag;				// 描画フラグ、true時に描画
+	float damagePer;            // ダメージを受ける時に掛ける割合
 
-								// --- The following functions are protected because they are not intended to be
-								// --- called from outside the class.
-								// Circular collision detection 
-								// Pre: &ent = Other entity
-								// Post: &collisionVector is from center to center
+	// 円の衝突判定メソッド
+	// collision()によって呼び出される、デフォルトの衝突判定メソッド
+	// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+	// 衝突している場合は、collisionVectorを設定
 	virtual bool collideCircle(Entity &ent, VECTOR2 &collisionVector);
-	// Axis aligned box collision detection
-	// Pre: &ent = Other entity
-	// Post: &collisionVector is from center to center
+	// 軸平行境界ボックスの衝突判定メソッド
+	// collision()によって呼び出される、デフォルトの衝突判定メソッド
+	// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+	// 衝突している場合は、collisionVectorを設定
 	virtual bool collideBox(Entity &ent, VECTOR2 &collisionVector);
-	// Separating axis collision detection between boxes
-	// Pre: &ent = Other entity
-	// Post: &collisionVector is perpendicular to collision edge
+	// 回転するボックスの衝突判定メソッド
+	// collision()によって呼び出される、デフォルトの衝突判定メソッド
+	// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+	// 衝突している場合は、collisionVectorを設定
+	// 分離軸テストを使用して衝突を判定
+	// 分離軸テスト：
+	// 2つのボックスは、特定の直線への投影が重なっていなければ衝突していない
 	virtual bool collideRotatedBox(Entity &ent, VECTOR2 &collisionVector);
-	// Separating axis collision detection between box and circle
-	// Pre: &ent = Other entity
-	// Post: &collisionVector is perpendicular to collision edge or
-	//       center to corner when collision is with box corner.
+	// 回転するボックスと円の衝突判定メソッド
+	// collision()によって呼び出される、デフォルトの衝突判定メソッド
+	// ボックスの辺と円の半径で分離軸テストを使用
+	// 円の中心が衝突ボックスの各辺を伸ばした直線の外側
+	// （ボロノイ領域）にある場合、ボックスの最も近い頂点と
+	// 衝突がないかを距離のチェックで判定します。
+	// 最も近い頂点は、重なりのテストから判断できます。
+	// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+	// 衝突している場合は、collisionVectorを設定
 	virtual bool collideRotatedBoxCircle(Entity &ent, VECTOR2 &collisionVector);
-	// Separating axis collision detection helper functions
+	// 回転するボックスの頂点、投影線、投影の最小値と最大値を計算
 	void computeRotatedBox();
+	// 相手のボックスを、このエンティティのedge01およびedge03に投影
+	// collideRotateBos()によって呼び出される
+	// 実行後：投影が重なっている場合はtrue、それ以外の場合はfalseを戻す
 	bool projectionsOverlap(Entity &ent, VECTOR2 &collisionVector);
+	// ボックスの頂点が円と衝突していないかを、距離のチェックを使用して判定
+	// collideRotateBosCircle()によって呼び出される
+	// 実行後：衝突している場合はtrue、していない場合はfalseを戻す
+	// 衝突している場合は、collisionVectorを設定
 	bool collideCornerCircle(VECTOR2 corner, Entity &ent, VECTOR2 &collisionVector);
-	// Pixel Perfect collision detection
-	// If the graphics card does not support a stencil buffer then CIRCLE
-	// collision is used.
-	// Pre: &ent = Other entity
-	// Post: &collisionVector contains collision vector
-	virtual bool collidePixelPerfect(Entity &ent, VECTOR2 &collisionVector);
-
 public:
-	// Constructor
+	// コンストラクタ
 	Entity();
-	// Destructor
+	// デストラクタ
 	virtual ~Entity() {}
 
 	////////////////////////////////////////
-	//           Get functions            //
+	//           getter                   //
 	////////////////////////////////////////
 
-	// Return center of scaled Entity as screen x,y.
+	// 画面上でのエンティティの中心の座標を戻す
 	virtual const VECTOR2* getCenter()
 	{
 		center = VECTOR2(getCenterX(), getCenterY());
 		return &center;
 	}
 
-	// Return radius of collision circle.
+	// 円の衝突判定の大きさを戻す
 	virtual float getRadius() const { return radius; }
 
-	// Return RECT structure used for BOX and ROTATED_BOX collision detection.
+	// BOXとROTATED_BOXの衝突判定用のボックスを戻す
 	virtual const RECT& getEdge() const { return edge; }
-
-	// Return corner c of ROTATED_BOX
+	
+	// ROTATED_BOXの衝突判定用のボックスの頂点の座標を戻す
 	virtual const VECTOR2* getCorner(UINT c) const
 	{
 		if (c >= 4)
@@ -117,68 +125,66 @@ public:
 		return &corners[c];
 	}
 
-	// Return velocity vector.
+	// 速度ベクトルを戻す
 	virtual const VECTOR2 getVelocity() const { return velocity; }
 
-	// Return active.
+	// エンティティがアクティブかどうかを戻す
 	virtual bool  getActive()         const { return active; }
 
-	// Return mass.
+	// 質量を戻す
 	virtual float getMass()           const { return mass; }
 
-	// Return gravitational constant.
+	// 重力定数を戻す
 	virtual float getGravity()        const { return gravity; }
 
-	// Return health;
+	// 体力を戻す
 	virtual float getHealth()         const { return health; }
 
-	// Return collision type (NONE, CIRCLE, BOX, ROTATED_BOX)
+	// 衝突判定の種類を戻す(NONE, CIRCLE, BOX, ROTATED_BOX)
 	virtual entityNS::COLLISION_TYPE getCollisionType() { return collisionType; }
-
-	// Return number of pixels colliding in pixel perfect collision
-	virtual DWORD getPixelsColliding() const { return pixelsColliding; }
 	
-	// 自分が存在するタイルのX位置
+	// 自分が存在するタイルのX位置を戻す
 	int getTileX() { return tileX; }
 	
-	// 自分が存在するタイルのY位置
+	// 自分が存在するタイルのY位置を戻す
 	int getTileY() { return tileY; }
 	
 	////////////////////////////////////////
-	//           Set functions            //
+	//           setter                   //
 	////////////////////////////////////////
 
-	// Set velocity.
+	// 速度をセット
 	virtual void  setVelocity(VECTOR2 v) { velocity = v; }
 
-	// Set delta velocity. Added to velocity in update().
+	// 次の更新での加速度をセット
 	virtual void  setDeltaV(VECTOR2 dv) { deltaV = dv; }
 
-	// Set active.
+	// エンティティがアクティブかどうかをセット
 	virtual void  setActive(bool a) { active = a; }
 
-	// Set health.
+	// 体力をセット
 	virtual void setHealth(float h) { health = h; }
 
-	// Set mass.
+	// 質量をセット
 	virtual void  setMass(float m) { mass = m; }
 
-	// Set gravitational constant. Default is 6.67428e-11
+	// 重力定数をセット。デフォルトは6.67428e-11
 	virtual void  setGravity(float g) { gravity = g; }
 
-	// Set radius of collision circle.
+	// 円の衝突判定用の半径をセット
 	virtual void setCollisionRadius(float r) { radius = r; }
 
-	// Set collision type (NONE, CIRCLE, BOX, ROTATED_BOX)
+	// 衝突判定の種類をセット(NONE, CIRCLE, BOX, ROTATED_BOX)
 	virtual void setCollisionType(entityNS::COLLISION_TYPE ctype)
 	{
 		collisionType = ctype;
 	}
 
-	// Set RECT structure used for BOX and ROTATED_BOX collision detection.
+
+	// BOXとROTATED_BOXの衝突判定用のボックスをセット
 	virtual void setEdge(RECT e) { edge = e; }
 
-	// Set rotatedBoxReady. Set to false to force recalculation.
+	// 回転した衝突判定用のボックスが準備できているかをセット
 	virtual void setRotatedBoxReady(bool r) { rotatedBoxReady = r; }
 
 	// タイル上での位置をセットする関数
@@ -188,12 +194,12 @@ public:
 	void setTileY(int y) { tileY = y; }
 
 	////////////////////////////////////////
-	//         Other functions            //
+	//         その他の関数               //
 	////////////////////////////////////////
 
-	// Update Entity.
-	// typically called once per frame
-	// frameTime is used to regulate the speed of movement and animation
+	// update
+	// 通常、フレームごとに1回呼び出す
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
 	virtual void update(float frameTime);
 
 	// エンティティを更新
@@ -207,33 +213,40 @@ public:
 	// パラメータリセット
 	virtual void reset();
 
-	// Initialize Entity
-	// Pre: *gamePtr = pointer to Game object
-	//      width = width of Image in pixels  (0 = use full texture width)
-	//      height = height of Image in pixels (0 = use full texture height)
-	//      ncols = number of columns in texture (1 to n) (0 same as 1)
-	//      *textureM = pointer to TextureManager object
+	// Entityを初期化
+	// 実行前：*gamePtr = Gameオブジェクトへのポインタ
+	//		   width = Imageの幅（ピクセル単位）（0 = テクスチャ全体の幅を使用）
+	//		   height = Imageの高さ（ピクセル単位）（0 = テクスチャ全体の高さを使用）
+	//         ncols = テクスチャ内の列数（1からnまで）（0は1と同じ）
+	//         *textureM = Texturemanagerオブジェクトへのポインタ
+	// 実行後：成功した場合はtrue、失敗した場合はfalseを戻す
 	virtual bool initialize(Game *gamePtr, int width, int height, int ncols,
 		TextureManager *textureM);
-	// Activate Entity.
+
+	// エンティティをアクティブ化
 	virtual void activate();
 
-	// Empty ai function to allow Entity objects to be instantiated.
+	// AI（人工知能）
+	// 通常、フレームごとに1回呼び出す
+	// 人工知能計算を実行、entは相互作用のために渡される
 	virtual void ai(float frameTime, Entity &ent);
 
-	// Is this entity outside the specified rectangle?
+	// このエンティティが指定された矩形の外側にあるか
 	virtual bool outsideRect(RECT rect);
 
-	// Does this entity collide with ent?
+	// このエンティティともう一方のエンティティが衝突しているか
 	virtual bool collidesWith(Entity &ent, VECTOR2 &collisionVector);
 
-	// Damage this Entity with weapon.
+	// damage
+	// このエンティティが、武器によってダメージを受ける
+	// 継承する側のクラスでこの関数をオーバーライド
 	virtual void damage(int weapon);
 
-	// Entity bounces after collision with other Entity
+	// 他のエンティティとの衝突後の跳ね返り
 	void bounce(VECTOR2 &collisionVector, Entity &ent);
 
-	// Adds the gravitational force to the velocity vector of this entity
+	// 相手のエンティティからこのエンティティへの重力
+	// 重力をこのエンティティの速度ベクトルに加算
 	void gravityForce(Entity *other, float frameTime);
 
 	// タイル上での位置を初期化する関数

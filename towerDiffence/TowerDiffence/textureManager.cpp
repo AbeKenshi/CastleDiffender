@@ -26,7 +26,7 @@ bool TextureManager::initialize(Graphics *g, std::string file)
 {
 	bool success = true;
 	try {
-		graphics = g;                       // the graphics object
+		graphics = g;                       // graphicsオブジェクト
 		for (UINT i = 0; i<file.size(); i++)    // convert to lowercase
 			file.at(i) = tolower(file.at(i));
 		if (file.rfind(".txt") == file.size() - 4) // if .txt extension
@@ -63,7 +63,7 @@ bool TextureManager::initialize(Graphics *g, std::string file)
 		}
 	}
 	catch (...) { return false; }
-	initialized = true;                    // set true when initialized
+	initialized = true;                    // 正常に初期化された場合、trueを設定
 	return success;
 }
 

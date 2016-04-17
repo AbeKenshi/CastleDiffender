@@ -1,10 +1,13 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// dashboard.h v1.0
+//==========================================================
+/// @file
+/// @brief    ダッシュボード関連のクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
-#ifndef _DASHBOARD_H            // Prevent multiple definitions if this 
-#define _DASHBOARD_H            // file is included in more than one place
+#ifndef _DASHBOARD_H            // このファイルが複数の箇所でインクルードされる場合に、 
+#define _DASHBOARD_H            // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 #include <string>
@@ -18,8 +21,8 @@ namespace dashboardNS
 {
 	const int	WIDTH = 48;
 	const int	HEGIHT = 48;
-    const int   TEXTURE_COLS = 4;       // texture has 4 columns
-    const int   BAR_FRAME = 0;          // the frame number of each texture
+    const int   TEXTURE_COLS = 4;       // テクスチャは4列
+    const int   BAR_FRAME = 0;          // それぞれのテクスチャのフレーム番号
     const int   DIAL360_FRAME = 1;      // "
     const int   DIAL270_FRAME = 2;      // ...
     const int   DIAL180_FRAME = 3;
@@ -32,8 +35,8 @@ namespace dashboardNS
     const int   BUTTON_UP_FRAME = 10;
     const int   BUTTON_DOWN_FRAME = 11;
     const int   BAR_GRAPH_FRAME = 12;
-    const int   SWITCH_WIDTH = 44;      // width of toggle switch 
-    const int   BAR_GRAPH_WIDTH = 8;    // width of bar + gap
+    const int   SWITCH_WIDTH = 44;      // トグルスイッチの幅（ピクセル単位）
+    const int   BAR_GRAPH_WIDTH = 8;    // 棒グラフの幅＋空きスペース
     enum DialType{DIAL360, DIAL270, DIAL180};
 }
 
@@ -45,41 +48,44 @@ class SevenSegment : public Image
     double  number;
     public:
     SevenSegment();
-    // Initialize Seven Segment
-    // Pre: *graphics = pointer to Graphics object
-    //      *textureM = pointer to TextureManager object
-    //      left, top = screen location
-    //      scale = scaling (zoom) amount
-    //      digits = number of digits
-    //      color = color of digits
+	// セブンセグメント表示の初期化
+	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
+	//		   *textureM = TextureManagerオブジェクトへのポインタ
+	//		   left、top = 画面位置
+	//         scale = 倍率（ズーム）
+	//		   digits = 桁数
+	//		   color = 数字の色
+	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
     bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
                     float scale, UINT digits, COLOR_ARGB color);
-    // Set Number in 7-Segment
+	// セブンセグメント表示に表示する数値を設定
     void set(double value);
-    // Override update
+    // updateをオーバーライド
     virtual void update(float frameTime)    {}
-    // Draw 1 digit (internal use)
+	// セブンセグメントの数字「0」～「9」と「-」を表示
     void drawDigit(char n, COLOR_ARGB color);
-    // Draw decimal point (internal use)
+	// 小数点を描画
     void drawDecimal(COLOR_ARGB color);
-    // Draw Image using color as filter. Default color is WHITE.
-    virtual void draw(COLOR_ARGB color = graphicsNS::WHITE);
+	// セブンセグメント表示を描画
+	// number変数には、表示する浮動小数点数値が格納されている
+	virtual void draw(COLOR_ARGB color = graphicsNS::WHITE);
 };
 
 class Bar : public Image
 {
     public:
-    // Initialize the Bar 
-    // Pre: *graphics = pointer to Graphics object
-    //      *textureM = pointer to TextureManager object
-    //      left, top = screen location
-    //      scale = scaling (zoom) amount
-    //      color = color of bar
+	// Barを初期化
+	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
+	//		   *textureM = TextureManagerオブジェクトへのポインタ
+	//		   left、top = 画面位置
+	//         scale = 倍率（ズーム）
+	//		   color = バーの色
+	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
     bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
                     float scale, COLOR_ARGB color);
-    // Set Bar Size
+	// バーのサイズを設定
     void set(float percentOn);
-    // Override update so setRect() is not called.
+	// updateをオーバーライド
     virtual void update(float frameTime)    {}
 };
 
@@ -89,25 +95,24 @@ class DialGauge : public Image
     Image   pointer;
     dashboardNS::DialType dialType;
     public:
-    // Initialize Dial Gauge
-    // Pre: *graphics = pointer to Graphics object
-    //      *textureM = pointer to TextureManager object
-    //      left, top = screen location
-    //      scale = scaling (zoom) amount
-    //      type = dial type
-    //      zeroAngle = where zero is on dial
-    //      dialColor = color of dial
-    //      pointerColor = color of pointer
+	// DialGaugeを初期化
+	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
+	//		   *textureM = TextureManagerオブジェクトへのポインタ
+	//		   left、top = 画面位置
+	//         scale = 倍率（ズーム）
+	//		   type = 円盤の種類
+	//		   zeroAngle = 円盤のゼロの位置
+	//		   dialColor = 円盤の色
+	//		   pointColor = 数字の色
+	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
     bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
                     float scale, dashboardNS::DialType type, float zeroAngle,
                     COLOR_ARGB dialColor, COLOR_ARGB pointerColor);
-    // Set Dial as percentage 0 to 100
+	// DialGaugeの指針を設定
     void set(float percentOn);
-    // Override update so setRect() is not called.
+	// updateをオーバーライド
     virtual void update(float frameTime)    {}
-    // Draw the image without creating a sprite Begin/End pair.
-    // Pre : Image::spriteBegin() is called.
-    // Post: Image::spriteEnd() is called.
+	// DialGaugeと指針を描画
     virtual void draw(COLOR_ARGB color = graphicsNS::WHITE); // draw using color as filter
 };
 
@@ -119,20 +124,22 @@ class Light : public Image
     COLOR_ARGB  onColor;
     COLOR_ARGB  offColor;
     public:
-    Light();    // constructor
-    // Initialize the Light
-    // Pre: *graphics = pointer to Graphics object
-    //      *textureM = pointer to TextureManager object
-    //      left, top = screen location
-    //      scale = scaling (zoom) amount
-    //      flashRate = on/off/flash delay, <0 On, =0 Off, >0 flashes per second
-    //      colorOn = the color of the light when on
-    //      colorOff = the color of the light when off
+    Light();    // コンストラクタ
+	// Lightを初期化
+	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
+	//		   *textureM = TextureManagerオブジェクトへのポインタ
+	//		   left、top = 画面位置
+	//         scale = 倍率（ズーム）
+	//		   flashRate = 点灯/消灯/点滅の速さ
+	//		   （<0の場合は点灯、=0の場合は消灯、>0の場合は1秒あたりの点滅の時間）
+	//		   colorOn = 点灯時のライトの色
+	//		   colorOff = 消灯時のライトの色
+	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
     bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
                 float scale,float flashRate, COLOR_ARGB colorOn, COLOR_ARGB colorOff);
-    // Set flashRate: <0 On, =0 Off, >0 flash delay in seconds
-    void set(float rate);
-    // Override update
+	// flashRateを設定：<0の場合は点灯、 =0の場合は消灯、>0の場合は点滅の周期
+	void set(float rate);
+	// updateをオーバーライド
     virtual void update(float frameTime);
 };
 
@@ -141,22 +148,23 @@ class ToggleSwitch : public Image
     private:
     Input   *input;
     HWND    hwnd;
-    RECT    switchRect;         // mouse click region
-    bool    switchOn;           // switch state
-    bool    mouseClick;         // track mouse clicks
+    RECT    switchRect;         // マウスクリックを受け付ける範囲
+    bool    switchOn;           // スイッチの状態
+    bool    mouseClick;         // マウスクリックの状態
     public:
-    // Toggle switch constructor
+    // Toggle switchコンストラクタ
     ToggleSwitch();
-    // Initialize the Toggle Switch
-    // Pre: *graphics = pointer to Graphics object
-    //      *textureM = pointer to TextureManager object
-    //      *in = pointer to Input object
-    //      hwnd = handle to window
-    //      left, top = screen location
-    //      scale = scaling (zoom) amount
+	// 切り替えスイッチ（ToggleSwitch）を初期化
+	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
+	//		   *textureM = TextureManagerオブジェクトへのポインタ
+	//		   *in = Inputオブジェクトへのポインタ
+	//         hwnd = ウィンドウへのハンドル
+	//		   left、top = 画面位置
+	//		   scale = 倍率（ズーム）
+	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
     bool initialize(Graphics *graphics, TextureManager *textureM, Input *in, HWND hwnd,
                     int left, int top, float scale);
-    // Override update
+	// updateをオーバーライド
     virtual void update(float frameTime);
     // スイッチの状態を取得
     bool getSwitchOn()   {return switchOn;}
@@ -170,24 +178,25 @@ class PushButton : public Image
     private:
     Input   *input;
     HWND    hwnd;
-    RECT    switchRect;         // mouse click region
-    bool    switchOn;           // switch state
-    bool    mouseClick;         // track mouse clicks
-    bool    momentary;          // true for momentary, false for toggle
+	RECT    switchRect;         // マウスクリックを受け付ける範囲
+	bool    switchOn;           // スイッチの状態
+	bool    mouseClick;         // マウスクリックの状態
+    bool    momentary;          // 一定時間ごとに切り替える場合はtrue、トグルの場合はfalse
     public:
-    // Pushbutton switch constructor
+    // Pushbutton switchコンストラクタ
     PushButton();
-    // Initialize the Pushbutton
-    // Pre: *graphics = pointer to Graphics object
-    //      *textureM = pointer to TextureManager object
-    //      *in = pointer to Input object
-    //      hwnd = handle to window
-    //      left, top = screen location
-    //      scale = scaling (zoom) amount
-    //      momentary = true for momentary, false for toggle
+	// プッシュボタン（PushButton）を初期化
+	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
+	//		   *textureM = TextureManagerオブジェクトへのポインタ
+	//		   *in = Inputオブジェクトへのポインタ
+	//         hwnd = ウィンドウへのハンドル
+	//		   left、top = 画面位置
+	//		   scale = 倍率（ズーム）
+	//		   type = trueの場合はモーメンタリー、falseの場合はオルタネート
+	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
     bool initialize(Graphics *graphics, TextureManager *textureM, Input *in, HWND hwnd,
                     int left, int top, float scale, bool momentary);
-    // Override update
+	// updateをオーバーライド
     virtual void update(float frameTime);
     // Get switch state
     bool getSwitchOn()  {return switchOn;}
@@ -199,29 +208,28 @@ class PushButton : public Image
 class BarGraph : public Image
 {
     private:
-    int     maxBars;    // max bars
-    int   barsOn;       // bars currently on
+    int     maxBars;    // バーの本数の最大数
+    int   barsOn;       // 現在のバーの本数
     public:
-    // BarGraph constructor
+    // BarGraphコンストラクタ
     BarGraph();
-    // Initialize the Bar Graph
-    // Pre: *graphics = pointer to Graphics object
-    //      *textureM = pointer to TextureManager object
-    //      *in = pointer to Input object
-    //      hwnd = handle to window
-    //      left, top = screen location
-    //      scale = scaling (zoom) amount
-    //      bars = number of bars in meter
-    //      color = color of bars
+	// BarGraphを初期化
+	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
+	//		   *textureM = TextureManagerオブジェクトへのポインタ
+	//		   left、top = 画面位置
+	//		   scale = 倍率（ズーム）
+	//		   bars = メーター内のバーの本数
+	//		   color = バーの色
+	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
     bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
                     float scale, UINT bars, COLOR_ARGB color);
-    // Set display 0 to 100 percent
-    void set(float percentOn);
-    // Override update so setRect() is not called.
+	// barsOnの値を、表示するバーの本数に設定
+	// パラメータpは割合（0～100）
+    void set(float percentOn);	
+	// updateをオーバーライド
     virtual void update(float frameTime)    {}
-    // Draw the image without creating a sprite Begin/End pair.
-    // Pre : Image::spriteBegin() is called.
-    // Post: Image::spriteEnd() is called.
+	// BarGraphを描画
+	// barsOnは、表示するバーの本数を格納
     virtual void draw(COLOR_ARGB color = graphicsNS::WHITE); // draw using color as filter
 };
 
