@@ -14,7 +14,9 @@
 #include "map.h"
 #include "enemy.h"
 #include "midBoss.h"
+#include "fire.h"
 #include "rect.h"
+#include "braveAttackCollision.h"
 
 // Braveクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -65,10 +67,12 @@ namespace braveNS
 class Brave : public Character
 {
 private:
-	int magicPoint;					// MP、必殺技を使うと減少。
-	float mpTimer;					// MP回復用のタイマー
-	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
-	float tmpY;						// 一時的なY座標保存用
+	int magicPoint;								// MP、必殺技を使うと減少。
+	float mpTimer;								// MP回復用のタイマー
+	bool secondAttackFlag;						// 第二段攻撃アニメーションの開始フラグ
+	float tmpY;									// 一時的なY座標保存用
+	Fire fire;									// 炎
+	BraveAttackCollision braveAttackCollision;	// 勇者の攻撃の当たり判定用
 	// 向いている方向とアニメーションを切り替える
 	// 内部的にのみ使用
 	void changeWithMove(float frameTime);
@@ -97,6 +101,10 @@ public:
 	//==========================================================
 	// MPを返す関数
 	int getMP() { return magicPoint; }
+	// 炎を返す
+	Fire& getFire() { return fire; }
+	// 攻撃時のエンティティを返す
+	BraveAttackCollision& getBraveAttackCollision() { return braveAttackCollision; }
 
 	//==========================================================
 	// setter

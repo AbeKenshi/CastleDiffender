@@ -3,7 +3,7 @@
 #define WIN32_LEAN_AND_MEAN
 
 #include "entity.h"
-#include "brave.h"
+#include "character.h"
 #include "constants.h"
 
 namespace fireNS
@@ -33,6 +33,7 @@ public:
 	void reset();
 
 	// 新しいメンバー関数
-	void fire(Brave *brave);		// 勇者からミサイルを発射
+	// 勇者からミサイルを発射
+	void fire(float centerX, float centerY, float width, float height, float scale, int& mp, characterNS::DIRECTION direction);
 };
 #endif

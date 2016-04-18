@@ -65,6 +65,7 @@ void Brave::reset()
 	endFrame = braveNS::MOVE_UP_END_FRAME;						// アニメーションの最後のフレーム
 	currentFrame = startFrame;									// 現在のフレームはアニメーションの最初のフレームに設定
 	secondAttackFlag = false;									// 二連撃目の攻撃フラグはオフ
+	fire.reset();												// 炎を初期化
 	Character::reset();
 }
 
@@ -78,6 +79,16 @@ void Brave::update(float frameTime)
 	// エンティティが非アクティブなら、何もしない
 	if (!active)
 		return;
+
+
+	// 勇者の攻撃判定がでている場合はコリジョンを生成して当たり判定をとる
+	if (attackCollisionFlag)
+		braveAttackCollision.attack(getCenterX(), getCenterY(), getWidth(), getHeight(), direction);
+
+	// FIRE_KEYに対応するキーが押されたら勇者から炎を発射
+	if (input->isKeyDown(BRAVE_FIRE_KEY))
+		fire.fire(getCenterX(), getCenterY(), getWidth(), getHeight(), getScale(), magicPoint, direction);
+
 	// 攻撃用のエンティティを出現させるフラグをオフ
 	attackCollisionFlag = false;
 
@@ -316,6 +327,12 @@ void Brave::update(float frameTime)
 		spriteData.y = rectNS::HEIGHT - 10;							// 画面上端に移動
 	if (spriteData.y > GAME_HEIGHT - braveNS::HEIGHT * getScale())  // 画面下端を超えたら
 		spriteData.y = GAME_HEIGHT -braveNS::HEIGHT * getScale();	// 画面下端に移動
+
+
+	// 勇者の攻撃コリジョンを更新
+	braveAttackCollision.update(frameTime);
+	// 炎を更新
+	fire.update(frameTime);
 }
 
 //==========================================================

@@ -8,7 +8,8 @@
 #ifndef _ATTACK_EFFECT_H	// このファイルが複数の箇所でインクルードされる場合、
 #define _ATTACK_EFFECT_H	// 多重に定義されることを防ぎます。
 
-#include "brave.h"
+#include "image.h"
+#include "character.h"
 
 namespace attackEffectNS
 {
@@ -41,6 +42,6 @@ public:
 	//==========================================================
 	// Attack
 	// この関数が呼ばれると攻撃の衝撃波のアニメーションが発動
-	void attack(Brave &brave);
+	void attack(float centerX, float centerY, float width, float height, characterNS::DIRECTION direction);
 };
 #endif // !_ATTACK_EFFECT_H

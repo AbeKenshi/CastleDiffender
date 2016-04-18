@@ -47,33 +47,33 @@ void AttackEffect::update(float frameTime)
 // Attack
 // この関数が呼ばれると攻撃の衝撃波のアニメーションが発動
 //==========================================================
-void AttackEffect::attack(Brave &brave)
+void AttackEffect::attack(float centerX, float centerY, float width, float height, characterNS::DIRECTION direction)
 {
 	// brave（プレイヤー）の向きによって表示させる位置を分岐
 	// プレイヤーの元々の画像が偏っているので、±10程度の補正をかけている
-	switch (brave.getDirection())
+	switch (direction)
 	{
 	case characterNS::RIGHT:	// 右
-		setX(brave.getCenterX() - getWidth() * getScale() / 2.0f);
-		setY(brave.getCenterY() - getHeight() * getScale() / 2.0f - 10);
+		setX(centerX - getWidth() * getScale() / 2.0f);
+		setY(centerY - getHeight() * getScale() / 2.0f - 10);
 		setDegrees(0);
 		flipHorizontal(false);
 		break;
 	case characterNS::LEFT:		// 左
-		setX(brave.getCenterX() - getWidth() * getScale() / 2.0f - 10);
-		setY(brave.getCenterY() - getHeight() * getScale() / 2.0f - 10);
+		setX(centerX - getWidth() * getScale() / 2.0f - 10);
+		setY(centerY - getHeight() * getScale() / 2.0f - 10);
 		setDegrees(0);
 		flipHorizontal(true);
 		break;
 	case characterNS::UP:		// 上
-		setX(brave.getCenterX() - getWidth() * getScale() / 2.0f - 10);
-		setY(brave.getCenterY() - getHeight() * getScale() / 2.0f - 10 - 10);
+		setX(centerX - getWidth() * getScale() / 2.0f - 10);
+		setY(centerY - getHeight() * getScale() / 2.0f - 10 - 10);
 		setDegrees(40.0f);
 		flipHorizontal(true);
 		break;
 	case characterNS::DOWN:		// 下
-		setX(brave.getCenterX() - getWidth() * getScale() / 2.0f - 10);
-		setY(brave.getCenterY() - getHeight() * getScale() / 2.0f - 10 + 10);
+		setX(centerX - getWidth() * getScale() / 2.0f - 10);
+		setY(centerY - getHeight() * getScale() / 2.0f - 10 + 10);
 		setDegrees(230.0f);
 		flipHorizontal(true);
 		break;
