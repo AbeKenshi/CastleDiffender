@@ -4,8 +4,6 @@
 
 #include "entity.h"
 #include "constants.h"
-#include "brave.h"
-#include "enemy.h"
 #include "attackEffect.h"
 
 namespace braveAttackCollisionNS
@@ -29,7 +27,8 @@ public:
 	void update(float frameTime);
 
 	// V‚µ‚¢ƒƒ“ƒo[ŠÖ”
-	void attack(Brave &brave);	// —EÒ‚©‚ç‚ÌUŒ‚
+	// —EÒ‚©‚ç‚ÌUŒ‚
+	void attack(float centerX, float centerY, float width, float height, characterNS::DIRECTION direction);
 
 	//==========================================================
 	// getter

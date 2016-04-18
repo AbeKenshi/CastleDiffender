@@ -63,12 +63,11 @@ private:
 	TextureManager descriptionTexture;                  // 操作説明のテクスチャ
 	Image description;                                  // 操作説明画像
 	TextureManager braveTexture;						// 勇者のテクスチャ
-	Brave brave;										// 勇者
 	TextureManager attackEffectTexture;					// 攻撃の衝撃波のテクスチャ
 	TextureManager braveIconTexture;					// 勇者のアイコンのテクスチャ
-	BraveIcon braveIcon;								// 勇者のアイコン
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
-	BraveAttackCollision braveAttackCollision;			// 勇者の攻撃の当たり判定用
+	Brave brave;										// 勇者
+	BraveIcon braveIcon;								// 勇者のアイコン
 	TextureManager tileTexture;							// タイルのテクスチャ
 	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ
@@ -79,7 +78,6 @@ private:
 	TextureManager castleIconTexture;					// 城のアイコンのテクスチャ
 	CastleIcon castleIcon;								// 城のアイコン
 	TextureManager fireTexture;							// 炎のテクスチャ
-	Fire fire;											// 炎
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
 	Enemy **enemy;	    								// 敵へのポインタの配列
 	float *enemyX;										// 敵の初期位置Xの配列

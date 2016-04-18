@@ -77,12 +77,12 @@ void Fire::update(float frameTime)
 // Fire
 // Braveからミサイルを発射
 //==========================================================
-void Fire::fire(Brave *brave)
+void Fire::fire(float centerX, float centerY, float width, float height, float scale, int& mp, characterNS::DIRECTION direction)
 {
-	if (fireTimer <= 0.0f && brave->getMP() > fireNS::FIRE_MP)	// 発射可能な場合
+	if (fireTimer <= 0.0f && mp > fireNS::FIRE_MP)	// 発射可能な場合
 	{
 		audio->playCue("fire");
-		switch (brave->getDirection())
+		switch (direction)
 		{
 		case characterNS::UP:
 			velocity.x = 0.0f;
@@ -105,11 +105,11 @@ void Fire::fire(Brave *brave)
 			spriteData.angle = 0.0f;
 			break;
 		}
-		spriteData.x = (float)(brave->getCenterX() - spriteData.width / 2 - brave->getWidth() * (brave->getScale() - 1) / 2.0);
-		spriteData.y = (float)(brave->getCenterY() - spriteData.height / 2 - brave->getHeight() * (brave->getScale() - 1) / 2.0f - 10.0f);
+		spriteData.x = (float)(centerX - spriteData.width / 2 - width * (scale - 1) / 2.0);
+		spriteData.y = (float)(centerY - spriteData.height / 2 - height * (scale - 1) / 2.0f - 10.0f);
 		visible = true;									// 炎を表示
 		active = true;									// 衝突可能にする
 		fireTimer = fireNS::FIRE_DELAY;					// 発射の間隔
-		brave->setMP(brave->getMP() - fireNS::FIRE_MP);	// MPを減少
+		mp -= fireNS::FIRE_MP;							// MPを減少
 	}
 }

@@ -153,19 +153,19 @@ void TowerDiffence::initialize(HWND hwnd)
 	if (!attackCollisionTexture.initialize(graphics, COLLISION_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision texture"));
 	// 勇者のあたり判定用
-	if (!braveAttackCollision.initialize(this, braveAttackCollisionNS::WIDTH, braveAttackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
+	if (!brave.getBraveAttackCollision().initialize(this, braveAttackCollisionNS::WIDTH, braveAttackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision"));
 	if (!attackEffectTexture.initialize(graphics, ATTACK_EFFECT_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack effect texture"));
-	if (!braveAttackCollision.getAttackEffect().initialize(graphics, attackEffectNS::WIDTH, attackEffectNS::HEIGHT, attackEffectNS::TEXTURE_COLS, &attackEffectTexture))
+	if (!brave.getBraveAttackCollision().getAttackEffect().initialize(graphics, attackEffectNS::WIDTH, attackEffectNS::HEIGHT, attackEffectNS::TEXTURE_COLS, &attackEffectTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack effect"));
 
 	// 炎のテクスチャ
 	if (!fireTexture.initialize(graphics, FIRE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire texture"));
-	if (!fire.initialize(this, fireNS::WIDTH, fireNS::HEIGHT, fireNS::TEXTURE_COLS, &fireTexture))
+	if (!brave.getFire().initialize(this, fireNS::WIDTH, fireNS::HEIGHT, fireNS::TEXTURE_COLS, &fireTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire"));
-	fire.setScale(1.5);
+	brave.getFire().setScale(1.5);
 
 	// 雑魚敵のテクスチャ
 	if (!enemyTexture.initialize(graphics, ENEMY_IMAGE))
@@ -340,22 +340,12 @@ void TowerDiffence::update()
 			roundTimer -= frameTime;
 			return;
 		}
-		// FIRE_KEYに対応するキーが押されたら勇者から炎を発射
-		if (input->isKeyDown(BRAVE_FIRE_KEY))
-			fire.fire(&brave);
-		// 勇者の攻撃判定がでている場合はコリジョンを生成して当たり判定をとる
-		if (brave.getAttackCollisionFlag())
-			braveAttackCollision.attack(brave);
 		// それぞれの敵を更新
 		for (int i = 0; i < enemyNum; i++) {
 			enemy[i]->update(frameTime);
 		}
 		// 勇者を更新
 		brave.update(frameTime);
-		// 炎を更新
-		fire.update(frameTime);
-		// 勇者の攻撃コリジョンを更新
-		braveAttackCollision.update(frameTime);
 		// 城を更新
 		castle.update(frameTime);
 		// 勇者のアイコン画像を更新
@@ -431,8 +421,6 @@ void TowerDiffence::roundStart()
 	}
 	// 城を初期化
 	castle.reset();
-	// 炎を初期化
-	fire.reset();
 	// 残り時間を初期化
 	remainingTime = 1500.0f;
 	// ゲームオーバーのフラグを初期化
@@ -488,7 +476,7 @@ void TowerDiffence::collisions()
 	// 各敵について衝突判定
 	for (int i = 0; i < enemyNum; i++) {
 		// プレイヤーの攻撃コリジョンと雑魚敵の衝突の場合
-		if (braveAttackCollision.collidesWith(*enemy[i], collisionVector))
+		if (brave.getBraveAttackCollision().collidesWith(*enemy[i], collisionVector))
 		{
 			// 敵にダメージを与える
 			enemy[i]->damage(BRAVE_ATTACK);
@@ -589,11 +577,11 @@ void TowerDiffence::collisions()
 		}
 
 		// 炎と雑魚敵の衝突の場合
-		if (fire.collidesWith(*enemy[i], collisionVector))
+		if (brave.getFire().collidesWith(*enemy[i], collisionVector))
 		{
 			enemy[i]->damage(FIRE);
-			fire.setVisible(false);
-			fire.setActive(false);
+			brave.getFire().setVisible(false);
+			brave.getFire().setActive(false);
 		}
 
 		// 攻撃中ならば行動選択は行わない
@@ -819,7 +807,7 @@ void TowerDiffence::collisions()
 	for (int i = 0; i < 8; ++i)
 	{
 		// プレイヤーの攻撃コリジョンとの衝突の場合
-		if (braveAttackCollision.collidesWith(barricades[i], collisionVector))
+		if (brave.getBraveAttackCollision().collidesWith(barricades[i], collisionVector))
 		{
 			// バリケードにダメージを与える
 			barricades[i].damage(BRAVE_ATTACK);
@@ -831,8 +819,8 @@ void TowerDiffence::collisions()
 	// 勇者の攻撃がいずれかの敵に当たった場合、攻撃コリジョンをなくす
 	if (braveAttackCollidesWithAnyEnemy)
 	{
-		braveAttackCollision.setVisible(false);
-		braveAttackCollision.setActive(false);
+		brave.getBraveAttackCollision().setVisible(false);
+		brave.getBraveAttackCollision().setActive(false);
 	}
 
 	// 死亡チェック
@@ -939,7 +927,7 @@ void TowerDiffence::render()
 		braveIcon.draw();
 		castleIcon.draw();
 		castle.draw();
-		fire.draw();
+		brave.getFire().draw();
 		float tmpX = brave.getX();
 		float tmpY = brave.getY();
 		brave.setX((float)(tmpX - brave.getWidth() * (brave.getScale() - 1) / 2.0));
@@ -947,8 +935,8 @@ void TowerDiffence::render()
 		brave.draw(graphicsNS::WHITE);
 		brave.setX(tmpX);
 		brave.setY(tmpY);
-		braveAttackCollision.draw();
-		braveAttackCollision.getAttackEffect().draw();
+		brave.getBraveAttackCollision().draw();
+		brave.getBraveAttackCollision().getAttackEffect().draw();
 		braveHealthBar.set(brave.getHealth());
 		braveMpBar.set((float)brave.getMP());
 		castleHealthBar.set(castle.getHealth());
