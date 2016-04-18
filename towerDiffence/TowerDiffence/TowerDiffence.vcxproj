@@ -200,6 +200,7 @@
     <ClCompile Include="midBoss.cpp" />
     <ClCompile Include="mpTextImage.cpp" />
     <ClCompile Include="rect.cpp" />
+    <ClCompile Include="stage.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="textDX.cpp" />
     <ClCompile Include="textureManager.cpp" />

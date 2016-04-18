@@ -97,6 +97,7 @@
     <ClCompile Include="winmain.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
+    <ClCompile Include="stage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="attackEffect.h">
