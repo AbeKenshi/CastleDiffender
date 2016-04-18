@@ -1,3 +1,11 @@
+//==========================================================
+/// @file
+/// @brief    Fireクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #ifndef _FIRE_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _FIRE_H		// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
@@ -6,6 +14,9 @@
 #include "character.h"
 #include "constants.h"
 
+
+// Fireクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace fireNS
 {
 	const int WIDTH = 24;							// 画像の幅（各フレーム）
@@ -33,7 +44,8 @@ public:
 	void reset();
 
 	// 新しいメンバー関数
-	// 勇者からミサイルを発射
+	// 勇者から炎を発射
+	// 指定した位置にこのエンティティをアクティブにして出現させる
 	void fire(float centerX, float centerY, float width, float height, float scale, int& mp, characterNS::DIRECTION direction);
 };
 #endif

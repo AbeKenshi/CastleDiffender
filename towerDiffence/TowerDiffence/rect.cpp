@@ -1,7 +1,10 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// console.cpp v1.0
+//==========================================================
+/// @file
+/// @brief    rect.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
 #include "rect.h"
 
@@ -14,7 +17,7 @@ Rect::Rect()
 	graphics = NULL;
 	backColor = rectNS::BACK_COLOR;
 
-	x = rectNS::X;                   // 最初の四角形の位置
+	x = rectNS::X;						// 最初の四角形の位置
 	y = rectNS::Y;
 
 	width = rectNS::WIDTH;
@@ -130,7 +133,7 @@ const void Rect::draw()
 }
 
 //=============================================================================
-// called when graphics device is lost
+// グラフィックスデバイスが消失したときに呼び出される
 //=============================================================================
 void Rect::onLostDevice()
 {
@@ -140,7 +143,7 @@ void Rect::onLostDevice()
 }
 
 //=============================================================================
-// called when graphics device is reset
+// グラフィックスデバイスがリセットされたときに呼び出される
 //=============================================================================
 void Rect::onResetDevice()
 {

@@ -1,3 +1,11 @@
+//==========================================================
+/// @file
+/// @brief    fire.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #include "fire.h"
 
 //==========================================================
@@ -6,22 +14,20 @@
 Fire::Fire() : Entity()
 {
 	active = false;								// 炎はアクティブでない状態から開始
+	visible = false;
 	spriteData.width = fireNS::WIDTH;			// １つの画像のサイズ
 	spriteData.height = fireNS::HEIGHT;
 	spriteData.rect.bottom = fireNS::HEIGHT;	// 画像内の選択する部分
 	spriteData.rect.right = fireNS::WIDTH;
-	cols = fireNS::TEXTURE_COLS;
-	frameDelay = fireNS::ANIMATION_DELAY;
-	// ファイアーアニメーションの最初のフレーム
-	startFrame = fireNS::START_FRAME;
-	// ファイアーアニメーションの最後のフレーム
-	endFrame = fireNS::END_FRAME;
-	currentFrame = startFrame;
+	cols = fireNS::TEXTURE_COLS;				// テクスチャの列数
+	frameDelay = fireNS::ANIMATION_DELAY;		// アニメーションの各フレームの間隔
+	startFrame = fireNS::START_FRAME;			// ファイアーアニメーションの最初のフレーム
+	endFrame = fireNS::END_FRAME;				// ファイアーアニメーションの最後のフレーム
+	currentFrame = startFrame;					// 現在のフレームはアニメーションの最初のフレームに設定
+	collisionType = entityNS::CIRCLE;			// 円の衝突判定
 	radius = fireNS::COLLISION_RADIUS;			// 円の衝突判定用
-	visible = false;
-	fireTimer = 0.0f;
-	collisionType = entityNS::CIRCLE;
-	mode = imageNS::VERTICAL;
+	fireTimer = 0.0f;							// 炎が発射可能になるまでの残り時間
+	mode = imageNS::VERTICAL;					// アニメーションのモード
 }
 
 //==========================================================
@@ -29,18 +35,16 @@ Fire::Fire() : Entity()
 //==========================================================
 void Fire::reset()
 {
-	active = false;								// 炎はアクティブでない状態から開始
-	frameDelay = fireNS::ANIMATION_DELAY;
-	// ファイアーアニメーションの最初のフレーム
-	startFrame = fireNS::START_FRAME;
-	// ファイアーアニメーションの最後のフレーム
-	endFrame = fireNS::END_FRAME;
-	currentFrame = startFrame;
-	radius = fireNS::COLLISION_RADIUS;			// 円の衝突判定用
+	active = false;								// 炎はアクティブでない状態から開始	
 	visible = false;
-	fireTimer = 0.0f;
-	collisionType = entityNS::CIRCLE;
-	mode = imageNS::VERTICAL;
+	frameDelay = fireNS::ANIMATION_DELAY;		// アニメーションの各フレームの間隔
+	startFrame = fireNS::START_FRAME;			// ファイアーアニメーションの最初のフレーム
+	endFrame = fireNS::END_FRAME;				// ファイアーアニメーションの最後のフレーム
+	currentFrame = startFrame;					// 現在のフレームはアニメーションの最初のフレームに設定
+	collisionType = entityNS::CIRCLE;			// 円の衝突判定
+	radius = fireNS::COLLISION_RADIUS;			// 円の衝突判定用
+	fireTimer = 0.0f;							// 炎が発射可能になるまでの残り時間
+	mode = imageNS::VERTICAL;					// アニメーションのモード
 }
 
 //==========================================================
@@ -75,7 +79,7 @@ void Fire::update(float frameTime)
 
 //==========================================================
 // Fire
-// Braveからミサイルを発射
+// Braveから炎を発射
 //==========================================================
 void Fire::fire(float centerX, float centerY, float width, float height, float scale, int& mp, characterNS::DIRECTION direction)
 {

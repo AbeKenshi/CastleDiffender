@@ -40,6 +40,9 @@ class Graphics;
 #define SETCOLOR_ARGB(a,r,g,b) \
     ((COLOR_ARGB)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
+
+// Graphicsクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace graphicsNS
 {
 	// 共通で使用する色

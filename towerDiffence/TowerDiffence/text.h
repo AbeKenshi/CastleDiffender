@@ -16,31 +16,33 @@ class Text;
 #include "image.h"
 #include "constants.h"
 
-
+// Textクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace textNS
 {
-	enum Alignment { LEFT, RIGHT, CENTER, CENTER_MIDDLE, CENTER_BOTTOM, LEFT_BOTTOM, RIGHT_BOTTOM };
+	enum Alignment { LEFT, RIGHT, CENTER, CENTER_MIDDLE, CENTER_BOTTOM, LEFT_BOTTOM, RIGHT_BOTTOM };	// アラインメント（左端、右端、中央上、中央、中央下、左下、右下）
+	// フォントデータ構造体
 	struct FontData
 	{
-		UINT left;
-		UINT right;
+		UINT left;	// 左位置
+		UINT right;	// 右位置
 	};
 	// フォントの高さは62、幅は48ピクセル
 	const int FONT_BORDER = 3;      // 右と下に1ピクセル幅の透明な境界＋可視セル境界
-	const int FONT_WIDTH = 48;
+	const int FONT_WIDTH = 48;		// フォントは48ピクセルの幅
 	const int FONT_HEIGHT = 62;     // フォントは62ピクセルの高さ
-	const int GRID_WIDTH = FONT_WIDTH + FONT_BORDER;
-	const int GRID_HEIGHT = FONT_HEIGHT + FONT_BORDER;
+	const int GRID_WIDTH = FONT_WIDTH + FONT_BORDER;	// 実質的なフォントの幅
+	const int GRID_HEIGHT = FONT_HEIGHT + FONT_BORDER;	// 実質的なフォントの高さ
 	const int COLUMNS = 16;         // フォントの画像の行数
 	const int ROWS = 14;            // フォントの画像の列数
 	const int FRAMES = 1;           // アニメーションのフレーム数（1 = アニメーションなし）
 	const double ANIM_DELAY = 0.0;  // アニメーションのフレーム間の時間
-	const int MAX_FONT_HEIGHT = 1000;
+	const int MAX_FONT_HEIGHT = 1000;	// 最大のフォントの高さ
 	const int MIN_CHAR = 0x0020;    // 最小文字コード
 	const int MAX_CHAR = 0x00FF;    // 最大文字コード
 	const int PROPORTIONAL_SPACING = 5; // プロポーショナルフォントの1:1スケールの場合の文字間のスペース
-	const int TAB_SIZE = 8;
-	const char UNDERLINE = '_';
+	const int TAB_SIZE = 8;			// タブの幅
+	const char UNDERLINE = '_';		// 下線
 	const char SOLID = 0x7F;        // コード$7Fの文字に使用される固定ブロック
 	const int BOLD_SIZE = 4;        // 太字表示のときのシフトするピクセル数
 }

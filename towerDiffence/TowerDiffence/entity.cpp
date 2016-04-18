@@ -13,24 +13,26 @@
 //=============================================================================
 Entity::Entity() : Image()
 {
-    radius = 1.0;
+    radius = 1.0;						// 円の衝突の大きさ
+	// BOXの衝突判定の四角形
     edge.left = -1;
     edge.top = -1;
     edge.right = 1;
     edge.bottom = 1;
-    mass = 1.0;
-    velocity.x = 0.0;
-    velocity.y = 0.0;
-    deltaV.x = 0.0;
-    deltaV.y = 0.0;
-    active = true;                  // エンティティはアクティブ
-    rotatedBoxReady = false;
-    collisionType = entityNS::CIRCLE;
-    health = 100;
-    gravity = entityNS::GRAVITY;
-	isDamaged = false;							// ダメージは受けていない状態からスタート
-	drawFlag = true;							// 描画フラグオン
-	damagePer = 1.0f;
+
+    mass = 1.0;							// 質量
+    velocity.x = 0.0;					// x速度
+    velocity.y = 0.0;					// y速度
+    deltaV.x = 0.0;						// x加速度
+    deltaV.y = 0.0;						// y加速度
+    active = true;						// エンティティはアクティブ
+    rotatedBoxReady = false;			// 回転の衝突判定のフラグ
+    collisionType = entityNS::CIRCLE;	// 衝突判定はデフォルトでは円
+    health = 100;						// 体力（MAX100）
+    gravity = entityNS::GRAVITY;		// 重力定数
+	isDamaged = false;					// ダメージは受けていない状態からスタート
+	drawFlag = true;					// 描画フラグオン
+	damagePer = 1.0f;					// ダメージを受ける割合
 	// ダメージ時に使用するタイマーをリセット
 	damageTimer = 0.0f;
 	totalDamageTime = 0.0f;
@@ -41,15 +43,20 @@ Entity::Entity() : Image()
 //==========================================================
 void Entity::reset()
 {
-	rotatedBoxReady = false;
-	active = true;
-	health = 100;
-	isDamaged = false;							// ダメージは受けていない状態からスタート
-	drawFlag = true;							// 描画フラグオン
-	damagePer = 1.0f;
+	velocity.x = 0.0;					// x速度
+	velocity.y = 0.0;					// y速度
+	deltaV.x = 0.0;						// x加速度
+	deltaV.y = 0.0;						// y加速度
+	rotatedBoxReady = false;			// 回転の衝突判定のフラグ
+	active = true;						// エンティティはアクティブ
+	health = 100;						// 体力（MAX100）
+	isDamaged = false;					// ダメージは受けていない状態からスタート
+	drawFlag = true;					// 描画フラグオン
+	damagePer = 1.0f;					// ダメージを受ける割合
 	// ダメージ時に使用するタイマーをリセット
 	damageTimer = 0.0f;
 	totalDamageTime = 0.0f;
+	// イメージをリセット
 	Image::reset();
 }
 
