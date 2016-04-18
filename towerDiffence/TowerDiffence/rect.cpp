@@ -13,17 +13,17 @@
 //=============================================================================
 Rect::Rect()
 {
-	initialized = false;                // 正常に初期化された場合、trueを設定
-	graphics = NULL;
-	backColor = rectNS::BACK_COLOR;
+	mInitialized = false;                // 正常に初期化された場合、trueを設定
+	mGraphics = NULL;
+	mBackColor = rectNS::BACK_COLOR;
 
-	x = rectNS::X;						// 最初の四角形の位置
-	y = rectNS::Y;
+	mX = rectNS::X;						// 最初の四角形の位置
+	mY = rectNS::Y;
 
-	width = rectNS::WIDTH;
-	height = rectNS::HEIGHT;
+	mWidth = rectNS::WIDTH;
+	mHeight = rectNS::HEIGHT;
 
-	vertexBuffer = NULL;
+	mVertexBuffer = NULL;
 }
 
 //=============================================================================
@@ -40,44 +40,44 @@ Rect::~Rect()
 bool Rect::initialize(Graphics *g)
 {
 	try {
-		graphics = g;                    // グラフィックシステム
+		mGraphics = g;                    // グラフィックシステム
 
 		// 左上
-		vtx[0].x = x;
-		vtx[0].y = y;
-		vtx[0].z = 0.0f;
-		vtx[0].rhw = 1.0f;
-		vtx[0].color = backColor;
+		mVtx[0].x = mX;
+		mVtx[0].y = mY;
+		mVtx[0].z = 0.0f;
+		mVtx[0].rhw = 1.0f;
+		mVtx[0].color = mBackColor;
 
 		// 右上
-		vtx[1].x = x + width;
-		vtx[1].y = y;
-		vtx[1].z = 0.0f;
-		vtx[1].rhw = 1.0f;
-		vtx[1].color = backColor;
+		mVtx[1].x = mX + mWidth;
+		mVtx[1].y = mY;
+		mVtx[1].z = 0.0f;
+		mVtx[1].rhw = 1.0f;
+		mVtx[1].color = mBackColor;
 
 		// 右下
-		vtx[2].x = x + width;
-		vtx[2].y = y + height;
-		vtx[2].z = 0.0f;
-		vtx[2].rhw = 1.0f;
-		vtx[2].color = backColor;
+		mVtx[2].x = mX + mWidth;
+		mVtx[2].y = mY + mHeight;
+		mVtx[2].z = 0.0f;
+		mVtx[2].rhw = 1.0f;
+		mVtx[2].color = mBackColor;
 
 		// 左下
-		vtx[3].x = x;
-		vtx[3].y = y + height;
-		vtx[3].z = 0.0f;
-		vtx[3].rhw = 1.0f;
-		vtx[3].color = backColor;
+		mVtx[3].x = mX;
+		mVtx[3].y = mY + mHeight;
+		mVtx[3].z = 0.0f;
+		mVtx[3].rhw = 1.0f;
+		mVtx[3].color = mBackColor;
 
-		graphics->createVertexBuffer(vtx, sizeof vtx, vertexBuffer);
+		mGraphics->createVertexBuffer(mVtx, sizeof mVtx, mVertexBuffer);
 
 	}
 	catch (...) {
 		return false;
 	}
 
-	initialized = true;
+	mInitialized = true;
 	return true;
 }
 
@@ -88,34 +88,34 @@ bool Rect::initialize(Graphics *g)
 void Rect::reset()
 {
 	// 左上
-	vtx[0].x = x;
-	vtx[0].y = y;
-	vtx[0].z = 0.0f;
-	vtx[0].rhw = 1.0f;
-	vtx[0].color = backColor;
+	mVtx[0].x = mX;
+	mVtx[0].y = mY;
+	mVtx[0].z = 0.0f;
+	mVtx[0].rhw = 1.0f;
+	mVtx[0].color = mBackColor;
 
 	// 右上
-	vtx[1].x = x + width;
-	vtx[1].y = y;
-	vtx[1].z = 0.0f;
-	vtx[1].rhw = 1.0f;
-	vtx[1].color = backColor;
+	mVtx[1].x = mX + mWidth;
+	mVtx[1].y = mY;
+	mVtx[1].z = 0.0f;
+	mVtx[1].rhw = 1.0f;
+	mVtx[1].color = mBackColor;
 
 	// 右下
-	vtx[2].x = x + width;
-	vtx[2].y = y + height;
-	vtx[2].z = 0.0f;
-	vtx[2].rhw = 1.0f;
-	vtx[2].color = backColor;
+	mVtx[2].x = mX + mWidth;
+	mVtx[2].y = mY + mHeight;
+	mVtx[2].z = 0.0f;
+	mVtx[2].rhw = 1.0f;
+	mVtx[2].color = mBackColor;
 
 	// 左下
-	vtx[3].x = x;
-	vtx[3].y = y + height;
-	vtx[3].z = 0.0f;
-	vtx[3].rhw = 1.0f;
-	vtx[3].color = backColor;
+	mVtx[3].x = mX;
+	mVtx[3].y = mY + mHeight;
+	mVtx[3].z = 0.0f;
+	mVtx[3].rhw = 1.0f;
+	mVtx[3].color = mBackColor;
 
-	graphics->createVertexBuffer(vtx, sizeof vtx, vertexBuffer);
+	mGraphics->createVertexBuffer(mVtx, sizeof mVtx, mVertexBuffer);
 
 }
 
@@ -125,11 +125,11 @@ void Rect::reset()
 //=============================================================================
 const void Rect::draw()
 {
-	graphics->drawQuad(vertexBuffer);       // 背景を描画
+	mGraphics->drawQuad(mVertexBuffer);       // 背景を描画
 
-	graphics->spriteBegin();                // スプライトの描画を開始
+	mGraphics->spriteBegin();                // スプライトの描画を開始
 
-	graphics->spriteEnd();                      // スプライトの描画を終了
+	mGraphics->spriteEnd();                      // スプライトの描画を終了
 }
 
 //=============================================================================
@@ -137,9 +137,9 @@ const void Rect::draw()
 //=============================================================================
 void Rect::onLostDevice()
 {
-	if (!initialized)
+	if (!mInitialized)
 		return;
-	SAFE_RELEASE(vertexBuffer);
+	SAFE_RELEASE(mVertexBuffer);
 }
 
 //=============================================================================
@@ -147,8 +147,8 @@ void Rect::onLostDevice()
 //=============================================================================
 void Rect::onResetDevice()
 {
-	if (!initialized)
+	if (!mInitialized)
 		return;
-	graphics->createVertexBuffer(vtx, sizeof vtx, vertexBuffer);
+	mGraphics->createVertexBuffer(mVtx, sizeof mVtx, mVertexBuffer);
 }
 

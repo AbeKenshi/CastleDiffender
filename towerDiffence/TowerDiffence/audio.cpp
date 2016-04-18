@@ -13,18 +13,18 @@
 //=============================================================================
 Audio::Audio()
 {
-    xactEngine = NULL;
-    waveBank = NULL;
-    soundBank = NULL;
-    cueI = 0;
-    mapWaveBank = NULL;         // UnmapViewOfFile()を呼び出してファイルを解放
-    soundBankData = NULL;
+    mXactEngine = NULL;
+    mWaveBank = NULL;
+    mSoundBank = NULL;
+    mCueI = 0;
+    mMapWaveBank = NULL;         // UnmapViewOfFile()を呼び出してファイルを解放
+    mSoundBankData = NULL;
 
     HRESULT hr = CoInitializeEx( NULL, COINIT_MULTITHREADED );
     if( SUCCEEDED( hr ) )
-        coInitialized = true;
+        mCoInitialized = true;
     else
-        coInitialized = false;
+        mCoInitialized = false;
 }
 
 //=============================================================================
@@ -33,23 +33,23 @@ Audio::Audio()
 Audio::~Audio()
 {
     // XACTをシャットダウン
-    if( xactEngine )
+    if( mXactEngine )
     {
 		// XACTエンジンをシャットダウンし、リソースを解放
-        xactEngine->ShutDown();
-        xactEngine->Release();
+        mXactEngine->ShutDown();
+        mXactEngine->Release();
     }
 
-    if ( soundBankData )
-        delete[] soundBankData;
-    soundBankData = NULL;
+    if ( mSoundBankData )
+        delete[] mSoundBankData;
+    mSoundBankData = NULL;
 
 	// xactEngine()->ShutDown()から戻った後、メモリマップトファイルを解放
-    if( mapWaveBank )
-        UnmapViewOfFile( mapWaveBank );
-    mapWaveBank = NULL;
+    if( mMapWaveBank )
+        UnmapViewOfFile( mMapWaveBank );
+    mMapWaveBank = NULL;
 
-    if( coInitialized )        // CoInitializeExが成功した場合
+    if( mCoInitialized )        // CoInitializeExが成功した場合
         CoUninitialize();
 }
 
@@ -69,17 +69,17 @@ HRESULT Audio::initialize()
     DWORD bytesRead;
     HANDLE hMapFile;
 
-    if( coInitialized == false)
+    if( mCoInitialized == false)
         return E_FAIL;
 
-    result = XACT3CreateEngine( 0, &xactEngine );
-    if( FAILED( result ) || xactEngine == NULL )
+    result = XACT3CreateEngine( 0, &mXactEngine );
+    if( FAILED( result ) || mXactEngine == NULL )
         return E_FAIL;
 
     // XACTランタイムの初期化と作成
     XACT_RUNTIME_PARAMETERS xactParams = {0};
     xactParams.lookAheadTime = XACT_ENGINE_LOOKAHEAD_DEFAULT;
-    result = xactEngine->Initialize( &xactParams );
+    result = mXactEngine->Initialize( &xactParams );
     if( FAILED( result ) )
         return result;
 
@@ -94,9 +94,9 @@ HRESULT Audio::initialize()
             hMapFile = CreateFileMapping( hFile, NULL, PAGE_READONLY, 0, fileSize, NULL );
             if( hMapFile )
             {
-                mapWaveBank = MapViewOfFile( hMapFile, FILE_MAP_READ, 0, 0, 0 );
-                if( mapWaveBank )
-                    result = xactEngine->CreateInMemoryWaveBank( mapWaveBank, fileSize, 0, 0, &waveBank );
+                mMapWaveBank = MapViewOfFile( hMapFile, FILE_MAP_READ, 0, 0, 0 );
+                if( mMapWaveBank )
+                    result = mXactEngine->CreateInMemoryWaveBank( mMapWaveBank, fileSize, 0, 0, &mWaveBank );
 
 				// mapWaveBankがファイルへのハンドルを保持
 				// 不要なハンドルは閉じる
@@ -119,11 +119,11 @@ HRESULT Audio::initialize()
         if( fileSize != -1 )
         {
 			// サウンドバンク用のメモリを予約
-            soundBankData = new BYTE[fileSize];
-            if( soundBankData )
+            mSoundBankData = new BYTE[fileSize];
+            if( mSoundBankData )
             {
-                if( 0 != ReadFile( hFile, soundBankData, fileSize, &bytesRead, NULL ) )
-                    result = xactEngine->CreateSoundBank( soundBankData, fileSize, 0, 0, &soundBank );
+                if( 0 != ReadFile( hFile, mSoundBankData, fileSize, &bytesRead, NULL ) )
+                    result = mXactEngine->CreateSoundBank( mSoundBankData, fileSize, 0, 0, &mSoundBank );
             }
         }
         CloseHandle( hFile );
@@ -139,9 +139,9 @@ HRESULT Audio::initialize()
 //=============================================================================
 void Audio::run()
 {
-    if (xactEngine == NULL)
+    if (mXactEngine == NULL)
         return;
-    xactEngine->DoWork();
+    mXactEngine->DoWork();
 }
 
 //=============================================================================
@@ -150,11 +150,11 @@ void Audio::run()
 //=============================================================================
 void Audio::playCue(const char cue[])
 {
-    if (soundBank == NULL)
+    if (mSoundBank == NULL)
         return;
 	// サウンドバンクからキューインデックスを取得
-    cueI = soundBank->GetCueIndex( cue );
-    soundBank->Play( cueI, 0, 0, NULL );
+    mCueI = mSoundBank->GetCueIndex( cue );
+    mSoundBank->Play( mCueI, 0, 0, NULL );
 }
 
 //=============================================================================
@@ -163,9 +163,9 @@ void Audio::playCue(const char cue[])
 //=============================================================================
 void Audio::stopCue(const char cue[])
 {
-    if (soundBank == NULL)
+    if (mSoundBank == NULL)
         return;
 	// サウンドバンクからキューインデックスを取得
-    cueI = soundBank->GetCueIndex( cue );
-    soundBank->Stop( cueI, XACT_FLAG_SOUNDBANK_STOP_IMMEDIATE);
+    mCueI = mSoundBank->GetCueIndex( cue );
+    mSoundBank->Stop( mCueI, XACT_FLAG_SOUNDBANK_STOP_IMMEDIATE);
 }

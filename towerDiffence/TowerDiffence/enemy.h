@@ -49,19 +49,19 @@ namespace enemyNS
 class Enemy : public Character
 {
 protected:
-	characterNS::DIRECTION oldDirection;	// 攻撃直前に向いていた方向を格納
-	characterNS::DIRECTION goalDirection;	// 次に進むべき方向
-	float attackTimer;						// 攻撃アニメーション用のタイマー
-	bool nearBarricade;						// バリケードと隣接しているかどうか
-	bool isAttacked;						// 攻撃した直後かどうか
-	bool canMakeDecesionMove;				// 移動に関しての意思決定を行えるかどうか
-	Barricade* barricades;					// バリケードの配列へのポインタ
-	int nearBarricadeIndex;					// 最近接のバリケードのインデックス
-	float continueAttackTime;				// 連続で攻撃する場合の溜め時間
-	float attackTime;						// プレイヤーに隣接してから攻撃に移るまでの溜め時間
-	imageNS::MODE attackAnimationMode;		// 攻撃時のアニメーションの遷移モード（水平か垂直方向）
-	enemyNS::TYPE type;                     // 敵の種類
-	EnemyCollision attackCollision;			// 攻撃判定用のコリジョン
+	characterNS::DIRECTION mOldDirection;	// 攻撃直前に向いていた方向を格納
+	characterNS::DIRECTION mGoalDirection;	// 次に進むべき方向
+	float mAttackTimer;						// 攻撃アニメーション用のタイマー
+	bool mNearBarricade;					// バリケードと隣接しているかどうか
+	bool mIsAttacked;						// 攻撃した直後かどうか
+	bool mCanMakeDecesionMove;				// 移動に関しての意思決定を行えるかどうか
+	Barricade* mBarricades;					// バリケードの配列へのポインタ
+	int mNearBarricadeIndex;				// 最近接のバリケードのインデックス
+	float mContinueAttackTime;				// 連続で攻撃する場合の溜め時間
+	float mAttackTime;						// プレイヤーに隣接してから攻撃に移るまでの溜め時間
+	imageNS::MODE mAttackAnimationMode;		// 攻撃時のアニメーションの遷移モード（水平か垂直方向）
+	enemyNS::TYPE mType;                    // 敵の種類
+	EnemyCollision mAttackCollision;		// 攻撃判定用のコリジョン
 public:
 	// コンストラクタ
 	Enemy();
@@ -85,30 +85,30 @@ public:
 	// setter
 	//==========================================================
 	// バリケードと隣接しているかどうかをセット
-	void setNearBarricade(bool nb) { nearBarricade = nb; }
+	void setNearBarricade(bool nb) { mNearBarricade = nb; }
 	// バリケードの配列へのポインタをセットする関数
-	void setBarricadesPointer(Barricade *b) { barricades = b; }
+	void setBarricadesPointer(Barricade *b) { mBarricades = b; }
 	// 次に進むべき方向をセットする関数
-	void setGoalDirection(characterNS::DIRECTION gd) { goalDirection = gd; }
+	void setGoalDirection(characterNS::DIRECTION gd) { mGoalDirection = gd; }
 	// 敵の種類をセットする関数
 	void setEnemyType(enemyNS::TYPE t)
 	{
-		type = t;
+		mType = t;
 	}
 
 	//==========================================================
 	// getter
 	//==========================================================
 	// 次に進むべき方向を返す関数
-	characterNS::DIRECTION getGoalDirection() { return goalDirection; }
+	characterNS::DIRECTION getGoalDirection() { return mGoalDirection; }
 	// 移動に関しての意思決定を行えるかどうか
-	bool canMakeDecesionMoving() { return canMakeDecesionMove; }
+	bool canMakeDecesionMoving() { return mCanMakeDecesionMove; }
 	// 最近接のバリケードのインデックスを返す
-	int getNearBarricadeIndex() { return nearBarricadeIndex; }
+	int getNearBarricadeIndex() { return mNearBarricadeIndex; }
 	// 攻撃判定用のコリジョンを返す
-	EnemyCollision& getAttackCollision() { return attackCollision; }
+	EnemyCollision& getAttackCollision() { return mAttackCollision; }
 	// 敵の種類を取得する関数
-	enemyNS::TYPE getEnemyType() { return type; }
+	enemyNS::TYPE getEnemyType() { return mType; }
 	
 	// 向きをgoalDirectionへとアップデートする関数
 	void changeDirection(int strF, int endF);

@@ -13,15 +13,15 @@
 //=============================================================================
 TextDX::TextDX()
 {
-    color = SETCOLOR_ARGB(255,255,255,255); // default to white font
+    mColor = SETCOLOR_ARGB(255,255,255,255); // default to white font
 
     // set font position
-    fontRect.top = 0;
-    fontRect.left = 0;
-    fontRect.right = GAME_WIDTH;
-    fontRect.bottom = GAME_HEIGHT;
-    dxFont = NULL;
-    angle  = 0;
+    mFontRect.top = 0;
+    mFontRect.left = 0;
+    mFontRect.right = GAME_WIDTH;
+    mFontRect.bottom = GAME_HEIGHT;
+    mDxFont = NULL;
+    mAngle  = 0;
 }
 
 //=============================================================================
@@ -29,7 +29,7 @@ TextDX::TextDX()
 //=============================================================================
 TextDX::~TextDX()
 {
-    SAFE_RELEASE(dxFont);
+    SAFE_RELEASE(mDxFont);
 }
 
 //=============================================================================
@@ -38,20 +38,20 @@ TextDX::~TextDX()
 bool TextDX::initialize(Graphics *g, int height, bool bold, bool italic, 
                         const std::string &fontName)
 {
-    graphics = g;                   // グラフィックシステム
+    mGraphics = g;                   // グラフィックシステム
 
     UINT weight = FW_NORMAL;
     if(bold)
         weight = FW_BOLD;
 
 	// DirectXフォントを作成
-    if(FAILED(D3DXCreateFont(graphics->get3Ddevice(), height, 0, weight, 1, italic,
+    if(FAILED(D3DXCreateFont(mGraphics->get3Ddevice(), height, 0, weight, 1, italic,
         DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE, fontName.c_str(),
-        &dxFont))) return false;
+        &mDxFont))) return false;
 
     // 変換行列を初期化
-    D3DXMatrixTransformation2D(&matrix, NULL, 0.0f, NULL, NULL, 0.0f, NULL);
+    D3DXMatrixTransformation2D(&mMatrix, NULL, 0.0f, NULL, NULL, 0.0f, NULL);
 
     return true;
 }
@@ -64,19 +64,19 @@ bool TextDX::initialize(Graphics *g, int height, bool bold, bool italic,
 //=============================================================================
 int TextDX::print(const std::string &str, int x, int y)
 {
-    if(dxFont == NULL)
+    if(mDxFont == NULL)
         return 0;
 	// フォント位置を設定
-    fontRect.top = y;
-    fontRect.left = x;
+    mFontRect.top = y;
+    mFontRect.left = x;
 
 	// 回転中心
     D3DXVECTOR2 rCenter=D3DXVECTOR2((float)x,(float)y);
     // テキストを特定の角度で回転する行列を準備
-    D3DXMatrixTransformation2D(&matrix, NULL, 0.0f, NULL, &rCenter, angle, NULL);
+    D3DXMatrixTransformation2D(&mMatrix, NULL, 0.0f, NULL, &rCenter, mAngle, NULL);
     // 行列をスプライトに適用
-    graphics->getSprite()->SetTransform(&matrix);
-    return dxFont->DrawTextA(graphics->getSprite(), str.c_str(), -1, &fontRect, DT_LEFT, color);
+    mGraphics->getSprite()->SetTransform(&mMatrix);
+    return mDxFont->DrawTextA(mGraphics->getSprite(), str.c_str(), -1, &mFontRect, DT_LEFT, mColor);
 }
 
 //=============================================================================
@@ -87,14 +87,14 @@ int TextDX::print(const std::string &str, int x, int y)
 //=============================================================================
 int TextDX::print(const std::string &str, RECT &rect, UINT format)
 {
-    if(dxFont == NULL)
+    if(mDxFont == NULL)
         return 0;
 
 	// テキストを回転させない行列を準備
-    D3DXMatrixTransformation2D(&matrix, NULL, 0.0f, NULL, NULL, NULL, NULL);
+    D3DXMatrixTransformation2D(&mMatrix, NULL, 0.0f, NULL, NULL, NULL, NULL);
 	// 行列をスプライトに適用
-    graphics->getSprite()->SetTransform(&matrix);
-    return dxFont->DrawTextA(graphics->getSprite(), str.c_str(), -1, &rect, format, color);
+    mGraphics->getSprite()->SetTransform(&mMatrix);
+    return mDxFont->DrawTextA(mGraphics->getSprite(), str.c_str(), -1, &rect, format, mColor);
 }
 
 //=============================================================================
@@ -102,9 +102,9 @@ int TextDX::print(const std::string &str, RECT &rect, UINT format)
 //=============================================================================
 void TextDX::onLostDevice()
 {
-    if(dxFont == NULL)
+    if(mDxFont == NULL)
         return;
-    dxFont->OnLostDevice();
+    mDxFont->OnLostDevice();
 }
 
 //=============================================================================
@@ -112,7 +112,7 @@ void TextDX::onLostDevice()
 //=============================================================================
 void TextDX::onResetDevice()
 {
-    if(dxFont == NULL)
+    if(mDxFont == NULL)
         return;
-    dxFont->OnResetDevice();
+    mDxFont->OnResetDevice();
 }

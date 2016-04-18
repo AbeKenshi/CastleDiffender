@@ -12,18 +12,18 @@
 //==========================================================
 AttackEffect::AttackEffect() : Image()
 {
-	visible = false;								// 非表示がデフォルト
-	spriteData.width = attackEffectNS::WIDTH;		// １つの画像のサイズ
-	spriteData.height = attackEffectNS::HEIGHT;
-	spriteData.rect.bottom = attackEffectNS::HEIGHT;// 画像内の選択する部分
-	spriteData.rect.right = attackEffectNS::WIDTH;
-	cols = attackEffectNS::TEXTURE_COLS;			// テクスチャの列数
-	frameDelay = attackEffectNS::ANIMATION_DELAY;	// アニメーションの各フレームの間隔
-	startFrame = attackEffectNS::START_FRAME;		// アニメーションの最初のフレーム
-	endFrame = attackEffectNS::END_FRAME;			// アニメーションの最後のフレーム
-	currentFrame = startFrame;						// 現在のフレームはアニメーションの最初のフレームに設定
-	spriteData.scale = attackEffectNS::SCALE;		// スプライトのスケール
-	loop = false;									// アニメーションはループさせない
+	mVisible = false;								// 非表示がデフォルト
+	mSpriteData.width = attackEffectNS::WIDTH;		// １つの画像のサイズ
+	mSpriteData.height = attackEffectNS::HEIGHT;
+	mSpriteData.rect.bottom = attackEffectNS::HEIGHT;// 画像内の選択する部分
+	mSpriteData.rect.right = attackEffectNS::WIDTH;
+	mCols = attackEffectNS::TEXTURE_COLS;			// テクスチャの列数
+	mFrameDelay = attackEffectNS::ANIMATION_DELAY;	// アニメーションの各フレームの間隔
+	mStartFrame = attackEffectNS::START_FRAME;		// アニメーションの最初のフレーム
+	mEndFrame = attackEffectNS::END_FRAME;			// アニメーションの最後のフレーム
+	mCurrentFrame = mStartFrame;						// 現在のフレームはアニメーションの最初のフレームに設定
+	mSpriteData.scale = attackEffectNS::SCALE;		// スプライトのスケール
+	mLoop = false;									// アニメーションはループさせない
 }
 
 //==========================================================
@@ -79,7 +79,7 @@ void AttackEffect::attack(float centerX, float centerY, float width, float heigh
 		break;
 	}
 	// スプライトを表示
-	visible = true;
+	mVisible = true;
 	// 現在のフレームをアニメーションの最初のフレームにセット
-	setCurrentFrame(startFrame);
+	setCurrentFrame(mStartFrame);
 }

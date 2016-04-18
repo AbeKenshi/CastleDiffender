@@ -34,12 +34,12 @@ class Map : public Entity
 {
 private:
 	// マップ
-	int tileMap[mapNS::MAP_HEIGHT][mapNS::MAP_WIDTH];
+	int mMapData[mapNS::MAP_HEIGHT][mapNS::MAP_WIDTH];
 	// 当たり判定のデータ、ゲームを通して移動できない箇所は1か2に設定する、岩は1に、城は2にする
-	int tileCol[mapNS::MAP_HEIGHT][mapNS::MAP_WIDTH];
-	int tileColInit[mapNS::MAP_HEIGHT][mapNS::MAP_WIDTH];
+	int mColData[mapNS::MAP_HEIGHT][mapNS::MAP_WIDTH];
+	int mColDataInit[mapNS::MAP_HEIGHT][mapNS::MAP_WIDTH];
 	// マップ上のオブジェクトデータ、0 -> バリケード
-	int tileObj[mapNS::MAP_HEIGHT][mapNS::MAP_WIDTH];
+	int mObjData[mapNS::MAP_HEIGHT][mapNS::MAP_WIDTH];
 public:
 	// コンストラクタ
 	Map();
@@ -52,19 +52,19 @@ public:
 	// マップデータの取得　引数は取得したい座標のインデックス
 	int getMapData(int x, int y)
 	{
-		return tileMap[x][y];
+		return mMapData[x][y];
 	}
 
 	// マップ当たり判定の更新 引き数は取得したい座標のインデックス
 	int getMapCol(int x, int y)
 	{
-		return tileCol[x][y];
+		return mColData[x][y];
 	}
 
 	// マップ上のオブジェクトデータ更新　引数は取得したい座標のインデックス
 	int getMapObj(int x, int y)
 	{
-		return tileObj[x][y];
+		return mObjData[x][y];
 	}
 
 
@@ -83,14 +83,14 @@ public:
 		{
 			for (int j = 0; j < mapNS::MAP_WIDTH; ++j)
 			{
-				tileCol[i][j] = tileColInit[i][j];
+				mColData[i][j] = mColDataInit[i][j];
 			}
 		}
 	}
 	// 指定されたマップの当たり判定データをリセットする
 	void resetMapCol(int y, int x) {
 		if (x < 0 || x >= mapNS::MAP_WIDTH || y < 0 || y >= mapNS::MAP_HEIGHT) { return; }
-		tileCol[y][x] = tileColInit[y][x];
+		mColData[y][x] = mColDataInit[y][x];
 	}
 
 	// 指定されたステージのマップデータを読み込む

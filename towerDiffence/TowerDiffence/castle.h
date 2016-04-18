@@ -29,8 +29,6 @@ namespace castleNS
 class Castle : public Entity		// Entityクラスを継承
 {
 private:
-	float timeCounter;				// ダメージアニメーション用のタイマー
-	float totalTimeCounter;			// ダメージアニメーション用のタイマー
 	bool death;						// 城が死亡時にtrue。activeをfalseにすると描画されなくなるので、代わりにこのフラグを用いる
 public:
 	// コンストラクタ

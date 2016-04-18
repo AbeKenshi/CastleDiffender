@@ -27,8 +27,6 @@ namespace barricadeNS
 class Barricade : public Entity		// Entityクラスを継承
 {
 private:
-	float timeCounter;				// ダメージアニメーション用のタイマー
-	float totalTimeCounter;			// ダメージアニメーション用のタイマー
 	HitEffect hitEffect;			// 攻撃がヒットしたときのアニメーション画像
 public:
 	// コンストラクタ
@@ -53,7 +51,7 @@ public:
 	// setter
 	//==========================================================
 	// ダメージを受けるときの倍率をセット
-	void setDamagerPer(float per) { damagePer = per; }
+	void setDamagerPer(float per) { mDamagePer = per; }
 	
 	//==========================================================
 	// getter

@@ -15,33 +15,33 @@ Input::Input()
 {
 	// キーが押されている状態を示す配列をクリア
 	for (size_t i = 0; i < inputNS::KEYS_ARRAY_LEN; i++)
-		keysDown[i] = false;
+		mKeysDown[i] = false;
 	// キーが押されたことを示す配列をクリア
 	for (size_t i = 0; i < inputNS::KEYS_ARRAY_LEN; i++)
-		keysPressed[i] = false;
-	newLine = true;                     // 新しい行をクリア
-	textIn = "";                        // textInをクリア
-	charIn = 0;                         // charInをクリア
+		mKeysPressed[i] = false;
+	mNewLine = true;                     // 新しい行をクリア
+	mTextIn = "";                        // textInをクリア
+	mCharIn = 0;                         // charInをクリア
 
 	// マウスデータ
-	mouseX = 0;                         // 画面X
-	mouseY = 0;                         // 画面Y
-	mouseRawX = 0;                      // 高精細X
-	mouseRawY = 0;                      // 高精細Y
-	mouseWheel = 0;                     // mouse wheel position
-	mouseLButton = false;               // 左マウスボタンが押されている場合にtrue
-	mouseMButton = false;               // 中央マウスボタンが押されている場合にtrue
-	mouseRButton = false;               // 右マウスボタンが押されている場合にtrue
-	mouseX1Button = false;              // X1マウスボタンが押されている場合にtrue
-	mouseX2Button = false;              // X2マウスボタンが押されている場合にtrue
+	mMouseX = 0;                         // 画面X
+	mMouseY = 0;                         // 画面Y
+	mMouseRawX = 0;                      // 高精細X
+	mMouseRawY = 0;                      // 高精細Y
+	mMouseWheel = 0;                     // mouse wheel position
+	mMouseLButton = false;               // 左マウスボタンが押されている場合にtrue
+	mMouseMButton = false;               // 中央マウスボタンが押されている場合にtrue
+	mMouseRButton = false;               // 右マウスボタンが押されている場合にtrue
+	mMouseX1Button = false;              // X1マウスボタンが押されている場合にtrue
+	mMouseX2Button = false;              // X2マウスボタンが押されている場合にtrue
 
 	for (int i = 0; i<MAX_CONTROLLERS; i++)
 	{
-		controllers[i].vibrateTimeLeft = 0;
-		controllers[i].vibrateTimeRight = 0;
+		mControllers[i].vibrateTimeLeft = 0;
+		mControllers[i].vibrateTimeRight = 0;
 	}
-	thumbstickDeadzone = GAMEPAD_THUMBSTICK_DEADZONE;    // default
-	triggerDeadzone = GAMEPAD_TRIGGER_DEADZONE;          // default
+	mThumbstickDeadzone = GAMEPAD_THUMBSTICK_DEADZONE;    // default
+	mTriggerDeadzone = GAMEPAD_TRIGGER_DEADZONE;          // default
 }
 
 //=============================================================================
@@ -49,7 +49,7 @@ Input::Input()
 //=============================================================================
 Input::~Input()
 {
-	if (mouseCaptured)
+	if (mMouseCaptured)
 		ReleaseCapture();               // マウスを解放
 }
 
@@ -61,20 +61,20 @@ Input::~Input()
 void Input::initialize(HWND hwnd, bool capture)
 {
 	try {
-		mouseCaptured = capture;
+		mMouseCaptured = capture;
 
 		// 高精細マウスを登録
-		Rid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
-		Rid[0].usUsage = HID_USAGE_GENERIC_MOUSE;
-		Rid[0].dwFlags = RIDEV_INPUTSINK;
-		Rid[0].hwndTarget = hwnd;
-		RegisterRawInputDevices(Rid, 1, sizeof(Rid[0]));
+		mRid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
+		mRid[0].usUsage = HID_USAGE_GENERIC_MOUSE;
+		mRid[0].dwFlags = RIDEV_INPUTSINK;
+		mRid[0].hwndTarget = hwnd;
+		RegisterRawInputDevices(mRid, 1, sizeof(mRid[0]));
 
-		if (mouseCaptured)
+		if (mMouseCaptured)
 			SetCapture(hwnd);           // マウスをキャプチャ
 
 		// コントローラーの状態をクリア
-		ZeroMemory(controllers, sizeof(ControllerState) * MAX_CONTROLLERS);
+		ZeroMemory(mControllers, sizeof(ControllerState) * MAX_CONTROLLERS);
 
 		checkControllers();             // 接続されているコントローラーをチェック
 	}
@@ -93,9 +93,9 @@ void Input::keyDown(WPARAM wParam)
 	// キーコードが、バッファ範囲内にあることを確認
 	if (wParam < inputNS::KEYS_ARRAY_LEN)
 	{
-		keysDown[wParam] = true;    // keysDown配列を更新
+		mKeysDown[wParam] = true;    // keysDown配列を更新
 		// キーが既に押されていた、clear()で消去されていた
-		keysPressed[wParam] = true; // keysPressed配列を更新
+		mKeysPressed[wParam] = true; // keysPressed配列を更新
 	}
 }
 
@@ -108,7 +108,7 @@ void Input::keyUp(WPARAM wParam)
 	// キーコードが、バッファ範囲内にあることを確認
 	if (wParam < inputNS::KEYS_ARRAY_LEN)
 		// 状態テーブルを更新
-		keysDown[wParam] = false;
+		mKeysDown[wParam] = false;
 }
 
 //=============================================================================
@@ -117,25 +117,25 @@ void Input::keyUp(WPARAM wParam)
 //=============================================================================
 void Input::keyIn(WPARAM wParam)
 {
-	if (newLine)                            // 新しい行の開始の場合
+	if (mNewLine)                            // 新しい行の開始の場合
 	{
-		textIn.clear();
-		newLine = false;
+		mTextIn.clear();
+		mNewLine = false;
 	}
 
 	if (wParam == '\b')                     // バックスペースキーの場合
 	{
-		if (textIn.length() > 0)             // 文字が存在する場合
-			textIn.erase(textIn.size() - 1);  // 最後に入力された文字を消去
+		if (mTextIn.length() > 0)             // 文字が存在する場合
+			mTextIn.erase(mTextIn.size() - 1);  // 最後に入力された文字を消去
 	}
 	else
 	{
-		textIn += wParam;                   // 文字をtextInに追加
-		charIn = wParam;                    // 最後の入力された文字を保存
+		mTextIn += wParam;                   // 文字をtextInに追加
+		mCharIn = wParam;                    // 最後の入力された文字を保存
 	}
 
 	if ((char)wParam == '\r')               // リターンキーの場合
-		newLine = true;                     // 新しい行を開始
+		mNewLine = true;                     // 新しい行を開始
 }
 
 //=============================================================================
@@ -144,7 +144,7 @@ void Input::keyIn(WPARAM wParam)
 bool Input::isKeyDown(UCHAR vkey) const
 {
 	if (vkey < inputNS::KEYS_ARRAY_LEN)
-		return keysDown[vkey];
+		return mKeysDown[vkey];
 	else
 		return false;
 }
@@ -156,7 +156,7 @@ bool Input::isKeyDown(UCHAR vkey) const
 bool Input::wasKeyPressed(UCHAR vkey) const
 {
 	if (vkey < inputNS::KEYS_ARRAY_LEN)
-		return keysPressed[vkey];
+		return mKeysPressed[vkey];
 	else
 		return false;
 }
@@ -168,7 +168,7 @@ bool Input::wasKeyPressed(UCHAR vkey) const
 bool Input::anyKeyPressed() const
 {
 	for (size_t i = 0; i < inputNS::KEYS_ARRAY_LEN; i++)
-		if (keysPressed[i] == true)
+		if (mKeysPressed[i] == true)
 			return true;
 	return false;
 }
@@ -179,7 +179,7 @@ bool Input::anyKeyPressed() const
 void Input::clearKeyPress(UCHAR vkey)
 {
 	if (vkey < inputNS::KEYS_ARRAY_LEN)
-		keysPressed[vkey] = false;
+		mKeysPressed[vkey] = false;
 }
 
 //=============================================================================
@@ -192,22 +192,22 @@ void Input::clear(UCHAR what)
 	if (what & inputNS::KEYS_DOWN)
 	{
 		for (size_t i = 0; i < inputNS::KEYS_ARRAY_LEN; i++)
-			keysDown[i] = false;
+			mKeysDown[i] = false;
 	}
 	// キーが押されたかどうかをクリアする場合
 	if (what & inputNS::KEYS_PRESSED)
 	{
 		for (size_t i = 0; i < inputNS::KEYS_ARRAY_LEN; i++)
-			keysPressed[i] = false;
+			mKeysPressed[i] = false;
 	}
 	// マウスをクリアする場合
 	if (what & inputNS::MOUSE)
 	{
-		mouseX = 0;
-		mouseY = 0;
-		mouseRawX = 0;
-		mouseRawY = 0;
-		mouseWheel = 0;
+		mMouseX = 0;
+		mMouseY = 0;
+		mMouseRawX = 0;
+		mMouseRawY = 0;
+		mMouseWheel = 0;
 	}
 	if (what & inputNS::TEXT_IN)
 	{
@@ -221,8 +221,8 @@ void Input::clear(UCHAR what)
 //=============================================================================
 void Input::mouseIn(LPARAM lParam)
 {
-	mouseX = GET_X_LPARAM(lParam);
-	mouseY = GET_Y_LPARAM(lParam);
+	mMouseX = GET_X_LPARAM(lParam);
+	mMouseY = GET_Y_LPARAM(lParam);
 }
 
 //=============================================================================
@@ -241,8 +241,8 @@ void Input::mouseRawIn(LPARAM lParam)
 
 	if (raw->header.dwType == RIM_TYPEMOUSE)
 	{
-		mouseRawX = raw->data.mouse.lLastX;
-		mouseRawY = raw->data.mouse.lLastY;
+		mMouseRawX = raw->data.mouse.lLastX;
+		mMouseRawY = raw->data.mouse.lLastY;
 	}
 }
 
@@ -253,7 +253,7 @@ void Input::mouseRawIn(LPARAM lParam)
 //=============================================================================
 void Input::mouseWheelIn(WPARAM wParam)
 {
-	mouseWheel = GET_WHEEL_DELTA_WPARAM(wParam);
+	mMouseWheel = GET_WHEEL_DELTA_WPARAM(wParam);
 }
 
 //=============================================================================
@@ -264,11 +264,11 @@ void Input::checkControllers()
 	DWORD result;
 	for (DWORD i = 0; i <MAX_CONTROLLERS; i++)
 	{
-		result = XInputGetState(i, &controllers[i].state);
+		result = XInputGetState(i, &mControllers[i].state);
 		if (result == ERROR_SUCCESS)
-			controllers[i].connected = true;
+			mControllers[i].connected = true;
 		else
-			controllers[i].connected = false;
+			mControllers[i].connected = false;
 	}
 }
 
@@ -280,11 +280,11 @@ void Input::readControllers()
 	DWORD result;
 	for (DWORD i = 0; i <MAX_CONTROLLERS; i++)
 	{
-		if (controllers[i].connected)
+		if (mControllers[i].connected)
 		{
-			result = XInputGetState(i, &controllers[i].state);
+			result = XInputGetState(i, &mControllers[i].state);
 			if (result == ERROR_DEVICE_NOT_CONNECTED)    // 接続されていない場合
-				controllers[i].connected = false;
+				mControllers[i].connected = false;
 		}
 	}
 }
@@ -297,10 +297,10 @@ void Input::readControllers()
 BYTE Input::getGamepadLeftTrigger(UINT n)
 {
 	BYTE value = getGamepadLeftTriggerUndead(n);
-	if (value > triggerDeadzone)             // if > dead zone
+	if (value > mTriggerDeadzone)             // if > dead zone
 											 //adjust magnitude relative to the end of the dead zone
-		value = (value - triggerDeadzone) * 255 /
-		(255 - triggerDeadzone);
+		value = (value - mTriggerDeadzone) * 255 /
+		(255 - mTriggerDeadzone);
 	else                                    // else, < dead zone
 		value = 0;
 	return value;
@@ -314,10 +314,10 @@ BYTE Input::getGamepadLeftTrigger(UINT n)
 BYTE Input::getGamepadRightTrigger(UINT n)
 {
 	BYTE value = getGamepadRightTriggerUndead(n);
-	if (value > triggerDeadzone)    // if > dead zone
+	if (value > mTriggerDeadzone)    // if > dead zone
 									//adjust magnitude relative to the end of the dead zone
-		value = (value - triggerDeadzone) * 255 /
-		(255 - triggerDeadzone);
+		value = (value - mTriggerDeadzone) * 255 /
+		(255 - mTriggerDeadzone);
 	else                                    // else, < dead zone
 		value = 0;
 	return value;
@@ -331,14 +331,14 @@ BYTE Input::getGamepadRightTrigger(UINT n)
 SHORT Input::getGamepadThumbLX(UINT n)
 {
 	int x = getGamepadThumbLXUndead(n);
-	if (x > thumbstickDeadzone) // if +x outside dead zone
+	if (x > mThumbstickDeadzone) // if +x outside dead zone
 								//adjust x relative to the deadzone and scale to 0 through 32767
-		x = (x - thumbstickDeadzone) * 32767 /
-		(32767 - thumbstickDeadzone);
-	else if (x < -thumbstickDeadzone)   // if -x outside dead zone
+		x = (x - mThumbstickDeadzone) * 32767 /
+		(32767 - mThumbstickDeadzone);
+	else if (x < -mThumbstickDeadzone)   // if -x outside dead zone
 										//adjust y relative to the deadzone and scale to 0 through -32767
-		x = (x + thumbstickDeadzone) * 32767 /
-		(32767 - thumbstickDeadzone);
+		x = (x + mThumbstickDeadzone) * 32767 /
+		(32767 - mThumbstickDeadzone);
 	else        // else, x inside dead zone
 		x = 0;  // return 0
 	return static_cast<SHORT>(x);
@@ -352,14 +352,14 @@ SHORT Input::getGamepadThumbLX(UINT n)
 SHORT Input::getGamepadThumbLY(UINT n)
 {
 	int y = getGamepadThumbLYUndead(n);
-	if (y > thumbstickDeadzone) // if +y outside dead zone
+	if (y > mThumbstickDeadzone) // if +y outside dead zone
 								//adjust magnitude relative to the end of the dead zone
-		y = (y - thumbstickDeadzone) * 32767 /
-		(32767 - thumbstickDeadzone);
-	else if (y < -thumbstickDeadzone)   // if -y outside dead zone
+		y = (y - mThumbstickDeadzone) * 32767 /
+		(32767 - mThumbstickDeadzone);
+	else if (y < -mThumbstickDeadzone)   // if -y outside dead zone
 										//adjust magnitude relative to the end of the dead zone
-		y = (y + thumbstickDeadzone) * 32767 /
-		(32767 - thumbstickDeadzone);
+		y = (y + mThumbstickDeadzone) * 32767 /
+		(32767 - mThumbstickDeadzone);
 	else        // else, y inside dead zone
 		y = 0;  // return 0
 	return static_cast<SHORT>(y);
@@ -373,14 +373,14 @@ SHORT Input::getGamepadThumbLY(UINT n)
 SHORT Input::getGamepadThumbRX(UINT n)
 {
 	int x = getGamepadThumbRXUndead(n);
-	if (x > thumbstickDeadzone) // if +x outside dead zone
+	if (x > mThumbstickDeadzone) // if +x outside dead zone
 								//adjust magnitude relative to the end of the dead zone
-		x = (x - thumbstickDeadzone) * 32767 /
-		(32767 - thumbstickDeadzone);
-	else if (x < -thumbstickDeadzone)   // if -x outside dead zone
+		x = (x - mThumbstickDeadzone) * 32767 /
+		(32767 - mThumbstickDeadzone);
+	else if (x < -mThumbstickDeadzone)   // if -x outside dead zone
 										//adjust magnitude relative to the end of the dead zone
-		x = (x + thumbstickDeadzone) * 32767 /
-		(32767 - thumbstickDeadzone);
+		x = (x + mThumbstickDeadzone) * 32767 /
+		(32767 - mThumbstickDeadzone);
 	else        // else, x inside dead zone
 		x = 0;  // return 0
 	return static_cast<SHORT>(x);
@@ -394,14 +394,14 @@ SHORT Input::getGamepadThumbRX(UINT n)
 SHORT Input::getGamepadThumbRY(UINT n)
 {
 	int y = getGamepadThumbRYUndead(n);
-	if (y > thumbstickDeadzone) // if +y outside dead zone
+	if (y > mThumbstickDeadzone) // if +y outside dead zone
 								//adjust magnitude relative to the end of the dead zone
-		y = (y - thumbstickDeadzone) * 32767 /
-		(32767 - thumbstickDeadzone);
-	else if (y < -thumbstickDeadzone)   // if -y outside dead zone
+		y = (y - mThumbstickDeadzone) * 32767 /
+		(32767 - mThumbstickDeadzone);
+	else if (y < -mThumbstickDeadzone)   // if -y outside dead zone
 										//adjust magnitude relative to the end of the dead zone
-		y = (y + thumbstickDeadzone) * 32767 /
-		(32767 - thumbstickDeadzone);
+		y = (y + mThumbstickDeadzone) * 32767 /
+		(32767 - mThumbstickDeadzone);
 	else        // else, y inside dead zone
 		y = 0;  // return 0
 	return static_cast<SHORT>(y);
@@ -414,21 +414,21 @@ void Input::vibrateControllers(float frameTime)
 {
 	for (int i = 0; i < MAX_CONTROLLERS; i++)
 	{
-		if (controllers[i].connected)
+		if (mControllers[i].connected)
 		{
-			controllers[i].vibrateTimeLeft -= frameTime;
-			if (controllers[i].vibrateTimeLeft < 0)
+			mControllers[i].vibrateTimeLeft -= frameTime;
+			if (mControllers[i].vibrateTimeLeft < 0)
 			{
-				controllers[i].vibrateTimeLeft = 0;
-				controllers[i].vibration.wLeftMotorSpeed = 0;
+				mControllers[i].vibrateTimeLeft = 0;
+				mControllers[i].vibration.wLeftMotorSpeed = 0;
 			}
-			controllers[i].vibrateTimeRight -= frameTime;
-			if (controllers[i].vibrateTimeRight < 0)
+			mControllers[i].vibrateTimeRight -= frameTime;
+			if (mControllers[i].vibrateTimeRight < 0)
 			{
-				controllers[i].vibrateTimeRight = 0;
-				controllers[i].vibration.wRightMotorSpeed = 0;
+				mControllers[i].vibrateTimeRight = 0;
+				mControllers[i].vibration.wRightMotorSpeed = 0;
 			}
-			XInputSetState(i, &controllers[i].vibration);
+			XInputSetState(i, &mControllers[i].vibration);
 		}
 	}
 }

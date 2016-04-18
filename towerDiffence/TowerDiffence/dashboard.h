@@ -45,9 +45,9 @@ namespace dashboardNS
 class SevenSegment : public Image
 {
 private:
-    Image   decimal;// セブンセグメントの画像
-    UINT    digits;	// 桁数
-    double  number;	// 表示する数値
+    Image   mDecimal;	// セブンセグメントの画像
+    UINT    mDigits;	// 桁数
+    double  mNumber;	// 表示する数値
 public:
 	// コンストラクタ
     SevenSegment();
@@ -95,8 +95,8 @@ public:
 class DialGauge : public Image
 {
 private:
-    Image   pointer;				// 画像
-    dashboardNS::DialType dialType;	// 円盤の種類
+    Image   mPointer;					// 画像
+    dashboardNS::DialType mDialType;	// 円盤の種類
 public:
 	// DialGaugeを初期化
 	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
@@ -122,10 +122,10 @@ public:
 class Light : public Image
 {
 private:
-    float   flashTimer;		// ライト点滅用のタイマー
-    float   flashDelay;		// ライトが点滅する間隔
-    COLOR_ARGB  onColor;	// 点灯時のライトの色
-    COLOR_ARGB  offColor;	// 消灯時のライトの色
+    float   mFlashTimer;	// ライト点滅用のタイマー
+    float   mFlashDelay;	// ライトが点滅する間隔
+    COLOR_ARGB  mOnColor;	// 点灯時のライトの色
+    COLOR_ARGB  mOffColor;	// 消灯時のライトの色
 public:
 	// コンストラクタ
     Light();
@@ -150,11 +150,11 @@ public:
 class ToggleSwitch : public Image
 {
 private:
-    Input   *input;				// 入力システムへのポインタ
-    HWND    hwnd;				// ウィンドウハンドル
-    RECT    switchRect;         // マウスクリックを受け付ける範囲
-    bool    switchOn;           // スイッチの状態
-    bool    mouseClick;         // マウスクリックの状態
+    Input   *mInput;			// 入力システムへのポインタ
+    HWND    mHwnd;				// ウィンドウハンドル
+    RECT    mSwitchRect;        // マウスクリックを受け付ける範囲
+    bool    mSwitchOn;          // スイッチの状態
+    bool    mMouseClick;        // マウスクリックの状態
     public:
     // Toggle switchコンストラクタ
     ToggleSwitch();
@@ -171,20 +171,20 @@ private:
 	// updateをオーバーライド
     virtual void update(float frameTime);
     // スイッチの状態を取得
-    bool getSwitchOn()   {return switchOn;}
+    bool getSwitchOn()   {return mSwitchOn;}
     // スイッチの状態を設定
-    void setSwitch(bool on) {switchOn = on;}
+    void setSwitch(bool on) {mSwitchOn = on;}
 };
 
 class PushButton : public Image
 {
 private:
-	Input   *input;				// 入力システムへのポインタ
-	HWND    hwnd;				// ウィンドウハンドル
-	RECT    switchRect;         // マウスクリックを受け付ける範囲
-	bool    switchOn;           // スイッチの状態
-	bool    mouseClick;         // マウスクリックの状態
-    bool    momentary;          // 一定時間ごとに切り替える場合はtrue、トグルの場合はfalse
+	Input   *mInput;			// 入力システムへのポインタ
+	HWND    mHwnd;				// ウィンドウハンドル
+	RECT    mSwitchRect;        // マウスクリックを受け付ける範囲
+	bool    mSwitchOn;          // スイッチの状態
+	bool    mMouseClick;        // マウスクリックの状態
+    bool    mMomentary;         // 一定時間ごとに切り替える場合はtrue、トグルの場合はfalse
 public:
     // Pushbutton switchコンストラクタ
     PushButton();
@@ -202,17 +202,17 @@ public:
 	// updateをオーバーライド
     virtual void update(float frameTime);
 	// スイッチの状態を取得
-    bool getSwitchOn()  {return switchOn;}
+    bool getSwitchOn()  {return mSwitchOn;}
 	// スイッチの状態を設定
-    void setSwitch(bool on) {switchOn = on;}
+    void setSwitch(bool on) {mSwitchOn = on;}
 };
 
 //
 class BarGraph : public Image
 {
 private:
-    int maxBars;		// バーの本数の最大数
-    int barsOn;			// 現在のバーの本数
+    int mMaxBars;			// バーの本数の最大数
+    int mBarsOn;			// 現在のバーの本数
 public:
     // BarGraphコンストラクタ
     BarGraph();

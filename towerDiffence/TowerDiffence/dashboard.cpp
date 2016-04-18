@@ -13,8 +13,8 @@
 //=============================================================================
 SevenSegment::SevenSegment()
 {
-    digits = 1;	// 桁数
-    number = 0;	// 表示する数値
+    mDigits = 1;	// 桁数
+    mNumber = 0;	// 表示する数値
 }
 
 //=============================================================================
@@ -34,18 +34,18 @@ bool SevenSegment::initialize(Graphics *graphics, TextureManager *textureM,
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::SEGMENT_FRAME);
-        spriteData.x = (float)left;
-        spriteData.y = (float)top;
-        spriteData.scale = scale;
-        colorFilter = color;
+        mSpriteData.x = (float)left;
+        mSpriteData.y = (float)top;
+        mSpriteData.scale = scale;
+        mColorFilter = color;
         if(digs < 1)
             digs = 1;
-        digits = digs;
+        mDigits = digs;
 
-        decimal.initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT,
+        mDecimal.initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT,
                            dashboardNS::TEXTURE_COLS, textureM);
-        decimal.setCurrentFrame(dashboardNS::DECIMAL_FRAME);
-        decimal.setColorFilter(color);
+        mDecimal.setCurrentFrame(dashboardNS::DECIMAL_FRAME);
+        mDecimal.setColorFilter(color);
     }
     catch(...)
     {
@@ -60,7 +60,7 @@ bool SevenSegment::initialize(Graphics *graphics, TextureManager *textureM,
 //=============================================================================
 void SevenSegment::set(double value)
 {
-    number = value;
+    mNumber = value;
 }
 
 //=============================================================================
@@ -76,8 +76,8 @@ void SevenSegment::set(double value)
 //=============================================================================
 void SevenSegment::drawDigit(char n, COLOR_ARGB color)
 {
-    float lowerY = spriteData.y + spriteData.height * spriteData.scale * 0.75f;
-    float saveY = spriteData.y;
+    float lowerY = mSpriteData.y + mSpriteData.height * mSpriteData.scale * 0.75f;
+    float saveY = mSpriteData.y;
 
 	// セグメントA
     if(n=='0' || n=='2' || n=='3' || n=='5' || n=='6' || n=='7' || n=='8' || n=='9')
@@ -104,7 +104,7 @@ void SevenSegment::drawDigit(char n, COLOR_ARGB color)
         Image::draw(color);
     }
 
-    spriteData.y = lowerY;  // 数字の下半分用にYを設定
+    mSpriteData.y = lowerY;  // 数字の下半分用にYを設定
 	
 	// セグメントEの場合
     if(n=='0' || n=='2' || n=='6' || n=='8')
@@ -124,7 +124,7 @@ void SevenSegment::drawDigit(char n, COLOR_ARGB color)
         setDegrees(90);
         Image::draw(color);
     }
-    spriteData.y = saveY;
+    mSpriteData.y = saveY;
 }
 
 //=============================================================================
@@ -132,17 +132,17 @@ void SevenSegment::drawDigit(char n, COLOR_ARGB color)
 //=============================================================================
 void SevenSegment::drawDecimal(COLOR_ARGB color)
 {
-    float saveX = spriteData.x;
-    float saveY = spriteData.y;
+    float saveX = mSpriteData.x;
+    float saveY = mSpriteData.y;
 
     setDegrees(0);
-    spriteData.x -= spriteData.width * spriteData.scale * 0.25f;
-    spriteData.y += spriteData.height * spriteData.scale * 0.80f;
+    mSpriteData.x -= mSpriteData.width * mSpriteData.scale * 0.25f;
+    mSpriteData.y += mSpriteData.height * mSpriteData.scale * 0.80f;
 
-    decimal.draw(spriteData, color);
+    mDecimal.draw(mSpriteData, color);
 
-    spriteData.x = saveX;
-    spriteData.y = saveY;
+    mSpriteData.x = saveX;
+    mSpriteData.y = saveY;
 }
 
 //=============================================================================
@@ -151,27 +151,27 @@ void SevenSegment::drawDecimal(COLOR_ARGB color)
 //=============================================================================
 void SevenSegment::draw(COLOR_ARGB color)
 {
-    float saveX = spriteData.x;
-    float saveY = spriteData.y;
+    float saveX = mSpriteData.x;
+    float saveY = mSpriteData.y;
     char ch;
 
-    if(digits == 0)
+    if(mDigits == 0)
         return;
 
 	// 数値を文字列に変換
     std::stringstream strstm;
-    strstm.precision(digits);
+    strstm.precision(mDigits);
     strstm.flags(std::ios_base::fixed);
-    strstm << number;           // 数値を文字列に変換
+    strstm << mNumber;           // 数値を文字列に変換
     std::string str = strstm.str();
 
     UINT digitN = str.length(); // 文字列の桁数を取得
 	// 文字列の桁数が、セブンセグメント表示の桁数よりも多い場合
-    if (digitN > digits)
-        digitN = digits;
+    if (digitN > mDigits)
+        digitN = mDigits;
 
 	// 最も左に位置する桁のx位置
-    spriteData.x += spriteData.width * spriteData.scale * 1.2f * (digits-digitN);
+    mSpriteData.x += mSpriteData.width * mSpriteData.scale * 1.2f * (mDigits-digitN);
 
     UINT n=0;
     ch = str.at(n++);           // numberの最初の桁を取得
@@ -183,7 +183,7 @@ void SevenSegment::draw(COLOR_ARGB color)
         {
             drawDigit(ch, color);   // 数字を表示
 			// 次の桁の画面上の位置
-            spriteData.x += spriteData.width * spriteData.scale * 1.2f;
+            mSpriteData.x += mSpriteData.width * mSpriteData.scale * 1.2f;
         }
         if(n < str.length())
             ch = str.at(n++);   // 次の桁を取得
@@ -192,7 +192,7 @@ void SevenSegment::draw(COLOR_ARGB color)
         if(ch != '.')           // 小数点でない場合
             digitN--;           // 桁数を減分
     }
-    spriteData.x = saveX;
+    mSpriteData.x = saveX;
 }
 
 //=============================================================================
@@ -211,10 +211,10 @@ bool Bar::initialize(Graphics *graphics, TextureManager *textureM, int left,
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::BAR_FRAME);
-        spriteData.x = (float)left;
-        spriteData.y = (float)top;
-        spriteData.scale = scale;
-        colorFilter = color;
+        mSpriteData.x = (float)left;
+        mSpriteData.y = (float)top;
+        mSpriteData.scale = scale;
+        mColorFilter = color;
     }
     catch(...)
     {
@@ -233,7 +233,7 @@ void Bar::set(float p)
         p = 0;
     else if(p > 100)
         p = 100;
-    spriteData.rect.right = spriteData.rect.left + (LONG)(spriteData.width*p/100);
+    mSpriteData.rect.right = mSpriteData.rect.left + (LONG)(mSpriteData.width*p/100);
 }
 
 //=============================================================================
@@ -255,7 +255,7 @@ bool DialGauge::initialize(Graphics *graphics, TextureManager *textureM, int lef
     try {
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
-        dialType = type;
+        mDialType = type;
         switch(type)
         {
         case dashboardNS::DIAL360:
@@ -265,17 +265,17 @@ bool DialGauge::initialize(Graphics *graphics, TextureManager *textureM, int lef
         case dashboardNS::DIAL180:
             setCurrentFrame(dashboardNS::DIAL180_FRAME); break;
         }
-        spriteData.x = (float)left;
-        spriteData.y = (float)top;
-        spriteData.scale = scale;
-        colorFilter = dialColor;
+        mSpriteData.x = (float)left;
+        mSpriteData.y = (float)top;
+        mSpriteData.scale = scale;
+        mColorFilter = dialColor;
         setDegrees(zeroAngle);
 
-        pointer.initialize(graphics, dashboardNS::WIDTH,
+        mPointer.initialize(graphics, dashboardNS::WIDTH,
                            dashboardNS::HEGIHT, dashboardNS::TEXTURE_COLS,
                            textureM);
-        pointer.setCurrentFrame(dashboardNS::POINTER_FRAME);
-        pointer.setColorFilter(pointerColor);
+        mPointer.setCurrentFrame(dashboardNS::POINTER_FRAME);
+        mPointer.setColorFilter(pointerColor);
     }
     catch(...)
     {
@@ -294,14 +294,14 @@ void DialGauge::set(float p)
         p = 0;
     else if(p > 100)
         p = 100;
-    switch(dialType)
+    switch(mDialType)
     {
     case dashboardNS::DIAL360:
-        pointer.setDegrees(p * 360/100.0f + getDegrees()); break;
+        mPointer.setDegrees(p * 360/100.0f + getDegrees()); break;
     case dashboardNS::DIAL270:
-        pointer.setDegrees(p * 270/100.0f + getDegrees() - 135); break;
+        mPointer.setDegrees(p * 270/100.0f + getDegrees() - 135); break;
     case dashboardNS::DIAL180:
-        pointer.setDegrees(p * 180/100.0f + getDegrees() - 90); break;
+        mPointer.setDegrees(p * 180/100.0f + getDegrees() - 90); break;
     }
 }
 
@@ -311,10 +311,10 @@ void DialGauge::set(float p)
 void DialGauge::draw(COLOR_ARGB color)
 {
     Image::draw(color);
-    float dialAngle = spriteData.angle;
-    spriteData.angle = pointer.getRadians();
-    pointer.draw(spriteData, graphicsNS::FILTER);
-    spriteData.angle = dialAngle;
+    float dialAngle = mSpriteData.angle;
+    mSpriteData.angle = mPointer.getRadians();
+    mPointer.draw(mSpriteData, graphicsNS::FILTER);
+    mSpriteData.angle = dialAngle;
 }
 
 //=============================================================================
@@ -322,10 +322,10 @@ void DialGauge::draw(COLOR_ARGB color)
 //=============================================================================
 Light::Light()
 {
-    flashDelay = 0;
-    flashTimer = 0;
-    onColor = graphicsNS::RED;
-    offColor = SETCOLOR_ARGB(255,32,0,0);   // ダークレッド
+    mFlashDelay = 0;
+    mFlashTimer = 0;
+    mOnColor = graphicsNS::RED;
+    mOffColor = SETCOLOR_ARGB(255,32,0,0);   // ダークレッド
 }
 
 //=============================================================================
@@ -347,16 +347,16 @@ bool Light::initialize(Graphics *graphics, TextureManager *textureM, int left, i
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::LIGHT_FRAME);
-        spriteData.x = (float)left;
-        spriteData.y = (float)top;
-        spriteData.scale = scale;
-        colorFilter = colorOff;
-        offColor = colorOff;
-        onColor = colorOn;
+        mSpriteData.x = (float)left;
+        mSpriteData.y = (float)top;
+        mSpriteData.scale = scale;
+        mColorFilter = colorOff;
+        mOffColor = colorOff;
+        mOnColor = colorOn;
         if(flashRate > 0)
-            flashDelay = flashRate/2.0f;    // デューティー比は50%
+            mFlashDelay = flashRate/2.0f;    // デューティー比は50%
         else
-            flashDelay = flashRate;
+            mFlashDelay = flashRate;
     }
     catch(...)
     {
@@ -372,9 +372,9 @@ bool Light::initialize(Graphics *graphics, TextureManager *textureM, int left, i
 void Light::set(float flashRate)
 {
     if(flashRate > 0)
-        flashDelay = flashRate/2.0f;    // デューティー比は50%
+        mFlashDelay = flashRate/2.0f;    // デューティー比は50%
     else
-        flashDelay = flashRate;
+        mFlashDelay = flashRate;
 }
 
 //=============================================================================
@@ -382,16 +382,16 @@ void Light::set(float flashRate)
 //=============================================================================
 void Light::update(float frameTime)
 {
-    if(flashDelay > 0)  // >0の場合、ライトを点滅させる
+    if(mFlashDelay > 0)  // >0の場合、ライトを点滅させる
     {
-        flashTimer += frameTime;
-        if(flashTimer >= flashDelay)
+        mFlashTimer += frameTime;
+        if(mFlashTimer >= mFlashDelay)
         {
-            flashTimer -= flashDelay;
-            if(colorFilter == onColor)
-                colorFilter = offColor;
+            mFlashTimer -= mFlashDelay;
+            if(mColorFilter == mOnColor)
+                mColorFilter = mOffColor;
             else
-                colorFilter = onColor;
+                mColorFilter = mOnColor;
         }
     }
 }
@@ -402,8 +402,8 @@ void Light::update(float frameTime)
 //=============================================================================
 ToggleSwitch::ToggleSwitch()
 {
-    switchOn = false;
-    mouseClick = true;
+    mSwitchOn = false;
+    mMouseClick = true;
 }
 
 //=============================================================================
@@ -423,15 +423,15 @@ bool ToggleSwitch::initialize(Graphics *graphics, TextureManager *textureM, Inpu
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::SWITCH_OFF_FRAME);
-        spriteData.x = (float)left;
-        spriteData.y = (float)top;
-        spriteData.scale = scale;
-        hwnd = h;                       // ウィンドウへのハンドル
-        input = in;                     // 入力オブジェクト
-        switchRect.left = left;
-        switchRect.top  = top;
-        switchRect.right = (long)(left + (dashboardNS::SWITCH_WIDTH * spriteData.scale));
-        switchRect.bottom = (long)(top + (spriteData.height * spriteData.scale));
+        mSpriteData.x = (float)left;
+        mSpriteData.y = (float)top;
+        mSpriteData.scale = scale;
+        mHwnd = h;                       // ウィンドウへのハンドル
+        mInput = in;                     // 入力オブジェクト
+        mSwitchRect.left = left;
+        mSwitchRect.top  = top;
+        mSwitchRect.right = (long)(left + (dashboardNS::SWITCH_WIDTH * mSpriteData.scale));
+        mSwitchRect.bottom = (long)(top + (mSpriteData.height * mSpriteData.scale));
     }
     catch(...)
     {
@@ -446,35 +446,35 @@ bool ToggleSwitch::initialize(Graphics *graphics, TextureManager *textureM, Inpu
 //=============================================================================
 void ToggleSwitch::update(float frameTime)
 {
-    if (!initialized || !visible)
+    if (!mInitialized || !mVisible)
         return;
 
     // ウィンドウがサイズ変更されている場合を考慮して、画面の比率を計算
     RECT clientRect;
-    GetClientRect(hwnd, &clientRect);
+    GetClientRect(mHwnd, &clientRect);
     float screenRatioX = (float)GAME_WIDTH / clientRect.right;
     float screenRatioY = (float)GAME_HEIGHT / clientRect.bottom;
 
-    if (input->getMouseLButton())       // マウスの左ボタンの場合
+    if (mInput->getMouseLButton())       // マウスの左ボタンの場合
     {
 		// マウスクリックがスイッチの内側で発生した場合
-        if (input->getMouseX()*screenRatioX >= switchRect.left &&
-            input->getMouseX()*screenRatioX <= switchRect.right &&
-            input->getMouseY()*screenRatioY >= switchRect.top &&
-            input->getMouseY()*screenRatioY <= switchRect.bottom)
+        if (mInput->getMouseX()*screenRatioX >= mSwitchRect.left &&
+            mInput->getMouseX()*screenRatioX <= mSwitchRect.right &&
+            mInput->getMouseY()*screenRatioY >= mSwitchRect.top &&
+            mInput->getMouseY()*screenRatioY <= mSwitchRect.bottom)
         {
-            if(mouseClick)
+            if(mMouseClick)
             {
-                mouseClick = false;
-                switchOn = !switchOn;       // スイッチを切り替える
-                if(switchOn)
+                mMouseClick = false;
+                mSwitchOn = !mSwitchOn;       // スイッチを切り替える
+                if(mSwitchOn)
                     setCurrentFrame(dashboardNS::SWITCH_ON_FRAME);
                 else
                     setCurrentFrame(dashboardNS::SWITCH_OFF_FRAME);
             }
         }
     } else
-        mouseClick = true;
+        mMouseClick = true;
 }
 
 //=============================================================================
@@ -482,9 +482,9 @@ void ToggleSwitch::update(float frameTime)
 //=============================================================================
 PushButton::PushButton()
 {
-    switchOn = false;
-    mouseClick = true;
-    momentary = true;
+    mSwitchOn = false;
+    mMouseClick = true;
+    mMomentary = true;
 }
 
 //=============================================================================
@@ -505,16 +505,16 @@ bool PushButton::initialize(Graphics *graphics, TextureManager *textureM, Input 
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::BUTTON_UP_FRAME);
-        spriteData.x = (float)left;
-        spriteData.y = (float)top;
-        spriteData.scale = scale;
-        hwnd = h;                       // ウィンドウへのハンドル
-        input = in;                     // 入力オブジェクト
-        switchRect.left = left;
-        switchRect.top  = top;
-        switchRect.right = (long)(left + spriteData.width * spriteData.scale);
-        switchRect.bottom = (long)(top + spriteData.height * spriteData.scale);
-        momentary = type;
+        mSpriteData.x = (float)left;
+        mSpriteData.y = (float)top;
+        mSpriteData.scale = scale;
+        mHwnd = h;                       // ウィンドウへのハンドル
+        mInput = in;                     // 入力オブジェクト
+        mSwitchRect.left = left;
+        mSwitchRect.top  = top;
+        mSwitchRect.right = (long)(left + mSpriteData.width * mSpriteData.scale);
+        mSwitchRect.bottom = (long)(top + mSpriteData.height * mSpriteData.scale);
+        mMomentary = type;
     }
     catch(...)
     {
@@ -529,31 +529,31 @@ bool PushButton::initialize(Graphics *graphics, TextureManager *textureM, Input 
 //=============================================================================
 void PushButton::update(float frameTime)
 {
-    if (!initialized || !visible)
+    if (!mInitialized || !mVisible)
         return;
 
 	// ウィンドウがサイズ変更されている場合を考慮して、画面の比率を計算
     RECT clientRect;
-    GetClientRect(hwnd, &clientRect);
+    GetClientRect(mHwnd, &clientRect);
     float screenRatioX = (float)GAME_WIDTH / clientRect.right;
     float screenRatioY = (float)GAME_HEIGHT / clientRect.bottom;
 
-    if (input->getMouseLButton())           // マウスの左ボタンの場合
+    if (mInput->getMouseLButton())           // マウスの左ボタンの場合
     {
 		// スイッチの内部でマウスがクリックされた場合
-        if (input->getMouseX()*screenRatioX >= switchRect.left &&
-            input->getMouseX()*screenRatioX <= switchRect.right &&
-            input->getMouseY()*screenRatioY >= switchRect.top &&
-            input->getMouseY()*screenRatioY <= switchRect.bottom)
+        if (mInput->getMouseX()*screenRatioX >= mSwitchRect.left &&
+            mInput->getMouseX()*screenRatioX <= mSwitchRect.right &&
+            mInput->getMouseY()*screenRatioY >= mSwitchRect.top &&
+            mInput->getMouseY()*screenRatioY <= mSwitchRect.bottom)
         {
-            if(mouseClick)
+            if(mMouseClick)
             {
-                mouseClick = false;
-                if(momentary)               // モーメンタリースイッチの場合
-                    switchOn = true;
+                mMouseClick = false;
+                if(mMomentary)               // モーメンタリースイッチの場合
+                    mSwitchOn = true;
                 else
-                    switchOn = !switchOn;   // スイッチを切り替える
-                if(switchOn)
+                    mSwitchOn = !mSwitchOn;   // スイッチを切り替える
+                if(mSwitchOn)
                     setCurrentFrame(dashboardNS::BUTTON_DOWN_FRAME);
                 else
                     setCurrentFrame(dashboardNS::BUTTON_UP_FRAME);
@@ -562,10 +562,10 @@ void PushButton::update(float frameTime)
     } 
     else
     {
-        mouseClick = true;
-        if(momentary)
+        mMouseClick = true;
+        if(mMomentary)
         {
-            switchOn = false;
+            mSwitchOn = false;
             setCurrentFrame(dashboardNS::BUTTON_UP_FRAME);
         }
     }
@@ -576,8 +576,8 @@ void PushButton::update(float frameTime)
 //=============================================================================
 BarGraph::BarGraph()
 {
-    maxBars = 1;
-    barsOn = 0;
+    mMaxBars = 1;
+    mBarsOn = 0;
 }
 
 //=============================================================================
@@ -597,12 +597,12 @@ bool BarGraph::initialize(Graphics *graphics, TextureManager *textureM, int left
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
                           dashboardNS::TEXTURE_COLS, textureM);
         setCurrentFrame(dashboardNS::BAR_GRAPH_FRAME);
-        spriteData.x = (float)left;
-        spriteData.y = (float)top;
-        spriteData.scale = scale;
-        colorFilter = color;
-        if(maxBars > 0)
-            maxBars = bars;
+        mSpriteData.x = (float)left;
+        mSpriteData.y = (float)top;
+        mSpriteData.scale = scale;
+        mColorFilter = color;
+        if(mMaxBars > 0)
+            mMaxBars = bars;
     }
     catch(...)
     {
@@ -622,7 +622,7 @@ void BarGraph::set(float p)
         p = 0;
     else if(p > 100)
         p = 100;
-    barsOn = (int)(p * 0.01f * maxBars + 0.5);
+    mBarsOn = (int)(p * 0.01f * mMaxBars + 0.5);
 }
 
 //=============================================================================
@@ -631,14 +631,14 @@ void BarGraph::set(float p)
 //=============================================================================
 void BarGraph::draw(COLOR_ARGB color)
 {
-    float saveX = spriteData.x;
+    float saveX = mSpriteData.x;
 
-    for (int i=barsOn; i > 0; i--)
+    for (int i=mBarsOn; i > 0; i--)
     {
 		// 次のバーの画面上の位置
-        spriteData.x += dashboardNS::BAR_GRAPH_WIDTH * spriteData.scale;
+        mSpriteData.x += dashboardNS::BAR_GRAPH_WIDTH * mSpriteData.scale;
         Image::draw(color);
     }
-    spriteData.x = saveX;
+    mSpriteData.x = saveX;
 }
 

@@ -34,7 +34,7 @@ namespace fireNS
 class Fire : public Entity							// Entityクラスを継承
 {
 private:
-	float fireTimer;								// 発射が可能になるまでの残り時間
+	float mFireTimer;								// 発射が可能になるまでの残り時間
 public:
 	// コンストラクタ
 	Fire();

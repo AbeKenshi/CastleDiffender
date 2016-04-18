@@ -12,8 +12,8 @@
 //=============================================================================
 TextureManager::TextureManager()
 {
-	graphics = NULL;
-	initialized = false;            // 初期化に成功した場合は、true
+	mGraphics = NULL;
+	mInitialized = false;            // 初期化に成功した場合は、true
 }
 
 //=============================================================================
@@ -21,8 +21,8 @@ TextureManager::TextureManager()
 //=============================================================================
 TextureManager::~TextureManager()
 {
-	for (UINT i = 0; i<texture.size(); i++)
-		safeReleaseTexture(texture[i]);
+	for (UINT i = 0; i<mTexture.size(); i++)
+		safeReleaseTexture(mTexture[i]);
 }
 
 //=============================================================================
@@ -33,7 +33,7 @@ bool TextureManager::initialize(Graphics *g, std::string file)
 {
 	bool success = true;
 	try {
-		graphics = g;                       // graphicsオブジェクト
+		mGraphics = g;                       // graphicsオブジェクト
 		for (UINT i = 0; i<file.size(); i++)    // convert to lowercase
 			file.at(i) = tolower(file.at(i));
 		if (file.rfind(".txt") == file.size() - 4) // if .txt extension
@@ -45,32 +45,32 @@ bool TextureManager::initialize(Graphics *g, std::string file)
 			std::string name;
 			while (getline(infile, name))
 			{
-				fileNames.push_back(name);  // add to files
-				width.push_back(0);         // make room for width
-				height.push_back(0);        // make room for height
-				texture.push_back(NULL);    // make room for texture
+				mFileNames.push_back(name);  // add to files
+				mWidth.push_back(0);         // make room for width
+				mHeight.push_back(0);        // make room for height
+				mTexture.push_back(NULL);    // make room for texture
 			}
 			infile.close();
 		}
 		else    // not .txt file so file contains name of one texture
 		{
-			fileNames.push_back(file);      // put one file name in files
-			width.push_back(0);         // make room for width
-			height.push_back(0);        // make room for height
-			texture.push_back(NULL);    // make room for texture
+			mFileNames.push_back(file);      // put one file name in files
+			mWidth.push_back(0);         // make room for width
+			mHeight.push_back(0);        // make room for height
+			mTexture.push_back(NULL);    // make room for texture
 		}
 
 		// load texture files
-		for (UINT i = 0; i<fileNames.size(); i++)
+		for (UINT i = 0; i<mFileNames.size(); i++)
 		{
-			hr = graphics->loadTexture(fileNames[i].c_str(),
-				graphicsNS::TRANSCOLOR, width[i], height[i], texture[i]);
-			if (FAILED(hr))
+			mHr = mGraphics->loadTexture(mFileNames[i].c_str(),
+				graphicsNS::TRANSCOLOR, mWidth[i], mHeight[i], mTexture[i]);
+			if (FAILED(mHr))
 				success = false;    // at least one texture failed to load
 		}
 	}
 	catch (...) { return false; }
-	initialized = true;                    // 正常に初期化された場合、trueを設定
+	mInitialized = true;                    // 正常に初期化された場合、trueを設定
 	return success;
 }
 
@@ -81,10 +81,10 @@ void TextureManager::onLostDevice()
 {
 	try
 	{
-		if (!initialized)
+		if (!mInitialized)
 			return;
-		for (UINT i = 0; i<texture.size(); i++)
-			safeReleaseTexture(texture[i]);
+		for (UINT i = 0; i<mTexture.size(); i++)
+			safeReleaseTexture(mTexture[i]);
 	}
 	catch (...)
 	{
@@ -98,14 +98,14 @@ void TextureManager::onLostDevice()
 //=============================================================================
 void TextureManager::onResetDevice()
 {
-	if (!initialized)
+	if (!mInitialized)
 		return;
 	// load texture files
-	for (UINT i = 0; i<fileNames.size(); i++)
+	for (UINT i = 0; i<mFileNames.size(); i++)
 	{
-		hr = graphics->loadTexture(fileNames[i].c_str(),
-			graphicsNS::TRANSCOLOR, width[i], height[i], texture[i]);
-		if (FAILED(hr))
-			safeReleaseTexture(texture[i]);
+		mHr = mGraphics->loadTexture(mFileNames[i].c_str(),
+			graphicsNS::TRANSCOLOR, mWidth[i], mHeight[i], mTexture[i]);
+		if (FAILED(mHr))
+			safeReleaseTexture(mTexture[i]);
 	}
 }

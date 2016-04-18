@@ -28,36 +28,36 @@ class Entity : public Image
 {
 	// Entityプロパティ
 protected:
-	entityNS::COLLISION_TYPE collisionType;
-	VECTOR2 center;				// エンティティの中心
-	float   radius;				// 円の衝突判定の大きさ
-	VECTOR2 distSquared;		// 円の衝突判定の計算に使用
-	float   sumRadiiSquared;
-	RECT    edge;				// BOXとROTATED_BOXの衝突判定用のボックス
-	VECTOR2 corners[4];			// ROTATED_BOXの衝突判定用
-	VECTOR2 edge01, edge03;		// 投影用のエッジ
+	entityNS::COLLISION_TYPE mCollisionType;	// 衝突判定の種類
+	VECTOR2 mCenter;				// エンティティの中心
+	float   mRadius;				// 円の衝突判定の大きさ
+	VECTOR2 mDistSquared;			// 円の衝突判定の計算に使用
+	float   mSumRadiiSquared;
+	RECT    mEdge;					// BOXとROTATED_BOXの衝突判定用のボックス
+	VECTOR2 mCorners[4];			// ROTATED_BOXの衝突判定用
+	VECTOR2 mEdge01, mEdge03;		// 投影用のエッジ
 	// このエンティティのボックスをedge01とedge03に投影した場合の最大と最小の投影
-	float   entA01min, entA01max, entA03min, entA03max;
+	float   mEntA01min, mEntA01max, mEntA03min, mEntA03max;
 	// 相手のボックスをedge01とedge03に投影した場合の最大と最小の投影
-	float   entB01min, entB01max, entB03min, entB03max;
-	VECTOR2 velocity;			// 速度
-	VECTOR2 deltaV;				// 次にupdate()が呼び出されたときの加速度
-	float   mass;				// エンティティの質量
-	float   health;				// 体力（0~100）
-	float   rr;					// このエンティティと相手のエンティティまでの距離
-	float   force;				// エンティティに働く力
-	float   gravity;			// ゲーム世界での重力定数
-	Input   *input;				// 入力システムへのポインタ
-	Audio   *audio;				// オーディオシステムへのポインタ
-	HRESULT hr;					// 標準の戻り値
-	bool    active;				// trueのときのみエンティティの衝突判定が有効
-	bool    rotatedBoxReady;    // 回転した衝突判定用のボックスが準備できた場合、true
-	int tileX, tileY;			// 自分が存在するタイルの位置
-	bool isDamaged;				// ダメージを受けている状態かどうか
-	bool drawFlag;				// 描画フラグ、true時に描画
-	float damagePer;            // ダメージを受ける時に掛ける割合
-	float damageTimer;					// ダメージ時のアニメーション用のタイマー
-	float totalDamageTime;				// ダメージ時のアニメーション用のタイマー
+	float   mEntB01min, mEntB01max, mEntB03min, mEntB03max;
+	VECTOR2 mVelocity;				// 速度
+	VECTOR2 mDeltaV;				// 次にupdate()が呼び出されたときの加速度
+	float   mMass;					// エンティティの質量
+	float   mHealth;				// 体力（0~100）
+	float   mRr;					// このエンティティと相手のエンティティまでの距離
+	float   mForce;					// エンティティに働く力
+	float   mGravity;				// ゲーム世界での重力定数
+	Input   *mInput;				// 入力システムへのポインタ
+	Audio   *mAudio;				// オーディオシステムへのポインタ
+	HRESULT mHr;					// 標準の戻り値
+	bool    mActive;				// trueのときのみエンティティの衝突判定が有効
+	bool    mRotatedBoxReady;		// 回転した衝突判定用のボックスが準備できた場合、true
+	int mTileX, mTileY;				// 自分が存在するタイルの位置
+	bool mIsDamaged;				// ダメージを受けている状態かどうか
+	bool mDrawFlag;					// 描画フラグ、true時に描画
+	float mDamagePer;			    // ダメージを受ける時に掛ける割合
+	float mDamageTimer;				// ダメージ時のアニメーション用のタイマー
+	float mTotalDamageTime;			// ダメージ時のアニメーション用のタイマー
 
 	// 円の衝突判定メソッド
 	// collision()によって呼び出される、デフォルトの衝突判定メソッド
@@ -111,94 +111,94 @@ public:
 	// 画面上でのエンティティの中心の座標を戻す
 	virtual const VECTOR2* getCenter()
 	{
-		center = VECTOR2(getCenterX(), getCenterY());
-		return &center;
+		mCenter = VECTOR2(getCenterX(), getCenterY());
+		return &mCenter;
 	}
 
 	// 円の衝突判定の大きさを戻す
-	virtual float getRadius() const { return radius; }
+	virtual float getRadius() const { return mRadius; }
 
 	// BOXとROTATED_BOXの衝突判定用のボックスを戻す
-	virtual const RECT& getEdge() const { return edge; }
+	virtual const RECT& getEdge() const { return mEdge; }
 	
 	// ROTATED_BOXの衝突判定用のボックスの頂点の座標を戻す
 	virtual const VECTOR2* getCorner(UINT c) const
 	{
 		if (c >= 4)
 			c = 0;
-		return &corners[c];
+		return &mCorners[c];
 	}
 
 	// 速度ベクトルを戻す
-	virtual const VECTOR2 getVelocity() const { return velocity; }
+	virtual const VECTOR2 getVelocity() const { return mVelocity; }
 
 	// エンティティがアクティブかどうかを戻す
-	virtual bool  getActive()         const { return active; }
+	virtual bool  getActive()         const { return mActive; }
 
 	// 質量を戻す
-	virtual float getMass()           const { return mass; }
+	virtual float getMass()           const { return mMass; }
 
 	// 重力定数を戻す
-	virtual float getGravity()        const { return gravity; }
+	virtual float getGravity()        const { return mGravity; }
 
 	// 体力を戻す
-	virtual float getHealth()         const { return health; }
+	virtual float getHealth()         const { return mHealth; }
 
 	// 衝突判定の種類を戻す(NONE, CIRCLE, BOX, ROTATED_BOX)
-	virtual entityNS::COLLISION_TYPE getCollisionType() { return collisionType; }
+	virtual entityNS::COLLISION_TYPE getCollisionType() { return mCollisionType; }
 	
 	// 自分が存在するタイルのX位置を戻す
-	int getTileX() { return tileX; }
+	int getTileX() { return mTileX; }
 	
 	// 自分が存在するタイルのY位置を戻す
-	int getTileY() { return tileY; }
+	int getTileY() { return mTileY; }
 	
 	////////////////////////////////////////
 	//           setter                   //
 	////////////////////////////////////////
 
 	// 速度をセット
-	virtual void  setVelocity(VECTOR2 v) { velocity = v; }
+	virtual void  setVelocity(VECTOR2 v) { mVelocity = v; }
 
 	// 次の更新での加速度をセット
-	virtual void  setDeltaV(VECTOR2 dv) { deltaV = dv; }
+	virtual void  setDeltaV(VECTOR2 dv) { mDeltaV = dv; }
 
 	// エンティティがアクティブかどうかをセット
-	virtual void  setActive(bool a) { active = a; }
+	virtual void  setActive(bool a) { mActive = a; }
 
 	// 体力をセット
-	virtual void setHealth(float h) { health = h; }
+	virtual void setHealth(float h) { mHealth = h; }
 
 	// 質量をセット
-	virtual void  setMass(float m) { mass = m; }
+	virtual void  setMass(float m) { mMass = m; }
 
 	// 重力定数をセット。デフォルトは6.67428e-11
-	virtual void  setGravity(float g) { gravity = g; }
+	virtual void  setGravity(float g) { mGravity = g; }
 
 	// 円の衝突判定用の半径をセット
-	virtual void setCollisionRadius(float r) { radius = r; }
+	virtual void setCollisionRadius(float r) { mRadius = r; }
 
 	// 衝突判定の種類をセット(NONE, CIRCLE, BOX, ROTATED_BOX)
 	virtual void setCollisionType(entityNS::COLLISION_TYPE ctype)
 	{
-		collisionType = ctype;
+		mCollisionType = ctype;
 	}
 
 
 	// BOXとROTATED_BOXの衝突判定用のボックスをセット
-	virtual void setEdge(RECT e) { edge = e; }
+	virtual void setEdge(RECT e) { mEdge = e; }
 
 	// 回転した衝突判定用のボックスが準備できているかをセット
-	virtual void setRotatedBoxReady(bool r) { rotatedBoxReady = r; }
+	virtual void setRotatedBoxReady(bool r) { mRotatedBoxReady = r; }
 
 	// タイル上での位置をセットする関数
-	void setTileX(int x) { tileX = x; }
+	void setTileX(int x) { mTileX = x; }
 
 	// タイル上での位置をセットする関数
-	void setTileY(int y) { tileY = y; }
+	void setTileY(int y) { mTileY = y; }
 
 	// ダメージを受けるときに掛ける割合をセット
-	void setDamagePer(float per) { damagePer = per; }
+	void setDamagePer(float per) { mDamagePer = per; }
 
 	////////////////////////////////////////
 	//         その他の関数               //

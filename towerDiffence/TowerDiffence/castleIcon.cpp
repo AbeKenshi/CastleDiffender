@@ -13,13 +13,13 @@
 //==========================================================
 CastleIcon::CastleIcon() : Image()
 {
-	spriteData.width = castleIconNS::WIDTH;			// 城のアイコンのサイズ
-	spriteData.height = castleIconNS::HEIGHT;
-	spriteData.x = castleIconNS::X;					// 画面上の位置
-	spriteData.y = castleIconNS::Y;
-	spriteData.rect.bottom = castleIconNS::HEIGHT;	// 画面の一部を選択
-	spriteData.rect.right = castleIconNS::WIDTH;
-	startFrame = castleIconNS::START_FRAME;			// アニメーションの最初のフレーム
-	currentFrame = startFrame;						// 現在のフレームをアニメーションの最初のフレームにセット
+	mSpriteData.width = castleIconNS::WIDTH;			// 城のアイコンのサイズ
+	mSpriteData.height = castleIconNS::HEIGHT;
+	mSpriteData.x = castleIconNS::X;					// 画面上の位置
+	mSpriteData.y = castleIconNS::Y;
+	mSpriteData.rect.bottom = castleIconNS::HEIGHT;	// 画面の一部を選択
+	mSpriteData.rect.right = castleIconNS::WIDTH;
+	mStartFrame = castleIconNS::START_FRAME;			// アニメーションの最初のフレーム
+	mCurrentFrame = mStartFrame;						// 現在のフレームをアニメーションの最初のフレームにセット
 }
 

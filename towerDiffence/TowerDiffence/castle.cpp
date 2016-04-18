@@ -13,21 +13,21 @@
 //==========================================================
 Castle::Castle() : Entity()
 {
-	spriteData.width = castleNS::WIDTH;			// １つの画像のサイズ
-	spriteData.height = castleNS::HEIGHT;
-	spriteData.rect.bottom = castleNS::HEIGHT;	// 画像内の選択する部分
-	spriteData.rect.right = castleNS::WIDTH;
-	spriteData.x = castleNS::X;					// 画面上の位置
-	spriteData.y = castleNS::Y;
-	cols = castleNS::TEXTURE_COLS;				// テクスチャの列数
-	startFrame = castleNS::START_FRAME;			// アニメーションの最初のフレーム
-	currentFrame = startFrame;					// 現在のフレームをアニメーションの最初のフレームにセット
+	mSpriteData.width = castleNS::WIDTH;			// １つの画像のサイズ
+	mSpriteData.height = castleNS::HEIGHT;
+	mSpriteData.rect.bottom = castleNS::HEIGHT;	// 画像内の選択する部分
+	mSpriteData.rect.right = castleNS::WIDTH;
+	mSpriteData.x = castleNS::X;					// 画面上の位置
+	mSpriteData.y = castleNS::Y;
+	mCols = castleNS::TEXTURE_COLS;				// テクスチャの列数
+	mStartFrame = castleNS::START_FRAME;			// アニメーションの最初のフレーム
+	mCurrentFrame = mStartFrame;					// 現在のフレームをアニメーションの最初のフレームにセット
 	// Boxの衝突判定用
-	edge.left = (LONG)(-castleNS::WIDTH / 1.8);
-	edge.right = (LONG)(castleNS::WIDTH / 1.8);
-	edge.top = (LONG)(-castleNS::HEIGHT / 1.8);
-	edge.bottom = (LONG)(castleNS::HEIGHT / 1.8);
-	collisionType = entityNS::BOX;
+	mEdge.left = (LONG)(-castleNS::WIDTH / 1.8);
+	mEdge.right = (LONG)(castleNS::WIDTH / 1.8);
+	mEdge.top = (LONG)(-castleNS::HEIGHT / 1.8);
+	mEdge.bottom = (LONG)(castleNS::HEIGHT / 1.8);
+	mCollisionType = entityNS::BOX;
 
 	death = false;								// 死亡していない状態からスタート
 }
@@ -50,32 +50,32 @@ void Castle::reset()
 void Castle::update(float frameTime)
 {
 	// 非アクティブなら、何もしない
-	if (visible == false)
+	if (mVisible == false)
 		return;
 
 
 	// ダメージを受けているなら一定時間ごとにアニメーションを点滅
-	if (isDamaged)
+	if (mIsDamaged)
 	{
 		// ダメージ時にアニメーション用のタイマーを加算
-		damageTimer += frameTime;
-		totalDamageTime += frameTime;
+		mDamageTimer += frameTime;
+		mTotalDamageTime += frameTime;
 		// 0.15秒ごとに描画フラグを切り替え
-		if (damageTimer > 0.15f)
+		if (mDamageTimer > 0.15f)
 		{
-			if (drawFlag)
-				drawFlag = false;
+			if (mDrawFlag)
+				mDrawFlag = false;
 			else
-				drawFlag = true;
-			damageTimer = 0.0f;
+				mDrawFlag = true;
+			mDamageTimer = 0.0f;
 		}
 		// DAMAGE_TIME分だけ点滅したら、点滅を終了
-		if (totalDamageTime > 1.0f)
+		if (mTotalDamageTime > 1.0f)
 		{
-			damageTimer = 0.0f;
-			totalDamageTime = 0.0f;
-			drawFlag = true;
-			isDamaged = false;
+			mDamageTimer = 0.0f;
+			mTotalDamageTime = 0.0f;
+			mDrawFlag = true;
+			mIsDamaged = false;
 		}
 	}
 	// エンティティを更新
@@ -89,7 +89,7 @@ void Castle::update(float frameTime)
 void Castle::damage(WEAPON weapon)
 {
 	// 非アクティブな場合、ダメージは受けない
-	if (!active)
+	if (!mActive)
 		return;
 
 	// WEAPONによってダメージを分岐
@@ -103,20 +103,20 @@ void Castle::damage(WEAPON weapon)
 		break;
 	case ENEMY_ATTACK:			// 雑魚敵の攻撃
 		// 一定ダメージを受ける
-		health -= enemyAttackDamage * damagePer;
+		mHealth -= enemyAttackDamage * mDamagePer;
 		// ダメージ状態のフラグをオン
-		isDamaged = true;
+		mIsDamaged = true;
 		break;
 	case MIDBOSS_ATTACK:		// 中ボスの攻撃
 		// 一定ダメージを受ける
-		health -= midBossAttackDamage * damagePer;
+		mHealth -= midBossAttackDamage * mDamagePer;
 		// ダメージ状態のフラグをオン
-		isDamaged = true;
+		mIsDamaged = true;
 		break;
 	default:
 		break;
 	}
 	// 体力が0以下になったなら、死亡
-	if (health <= 0)
+	if (mHealth <= 0)
 		death = true;
 }

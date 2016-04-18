@@ -13,19 +13,19 @@
 //==========================================================
 EnemyCollision::EnemyCollision() : Entity()
 {
-	active = false;												// 攻撃はアクティブでない状態から開始
-	visible = false;
-	spriteData.width = enemyCollisionNS::ATTACK_WIDTH;			// １つの画像のサイズ
-	spriteData.height = enemyCollisionNS::ATTACK_HEIGHT;
-	spriteData.rect.bottom = enemyCollisionNS::ATTACK_HEIGHT;	// 画面の一部を選択
-	spriteData.rect.right = enemyCollisionNS::ATTACK_WIDTH;
+	mActive = false;												// 攻撃はアクティブでない状態から開始
+	mVisible = false;
+	mSpriteData.width = enemyCollisionNS::ATTACK_WIDTH;			// １つの画像のサイズ
+	mSpriteData.height = enemyCollisionNS::ATTACK_HEIGHT;
+	mSpriteData.rect.bottom = enemyCollisionNS::ATTACK_HEIGHT;	// 画面の一部を選択
+	mSpriteData.rect.right = enemyCollisionNS::ATTACK_WIDTH;
 	// Boxの衝突判定用
-	edge.left = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
-	edge.right = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
-	edge.top = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-	edge.bottom = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-	collisionType = entityNS::BOX;
-	collisionTimer = 0.0f;										// 攻撃の当たり判定が出ている時間を計測するタイマー
+	mEdge.left = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+	mEdge.right = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
+	mEdge.top = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+	mEdge.bottom = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+	mCollisionType = entityNS::BOX;
+	mCollisionTimer = 0.0f;										// 攻撃の当たり判定が出ている時間を計測するタイマー
 }
 
 //==========================================================
@@ -36,16 +36,16 @@ EnemyCollision::EnemyCollision() : Entity()
 void EnemyCollision::update(float frameTime)
 {
 	// 非アクティブなら、このエンティティの更新はしない
-	if (visible == false)
+	if (mVisible == false)
 		return;
 	// 攻撃の当たり判定が出ている時間を加算
-	collisionTimer += frameTime;
+	mCollisionTimer += frameTime;
 	// 攻撃の当たり判定が一定以上出ているなら、このエンティティを非アクティブにする
-	if (collisionTimer >= enemyCollisionNS::COLLISION_TIME)
+	if (mCollisionTimer >= enemyCollisionNS::COLLISION_TIME)
 	{
-		collisionTimer = 0.0f;
-		visible = false;
-		active = false;
+		mCollisionTimer = 0.0f;
+		mVisible = false;
+		mActive = false;
 	}
 	// エンティティを更新
 	Entity::update(frameTime);
@@ -63,61 +63,61 @@ void EnemyCollision::attack(float centerX, float centerY, float width, float hei
 	switch (direction)
 	{
 	case characterNS::RIGHT:	// 右
-		spriteData.width = enemyCollisionNS::ATTACK_WIDTH;	// １つの画像のサイズ
-		spriteData.height = enemyCollisionNS::ATTACK_HEIGHT;
-		spriteData.rect.bottom = enemyCollisionNS::ATTACK_HEIGHT;
-		spriteData.rect.right = enemyCollisionNS::ATTACK_WIDTH;
+		mSpriteData.width = enemyCollisionNS::ATTACK_WIDTH;	// １つの画像のサイズ
+		mSpriteData.height = enemyCollisionNS::ATTACK_HEIGHT;
+		mSpriteData.rect.bottom = enemyCollisionNS::ATTACK_HEIGHT;
+		mSpriteData.rect.right = enemyCollisionNS::ATTACK_WIDTH;
 		// Boxの衝突判定用
-		edge.left = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
-		edge.right = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
-		edge.top = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-		edge.bottom = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-		spriteData.x = centerX + width / 2;
-		spriteData.y = centerY - height / 2;
+		mEdge.left = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		mEdge.right = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		mEdge.top = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		mEdge.bottom = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		mSpriteData.x = centerX + width / 2;
+		mSpriteData.y = centerY - height / 2;
 		break;
 	case characterNS::UP:		// 上
-		spriteData.width = enemyCollisionNS::ATTACK_HEIGHT;	// １つの画像のサイズ
-		spriteData.height = enemyCollisionNS::ATTACK_WIDTH;
-		spriteData.rect.bottom = enemyCollisionNS::ATTACK_WIDTH;
-		spriteData.rect.right = enemyCollisionNS::ATTACK_HEIGHT;
+		mSpriteData.width = enemyCollisionNS::ATTACK_HEIGHT;	// １つの画像のサイズ
+		mSpriteData.height = enemyCollisionNS::ATTACK_WIDTH;
+		mSpriteData.rect.bottom = enemyCollisionNS::ATTACK_WIDTH;
+		mSpriteData.rect.right = enemyCollisionNS::ATTACK_HEIGHT;
 		// Boxの衝突判定用
-		edge.left = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-		edge.right = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-		edge.top = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
-		edge.bottom = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
-		spriteData.x = centerX - width / 2;
-		spriteData.y = centerY - height / 2 - spriteData.height - 10;
+		mEdge.left = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		mEdge.right = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		mEdge.top = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		mEdge.bottom = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		mSpriteData.x = centerX - width / 2;
+		mSpriteData.y = centerY - height / 2 - mSpriteData.height - 10;
 		break;
 	case characterNS::LEFT:		// 左
-		spriteData.width = enemyCollisionNS::ATTACK_WIDTH;	// １つの画像のサイズ
-		spriteData.height = enemyCollisionNS::ATTACK_HEIGHT;
-		spriteData.rect.bottom = enemyCollisionNS::ATTACK_HEIGHT;
-		spriteData.rect.right = enemyCollisionNS::ATTACK_WIDTH;
+		mSpriteData.width = enemyCollisionNS::ATTACK_WIDTH;	// １つの画像のサイズ
+		mSpriteData.height = enemyCollisionNS::ATTACK_HEIGHT;
+		mSpriteData.rect.bottom = enemyCollisionNS::ATTACK_HEIGHT;
+		mSpriteData.rect.right = enemyCollisionNS::ATTACK_WIDTH;
 		// Boxの衝突判定用
-		edge.left = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
-		edge.right = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
-		edge.top = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-		edge.bottom = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-		spriteData.x = centerX - width / 2 - spriteData.width;
-		spriteData.y = centerY - height / 2;
+		mEdge.left = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		mEdge.right = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		mEdge.top = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		mEdge.bottom = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		mSpriteData.x = centerX - width / 2 - mSpriteData.width;
+		mSpriteData.y = centerY - height / 2;
 		break;
 	case characterNS::DOWN:		// 下
-		spriteData.width = enemyCollisionNS::ATTACK_HEIGHT;	// １つの画像のサイズ
-		spriteData.height = enemyCollisionNS::ATTACK_WIDTH;
-		spriteData.rect.bottom = enemyCollisionNS::ATTACK_WIDTH;
-		spriteData.rect.right = enemyCollisionNS::ATTACK_HEIGHT;
+		mSpriteData.width = enemyCollisionNS::ATTACK_HEIGHT;	// １つの画像のサイズ
+		mSpriteData.height = enemyCollisionNS::ATTACK_WIDTH;
+		mSpriteData.rect.bottom = enemyCollisionNS::ATTACK_WIDTH;
+		mSpriteData.rect.right = enemyCollisionNS::ATTACK_HEIGHT;
 		// Boxの衝突判定用
-		edge.left = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-		edge.right = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
-		edge.top = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
-		edge.bottom = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
-		spriteData.x = centerX - width / 2;
-		spriteData.y = centerY + height / 2;
+		mEdge.left = (LONG)(-enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		mEdge.right = (LONG)(enemyCollisionNS::ATTACK_HEIGHT / 2.0);
+		mEdge.top = (LONG)(-enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		mEdge.bottom = (LONG)(enemyCollisionNS::ATTACK_WIDTH / 2.0);
+		mSpriteData.x = centerX - width / 2;
+		mSpriteData.y = centerY + height / 2;
 		break;
 	}
 	// 攻撃の当たり判定が出ている時間をリセット
-	collisionTimer = 0.0f;
-	visible = true;							// 攻撃を表示
-	active = true;							// 衝突可能にする	
+	mCollisionTimer = 0.0f;
+	//visible = true;							// 攻撃を表示
+	mActive = true;							// 衝突可能にする	
 	setRect();
 }

@@ -29,7 +29,7 @@ namespace braveIconNS
 class BraveIcon : public Image
 {
 private:
-	Brave *brave;	// 勇者へのポインタ。オブジェクトはこのクラス外で生成されるのでデストラクタは必要ない。
+	Brave *mBrave;	// 勇者へのポインタ。オブジェクトはこのクラス外で生成されるのでデストラクタは必要ない。
 public:
 	// コンストラクタ
 	BraveIcon();
@@ -44,6 +44,6 @@ public:
 	// 新しいメンバー関数
 	// Entityオブジェクトとリンクさせる。
 	// initialize関数の直後に呼び出す。
-	void linkEntity(Brave& brv) { brave = &(brv); }
+	void linkEntity(Brave& brv) { mBrave = &(brv); }
 };
 #endif // !_BRAVE_ICON_H

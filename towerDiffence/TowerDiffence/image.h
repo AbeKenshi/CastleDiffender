@@ -22,23 +22,23 @@ class Image
 {
 protected:
 	// Imageプロパティ
-	Graphics *graphics;						// graphicsへのポインタ
-	TextureManager *textureManager;			// texture managerへのポインタ
-											// spriteDataはGraphics::drawSprite()による画像の描画に必要なデータを保持する
-	SpriteData spriteData;					// "graphics.h"で定義されているSpriteData
-	COLOR_ARGB colorFilter;					// color filterとして適用（白を使用）
-	int cols;								// 複数のフレームを持つスプライト内の列数（1からnまで）
-	int startFrame;							// 複数のフレームを持つアニメーションシーケンスの最初のフレーム番号
-	int endFrame;							// 複数のフレームを持つアニメーションシーケンスの最後のフレーム番号
-	int currentFrame;						// アニメーションの現在のフレーム
-	double frameDelay;						// アニメーションの各フレームを表示する間隔（秒単位）
-	double animTimer;						// アニメーションの時間を測るために使用する変数
-	HRESULT hr;								// 標準の戻り値
-	bool loop;								// アニメーションを繰り返す場合、trueに設定（デフォルト）
-	bool visible;							// 画像が可視な場合、true
-	bool initialized;						// 初期化が成功した場合は、true
-	bool animComplete;						// ループしないアニメーションシーケンスが完了したときにtrueとなる
-	imageNS::MODE mode;						// 読み込んだ画像に対して横にアニメーションが流れる場合はHORIZONTAL、縦の場合はVERTICAL
+	Graphics *mGraphics;					// graphicsへのポインタ
+	TextureManager *mTextureManager;		// texture managerへのポインタ
+	// spriteDataはGraphics::drawSprite()による画像の描画に必要なデータを保持する
+	SpriteData mSpriteData;					// "graphics.h"で定義されているSpriteData
+	COLOR_ARGB mColorFilter;				// color filterとして適用（白を使用）
+	int mCols;								// 複数のフレームを持つスプライト内の列数（1からnまで）
+	int mStartFrame;						// 複数のフレームを持つアニメーションシーケンスの最初のフレーム番号
+	int mEndFrame;							// 複数のフレームを持つアニメーションシーケンスの最後のフレーム番号
+	int mCurrentFrame;						// アニメーションの現在のフレーム
+	double mFrameDelay;						// アニメーションの各フレームを表示する間隔（秒単位）
+	double mAnimTimer;						// アニメーションの時間を測るために使用する変数
+	HRESULT mHr;							// 標準の戻り値
+	bool mLoop;								// アニメーションを繰り返す場合、trueに設定（デフォルト）
+	bool mVisible;							// 画像が可視な場合、true
+	bool mInitialized;						// 初期化が成功した場合は、true
+	bool mAnimComplete;						// ループしないアニメーションシーケンスが完了したときにtrueとなる
+	imageNS::MODE mMode;					// 読み込んだ画像に対して横にアニメーションが流れる場合はHORIZONTAL、縦の場合はVERTICAL
 
 public:
 	// コンストラクタ
@@ -50,157 +50,157 @@ public:
 	// SpriteData構造体への参照を戻す
 	const virtual SpriteData& getSpriteInfo()
 	{
-		return spriteData;
+		return mSpriteData;
 	}
-	const virtual SpriteData& getSpriteData() { return spriteData; }
+	const virtual SpriteData& getSpriteData() { return mSpriteData; }
 
 
 	// visibleパラメータをｓ戻す
 	virtual bool getVisible()
 	{
-		return visible;
+		return mVisible;
 	}
 
 	// X位置を戻す
 	virtual float getX()
 	{
-		return spriteData.x;
+		return mSpriteData.x;
 	}
 
 	// Y位置を戻す
 	virtual float getY()
 	{
-		return spriteData.y;
+		return mSpriteData.y;
 	}
 
 	// 倍率を戻す
 	virtual float getScale()
 	{
-		return spriteData.scale;
+		return mSpriteData.scale;
 	}
 
 	// 幅を戻す
 	virtual int   getWidth()
 	{
-		return spriteData.width;
+		return mSpriteData.width;
 	}
 
 	// 高さを戻す
 	virtual int   getHeight()
 	{
-		return spriteData.height;
+		return mSpriteData.height;
 	}
 
 	// 中心点のXを戻す
 	virtual float getCenterX()
 	{
-		return spriteData.x + spriteData.width / 2 * getScale();
+		return mSpriteData.x + mSpriteData.width / 2 * getScale();
 	}
 
 	// 中心点のYを戻す
 	virtual float getCenterY()
 	{
-		return spriteData.y + spriteData.height / 2 * getScale();
+		return mSpriteData.y + mSpriteData.height / 2 * getScale();
 	}
 
 	// 回転角度（度単位）を戻す
 	virtual float getDegrees()
 	{
-		return spriteData.angle*(180.0f / (float)PI);
+		return mSpriteData.angle*(180.0f / (float)PI);
 	}
 
 	// 回転角度（ラジアン）を戻す
 	virtual float getRadians()
 	{
-		return spriteData.angle;
+		return mSpriteData.angle;
 	}
 
 	// アニメーションのフレーム間の間隔を戻す
 	virtual float getFrameDelay() {
-		return (float)frameDelay;
+		return (float)mFrameDelay;
 	}
 
 	// 開始フレームの番号を戻す
 	virtual int   getStartFrame()
 	{
-		return startFrame;
+		return mStartFrame;
 	}
 
 	// 終了フレームの番号を戻す
 	virtual int   getEndFrame()
 	{
-		return endFrame;
+		return mEndFrame;
 	}
 
 	// 現在のフレームの番号を戻す
 	virtual int   getCurrentFrame()
 	{
-		return currentFrame;
+		return mCurrentFrame;
 	}
 
 	// ImageのRECT構造体を戻す
 	virtual RECT  getSpriteDataRect()
 	{
-		return spriteData.rect;
+		return mSpriteData.rect;
 	}
 
 	// アニメーション完了の状態を戻す
 	virtual bool  getAnimationComplete()
 	{
-		return animComplete;
+		return mAnimComplete;
 	}
 
 	// colorFilterを戻す
-	virtual COLOR_ARGB getColorFilter() { return colorFilter; }
+	virtual COLOR_ARGB getColorFilter() { return mColorFilter; }
 
 	// X位置を設定
 	virtual void setX(float newX)
 	{
-		spriteData.x = newX;
+		mSpriteData.x = newX;
 	}
 
 	// Y位置を設定
 	virtual void setY(float newY)
 	{
-		spriteData.y = newY;
+		mSpriteData.y = newY;
 	}
 
 	// 拡大縮小を設定
 	virtual void setScale(float s)
 	{
-		spriteData.scale = s;
+		mSpriteData.scale = s;
 	}
 
 	// 回転角度を設定（度単位）
 	// 0度は上向きです。角度は時計回りに進みます。
 	virtual void setDegrees(float deg)
 	{
-		spriteData.angle = deg*((float)PI / 180.0f);
+		mSpriteData.angle = deg*((float)PI / 180.0f);
 	}
 
 	// 回転角度を設定（ラジアン単位）
 	// 0度は上向きです。角度は時計回りに進みます。
 	virtual void setRadians(float rad)
 	{
-		spriteData.angle = rad;
+		mSpriteData.angle = rad;
 	}
 
 	// 可視性を設定
 	virtual void setVisible(bool v)
 	{
-		visible = v;
+		mVisible = v;
 	}
 
 	// アニメーションのフレーム間の間隔を設定
 	virtual void setFrameDelay(float d)
 	{
-		frameDelay = d;
+		mFrameDelay = d;
 	}
 
 	// アニメーションの開始フレームと終了フレームを設定
 	virtual void setFrames(int s, int e)
 	{
-		startFrame = s; endFrame = e;
+		mStartFrame = s; mEndFrame = e;
 	}
 
 	// アニメーションの現在のフレームを設定
@@ -212,47 +212,47 @@ public:
 	// spriteData.rectをrに設定
 	virtual void setSpriteDataRect(RECT r)
 	{
-		spriteData.rect = r;
+		mSpriteData.rect = r;
 	}
 
 	// アニメーションループを設定（lp = trueの場合にループする）
 	virtual void setLoop(bool lp)
 	{
-		loop = lp;
+		mLoop = lp;
 	}
 
 	// アニメーション完了ブール値を設定
-	virtual void setAnimationComplete(bool a) { animComplete = a; };
+	virtual void setAnimationComplete(bool a) { mAnimComplete = a; };
 
 	// 色フィルタを設定（WHITEを使用すると、変化しない）
 	virtual void setColorFilter(COLOR_ARGB color)
 	{
-		colorFilter = color;
+		mColorFilter = color;
 	}
 
 	// TextureManagerを設定
 	virtual void setTextureManager(TextureManager *textureM)
 	{
-		textureManager = textureM;
+		mTextureManager = textureM;
 	}
 
 	// MODEを設定
 	virtual void setMode(imageNS::MODE m)
 	{
-		mode = m;
+		mMode = m;
 	}
 
 
 	// 画像を水平方向に反転（鏡）
 	virtual void flipHorizontal(bool flip)
 	{
-		spriteData.flipHorizontal = flip;
+		mSpriteData.flipHorizontal = flip;
 	}
 
 	// 画像を垂直方向に反転
 	virtual void flipVertical(bool flip)
 	{
-		spriteData.flipVertical = flip;
+		mSpriteData.flipVertical = flip;
 	}
 
 	// Imageを初期化
