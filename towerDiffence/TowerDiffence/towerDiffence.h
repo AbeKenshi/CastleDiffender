@@ -101,6 +101,7 @@ private:
 	bool mStageSelectOn;								// ステージ選択フラグ
 	bool mDescriptionOn;                                // 操作説明フラグ
 	float   mRoundTimer;								// 新しいラウンドが開始するまでの時間
+	int mHighScores[3];									// 各ステージのハイスコア
 public:
 	// コンストラクタ
 	TowerDiffence();
@@ -148,5 +149,8 @@ public:
 
 	// 敵のテクスチャを初期化する
 	void initializeEnemiesTexture();
+	
+	//
+	void loadHighScore();
 };
 #endif
