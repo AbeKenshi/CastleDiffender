@@ -139,7 +139,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	brave.setScale(1.5);
 	brave.setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
 	brave.setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
-	brave.setMapPointer(&map);
+	brave.setMapPointer(map);
 
 	// 勇者のアイコンのテクスチャ
 	if (!braveIconTexture.initialize(graphics, BRAVE_ICON_IMAGE))
@@ -147,7 +147,7 @@ void TowerDiffence::initialize(HWND hwnd)
 	// 勇者のアイコンの画像
 	if (!braveIcon.initialize(graphics, braveIconNS::WIDTH, braveIconNS::HEIGHT, braveIconNS::TEXTURE_COLS, &braveIconTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave icon"));
-	braveIcon.linkEntity(&brave);
+	braveIcon.linkEntity(brave);
 
 	// 勇者の当たり判定用のテクスチャ
 	if (!attackCollisionTexture.initialize(graphics, COLLISION_IMAGE))
@@ -411,6 +411,7 @@ void TowerDiffence::roundStart()
 	stageClear.setY((float)GAME_HEIGHT);
 	// 勇者を初期化
 	brave.reset();
+	braveIcon.reset();
 	// 各敵を初期化
 	for (int i = 0; i < enemyNum; i++)
 	{
@@ -590,8 +591,6 @@ void TowerDiffence::collisions()
 		}
 		else if (enemy[i]->collidesWith(brave, collisionVector))// 雑魚敵とプレイヤーが衝突している場合、
 		{
-			// 敵の状態を勇者攻撃状態に変更
-			enemy[i]->setAttackState(enemyNS::ATTACK_BRAVE);
 			// 勇者がいる方向に応じて攻撃する方向を変更
 			enemy[i]->changeAttack(collisionVector);
 		}
@@ -614,8 +613,6 @@ void TowerDiffence::collisions()
 			{
 				enemy[i]->changeAttack(characterNS::UP);
 			}
-			// 敵の状態を城攻撃状態に変更
-			enemy[i]->setAttackState(enemyNS::ATTACK_CASTLE);
 		}
 		else if (map.getMapObj(enemy[i]->getTileY(), enemy[i]->getTileX()) == -2)	// 最近接のバリケードに衝突していたら攻撃
 		{
@@ -630,15 +627,12 @@ void TowerDiffence::collisions()
 				enemy[i]->changeAttack(characterNS::UP);
 			else
 				throw(GameError(gameErrorNS::FATAL_ERROR, "Error enemy and barricades"));
-			// 敵の状態をバリケード攻撃状態に変更
-			enemy[i]->setAttackState(enemyNS::ATTACK_BARRICADE);
 		}
 		else if (enemy[i]->canMakeDecesionMoving())	// 敵が方向転換可能な状態にあるとき、意思決定を行い進む方向を決める
 		{
 			bool changeGoalDirectionFlag = false;	// 進みたい方向を変える必要があるかどうか
 			if (rand() % 3 == 0)
 			{
-				enemy[i]->setStateDetail(enemyNS::MOVE_CASTLE);
 				enemy[i]->setState(characterNS::MOVE);
 				enemy[i]->setGoalDirection((characterNS::DIRECTION) (rand() % 4));
 				switch (enemy[i]->getGoalDirection())
@@ -681,7 +675,6 @@ void TowerDiffence::collisions()
 					else
 					{
 						enemy[i]->setState(characterNS::WAIT);
-						enemy[i]->setStateDetail(enemyNS::WAIT);
 					}
 				}
 			}
@@ -692,7 +685,6 @@ void TowerDiffence::collisions()
 				if (!enemy[i]->checkBarricadeOnLine())	// 城までの直線上にバリケードがない場合、城へと進行する
 				{
 					// 敵の状態を城移動中へと変更
-					enemy[i]->setStateDetail(enemyNS::MOVE_CASTLE);
 					enemy[i]->setState(characterNS::MOVE);
 					// 進みたい方向に進めない場合、方向を進みたい方向をランダムに変換
 					switch (enemy[i]->getGoalDirection())
@@ -726,7 +718,6 @@ void TowerDiffence::collisions()
 				else // 城までの直線状にバリケードが存在する場合、
 				{
 					// 敵の状態をバリケードに進行中へと変更
-					enemy[i]->setStateDetail(enemyNS::MOVE_BARRICADE);
 					enemy[i]->setState(characterNS::MOVE);
 					// 確率50%でx方向に進むかどうかを先に決定し、そのあとにy方向に進むかどうかを決定
 					bool canMoveXDirection = false;
@@ -798,7 +789,6 @@ void TowerDiffence::collisions()
 					else
 					{
 						enemy[i]->setState(characterNS::WAIT);
-						enemy[i]->setStateDetail(enemyNS::WAIT);
 					}
 				}
 			}
@@ -1208,7 +1198,7 @@ void TowerDiffence::initializeEnemies(int stageNum, int enemyWave)
 				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
 		}
 		enemy[i]->setScale(1.5);
-		enemy[i]->setMapPointer(&map);
+		enemy[i]->setMapPointer(map);
 		enemy[i]->setBarricadesPointer(barricades);
 
 		// 雑魚敵の当たり判定用

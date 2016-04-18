@@ -1,3 +1,11 @@
+//==========================================================
+/// @file
+/// @brief    BraveIconクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #ifndef _BRAVE_ICON_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _BRAVE_ICON_H		// 多重に定義されることを防ぎます。
 
@@ -5,6 +13,8 @@
 #include "constants.h"
 #include "brave.h"
 
+// BraveIconクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace braveIconNS
 {
 	const int WIDTH = 48;			// 画像の幅（各フレーム）
@@ -25,11 +35,15 @@ public:
 	BraveIcon();
 
 	// 継承されたメンバー関数
+	// update
 	void update(float frameTime);
+	// パラメータリセット
+	// roundStart()内で呼び出される
+	void reset();
 	
 	// 新しいメンバー関数
 	// Entityオブジェクトとリンクさせる。
 	// initialize関数の直後に呼び出す。
-	void linkEntity(Brave* brv) { brave = brv; }
+	void linkEntity(Brave& brv) { brave = &(brv); }
 };
 #endif // !_BRAVE_ICON_H

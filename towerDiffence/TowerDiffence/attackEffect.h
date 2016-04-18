@@ -11,6 +11,8 @@
 #include "image.h"
 #include "character.h"
 
+// AttackEffectクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace attackEffectNS
 {
 	const int WIDTH = 96;					// 画像の幅（各フレーム）

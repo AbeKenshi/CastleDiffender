@@ -12,8 +12,6 @@
 
 #include "constants.h"
 #include "map.h"
-#include "enemy.h"
-#include "midBoss.h"
 #include "fire.h"
 #include "rect.h"
 #include "braveAttackCollision.h"
@@ -111,10 +109,5 @@ public:
 	//==========================================================
 	// MPをセットする関数
 	void setMP(int mp) { magicPoint = mp; }
-	// 敵の種類によってダメージ値を変更
-	void setDamagePer(float per) { damagePer = per; }
-
-	// 移動中へと状態を遷移
-	void changeStateToMove();
 };
 #endif

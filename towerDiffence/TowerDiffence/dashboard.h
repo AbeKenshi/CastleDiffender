@@ -17,10 +17,12 @@
 #include "textureManager.h"
 #include "input.h"
 
+// ダッシュボードの定数
+// ゲーム内でのステータス以外をここに記述
 namespace dashboardNS
 {
-	const int	WIDTH = 48;
-	const int	HEGIHT = 48;
+	const int	WIDTH = 48;				// 画像の幅（各フレーム）
+	const int	HEGIHT = 48;			// 画像の高さ
     const int   TEXTURE_COLS = 4;       // テクスチャは4列
     const int   BAR_FRAME = 0;          // それぞれのテクスチャのフレーム番号
     const int   DIAL360_FRAME = 1;      // "
@@ -42,11 +44,12 @@ namespace dashboardNS
 
 class SevenSegment : public Image
 {
-    private:
-    Image   decimal;
-    UINT    digits;
-    double  number;
-    public:
+private:
+    Image   decimal;// セブンセグメントの画像
+    UINT    digits;	// 桁数
+    double  number;	// 表示する数値
+public:
+	// コンストラクタ
     SevenSegment();
 	// セブンセグメント表示の初期化
 	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
@@ -73,7 +76,7 @@ class SevenSegment : public Image
 
 class Bar : public Image
 {
-    public:
+public:
 	// Barを初期化
 	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
 	//		   *textureM = TextureManagerオブジェクトへのポインタ
@@ -91,10 +94,10 @@ class Bar : public Image
 
 class DialGauge : public Image
 {
-    private:
-    Image   pointer;
-    dashboardNS::DialType dialType;
-    public:
+private:
+    Image   pointer;				// 画像
+    dashboardNS::DialType dialType;	// 円盤の種類
+public:
 	// DialGaugeを初期化
 	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
 	//		   *textureM = TextureManagerオブジェクトへのポインタ
@@ -118,13 +121,14 @@ class DialGauge : public Image
 
 class Light : public Image
 {
-    private:
-    float   flashTimer;
-    float   flashDelay;
-    COLOR_ARGB  onColor;
-    COLOR_ARGB  offColor;
-    public:
-    Light();    // コンストラクタ
+private:
+    float   flashTimer;		// ライト点滅用のタイマー
+    float   flashDelay;		// ライトが点滅する間隔
+    COLOR_ARGB  onColor;	// 点灯時のライトの色
+    COLOR_ARGB  offColor;	// 消灯時のライトの色
+public:
+	// コンストラクタ
+    Light();
 	// Lightを初期化
 	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
 	//		   *textureM = TextureManagerオブジェクトへのポインタ
@@ -145,9 +149,9 @@ class Light : public Image
 
 class ToggleSwitch : public Image
 {
-    private:
-    Input   *input;
-    HWND    hwnd;
+private:
+    Input   *input;				// 入力システムへのポインタ
+    HWND    hwnd;				// ウィンドウハンドル
     RECT    switchRect;         // マウスクリックを受け付ける範囲
     bool    switchOn;           // スイッチの状態
     bool    mouseClick;         // マウスクリックの状態
@@ -174,15 +178,14 @@ class ToggleSwitch : public Image
 
 class PushButton : public Image
 {
-    private:
-    private:
-    Input   *input;
-    HWND    hwnd;
+private:
+	Input   *input;				// 入力システムへのポインタ
+	HWND    hwnd;				// ウィンドウハンドル
 	RECT    switchRect;         // マウスクリックを受け付ける範囲
 	bool    switchOn;           // スイッチの状態
 	bool    mouseClick;         // マウスクリックの状態
     bool    momentary;          // 一定時間ごとに切り替える場合はtrue、トグルの場合はfalse
-    public:
+public:
     // Pushbutton switchコンストラクタ
     PushButton();
 	// プッシュボタン（PushButton）を初期化
@@ -198,19 +201,19 @@ class PushButton : public Image
                     int left, int top, float scale, bool momentary);
 	// updateをオーバーライド
     virtual void update(float frameTime);
-    // Get switch state
+	// スイッチの状態を取得
     bool getSwitchOn()  {return switchOn;}
-    // Set switch state
+	// スイッチの状態を設定
     void setSwitch(bool on) {switchOn = on;}
 };
 
 //
 class BarGraph : public Image
 {
-    private:
-    int     maxBars;    // バーの本数の最大数
-    int   barsOn;       // 現在のバーの本数
-    public:
+private:
+    int maxBars;		// バーの本数の最大数
+    int barsOn;			// 現在のバーの本数
+public:
     // BarGraphコンストラクタ
     BarGraph();
 	// BarGraphを初期化

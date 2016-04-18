@@ -19,16 +19,16 @@
 
 namespace consoleNS
 {
-    const UINT WIDTH = 1000;             // コンソールの矩形の幅（ピクセル単位）
-    const UINT HEIGHT = 400;            // コンソールの矩形の高さ（ピクセル単位）
-    const UINT X = 5;                   // コンソールの左上隅からの画面位置
+    const UINT WIDTH = 1000;										// コンソールの矩形の幅（ピクセル単位）
+    const UINT HEIGHT = 400;										// コンソールの矩形の高さ（ピクセル単位）
+    const UINT X = 5;												// コンソールの左上隅からの画面位置
     const UINT Y = 5;
-    const UINT MARGIN = 4;              // コンソールの端からテキストまでの余白
-    const char FONT[] = "Courier New";  // コンソールのテキストに使用するフォント
-    const int FONT_HEIGHT = 14;         // コンソールのフォントの高さ
-    const COLOR_ARGB FONT_COLOR = graphicsNS::WHITE;    // コンソールのフォントの色
-    const COLOR_ARGB BACK_COLOR = SETCOLOR_ARGB(192,128,128,128);    // コンソールの背景の色
-    const int MAX_LINES = 256;          // テキストバッファ内の表示可能なテキストの最大行数
+    const UINT MARGIN = 4;											// コンソールの端からテキストまでの余白
+    const char FONT[] = "Courier New";								// コンソールのテキストに使用するフォント
+    const int FONT_HEIGHT = 14;										// コンソールのフォントの高さ
+    const COLOR_ARGB FONT_COLOR = graphicsNS::WHITE;				// コンソールのフォントの色
+    const COLOR_ARGB BACK_COLOR = SETCOLOR_ARGB(192,128,128,128);   // コンソールの背景の色
+    const int MAX_LINES = 256;										// テキストバッファ内の表示可能なテキストの最大行数
 }
 
 // 

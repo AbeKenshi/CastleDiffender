@@ -24,7 +24,6 @@ namespace midBossNS
 	const int ATTACK_RIGHT_END_FRAME = 107;		// 左方向攻撃のアニメーションフレームは100、112、124、136
 	const float ATTACK_TIME = 1.5f;					// プレイヤーに隣接してから攻撃に移るまでの溜め時間
 	const float CONTINUE_ATTACK_TIME = 2.0f;		// 連続で攻撃する場合の溜め時間	
-	const float ATTACK_DAMAGE = 15.0f;
 }
 
 // MidBossクラス

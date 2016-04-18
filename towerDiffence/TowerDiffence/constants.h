@@ -1,3 +1,10 @@
+//==========================================================
+/// @file
+/// @brief    ’è”ƒwƒbƒ_[
+/// @author   ˆ¢•”Œ”V
+///
+/// @attention  ‚±‚Ìƒtƒ@ƒCƒ‹‚Ì—˜—p‚ÍA“¯«‚ÌREADME‚É‚ ‚é
+///             —˜—pğŒ‚É]‚Á‚Ä‚­‚¾‚³‚¢
 #ifndef _CONSTANTS_H            // ‚±‚Ìƒtƒ@ƒCƒ‹‚ª•¡”‚Ì‰ÓŠ‚ÅƒCƒ“ƒNƒ‹[ƒh‚³‚ê‚éê‡‚ÉA
 #define _CONSTANTS_H            // ‘½d‚É’è‹`‚³‚ê‚é‚±‚Æ‚ğ–h‚¬‚Ü‚·B
 #define WIN32_LEAN_AND_MEAN
@@ -9,8 +16,8 @@
 //=============================================================================
 
 // ƒEƒBƒ“ƒhƒE‚ÉŠÖ‚·‚é’è”
-const char CLASS_NAME[] = "TowerDiffence";
-const char GAME_TITLE[] = "TowerDiffence ver0.1";
+const char CLASS_NAME[] = "CastleDiffender";
+const char GAME_TITLE[] = "CastleDiffender ver1.0";
 const bool FULLSCREEN = false;							// ƒtƒ‹ƒXƒNƒŠ[ƒ“‚Ìê‡true
 const UINT GAME_WIDTH = 1280;							// ƒQ[ƒ€‰æ–Ê‚Ì•iƒsƒNƒZƒ‹’PˆÊj
 const UINT GAME_HEIGHT = 720;							// ƒQ[ƒ€‰æ–Ê‚Ì‚‚³iƒsƒNƒZƒ‹’PˆÊj
@@ -29,6 +36,10 @@ const int braveFireDamage = 110;				// —EÒ‚Ìƒtƒ@ƒCƒA[i•KE‹Zj‚ÌUŒ‚—Íiƒ_ƒ
 const int braveMpRecovery = 10;					// —EÒ‚ÌMP‰ñ•œ—ÊimpRecoveryTime•b‚²‚Æ‚É‰ñ•œj
 const float braveMpRecoveryTime = 2.0f;			// —EÒ‚ÌMP‚ª‰ñ•œ‚·‚éŠÔŠui•bj
 const float braveMoveSpeed = 150.0f;			// —EÒ‚ÌˆÚ“®‘¬“xiƒsƒNƒZƒ‹j
+// G‹›“GŠÖŒW
+const float enemyAttackDamage = 2.5f;			// G‹›“G‚ÌUŒ‚—ÍiƒvƒŒƒCƒ„[‚Æé‚Ö‚Ìƒ_ƒ[ƒW—Êj
+// ’†ƒ{ƒXŠÖŒW
+const float midBossAttackDamage = 15.0f;		// ’†ƒ{ƒX‚ÌUŒ‚—ÍiƒvƒŒƒCƒ„[‚Æé‚Ö‚Ìƒ_ƒ[ƒW—Êj
 
 // ‰æ‘œ
 const char MENU_IMAGE[] = "pictures\\systemGraphics\\title.png";				// ƒƒjƒ…[‰æ‘œ
@@ -53,17 +64,17 @@ const char CASTLE_ICON_IMAGE[] = "pictures\\map\\castleIcon.png";				// é‚ÌƒAƒC
 const char FONT_IMAGE[] = "pictures\\systemGraphics\\CKfont.png";				// ƒXƒvƒ‰ƒCƒgƒeƒLƒXƒg‚Ì‰æ‘œ
 
 // ‰¹º
-// WAVE_BANK must be location of .xwb file.
+// WAVE_BANKixwbƒtƒ@ƒCƒ‹j
 const char WAVE_BANK[] = "audio\\Win\\Wave Bank.xwb";
-// SOUND_BANK must be location of .xsb file.
+// SOUND_BANKixsbƒtƒ@ƒCƒ‹j
 const char SOUND_BANK[] = "audio\\Win\\Sound Bank.xsb";
-// audio cues
-const char TITLE[]    = "title";
-const char STAGE[]    = "stage";
-const char CLEAR[]    = "clear";
-const char GAMEOVER[] = "gameover";
-const char KILL[]     = "kill";
-const char FIRE_SE[]  = "fire";
+// ƒI[ƒfƒBƒIƒLƒ…[
+const char TITLE[]    = "title";	// ƒ^ƒCƒgƒ‹’†
+const char STAGE[]    = "stage";	// ƒXƒe[ƒW’†
+const char CLEAR[]    = "clear";	// ƒNƒŠƒA
+const char GAMEOVER[] = "gameover";	// ƒQ[ƒ€ƒI[ƒo[
+const char KILL[]     = "kill";		// ƒvƒŒƒCƒ„[UŒ‚
+const char FIRE_SE[]  = "fire";		// ƒvƒŒƒCƒ„[•KE‹Z
 
 
 // ƒL[ƒ}ƒbƒv
@@ -79,7 +90,7 @@ const UCHAR BRAVE_ATTACK_KEY = 'A';			// UŒ‚ƒL[
 const UCHAR BRAVE_GAURD_KEY = 'D';			// ƒK[ƒhƒL[
 const UCHAR BRAVE_FIRE_KEY = 'S';			// •KE‹ZƒL[
 
-// weapon types
+// WEAPON‚Ìí—Şi‰ŠA—EÒ‚ÌUŒ‚A—EÒ‚Ì‘æ“ñŒ‚AG‹›“G‚ÌUŒ‚A’†ƒ{ƒX‚ÌUŒ‚j
 enum WEAPON { FIRE, BRAVE_ATTACK, BRAVE_SECOND_ATTACK, ENEMY_ATTACK , MIDBOSS_ATTACK};
 
 //=============================================================================

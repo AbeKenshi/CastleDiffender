@@ -1,3 +1,11 @@
+//==========================================================
+/// @file
+/// @brief    character.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #include "character.h"
 
 //==========================================================
@@ -9,9 +17,6 @@ Character::Character() : Entity()
 	direction = characterNS::RIGHT;
 	// Boxの衝突判定を使用
 	collisionType = entityNS::BOX;
-	// ダメージ時に使用するタイマーをリセット
-	damageTimer = 0.0f;
-	totalDamageTime = 0.0f;
 	// 攻撃判定のコリジョンは最初はなし
 	attackCollisionFlag = false;
 	// 状態は何もしない状態からスタート
@@ -23,33 +28,22 @@ Character::Character() : Entity()
 //==========================================================
 void Character::reset()
 {
+	// 攻撃アニメーション終了後に戻るべきアニメーションフレーム保存用
 	oldStartFrame = startFrame;
 	oldEndFrame = endFrame;
 	// 初期の方向は右
 	direction = characterNS::RIGHT;
-	// ダメージ時に使用するタイマーをリセット
-	damageTimer = 0.0f;
-	totalDamageTime = 0.0f;
 	// 攻撃判定のコリジョンはなしでリセット
 	attackCollisionFlag = false;
 	// 状態は何もしない状態からスタート
 	state = characterNS::STATE::MOVE;
+	// エンティティをリセット
 	Entity::reset();
 }
 
 //==========================================================
-// キャラクターを描画
-// 描画フラグがオンのときのみ描画
-//==========================================================
-void Character::draw(COLOR_ARGB color)
-{
-	// 描画フラグがオンのときのみ描画
-	if (drawFlag)
-		Image::draw(color);	// 雑魚敵を描画
-}
-
-//==========================================================
 // 移動時のアップデート関数
+// アニメーション以外をアップデート
 //==========================================================
 void Character::updateMoving(float frameTime)
 {
@@ -59,6 +53,7 @@ void Character::updateMoving(float frameTime)
 
 //==========================================================
 // 攻撃時のアップデート関数
+// 現状では通常のアップデート
 //==========================================================
 void Character::updateAttacking(float frameTime)
 {
@@ -78,6 +73,7 @@ void Character::dead()
 
 //==========================================================
 // 移動可能かチェック
+// 実行前：x、y = チェックしたい位置の画面上での座標
 //==========================================================
 bool Character::checkCanMove(float x, float y)
 {
@@ -86,7 +82,6 @@ bool Character::checkCanMove(float x, float y)
 	// +αは微調整…
 	int map_x = (int)((x - 16) / 32) + 1;
 	int map_y = (int)((y - 16) / 32) + 1;
-
 	if (map_x <= 0)
 		map_x = 0;
 	if (map_x >= mapNS::MAP_WIDTH)
@@ -96,21 +91,26 @@ bool Character::checkCanMove(float x, float y)
 	if (map_y >= mapNS::MAP_HEIGHT)
 		map_y = mapNS::MAP_HEIGHT - 1;
 
+	// 進もうとするマップタイルに障害物があった場合、
 	if (map->getMapCol(map_y, map_x) == 1 || map->getMapCol(map_y, map_x) == 2)
 	{
+		// 移動不可
 		return false;
 	}
-	else
+	else  // 進もうとするマップタイルに障害物がない場合、
 	{
+		// 移動可能
 		return true;
 	}
 }
 
 //==========================================================
 // 向いている方向をセットする
+// 実行前：dir = セットするキャラクターの向き
 //==========================================================
 void Character::setDirection(characterNS::DIRECTION dir)
 {
+	// セットするキャラクターの向きによって分岐
 	switch (dir)
 	{
 	case characterNS::LEFT:
@@ -135,15 +135,16 @@ void Character::setDirection(characterNS::DIRECTION dir)
 			setRect();
 		}
 		break;
-	case characterNS::UP:// 上方向を向いていなければ上方向にアニメーションをリセット
-				if (direction != characterNS::DIRECTION::UP)
-				{
-					direction = characterNS::DIRECTION::UP;
-					startFrame = moveUpStartFrame;
-					currentFrame = endFrame - currentFrame + moveUpStartFrame;
-					endFrame = moveUpEndFrame;
-					setRect();
-				}
+	case characterNS::UP:
+		// 上方向を向いていなければ上方向にアニメーションをリセット
+		if (direction != characterNS::DIRECTION::UP)
+		{
+			direction = characterNS::DIRECTION::UP;
+			startFrame = moveUpStartFrame;
+			currentFrame = endFrame - currentFrame + moveUpStartFrame;
+			endFrame = moveUpEndFrame;
+			setRect();
+		}
 		break;
 	case characterNS::DOWN:
 		// 下方向を向いていなければ下方向にアニメーションをリセット
@@ -159,4 +160,21 @@ void Character::setDirection(characterNS::DIRECTION dir)
 	default:
 		break;
 	}
+}
+
+//==========================================================
+// 移動中へと状態を遷移
+//==========================================================
+void Character::changeStateToMove()
+{
+	// 状態は移動中へと遷移
+	state = characterNS::MOVE;
+	// アニメーションフレームの遷移は水平方向
+	mode = imageNS::HORIZONTAL;
+	// 移動中はアニメーションはループさせる
+	loop = true;
+	// アニメーションを向いている方向に合わせてセット
+	startFrame = oldStartFrame;
+	endFrame = oldEndFrame;
+	setCurrentFrame(startFrame);
 }

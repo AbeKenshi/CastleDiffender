@@ -9,12 +9,12 @@
 #include "dashboard.h"
 
 //=============================================================================
-// Seven Segment constructor
+// Seven Segmentコンストラクタ
 //=============================================================================
 SevenSegment::SevenSegment()
 {
-    digits = 1;
-    number = 0;
+    digits = 1;	// 桁数
+    number = 0;	// 表示する数値
 }
 
 //=============================================================================
@@ -540,7 +540,7 @@ void PushButton::update(float frameTime)
 
     if (input->getMouseLButton())           // マウスの左ボタンの場合
     {
-        // if mouse clicked inside switch
+		// スイッチの内部でマウスがクリックされた場合
         if (input->getMouseX()*screenRatioX >= switchRect.left &&
             input->getMouseX()*screenRatioX <= switchRect.right &&
             input->getMouseY()*screenRatioY >= switchRect.top &&

@@ -54,6 +54,8 @@ protected:
 	bool isDamaged;				// ダメージを受けている状態かどうか
 	bool drawFlag;				// 描画フラグ、true時に描画
 	float damagePer;            // ダメージを受ける時に掛ける割合
+	float damageTimer;					// ダメージ時のアニメーション用のタイマー
+	float totalDamageTime;				// ダメージ時のアニメーション用のタイマー
 
 	// 円の衝突判定メソッド
 	// collision()によって呼び出される、デフォルトの衝突判定メソッド
@@ -193,6 +195,9 @@ public:
 	// タイル上での位置をセットする関数
 	void setTileY(int y) { tileY = y; }
 
+	// ダメージを受けるときに掛ける割合をセット
+	void setDamagePer(float per) { damagePer = per; }
+
 	////////////////////////////////////////
 	//         その他の関数               //
 	////////////////////////////////////////
@@ -201,6 +206,9 @@ public:
 	// 通常、フレームごとに1回呼び出す
 	// frameTimeは、移動とアニメーションの速さを制御するために使用
 	virtual void update(float frameTime);
+
+	// 描画関数、描画フラグがオンのときのみ描画をする
+	virtual void draw(COLOR_ARGB color = graphicsNS::WHITE);
 
 	// エンティティを更新
 	// アニメーションを毎時間更新したくない場合はこのメソッドを使用する。
