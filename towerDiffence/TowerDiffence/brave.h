@@ -1,3 +1,11 @@
+//==========================================================
+/// @file
+/// @brief    Braveクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #ifndef _BRAVE_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _BRAVE_H		// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
@@ -8,13 +16,14 @@
 #include "midBoss.h"
 #include "rect.h"
 
+// Braveクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace braveNS
 {
 	const int WIDTH = 32;							// 画像の幅（各フレーム）
 	const int HEIGHT = 32;							// 画像の高さ
 	const int X = GAME_WIDTH / 2 - WIDTH / 2;		// 画面上の位置
-	const int Y = GAME_HEIGHT / 6 - HEIGHT;
-	const int MOVE_SPEED = 150;						// 移動速度（ピクセル）
+	const int Y = GAME_HEIGHT / 2 - HEIGHT * 3;
 	const int TEXTURE_COLS = 12;					// テクスチャは12列
 	const int MOVE_UP_START_FRAME = 48;				// 上方向移動のアニメーションはフレーム0から開始
 	const int MOVE_UP_END_FRAME = 50;				// 上方向移動のアニメーションフレームは0、1、2、3、4、5
@@ -24,7 +33,7 @@ namespace braveNS
 	const int MOVE_DOWN_END_FRAME = 74;				// 下方向移動のアニメーションフレームは24、25、26、27、28、29
 	const int MOVE_LEFT_START_FRAME = 84;			// 左方向移動のアニメーションはフレーム36から開始
 	const int MOVE_LEFT_END_FRAME = 86;				// 左方向移動のアニメーションフレームは36、37、38、39、40、41
-	const float MOVE_ANIMATION_DELAY = 0.2f;		// 移動アニメーションのフレーム間の時間
+	const float ANIMATION_DELAY = 0.2f;				// 移動アニメーションのフレーム間の時間
 	const int DOWN_ATTACK_START_FRAME = 145 + 24;	// 下方向への攻撃アニメーションはフレーム169から開始
 	const int DOWN_ATTACK_END_FRAME = 145 + 36;		// 下方向への攻撃アニメーションフレームは169、181
 	const int LEFT_ATTACK_START_FRAME = 148 + 24;	// 左方向への攻撃アニメーションはフレーム172から開始
@@ -45,16 +54,11 @@ namespace braveNS
 	const int DOWN_SECOND_ATTACK_END_FRAME = DOWN_ATTACK_END_FRAME;
 	const int LEFT_SECOND_ATTACK_START_FRAME = LEFT_ATTACK_START_FRAME;	// 左方向への攻撃アニメーション（第二段）はフレーム145から開始
 	const int LEFT_SECOND_ATTACK_END_FRAME = LEFT_ATTACK_END_FRAME;
-	const int UP_SECOND_ATTACK_START_FRAME = UP_ATTACK_START_FRAME;	// 上方向への攻撃アニメーション（第二段）はフレーム145から開始
+	const int UP_SECOND_ATTACK_START_FRAME = UP_ATTACK_START_FRAME;		// 上方向への攻撃アニメーション（第二段）はフレーム145から開始
 	const int UP_SECOND_ATTACK_END_FRAME = UP_ATTACK_END_FRAME;
 	const int RIGHT_SECOND_ATTACK_START_FRAME = RIGHT_ATTACK_START_FRAME;// 右方向への攻撃アニメーション（第二段）はフレーム145から開始
 	const int RIGHT_SECOND_ATTACK_END_FRAME = RIGHT_ATTACK_END_FRAME;
-	const int ATTACK_DAMAGE = 50;
-	const int FIRE_DAMAGE = 100;
-	const float RESERVOIR_TIME = 1.0f;				// 攻撃までのため時間
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けて点滅する時間
-	const int MP_RECOVERY = 10;
-	const float MP_RECOVERY_TIME = 2.0f;			// MPはMP_RECOVERY_TIMEごとにMP_RECOVERYだけ回復
 }
 
 // Braveクラス
@@ -64,6 +68,10 @@ private:
 	int magicPoint;					// MP、必殺技を使うと減少。
 	float mpTimer;					// MP回復用のタイマー
 	bool secondAttackFlag;			// 第二段攻撃アニメーションの開始フラグ
+	float tmpY;						// 一時的なY座標保存用
+	// 向いている方向とアニメーションを切り替える
+	// 内部的にのみ使用
+	void changeWithMove(float frameTime);
 public:
 	// コンストラクタ
 	Brave();
@@ -77,7 +85,8 @@ public:
 	void update(float frameTime);
 	// 人工知能。NPCの行動を決定するのに使用
 	void ai(float frameTime, Entity &ent) {};
-	// キャラクターにダメージを与える関数
+	// ダメージ処理
+	// WEAPONの種類によって受けるダメージが分岐
 	void damage(WEAPON);
 	// パラメータリセット
 	void reset();
@@ -96,5 +105,8 @@ public:
 	void setMP(int mp) { magicPoint = mp; }
 	// 敵の種類によってダメージ値を変更
 	void setDamagePer(float per) { damagePer = per; }
+
+	// 移動中へと状態を遷移
+	void changeStateToMove();
 };
 #endif

@@ -105,3 +105,58 @@ bool Character::checkCanMove(float x, float y)
 		return true;
 	}
 }
+
+//==========================================================
+// 向いている方向をセットする
+//==========================================================
+void Character::setDirection(characterNS::DIRECTION dir)
+{
+	switch (dir)
+	{
+	case characterNS::LEFT:
+		// 左方向を向いていなければ左方向にアニメーションをリセット
+		if (direction != characterNS::DIRECTION::LEFT)
+		{
+			direction = characterNS::DIRECTION::LEFT;
+			startFrame = moveLeftStartFrame;
+			currentFrame = endFrame - currentFrame + moveLeftStartFrame;
+			endFrame = moveLeftEndFrame;
+			setRect();
+		}
+		break;
+	case characterNS::RIGHT:
+		// 右方向を向いていなければ右方向にアニメーションをリセット
+		if (direction != characterNS::DIRECTION::RIGHT)
+		{
+			direction = characterNS::DIRECTION::RIGHT;
+			startFrame = moveRightStartFrame;
+			currentFrame = endFrame - currentFrame + moveRightStartFrame;
+			endFrame = moveRightEndFrame;
+			setRect();
+		}
+		break;
+	case characterNS::UP:// 上方向を向いていなければ上方向にアニメーションをリセット
+				if (direction != characterNS::DIRECTION::UP)
+				{
+					direction = characterNS::DIRECTION::UP;
+					startFrame = moveUpStartFrame;
+					currentFrame = endFrame - currentFrame + moveUpStartFrame;
+					endFrame = moveUpEndFrame;
+					setRect();
+				}
+		break;
+	case characterNS::DOWN:
+		// 下方向を向いていなければ下方向にアニメーションをリセット
+		if (direction != characterNS::DIRECTION::DOWN)
+		{
+			direction = characterNS::DIRECTION::DOWN;
+			startFrame = moveDownStartFrame;
+			currentFrame = endFrame - currentFrame + moveDownStartFrame;
+			endFrame = moveDownEndFrame;
+			setRect();
+		}
+		break;
+	default:
+		break;
+	}
+}
