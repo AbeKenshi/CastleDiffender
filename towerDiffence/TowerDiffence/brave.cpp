@@ -1,46 +1,54 @@
+//==========================================================
+/// @file
+/// @brief    brave.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #include "brave.h"
-#include "math.h"
 
 //==========================================================
 // デフォルトコンストラクタ
 //==========================================================
 Brave::Brave() : Character()
 {
-	spriteData.width = braveNS::WIDTH;			// 勇者のサイズ
+	spriteData.width = braveNS::WIDTH;							// 勇者のサイズ
 	spriteData.height = braveNS::HEIGHT;
-	spriteData.x = braveNS::X;					// 画面上の位置
+	spriteData.x = braveNS::X;									// 画面上の位置
 	spriteData.y = braveNS::Y;
-	spriteData.rect.bottom = braveNS::HEIGHT;	// 画面の一部を選択
+	spriteData.rect.bottom = braveNS::HEIGHT;					// 画面の一部を選択
 	spriteData.rect.right = braveNS::WIDTH;
-	frameDelay = braveNS::MOVE_ANIMATION_DELAY;
-	startFrame = braveNS::MOVE_UP_START_FRAME;
-	endFrame = braveNS::MOVE_UP_END_FRAME;
-	currentFrame = startFrame;
+	frameDelay = braveNS::ANIMATION_DELAY;						// アニメーションの各フレームの間隔
+	startFrame = braveNS::MOVE_UP_START_FRAME;					// アニメーションの最初のフレーム
+	endFrame = braveNS::MOVE_UP_END_FRAME;						// アニメーションの最後のフレーム
+	currentFrame = startFrame;									// 現在のフレームはアニメーションの最初のフレームに設定
 	// Boxの衝突判定用
 	edge.left = (LONG)(-braveNS::WIDTH * spriteData.scale / 2.0);
 	edge.right = (LONG)(braveNS::WIDTH * spriteData.scale / 2.0);
 	edge.top = (LONG)(-braveNS::HEIGHT * spriteData.scale / 2.0);
 	edge.bottom = (LONG)(braveNS::HEIGHT * spriteData.scale / 2.0);
-	secondAttackFlag = false;
-	mpTimer = 0.0;
-	magicPoint = 100;							// MPはMAX100でスタート
-	moveUpStartFrame = braveNS::MOVE_UP_START_FRAME;
-	moveUpEndFrame = braveNS::MOVE_UP_END_FRAME;
-	moveRightStartFrame = braveNS::MOVE_RIGHT_START_FRAME;
-	moveRightEndFrame = braveNS::MOVE_RIGHT_END_FRAME;
-	moveDownStartFrame = braveNS::MOVE_DOWN_START_FRAME;
-	moveDownEndFrame = braveNS::MOVE_DOWN_END_FRAME;
-	moveLeftStartFrame = braveNS::MOVE_LEFT_START_FRAME;
-	moveLeftEndFrame = braveNS::MOVE_LEFT_END_FRAME;
-	moveAnimationDelay = braveNS::MOVE_ANIMATION_DELAY;
-	attackUpStartFrame = braveNS::UP_ATTACK_START_FRAME;
-	attackUpEndFrame = braveNS::UP_ATTACK_END_FRAME;
-	attackRightStartFrame = braveNS::RIGHT_ATTACK_START_FRAME;
-	attackRightEndFrame = braveNS::RIGHT_ATTACK_END_FRAME;
-	attackDownStartFrame = braveNS::DOWN_ATTACK_START_FRAME;
-	attackDownEndFrame = braveNS::DOWN_ATTACK_END_FRAME;
-	attackLeftStartFrame = braveNS::LEFT_ATTACK_START_FRAME;
-	attackLeftEndFrame = braveNS::LEFT_ATTACK_END_FRAME;
+
+	secondAttackFlag = false;									// 二連撃目の攻撃フラグはオフ
+	mpTimer = 0.0;												// MP回復用のタイマー
+	magicPoint = 100;											// MPはMAX100でスタート
+	moveUpStartFrame = braveNS::MOVE_UP_START_FRAME;			// 上方向移動のアニメーションの最初のフレーム
+	moveUpEndFrame = braveNS::MOVE_UP_END_FRAME;				// 上方向移動のアニメーションの最後のフレーム
+	moveRightStartFrame = braveNS::MOVE_RIGHT_START_FRAME;		// 右方向移動のアニメーションの最初のフレーム
+	moveRightEndFrame = braveNS::MOVE_RIGHT_END_FRAME;			// 右方向移動のアニメーションの最後のフレーム
+	moveDownStartFrame = braveNS::MOVE_DOWN_START_FRAME;		// 下方向移動のアニメーションの最初のフレーム
+	moveDownEndFrame = braveNS::MOVE_DOWN_END_FRAME;			// 下方向移動のアニメーションの最後のフレーム
+	moveLeftStartFrame = braveNS::MOVE_LEFT_START_FRAME;		// 左方向移動のアニメーションの最初のフレーム
+	moveLeftEndFrame = braveNS::MOVE_LEFT_END_FRAME;			// 左方向移動のアニメーションの最後のフレーム
+	frameDelay = braveNS::ANIMATION_DELAY;						// アニメーションのフレーム間の間隔（秒）
+	attackUpStartFrame = braveNS::UP_ATTACK_START_FRAME;		// 上方向攻撃のアニメーションの最初のフレーム
+	attackUpEndFrame = braveNS::UP_ATTACK_END_FRAME;			// 上方向攻撃のアニメーションの最後のフレーム
+	attackRightStartFrame = braveNS::RIGHT_ATTACK_START_FRAME;	// 右方向攻撃のアニメーションの最初のフレーム
+	attackRightEndFrame = braveNS::RIGHT_ATTACK_END_FRAME;		// 右方向攻撃のアニメーションの最後のフレーム
+	attackDownStartFrame = braveNS::DOWN_ATTACK_START_FRAME;	// 下方向攻撃のアニメーションの最初のフレーム
+	attackDownEndFrame = braveNS::DOWN_ATTACK_END_FRAME;		// 下方向攻撃のアニメーションの最後のフレーム
+	attackLeftStartFrame = braveNS::LEFT_ATTACK_START_FRAME;	// 左方向攻撃のアニメーションの最初のフレーム
+	attackLeftEndFrame = braveNS::LEFT_ATTACK_END_FRAME;		// 左方向攻撃のアニメーションの最後のフレーム
 }
 
 //==========================================================
@@ -48,15 +56,15 @@ Brave::Brave() : Character()
 //==========================================================
 void Brave::reset()
 {
-	magicPoint = 100;							// MPはMAX100でスタート
-	spriteData.x = braveNS::X;					// 画面上の位置
+	mpTimer = 0.0;												// MP回復用のタイマー
+	magicPoint = 100;											// MPはMAX100でスタート
+	spriteData.x = braveNS::X;									// 画面上の位置
 	spriteData.y = braveNS::Y;
-	frameDelay = braveNS::MOVE_ANIMATION_DELAY;
-	startFrame = moveUpStartFrame;
-	endFrame = moveUpEndFrame;
-	currentFrame = startFrame;
-	secondAttackFlag = false;
-	mpTimer = 0.0;
+	frameDelay = braveNS::ANIMATION_DELAY;						// アニメーションのフレーム間の間隔（秒）
+	startFrame = braveNS::MOVE_UP_START_FRAME;					// アニメーションの最初のフレーム
+	endFrame = braveNS::MOVE_UP_END_FRAME;						// アニメーションの最後のフレーム
+	currentFrame = startFrame;									// 現在のフレームはアニメーションの最初のフレームに設定
+	secondAttackFlag = false;									// 二連撃目の攻撃フラグはオフ
 	Character::reset();
 }
 
@@ -67,106 +75,38 @@ void Brave::reset()
 //=============================================================================	
 void Brave::update(float frameTime)
 {
+	// エンティティが非アクティブなら、何もしない
 	if (!active)
 		return;
+	// 攻撃用のエンティティを出現させるフラグをオフ
 	attackCollisionFlag = false;
-	// 状態遷移前の処理
+
+	// ここで状態遷移、座標の移動、アニメーションのリセットを行う
+	// それぞれの状態ごとに処理を分岐
 	switch (state)
 	{
 	case characterNS::MOVE:		// 移動時はすべてのキーの入力を受け付ける
 		// 上下左右キーが入力された場合、
 		if (input->isKeyDown(BRAVE_LEFT_KEY) || input->isKeyDown(BRAVE_RIGHT_KEY) || input->isKeyDown(BRAVE_UP_KEY) || input->isKeyDown(BRAVE_DOWN_KEY))
 		{
-			// 左キーが入力された場合、
-			if (input->isKeyDown(BRAVE_LEFT_KEY))
-			{
-				// 左方向を向いていなければ左方向にアニメーションをリセット
-				if (direction != characterNS::DIRECTION::LEFT)
-				{
-					direction = characterNS::DIRECTION::LEFT;
-					startFrame = moveLeftStartFrame;
-					currentFrame = endFrame - currentFrame + moveLeftStartFrame;
-					endFrame = moveLeftEndFrame;
-					//animTimer = 0.0f;
-					setRect();
-				}
-				// 移動可能だったら
-				if (checkCanMove(spriteData.x - braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
-					// 左に移動
-					spriteData.x -= braveNS::MOVE_SPEED * frameTime;
-				}
-			}
-			// 右キーが入力された場合、
-			if (input->isKeyDown(BRAVE_RIGHT_KEY))
-			{
-				// 右方向を向いていなければ右方向にアニメーションをリセット
-				if (direction != characterNS::DIRECTION::RIGHT)
-				{
-					direction = characterNS::DIRECTION::RIGHT;
-					startFrame = moveRightStartFrame;
-					currentFrame = endFrame - currentFrame + moveRightStartFrame;
-					endFrame = moveRightEndFrame;
-					//animTimer = 0.0f;
-					setRect();
-				}
-				// 移動可能だったら
-				if (checkCanMove(spriteData.x + braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
-					// 右に移動
-					spriteData.x += braveNS::MOVE_SPEED * frameTime;
-				}
-			}
-			// 上キーが入力された場合、
-			if (input->isKeyDown(BRAVE_UP_KEY))
-			{
-				// 上方向を向いていなければ上方向にアニメーションをリセット
-				if (direction != characterNS::DIRECTION::UP)
-				{
-					direction = characterNS::DIRECTION::UP;
-					startFrame = moveUpStartFrame;
-					currentFrame = endFrame - currentFrame + moveUpStartFrame;
-					endFrame = moveUpEndFrame;
-					//animTimer = 0.0f;
-					setRect();
-				}
-				// 移動可能だったら
-				if (checkCanMove(spriteData.x, spriteData.y - braveNS::MOVE_SPEED * frameTime)) {
-					// 上に移動
-					spriteData.y -= braveNS::MOVE_SPEED * frameTime;
-				}
-			}
-			// 下キーが入力された場合、
-			if (input->isKeyDown(BRAVE_DOWN_KEY))
-			{
-				// 下方向を向いていなければ下方向にアニメーションをリセット
-				if (direction != characterNS::DIRECTION::DOWN)
-				{
-					direction = characterNS::DIRECTION::DOWN;
-					startFrame = moveDownStartFrame;
-					currentFrame = endFrame - currentFrame + moveDownStartFrame;
-					endFrame = moveDownEndFrame;
-					//animTimer = 0.0f;
-					setRect();
-				}
-				// 移動可能だったら
-				if (checkCanMove(spriteData.x, spriteData.y + braveNS::MOVE_SPEED * frameTime)) {
-					// 下に移動
-					spriteData.y += braveNS::MOVE_SPEED * frameTime;
-				}
-			}
-			Entity::updateOnlyImage(frameTime);
+			// 入力に応じて勇者の向きを変更、移動
+			changeWithMove(frameTime);
 		}
 		if (input->isKeyDown(BRAVE_ATTACK_KEY))	// 攻撃キーが押された場合、
 		{
+			// 攻撃用オーディオを再生
 			audio->playCue("kill");
-			// アニメーションをリセット
-			loop = false;
+			// 状態を攻撃中に遷移
 			state = characterNS::ATTACK;
+			// アニメーションフレームの遷移は垂直方向
 			mode = imageNS::VERTICAL;
 			// アニメーション終了時にフレームを戻すために保存
 			oldStartFrame = startFrame;
 			oldEndFrame = endFrame;
+			// 攻撃用のエンティティの出現フラグをオン
 			attackCollisionFlag = true;
 			// 向いている方向でアニメーションを分岐
+			loop = false;
 			switch (direction)
 			{
 			case characterNS::DOWN:
@@ -186,13 +126,11 @@ void Brave::update(float frameTime)
 				endFrame = attackUpEndFrame;
 				break;
 			}
-			currentFrame = startFrame;
-			animTimer = 0.0f;
-			setRect();
+			setCurrentFrame(startFrame);
 		}
 		else if (input->isKeyDown(BRAVE_GAURD_KEY))	// ガードキーが押された場合、
 		{
-			// アニメーションをリセット
+			// 状態をガード中に遷移
 			state = characterNS::GAURD;
 			// アニメーション終了時にフレームを戻すために保存
 			oldStartFrame = startFrame;
@@ -217,101 +155,32 @@ void Brave::update(float frameTime)
 				endFrame = braveNS::UP_GUARD_END_FRAME;
 				break;
 			}
-			currentFrame = startFrame;
-			animTimer = 0.0f;
-			setRect();
+			setCurrentFrame(startFrame);
 		}
 		break;
-	case characterNS::ATTACK:	// 攻撃時はアニメーションが終了するまで第二段攻撃の入力しか受け付けない
-								// 上下左右キーが入力された場合、
+	case characterNS::ATTACK:	// 攻撃時はアニメーションが終了するまで第二段攻撃か移動の入力しか受け付けない
+		// 上下左右キーが入力された場合、
 		if (input->isKeyDown(BRAVE_LEFT_KEY) || input->isKeyDown(BRAVE_RIGHT_KEY) || input->isKeyDown(BRAVE_UP_KEY) || input->isKeyDown(BRAVE_DOWN_KEY))
 		{
-			// 左キーが入力された場合、
-			if (input->isKeyDown(BRAVE_LEFT_KEY))
-			{
-				// 左方向を向いていなければ左方向にアニメーションをリセット
-				if (direction != characterNS::DIRECTION::LEFT)
-				{
-					direction = characterNS::DIRECTION::LEFT;
-					startFrame = moveLeftStartFrame;
-					currentFrame = endFrame - currentFrame + moveLeftStartFrame;
-					endFrame = moveLeftEndFrame;
-					//animTimer = 0.0f;
-					setRect();
-				}
-				// 移動可能だったら
-				if (checkCanMove(spriteData.x - braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
-					// 左に移動
-					spriteData.x -= braveNS::MOVE_SPEED  / 2 * frameTime;
-				}
-			}
-			// 右キーが入力された場合、
-			if (input->isKeyDown(BRAVE_RIGHT_KEY))
-			{
-				// 右方向を向いていなければ右方向にアニメーションをリセット
-				if (direction != characterNS::DIRECTION::RIGHT)
-				{
-					direction = characterNS::DIRECTION::RIGHT;
-					startFrame = moveRightStartFrame;
-					currentFrame = endFrame - currentFrame + moveRightStartFrame;
-					endFrame = moveRightEndFrame;
-					//animTimer = 0.0f;
-					setRect();
-				}
-				// 移動可能だったら
-				if (checkCanMove(spriteData.x + braveNS::MOVE_SPEED * frameTime, spriteData.y)) {
-					// 右に移動
-					spriteData.x += braveNS::MOVE_SPEED / 2 * frameTime;
-				}
-			}
-			// 上キーが入力された場合、
-			if (input->isKeyDown(BRAVE_UP_KEY))
-			{
-				// 上方向を向いていなければ上方向にアニメーションをリセット
-				if (direction != characterNS::DIRECTION::UP)
-				{
-					direction = characterNS::DIRECTION::UP;
-					startFrame = moveUpStartFrame;
-					currentFrame = endFrame - currentFrame + moveUpStartFrame;
-					endFrame = moveUpEndFrame;
-					//animTimer = 0.0f;
-					setRect();
-				}
-				// 移動可能だったら
-				if (checkCanMove(spriteData.x, spriteData.y - braveNS::MOVE_SPEED * frameTime)) {
-					// 上に移動
-					spriteData.y -= braveNS::MOVE_SPEED / 2* frameTime;
-				}
-			}
-			// 下キーが入力された場合、
-			if (input->isKeyDown(BRAVE_DOWN_KEY))
-			{
-				// 下方向を向いていなければ下方向にアニメーションをリセット
-				if (direction != characterNS::DIRECTION::DOWN)
-				{
-					direction = characterNS::DIRECTION::DOWN;
-					startFrame = moveDownStartFrame;
-					currentFrame = endFrame - currentFrame + moveDownStartFrame;
-					endFrame = moveDownEndFrame;
-					//animTimer = 0.0f;
-					setRect();
-				}
-				// 移動可能だったら
-				if (checkCanMove(spriteData.x, spriteData.y + braveNS::MOVE_SPEED * frameTime)) {
-					// 下に移動
-					spriteData.y += braveNS::MOVE_SPEED / 2 * frameTime;
-				}
-			}
-			Entity::updateOnlyImage(frameTime);
+			// 入力に応じて勇者の向きを変更、移動
+			changeWithMove(frameTime);
 		}
+		// 攻撃中にさらに攻撃ボタンが押された場合、
 		if (input->isKeyDown(BRAVE_ATTACK_KEY) && currentFrame > startFrame + 2)
 		{
+			// 第二撃攻撃のフラグをオン
 			secondAttackFlag = true;
 		}
+		// 攻撃アニメーションが終了した場合、
 		if (animComplete)
 		{
+			// 第二撃攻撃のフラグがオンなら
 			if (secondAttackFlag)
 			{
+				// 状態は第二撃攻撃中へと遷移
+				state = characterNS::SECOND_ATTACK;
+				// 現在の向きに合わせてアニメーションを再度リセット
+				loop = false;
 				switch (direction)
 				{
 				case characterNS::DOWN:
@@ -331,64 +200,54 @@ void Brave::update(float frameTime)
 					endFrame = braveNS::LEFT_SECOND_ATTACK_END_FRAME;
 					break;
 				}
-				state = characterNS::SECOND_ATTACK;
-				loop = false;
-				currentFrame = startFrame;
-				animTimer = 0.0f;
-				animComplete = false;
-				setRect();
-				Entity::updateOnlyImage(frameTime);
+				setCurrentFrame(startFrame);
+				// 第二撃攻撃のフラグをオフ
 				secondAttackFlag = false;
+				// 第二撃攻撃中は軽くジャンプしながら攻撃する
 				velocity.y = -sqrt(2 * 2000.0f * braveNS::HEIGHT);
+				// ジャンプを開始した直後のY座標を保存
+				tmpY = getY();
+				// 攻撃のエンティティの出現フラグをオン
 				attackCollisionFlag = true;
 			}
 			else
+			// 第二撃攻撃のフラグがオフなら
 			{
-				state = characterNS::MOVE;
-				mode = imageNS::HORIZONTAL;
-				loop = true;
-				startFrame = oldStartFrame;
-				endFrame = oldEndFrame;
-				currentFrame = startFrame;
-				animTimer = 0.0f;
-				animComplete = false;
-				setRect();
-				Entity::updateOnlyImage(frameTime);
+				// 状態を移動中へと遷移
+				changeStateToMove();
 			}
+			// アニメーションのみ更新（エンティティは更新しない）
+			Entity::updateOnlyImage(frameTime);
 		}
 		break;
 	case characterNS::SECOND_ATTACK:	// 第二段攻撃時はアニメーションが終了するまで入力を受け付けない
+		// ジャンプ中なので、重力に従って減速をする
 		velocity.y += frameTime * 2000.0f;
-		if (animComplete)
+		// y方向の速度 = -ジャンプを開始したときの初速度の場合（ジャンプ前のy座標まで戻っていることが期待される）、
+		if (velocity.y > sqrt(2 * 2000.0f * braveNS::HEIGHT))
 		{
-			state = characterNS::MOVE;
-			mode = imageNS::HORIZONTAL;
-			loop = true;
-			startFrame = oldStartFrame;
-			endFrame = oldEndFrame;
-			currentFrame = startFrame;
-			animTimer = 0.0f;
-			animComplete = false;
-			setRect();
+			// 若干のずれを補正するために、強制的にy座標をジャンプ前の座標へと戻す
+			setY(tmpY);
+			// 状態を移動中へと遷移
+			changeStateToMove();
+			// アニメーションのみ更新（エンティティは更新しない）
 			Entity::updateOnlyImage(frameTime);
+			// y方向への速度を0にしてジャンプ終了
 			velocity.y = 0.0f;
 		}
 		break;
 	case characterNS::GAURD:	// ボタンが離されたらガード終了
 		if (!input->isKeyDown(BRAVE_GAURD_KEY))
 		{
-			state = characterNS::MOVE;
-			mode = imageNS::HORIZONTAL;
-			startFrame = oldStartFrame;
-			endFrame = oldEndFrame;
-			currentFrame = startFrame;
-			animTimer = 0.0f;
-			animComplete = false;
-			setRect();
+			// 状態を移動中へと遷移
+			changeStateToMove();
 		}
 		break;
 	}
+
 	// 状態遷移後の処理
+	// 移動中はキーが押されている間のみアニメーションが進むようにしたいので、
+	// エンティティとアニメーションの更新を独立に行っている
 	switch (state)
 	{
 	case characterNS::MOVE:
@@ -408,8 +267,10 @@ void Brave::update(float frameTime)
 	// ダメージを受けているなら一定時間ごとにアニメーションを点滅
 	if (isDamaged)
 	{
+		// ダメージ時にアニメーション用のタイマーを加算
 		damageTimer += frameTime;
 		totalDamageTime += frameTime;
+		// 0.15秒ごとに描画フラグを切り替え
 		if (damageTimer > 0.15f)
 		{
 			if (drawFlag)
@@ -418,6 +279,7 @@ void Brave::update(float frameTime)
 				drawFlag = true;
 			damageTimer = 0.0f;
 		}
+		// DAMAGE_TIME分だけ点滅したら、点滅を終了
 		if (totalDamageTime > braveNS::DAMAGE_TIME)
 		{
 			damageTimer = 0.0f;
@@ -426,67 +288,157 @@ void Brave::update(float frameTime)
 			isDamaged = false;
 		}
 	}
+
 	// MPを一定時間ごとに回復
 	mpTimer += frameTime;
-	if (mpTimer > braveNS::MP_RECOVERY_TIME)
+	if (mpTimer > braveMpRecoveryTime)
 	{
 		mpTimer = 0.0f;
-		magicPoint += braveNS::MP_RECOVERY;
+		magicPoint += braveMpRecovery;
+		// MAX100を超えたら、100にする
 		if (magicPoint > 100)
 			magicPoint = 100;
 	}
 
-	// 移動可能だったら
-	if (checkCanMove(spriteData.x + frameTime * velocity.x, spriteData.y + frameTime * velocity.y))
+	// 移動可能だったら（第二撃攻撃中はジャンプ中なので移動を強制的に許可）
+	if (checkCanMove(spriteData.x + frameTime * velocity.x, spriteData.y + frameTime * velocity.y) || state == characterNS::SECOND_ATTACK)
 	{
 		spriteData.x += frameTime * velocity.x;     // キャラをX方向に動かす
 		spriteData.y += frameTime * velocity.y;     // キャラをY方向に動かす
 	}
+
 	// 画面の端まで来たら進めない
 	if (spriteData.x > GAME_WIDTH - braveNS::WIDTH * getScale())	// 画面右端を超えたら
 		spriteData.x = GAME_WIDTH - braveNS::WIDTH * getScale();	// 画面右端に移動
 	if (spriteData.x < 0)											// 画面左端を超えたら
 		spriteData.x = 0;											// 画面左端に移動
-	if (spriteData.y < rectNS::HEIGHT - 10)								// 画面上端を超えたら
-		spriteData.y = rectNS::HEIGHT - 10;								// 画面上端に移動
+	if (spriteData.y < rectNS::HEIGHT - 10)							// 画面上端を超えたら
+		spriteData.y = rectNS::HEIGHT - 10;							// 画面上端に移動
 	if (spriteData.y > GAME_HEIGHT - braveNS::HEIGHT * getScale())  // 画面下端を超えたら
 		spriteData.y = GAME_HEIGHT -braveNS::HEIGHT * getScale();	// 画面下端に移動
 }
 
 //==========================================================
-// ダメージ
+// ダメージ処理
+// WEAPONの種類によって受けるダメージが分岐
 //==========================================================
 void Brave::damage(WEAPON weapon)
 {
+	// 非アクティブな場合、ダメージは受けない
+	if (!active)
+		return;
+
+	// WEAPONによってダメージを分岐
 	switch (weapon)
 	{
-	case FIRE:
+	case FIRE:					// 炎
 		break;
-	case BRAVE_ATTACK:
+	case BRAVE_ATTACK:			// 勇者の攻撃
 		break;
-	case BRAVE_SECOND_ATTACK:
+	case BRAVE_SECOND_ATTACK:	// 勇者の第二撃
 		break;
-	case ENEMY_ATTACK:
+	case ENEMY_ATTACK:			// 雑魚敵
+		// ガード中なら、ダメージの代わりにMPを消費
 		if (state == characterNS::GAURD)
 			magicPoint -= 25;
-		else
+		else  // ガード中でないなら、
 		{
+			// 一定ダメージを受ける
 			health -= enemyNS::ATTACK_DAMAGE * damagePer;
+			// ダメージ状態のフラグをオン
 			isDamaged = true;
 		}
 		break;
-	case MIDBOSS_ATTACK:
+	case MIDBOSS_ATTACK:		// 中ボス
+		// ガード中なら、ダメージの代わりにMPを消費
 		if (state == characterNS::GAURD)
 			magicPoint -= 35;
-		else
+		else  // ガード中でないなら、
 		{
+			// 一定ダメージを受ける
 			health -= midBossNS::ATTACK_DAMAGE * damagePer;
+			// ダメージ状態のフラグをオン
 			isDamaged = true;
 		}
 		break;
 	default:
 		break;
 	}
+	// 体力が0以下になったなら、死亡
 	if (health <= 0)
 		dead();
+}
+
+//==========================================================
+// 向いている方向とアニメーションを切り替える
+// 内部的にのみ使用
+//==========================================================
+void Brave::changeWithMove(float frameTime)
+{
+	float r = 1.0f;
+	if (state == BRAVE_ATTACK)
+		r = 2.0f;
+	// 左キーが入力された場合、
+	if (input->isKeyDown(BRAVE_LEFT_KEY))
+	{
+		// 向いている方向を左に
+		setDirection(characterNS::LEFT);
+		// 移動可能だったら
+		if (checkCanMove(spriteData.x - braveMoveSpeed * frameTime, spriteData.y)) {
+			// 左に移動
+			spriteData.x -= braveMoveSpeed / r * frameTime;
+		}
+	}
+	// 右キーが入力された場合、
+	if (input->isKeyDown(BRAVE_RIGHT_KEY))
+	{
+		// 向いている方向を右に
+		setDirection(characterNS::RIGHT);
+		// 移動可能だったら
+		if (checkCanMove(spriteData.x + braveMoveSpeed * frameTime, spriteData.y)) {
+			// 右に移動
+			spriteData.x += braveMoveSpeed / r * frameTime;
+		}
+	}
+	// 上キーが入力された場合、
+	if (input->isKeyDown(BRAVE_UP_KEY))
+	{
+		// 向いている方向を上に
+		setDirection(characterNS::UP);
+		// 移動可能だったら
+		if (checkCanMove(spriteData.x, spriteData.y - braveMoveSpeed * frameTime)) {
+			// 上に移動
+			spriteData.y -= braveMoveSpeed / r * frameTime;
+		}
+	}
+	// 下キーが入力された場合、
+	if (input->isKeyDown(BRAVE_DOWN_KEY))
+	{
+		// 向いている方向を下に
+		setDirection(characterNS::DOWN);
+		// 移動可能だったら
+		if (checkCanMove(spriteData.x, spriteData.y + braveMoveSpeed * frameTime)) {
+			// 下に移動
+			spriteData.y += braveMoveSpeed / r * frameTime;
+		}
+	}
+	// アニメーションのみ更新（エンティティは更新しない）
+	Entity::updateOnlyImage(frameTime);
+}
+
+//==========================================================
+// 移動中へと状態を遷移
+//==========================================================
+void Brave::changeStateToMove()
+{
+	// 状態は移動中へと遷移
+	state = characterNS::MOVE;
+	// アニメーションフレームの遷移は水平方向
+	mode = imageNS::HORIZONTAL;
+	// 移動中はアニメーションはループさせる
+	loop = true;
+	// アニメーションを向いている方向に合わせてセット
+	startFrame = oldStartFrame;
+	endFrame = oldEndFrame;
+	setCurrentFrame(startFrame);
 }

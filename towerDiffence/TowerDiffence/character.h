@@ -33,7 +33,6 @@ protected:
 	int moveDownEndFrame;
 	int moveLeftStartFrame;
 	int moveLeftEndFrame;
-    float moveAnimationDelay; 
 	int attackUpStartFrame;
 	int attackUpEndFrame;
 	int attackRightStartFrame;
@@ -81,6 +80,8 @@ public:
 	void setMapPointer(Map *m) { map = m; }
 	// 状態をセットする関数
 	void setState(characterNS::STATE st) { state = st; }
+	// 向いている方向をセットする
+	void setDirection(characterNS::DIRECTION dir);
 
 	//==========================================================
 	// getter

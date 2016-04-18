@@ -24,30 +24,33 @@ const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1ƒtƒŒ[ƒ€‚É—v‚·‚éÅ‘å‚Ì
 
 // ƒQ[ƒ€“à‚Ìƒpƒ‰ƒ[ƒ^
 // —EÒŠÖŒW
-static const int braveAttackDamage = 50;
-static const int braveFireDamage = 100;
+const int braveAttackDamage = 50;				// —EÒiƒvƒŒƒCƒ„[j‚ÌUŒ‚—Íiƒ_ƒ[ƒW—Êj
+const int braveFireDamage = 110;				// —EÒ‚Ìƒtƒ@ƒCƒA[i•KE‹Zj‚ÌUŒ‚—Íiƒ_ƒ[ƒW—Êj
+const int braveMpRecovery = 10;					// —EÒ‚ÌMP‰ñ•œ—ÊimpRecoveryTime•b‚²‚Æ‚É‰ñ•œj
+const float braveMpRecoveryTime = 2.0f;			// —EÒ‚ÌMP‚ª‰ñ•œ‚·‚éŠÔŠui•bj
+const float braveMoveSpeed = 150.0f;			// —EÒ‚ÌˆÚ“®‘¬“xiƒsƒNƒZƒ‹j
 
 // ‰æ‘œ
-const char MENU_IMAGE[] = "pictures\\title.png";						// ƒƒjƒ…[‰æ‘œ
-const char STAGE_SELECT_IMAGE[] = "pictures\\stageselect.png";			// ƒXƒe[ƒW‘I‘ğ‰æ–Ê‰æ‘œ
-const char RESULT_IMAGE[] = "pictures\\gameover.png";                   // ƒŠƒUƒ‹ƒg‰æ‘œ
-const char STAGE_CLEAR_IMAGE[] = "pictures\\stageclear.png";			// ƒXƒe[ƒWƒNƒŠƒA‰æ‘œ
-const char DESCRIPTION_IMAGE[] = "pictures\\description.png";           // ‘€ìà–¾‰æ‘œ
-const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main.png";		// —EÒ‚Ì•às‰æ‘œ
-const char FIRE_IMAGE[] = "pictures\\alex\\fire.png";					// ‰Š‚Ì‰æ‘œ
-const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy.png";				// G‹›“G‚Ì‰æ‘œ
-const char MID_BOSS_IMAGE[] = "pictures\\enemy\\midBoss.png";			// ’†ƒ{ƒX‚Ì‰æ‘œ
-const char TILE_IMAGES[] = "pictures\\map\\ground.png";					// ƒ}ƒbƒv‰æ‘œ
-const char DASHBOARD_TEXTURES[] = "pictures\\dashboard.png";			// ƒ_ƒbƒVƒ…ƒ{[ƒh‰æ‘œ
-const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";			// ƒoƒŠƒP[ƒh‚Ì‰æ‘œ
-const char HIT_EFFECT_IMAGE[] = "pictures\\effect\\hitEffect.png";		// ƒ_ƒ[ƒWƒGƒtƒFƒNƒg‚Ì‰æ‘œ
-const char ATTACK_EFFECT_IMAGE[] = "pictures\\effect\\attackEffect.png";// UŒ‚ƒGƒtƒFƒNƒg‚Ì‰æ‘œ
-const char COLLISION_IMAGE[] = "pictures\\alex\\attackCollision.png";	// UŒ‚—p‚ÌƒeƒNƒXƒ`ƒƒ
-const char CASTLE_IMAGE[] = "pictures\\map\\castle.png";				// é‰æ‘œ
-const char BRAVE_ICON_IMAGE[] = "pictures\\alex\\icon.png";				// —EÒ‚ÌƒAƒCƒRƒ“‰æ‘œ
-const char TEXT_IMAGE[] = "pictures\\systemGraphics\\text.png";			// ƒeƒLƒXƒgi‚l‚oA‚g‚oj‰æ‘œ
-const char CASTLE_ICON_IMAGE[] = "pictures\\map\\castleIcon.png";		// é‚ÌƒAƒCƒRƒ“‚Ì‰æ‘œ
-const char FONT_IMAGE[] = "pictures\\CKfont.png";						// ƒXƒvƒ‰ƒCƒgƒeƒLƒXƒg‚Ì‰æ‘œ
+const char MENU_IMAGE[] = "pictures\\systemGraphics\\title.png";				// ƒƒjƒ…[‰æ‘œ
+const char STAGE_SELECT_IMAGE[] = "pictures\\systemGraphics\\stageselect.png";	// ƒXƒe[ƒW‘I‘ğ‰æ–Ê‰æ‘œ
+const char RESULT_IMAGE[] = "pictures\\systemGraphics\\gameover.png";           // ƒŠƒUƒ‹ƒg‰æ‘œ
+const char STAGE_CLEAR_IMAGE[] = "pictures\\systemGraphics\\stageclear.png";	// ƒXƒe[ƒWƒNƒŠƒA‰æ‘œ
+const char DESCRIPTION_IMAGE[] = "pictures\\systemGraphics\\description.png";   // ‘€ìà–¾‰æ‘œ
+const char BRAVE_MOVE_IMAGE[] = "pictures\\alex\\alex_main.png";				// —EÒ‚Ì•às‰æ‘œ
+const char FIRE_IMAGE[] = "pictures\\alex\\fire.png";							// ‰Š‚Ì‰æ‘œ
+const char ENEMY_IMAGE[] = "pictures\\enemy\\enemy.png";						// G‹›“G‚Ì‰æ‘œ
+const char MID_BOSS_IMAGE[] = "pictures\\enemy\\midBoss.png";					// ’†ƒ{ƒX‚Ì‰æ‘œ
+const char TILE_IMAGES[] = "pictures\\map\\ground.png";							// ƒ}ƒbƒv‰æ‘œ
+const char DASHBOARD_TEXTURES[] = "pictures\\systemGraphics\\dashboard.png";	// ƒ_ƒbƒVƒ…ƒ{[ƒh‰æ‘œ
+const char BARRICADE_IMAGE[] = "pictures\\map\\barricade.png";					// ƒoƒŠƒP[ƒh‚Ì‰æ‘œ
+const char HIT_EFFECT_IMAGE[] = "pictures\\effect\\hitEffect.png";				// ƒ_ƒ[ƒWƒGƒtƒFƒNƒg‚Ì‰æ‘œ
+const char ATTACK_EFFECT_IMAGE[] = "pictures\\effect\\attackEffect.png";		// UŒ‚ƒGƒtƒFƒNƒg‚Ì‰æ‘œ
+const char COLLISION_IMAGE[] = "pictures\\alex\\attackCollision.png";			// UŒ‚—p‚ÌƒeƒNƒXƒ`ƒƒ
+const char CASTLE_IMAGE[] = "pictures\\map\\castle.png";						// é‰æ‘œ
+const char BRAVE_ICON_IMAGE[] = "pictures\\alex\\icon.png";						// —EÒ‚ÌƒAƒCƒRƒ“‰æ‘œ
+const char TEXT_IMAGE[] = "pictures\\systemGraphics\\text.png";					// ƒeƒLƒXƒgi‚l‚oA‚g‚oj‰æ‘œ
+const char CASTLE_ICON_IMAGE[] = "pictures\\map\\castleIcon.png";				// é‚ÌƒAƒCƒRƒ“‚Ì‰æ‘œ
+const char FONT_IMAGE[] = "pictures\\systemGraphics\\CKfont.png";				// ƒXƒvƒ‰ƒCƒgƒeƒLƒXƒg‚Ì‰æ‘œ
 
 // ‰¹º
 // WAVE_BANK must be location of .xwb file.

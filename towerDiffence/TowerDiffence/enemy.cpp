@@ -37,7 +37,6 @@ Enemy::Enemy() : Character()
 	moveDownEndFrame = enemyNS::MOVE_DOWN_END_FRAME;
 	moveLeftStartFrame = enemyNS::MOVE_LEFT_START_FRAME;
 	moveLeftEndFrame = enemyNS::MOVE_LEFT_END_FRAME;
-	moveAnimationDelay = enemyNS::MOVE_ANIMATION_DELAY;
 	attackUpStartFrame = enemyNS::ATTACK_UP_START_FRAME;
 	attackUpEndFrame = enemyNS::ATTACK_UP_END_FRAME;
 	attackRightStartFrame = enemyNS::ATTACK_RIGHT_START_FRAME;
