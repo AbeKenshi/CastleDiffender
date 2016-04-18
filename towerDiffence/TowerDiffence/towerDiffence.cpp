@@ -500,9 +500,7 @@ void TowerDiffence::render()
 			sprintf_s(time, "%04d", (int)mHighScores[i]);
 			strcat_s(str2, time);
 			mFontCK->setFontHeight(20);
-			mFontCK->setFontColor(SETCOLOR_ARGB(128, 128, 128, 128));  // shadow grey
-			mFontCK->print(str2, 512, 50 + i * 240);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+			mFontCK->setFontColor(graphicsNS::ORANGE);
 			mFontCK->print(str2, 505, 3 + 50 + i * 240);
 		}
 	}
