@@ -944,7 +944,7 @@ void TowerDiffence::loadHighScore()
 		{
 			if (getline(stream, token, ','))
 			{
-				mHighScores[i] = stof(token);
+				mHighScores[i] = (int)stof(token);
 			}
 		}
 	}
