@@ -13,19 +13,19 @@
 //==========================================================
 BraveAttackCollision::BraveAttackCollision() : Entity()
 {
-	active = false;												// 攻撃はアクティブでない状態から開始
-	visible = false;
-	spriteData.width = braveAttackCollisionNS::WIDTH;			// １つの画像のサイズ
-	spriteData.height = braveAttackCollisionNS::HEIGHT;
-	spriteData.rect.bottom = braveAttackCollisionNS::HEIGHT;	// 画面の一部を選択
-	spriteData.rect.right = braveAttackCollisionNS::WIDTH;
+	mActive = false;												// 攻撃はアクティブでない状態から開始
+	mVisible = false;
+	mSpriteData.width = braveAttackCollisionNS::WIDTH;			// １つの画像のサイズ
+	mSpriteData.height = braveAttackCollisionNS::HEIGHT;
+	mSpriteData.rect.bottom = braveAttackCollisionNS::HEIGHT;	// 画面の一部を選択
+	mSpriteData.rect.right = braveAttackCollisionNS::WIDTH;
 	// Boxの衝突判定用
-	edge.left = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
-	edge.right = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
-	edge.top = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
-	edge.bottom = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
-	collisionType = entityNS::BOX;
-	collisionTimer = 0.0f;										// 攻撃の当たり判定が出ている時間を計測するタイマー
+	mEdge.left = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+	mEdge.right = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
+	mEdge.top = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+	mEdge.bottom = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
+	mCollisionType = entityNS::BOX;
+	mCollisionTimer = 0.0f;										// 攻撃の当たり判定が出ている時間を計測するタイマー
 }
 
 //==========================================================
@@ -36,18 +36,18 @@ BraveAttackCollision::BraveAttackCollision() : Entity()
 void BraveAttackCollision::update(float frameTime)
 {
 	// 攻撃の衝撃派を更新
-	attackEffect.update(frameTime);
+	mAttackEffect.update(frameTime);
 	// 非アクティブなら、このエンティティの更新はしない
-	if (visible == false)
+	if (mVisible == false)
 		return;
 	// 攻撃の当たり判定が出ている時間を加算
-	collisionTimer += frameTime;
+	mCollisionTimer += frameTime;
 	// 攻撃の当たり判定が一定以上出ているなら、このエンティティを非アクティブにする
-	if (collisionTimer >= braveAttackCollisionNS::COLLISION_TIME)
+	if (mCollisionTimer >= braveAttackCollisionNS::COLLISION_TIME)
 	{
-		collisionTimer = 0.0f;
-		visible = false;
-		active = false;
+		mCollisionTimer = 0.0f;
+		mVisible = false;
+		mActive = false;
 	}
 	// エンティティを更新
 	Entity::update(frameTime);
@@ -61,66 +61,66 @@ void BraveAttackCollision::update(float frameTime)
 void BraveAttackCollision::attack(float centerX, float centerY, float width, float height, characterNS::DIRECTION direction)
 {
 	// 攻撃の衝撃派のアニメーションを表示
-	attackEffect.attack(centerX, centerY, width, height, direction);
+	mAttackEffect.attack(centerX, centerY, width, height, direction);
 	// 勇者の向きによって出現位置を分岐
 	// 勇者の画像に偏りがあるため、若干位置を修正している
 	switch (direction)
 	{
 		case characterNS::RIGHT:	// 右
-			spriteData.width = braveAttackCollisionNS::WIDTH;	// １つの画像のサイズ
-			spriteData.height = braveAttackCollisionNS::HEIGHT;
-			spriteData.rect.bottom = braveAttackCollisionNS::HEIGHT;
-			spriteData.rect.right = braveAttackCollisionNS::WIDTH;
+			mSpriteData.width = braveAttackCollisionNS::WIDTH;	// １つの画像のサイズ
+			mSpriteData.height = braveAttackCollisionNS::HEIGHT;
+			mSpriteData.rect.bottom = braveAttackCollisionNS::HEIGHT;
+			mSpriteData.rect.right = braveAttackCollisionNS::WIDTH;
 			// Boxの衝突判定用
-			edge.left = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
-			edge.right = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
-			edge.top = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
-			edge.bottom = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
-			spriteData.x = centerX + width / 2;
-			spriteData.y = centerY - spriteData.height / 2;
+			mEdge.left = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+			mEdge.right = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
+			mEdge.top = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+			mEdge.bottom = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
+			mSpriteData.x = centerX + width / 2;
+			mSpriteData.y = centerY - mSpriteData.height / 2;
 			break;
 		case characterNS::UP:		// 上
-			spriteData.width = braveAttackCollisionNS::HEIGHT;	// １つの画像のサイズ
-			spriteData.height = braveAttackCollisionNS::WIDTH;
-			spriteData.rect.bottom = braveAttackCollisionNS::WIDTH;
-			spriteData.rect.right = braveAttackCollisionNS::HEIGHT;
+			mSpriteData.width = braveAttackCollisionNS::HEIGHT;	// １つの画像のサイズ
+			mSpriteData.height = braveAttackCollisionNS::WIDTH;
+			mSpriteData.rect.bottom = braveAttackCollisionNS::WIDTH;
+			mSpriteData.rect.right = braveAttackCollisionNS::HEIGHT;
 			// Boxの衝突判定用
-			edge.left = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
-			edge.right = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
-			edge.top = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
-			edge.bottom = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
-			spriteData.x = centerX - spriteData.width / 2;
-			spriteData.y = centerY - height / 2 - spriteData.height;
+			mEdge.left = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+			mEdge.right = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
+			mEdge.top = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+			mEdge.bottom = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
+			mSpriteData.x = centerX - mSpriteData.width / 2;
+			mSpriteData.y = centerY - height / 2 - mSpriteData.height;
 			break;
 		case characterNS::LEFT:		// 左
-			spriteData.width = braveAttackCollisionNS::WIDTH;	// １つの画像のサイズ
-			spriteData.height = braveAttackCollisionNS::HEIGHT;
-			spriteData.rect.bottom = braveAttackCollisionNS::HEIGHT;
-			spriteData.rect.right = braveAttackCollisionNS::WIDTH;
+			mSpriteData.width = braveAttackCollisionNS::WIDTH;	// １つの画像のサイズ
+			mSpriteData.height = braveAttackCollisionNS::HEIGHT;
+			mSpriteData.rect.bottom = braveAttackCollisionNS::HEIGHT;
+			mSpriteData.rect.right = braveAttackCollisionNS::WIDTH;
 			// Boxの衝突判定用
-			edge.left = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
-			edge.right = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
-			edge.top = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
-			edge.bottom = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
-			spriteData.x = centerX - spriteData.width / 2 - width;
-			spriteData.y = centerY - spriteData.height / 2;
+			mEdge.left = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+			mEdge.right = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
+			mEdge.top = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+			mEdge.bottom = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
+			mSpriteData.x = centerX - mSpriteData.width / 2 - width;
+			mSpriteData.y = centerY - mSpriteData.height / 2;
 			break;
 		case characterNS::DOWN:		// 下
-			spriteData.width = braveAttackCollisionNS::HEIGHT;	// １つの画像のサイズ
-			spriteData.height = braveAttackCollisionNS::WIDTH;
-			spriteData.rect.bottom = braveAttackCollisionNS::WIDTH;
-			spriteData.rect.right = braveAttackCollisionNS::HEIGHT;
+			mSpriteData.width = braveAttackCollisionNS::HEIGHT;	// １つの画像のサイズ
+			mSpriteData.height = braveAttackCollisionNS::WIDTH;
+			mSpriteData.rect.bottom = braveAttackCollisionNS::WIDTH;
+			mSpriteData.rect.right = braveAttackCollisionNS::HEIGHT;
 			// Boxの衝突判定用
-			edge.left = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
-			edge.right = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
-			edge.top = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
-			edge.bottom = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
-			spriteData.x = centerX - spriteData.width / 2;
-			spriteData.y = centerY + 10;
+			mEdge.left = (LONG)(-braveAttackCollisionNS::HEIGHT / 2.0);
+			mEdge.right = (LONG)(braveAttackCollisionNS::HEIGHT / 2.0);
+			mEdge.top = (LONG)(-braveAttackCollisionNS::WIDTH / 2.0);
+			mEdge.bottom = (LONG)(braveAttackCollisionNS::WIDTH / 2.0);
+			mSpriteData.x = centerX - mSpriteData.width / 2;
+			mSpriteData.y = centerY + 10;
 			break;
 	}
 	// 攻撃の当たり判定が出ている時間をリセット
-	collisionTimer = 0.0f;
-	visible = true;						// 攻撃を表示
-	active = true;							// 衝突可能にする
+	mCollisionTimer = 0.0f;
+	//visible = true;						// 攻撃を表示
+	mActive = true;							// 衝突可能にする
 }

@@ -26,21 +26,21 @@ namespace gameErrorNS
 class GameError : public std::exception
 {
 private:
-    int     errorCode;
-    std::string message;
+    int     mErrorCode;
+    std::string mMessage;
 public:
 	// デフォルトコンストラクタ
-    GameError() throw() :errorCode(gameErrorNS::FATAL_ERROR), message("Undefined Error in game.") {}
+    GameError() throw() :mErrorCode(gameErrorNS::FATAL_ERROR), mMessage("Undefined Error in game.") {}
     // コピーコンストラクタ
-    GameError(const GameError& e) throw(): std::exception(e), errorCode(e.errorCode), message(e.message) {}
+    GameError(const GameError& e) throw(): std::exception(e), mErrorCode(e.mErrorCode), mMessage(e.mMessage) {}
     // 引数ありのコンストラクタ
-    GameError(int code, const std::string &s) throw() :errorCode(code), message(s) {}
+    GameError(int code, const std::string &s) throw() :mErrorCode(code), mMessage(s) {}
     // 代入演算子
     GameError& operator= (const GameError& rhs) throw() 
     {
         std::exception::operator=(rhs);
-        this->errorCode = rhs.errorCode;
-        this->message = rhs.message;
+        this->mErrorCode = rhs.mErrorCode;
+        this->mMessage = rhs.mMessage;
     }
 	// デストラクタ
     virtual ~GameError() throw() {};
@@ -48,8 +48,8 @@ public:
 	// 基本クラスに対するオーバーライド
     virtual const char* what() const throw() { return this->getMessage(); }
 
-    const char* getMessage() const throw() { return message.c_str(); }
-    int getErrorCode() const throw() { return errorCode; }
+    const char* getMessage() const throw() { return mMessage.c_str(); }
+    int getErrorCode() const throw() { return mErrorCode; }
 };
 
 #endif

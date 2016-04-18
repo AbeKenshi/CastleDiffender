@@ -110,19 +110,19 @@ class Graphics
 {
 private:
 	// DirectXポインタなど
-	LP_3D       direct3d;
-	LP_3DDEVICE device3d;
-	LP_SPRITE   sprite;
-	D3DPRESENT_PARAMETERS d3dpp;
-	D3DDISPLAYMODE pMode;
+	LP_3D       mDirect3d;
+	LP_3DDEVICE mDevice3d;
+	LP_SPRITE   mSprite;
+	D3DPRESENT_PARAMETERS mD3dpp;
+	D3DDISPLAYMODE mPMode;
 
 	// その他の変数
-	HRESULT     result;         // 標準のWindowsリターンコード
-	HWND        hwnd;
-	bool        fullscreen;
-	int         width;
-	int         height;
-	COLOR_ARGB  backColor;      // 背景色
+	HRESULT     mResult;         // 標準のWindowsリターンコード
+	HWND        mHwnd;
+	bool        mFullscreen;
+	int         mWidth;
+	int         mHeight;
+	COLOR_ARGB  mBackColor;      // 背景色
 
 	// (エンジンの使用時に内部的にのみ使用します。
 	// 内部にはユーザーが使用するものはありません。）
@@ -228,41 +228,41 @@ public:
 	////////////////////////////////////////
 
 	// direct3dを戻す
-	LP_3D get3D() { return direct3d; }
+	LP_3D get3D() { return mDirect3d; }
 
 	// device3dを戻す
-	LP_3DDEVICE get3Ddevice() { return device3d; }
+	LP_3DDEVICE get3Ddevice() { return mDevice3d; }
 
 	// スプライトを戻す
-	LP_SPRITE getSprite() { return sprite; }
+	LP_SPRITE getSprite() { return mSprite; }
 
 	// デバイスコンテキストへのハンドルを戻す
-	HDC getDC() { return GetDC(hwnd); }
+	HDC getDC() { return GetDC(mHwnd); }
 
 	// デバイスが消失していないかをチェック
 	HRESULT getDeviceState();
 
 	// フルスクリーンモードかどうかを戻す
-	bool getFullscreen() { return fullscreen; }
+	bool getFullscreen() { return mFullscreen; }
 
 	// Set color used to clear screen
-	void setBackColor(COLOR_ARGB c) { backColor = c; }
+	void setBackColor(COLOR_ARGB c) { mBackColor = c; }
 
 	//=============================================================================
 	// バックバッファをクリアして、DirectXのBeginScene()を呼び出す
 	//=============================================================================
 	HRESULT beginScene()
 	{
-		result = E_FAIL;
-		if (device3d == NULL)
-			return result;
+		mResult = E_FAIL;
+		if (mDevice3d == NULL)
+			return mResult;
 		// バックバッファをbackColorでクリアする
-		device3d->Clear(0, 0,
+		mDevice3d->Clear(0, 0,
 			D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
-			backColor, 1.0f, 0);
+			mBackColor, 1.0f, 0);
 
-		result = device3d->BeginScene();          // 描画のためのシーンを開始する
-		return result;
+		mResult = mDevice3d->BeginScene();          // 描画のためのシーンを開始する
+		return mResult;
 	}
 
 	//=============================================================================
@@ -270,10 +270,10 @@ public:
 	//=============================================================================
 	HRESULT endScene()
 	{
-		result = E_FAIL;
-		if (device3d)
-			result = device3d->EndScene();
-		return result;
+		mResult = E_FAIL;
+		if (mDevice3d)
+			mResult = mDevice3d->EndScene();
+		return mResult;
 	}
 
 	//=============================================================================
@@ -281,7 +281,7 @@ public:
 	//=============================================================================
 	void spriteBegin()
 	{
-		sprite->Begin(D3DXSPRITE_ALPHABLEND);
+		mSprite->Begin(D3DXSPRITE_ALPHABLEND);
 	}
 
 	//=============================================================================
@@ -289,7 +289,7 @@ public:
 	//=============================================================================
 	void spriteEnd()
 	{
-		sprite->End();
+		mSprite->End();
 	}
 };
 

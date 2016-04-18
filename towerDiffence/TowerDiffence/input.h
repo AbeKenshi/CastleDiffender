@@ -76,25 +76,25 @@ class Input
 {
 private:
 	// 指定のキーが押されている状態の場合にtrue
-	bool keysDown[inputNS::KEYS_ARRAY_LEN];
+	bool mKeysDown[inputNS::KEYS_ARRAY_LEN];
 	// 指定のキーが押された場合にtrue
-	bool keysPressed[inputNS::KEYS_ARRAY_LEN];
-	std::string textIn;                         // ユーザーが入力したテキスト
-	char charIn;                                // 最後に入力された文字
-	bool newLine;                               // 新しい行の開始時にtrue
-	int  mouseX, mouseY;                        // マウスの画面座標
-	int  mouseRawX, mouseRawY;                  // 高精細マウスのデータ
-	int  mouseWheel;                            // 
-	RAWINPUTDEVICE Rid[1];                      // 高精細マウス用
-	bool mouseCaptured;                         // マウスがキャプチャされている場合にtrue
-	bool mouseLButton;                          // 左マウスボタンが押されている場合にtrue
-	bool mouseMButton;                          // 中央マウスボタンが押されている場合にtrue
-	bool mouseRButton;                          // 右マウスボタンが押されている場合にtrue
-	bool mouseX1Button;                         // X1マウスボタンが押されている場合にtrue
-	bool mouseX2Button;                         // X2マウスボタンが押されている場合にtrue
-	ControllerState controllers[MAX_CONTROLLERS];    // コントローラーの状態
-	short thumbstickDeadzone;
-	short triggerDeadzone;
+	bool mKeysPressed[inputNS::KEYS_ARRAY_LEN];
+	std::string mTextIn;                         // ユーザーが入力したテキスト
+	char mCharIn;                                // 最後に入力された文字
+	bool mNewLine;                               // 新しい行の開始時にtrue
+	int  mMouseX, mMouseY;                       // マウスの画面座標
+	int  mMouseRawX, mMouseRawY;                 // 高精細マウスのデータ
+	int  mMouseWheel;                            // 
+	RAWINPUTDEVICE mRid[1];                      // 高精細マウス用
+	bool mMouseCaptured;                         // マウスがキャプチャされている場合にtrue
+	bool mMouseLButton;                          // 左マウスボタンが押されている場合にtrue
+	bool mMouseMButton;                          // 中央マウスボタンが押されている場合にtrue
+	bool mMouseRButton;                          // 右マウスボタンが押されている場合にtrue
+	bool mMouseX1Button;                         // X1マウスボタンが押されている場合にtrue
+	bool mMouseX2Button;                         // X2マウスボタンが押されている場合にtrue
+	ControllerState mControllers[MAX_CONTROLLERS];    // コントローラーの状態
+	short mThumbstickDeadzone;
+	short mTriggerDeadzone;
 
 public:
 	// Constructor
@@ -141,19 +141,19 @@ public:
 	void clearAll() { clear(inputNS::KEYS_MOUSE_TEXT); }
 
 	// テキスト入力バッファをクリア
-	void clearTextIn() { textIn.clear(); }
+	void clearTextIn() { mTextIn.clear(); }
 
 	// Clear last character entered
-	void clearCharIn() { charIn = 0; }
+	void clearCharIn() { mCharIn = 0; }
 
 	// Return text input as a string
-	std::string getTextIn() { return textIn; }
+	std::string getTextIn() { return mTextIn; }
 
 	// Set text input string
-	void setTextIn(std::string str) { textIn = str; }
+	void setTextIn(std::string str) { mTextIn = str; }
 
 	// Return last character entered
-	char getCharIn() { return charIn; }
+	char getCharIn() { return mCharIn; }
 
 	// Reads mouse screen position into mouseX, mouseY
 	void mouseIn(LPARAM);
@@ -166,32 +166,32 @@ public:
 	void mouseWheelIn(WPARAM);
 
 	// 左マウスボタンの状態を保存
-	void setMouseLButton(bool b) { mouseLButton = b; }
+	void setMouseLButton(bool b) { mMouseLButton = b; }
 
 	// 中央マウスボタンの状態を保存
-	void setMouseMButton(bool b) { mouseMButton = b; }
+	void setMouseMButton(bool b) { mMouseMButton = b; }
 
 	// 右マウスボタンの状態を保存
-	void setMouseRButton(bool b) { mouseRButton = b; }
+	void setMouseRButton(bool b) { mMouseRButton = b; }
 
 	// X1、X2マウスボタンの状態を保存
 	void setMouseXButton(WPARAM wParam) {
-		mouseX1Button = (wParam & MK_XBUTTON1) ? true : false;
-		mouseX2Button = (wParam & MK_XBUTTON2) ? true : false;
+		mMouseX1Button = (wParam & MK_XBUTTON1) ? true : false;
+		mMouseX2Button = (wParam & MK_XBUTTON2) ? true : false;
 	}
 
 	// マウスのX位置を戻す
-	int  getMouseX()        const { return mouseX; }
+	int  getMouseX()        const { return mMouseX; }
 
 	// マウスのY位置を戻す
-	int  getMouseY()        const { return mouseY; }
+	int  getMouseY()        const { return mMouseY; }
 
 	// マウスのX位置の移動のローデータを戻す。左への移動は<0、右への移動は>0
 	// 高精細マウスに対応
 	int  getMouseRawX()
 	{
-		int rawX = mouseRawX;
-		mouseRawX = 0;
+		int rawX = mMouseRawX;
+		mMouseRawX = 0;
 		return rawX;
 	}
 
@@ -199,8 +199,8 @@ public:
 	// 高精細マウスに対応
 	int  getMouseRawY()
 	{
-		int rawY = mouseRawY;
-		mouseRawY = 0;
+		int rawY = mMouseRawY;
+		mMouseRawY = 0;
 		return rawY;
 	}
 
@@ -208,25 +208,25 @@ public:
 	// Forward is >0, Backward is <0, movement is in multiples of WHEEL_DATA (120).
 	int  getMouseWheel()
 	{
-		int wheel = mouseWheel;
-		mouseWheel = 0;
+		int wheel = mMouseWheel;
+		mMouseWheel = 0;
 		return wheel;
 	}
 
 	// 左マウスボタンの状態を戻す
-	bool getMouseLButton()  const { return mouseLButton; }
+	bool getMouseLButton()  const { return mMouseLButton; }
 
 	// 中央マウスボタンの状態を戻す
-	bool getMouseMButton()  const { return mouseMButton; }
+	bool getMouseMButton()  const { return mMouseMButton; }
 
 	// 右マウスボタンの状態を戻す
-	bool getMouseRButton()  const { return mouseRButton; }
+	bool getMouseRButton()  const { return mMouseRButton; }
 
 	// X1マウスボタンの状態を戻す
-	bool getMouseX1Button() const { return mouseX1Button; }
+	bool getMouseX1Button() const { return mMouseX1Button; }
 
 	// X2マウスボタンの状態を戻す
-	bool getMouseX2Button() const { return mouseX2Button; }
+	bool getMouseX2Button() const { return mMouseX2Button; }
 
 	// Update connection status of game controllers.
 	void checkControllers();
@@ -235,23 +235,23 @@ public:
 	void readControllers();
 
 	// Set thumbstick deadzone
-	void setThumbstickDeadzone(short dz) { thumbstickDeadzone = abs(dz); }
+	void setThumbstickDeadzone(short dz) { mThumbstickDeadzone = abs(dz); }
 
 	// Set trigger deadzone
-	void setTriggerDeadzone(BYTE dz) { triggerDeadzone = dz; }
+	void setTriggerDeadzone(BYTE dz) { mTriggerDeadzone = dz; }
 
 	// Get thumbstick deadzone
-	short getThumbstickDeadzone() { return thumbstickDeadzone; }
+	short getThumbstickDeadzone() { return mThumbstickDeadzone; }
 
 	// Get trigger deadzone
-	BYTE getTriggerDeadzone() { return static_cast<BYTE>(triggerDeadzone); }
+	BYTE getTriggerDeadzone() { return static_cast<BYTE>(mTriggerDeadzone); }
 
 	// 指定のゲームコントローラーの状態を戻す
 	const ControllerState* getControllerState(UINT n)
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return &controllers[n];
+		return &mControllers[n];
 	}
 
 	// Return connection state of specified game controller
@@ -259,7 +259,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return controllers[n].connected;
+		return mControllers[n].connected;
 	}
 
 	// コントローラーnのボタンの状態を戻す
@@ -267,7 +267,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return controllers[n].state.Gamepad.wButtons;
+		return mControllers[n].state.Gamepad.wButtons;
 	}
 
 	// コントローラーnの方向パッド上の状態を戻す
@@ -275,7 +275,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return ((controllers[n].state.Gamepad.wButtons&GAMEPAD_DPAD_UP) != 0);
+		return ((mControllers[n].state.Gamepad.wButtons&GAMEPAD_DPAD_UP) != 0);
 	}
 
 	// コントローラーnの方向パッド下の状態を戻す
@@ -283,7 +283,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return ((controllers[n].state.Gamepad.wButtons&GAMEPAD_DPAD_DOWN) != 0);
+		return ((mControllers[n].state.Gamepad.wButtons&GAMEPAD_DPAD_DOWN) != 0);
 	}
 
 	// コントローラーnの方向パッド左の状態を戻す
@@ -291,7 +291,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return ((controllers[n].state.Gamepad.wButtons&GAMEPAD_DPAD_LEFT) != 0);
+		return ((mControllers[n].state.Gamepad.wButtons&GAMEPAD_DPAD_LEFT) != 0);
 	}
 
 	// コントローラーnの方向パッド右の状態を戻す
@@ -299,7 +299,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_DPAD_RIGHT) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_DPAD_RIGHT) != 0);
 	}
 
 	// コントローラーnのSTARTボタンの状態を戻す
@@ -307,7 +307,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_START_BUTTON) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_START_BUTTON) != 0);
 	}
 
 	// コントローラーnのBACKボタンの状態を戻す
@@ -315,7 +315,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_BACK_BUTTON) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_BACK_BUTTON) != 0);
 	}
 
 	// コントローラーnの左サムボタンの状態を戻す
@@ -323,7 +323,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_LEFT_THUMB) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_LEFT_THUMB) != 0);
 	}
 
 	// コントローラーnの右サムボタンの状態を戻す
@@ -331,7 +331,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_RIGHT_THUMB) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_RIGHT_THUMB) != 0);
 	}
 
 	// コントローラーnの左ショルダーボタンの状態を戻す
@@ -339,7 +339,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_LEFT_SHOULDER) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_LEFT_SHOULDER) != 0);
 	}
 
 	// コントローラーnの右ショルダーボタンの状態を戻す
@@ -347,7 +347,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_RIGHT_SHOULDER) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_RIGHT_SHOULDER) != 0);
 	}
 
 	// コントローラーnのAボタンの状態を戻す
@@ -355,7 +355,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_A) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_A) != 0);
 	}
 
 	// コントローラーnのBボタンの状態を戻す
@@ -363,7 +363,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_B) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_B) != 0);
 	}
 
 	// コントローラーnのXボタンの状態を戻す
@@ -371,7 +371,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_X) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_X) != 0);
 	}
 
 	// コントローラーnのYボタンの状態を戻す
@@ -379,7 +379,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return bool((controllers[n].state.Gamepad.wButtons&GAMEPAD_Y) != 0);
+		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_Y) != 0);
 	}
 
 	// コントローラーnの左トリガーの値を戻します。
@@ -391,7 +391,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return controllers[n].state.Gamepad.bLeftTrigger;
+		return mControllers[n].state.Gamepad.bLeftTrigger;
 	}
 
 	// コントローラーnの右トリガーの値を戻します。
@@ -403,7 +403,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return controllers[n].state.Gamepad.bRightTrigger;
+		return mControllers[n].state.Gamepad.bRightTrigger;
 	}
 
 	// コントローラーnの左サムスティック、Xの値を戻します。
@@ -415,7 +415,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return controllers[n].state.Gamepad.sThumbLX;
+		return mControllers[n].state.Gamepad.sThumbLX;
 	}
 
 	// コントローラーnの左サムスティック、Yの値を戻します。
@@ -427,7 +427,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return controllers[n].state.Gamepad.sThumbLY;
+		return mControllers[n].state.Gamepad.sThumbLY;
 	}
 
 	// コントローラーnの右サムスティック、Xの値を戻します。
@@ -439,7 +439,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)   // if invalid controller number
 			n = MAX_CONTROLLERS - 1;    // force valid
-		return controllers[n].state.Gamepad.sThumbRX;
+		return mControllers[n].state.Gamepad.sThumbRX;
 	}
 
 	// コントローラーnの右サムスティック、Yの値を戻します。
@@ -451,7 +451,7 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		return controllers[n].state.Gamepad.sThumbRY;
+		return mControllers[n].state.Gamepad.sThumbRY;
 	}
 
 	// コントローラーnの左モーターを振動させる
@@ -462,8 +462,8 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		controllers[n].vibration.wLeftMotorSpeed = speed;
-		controllers[n].vibrateTimeLeft = sec;
+		mControllers[n].vibration.wLeftMotorSpeed = speed;
+		mControllers[n].vibrateTimeLeft = sec;
 	}
 
 	// コントローラーnの右モーターを振動させる
@@ -474,8 +474,8 @@ public:
 	{
 		if (n > MAX_CONTROLLERS - 1)
 			n = MAX_CONTROLLERS - 1;
-		controllers[n].vibration.wRightMotorSpeed = speed;
-		controllers[n].vibrateTimeRight = sec;
+		mControllers[n].vibration.wRightMotorSpeed = speed;
+		mControllers[n].vibrateTimeRight = sec;
 	}
 
 	// 接続されているコントローラーを振動させる

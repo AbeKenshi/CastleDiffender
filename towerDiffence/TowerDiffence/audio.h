@@ -17,13 +17,13 @@ class Audio
 {
     // Audioプロパティ
   private:
-    IXACT3Engine* xactEngine;   // XACTエンジンへのポインタ
-    IXACT3WaveBank* waveBank;   // XACTウェイブバンクへのポインタ
-    IXACT3SoundBank* soundBank; // XACTサウンドバンクへのポインタ
-    XACTINDEX cueI;             // XACTサウンドインデックス
-    void* mapWaveBank;          // UnmapViewOfFile()を呼び出してファイルを解放
-    void* soundBankData;
-    bool coInitialized;         // CoInitializeExが成功した場合、trueを設定
+    IXACT3Engine* mXactEngine;   // XACTエンジンへのポインタ
+    IXACT3WaveBank* mWaveBank;   // XACTウェイブバンクへのポインタ
+    IXACT3SoundBank* mSoundBank; // XACTサウンドバンクへのポインタ
+    XACTINDEX mCueI;             // XACTサウンドインデックス
+    void* mMapWaveBank;          // UnmapViewOfFile()を呼び出してファイルを解放
+    void* mSoundBankData;
+    bool mCoInitialized;         // CoInitializeExが成功した場合、trueを設定
 
   public:
 	// コンストラクタ

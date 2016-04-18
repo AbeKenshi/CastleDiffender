@@ -51,21 +51,21 @@ namespace textNS
 class Text : public Image
 {
 private:
-	TextureManager fontTexture;     // それぞれのフォントのテクスチャ
-	LP_TEXTURE textureData;         // 一時保存用テクスチャデータ
-	char    *file;                  // テクスチャファイル名
-	Graphics *graphics;             // graphicsへのポインタ
-	UINT width, height;             // 1文字の幅、高さ
-	textNS::FontData fontData[textNS::ROWS][textNS::COLUMNS]; // それぞれの文字の左端と右端
-	COLOR_ARGB color;               // フォントカラー(a,r,g,b)
-	COLOR_ARGB backColor;           // 背景色(a,r,g,b)
-	UINT  fontHeight;               // フォントの高さ
-	UINT  tabSize;                  // タブの幅
-	UINT  proportionalSpacing;      // プロポーショナルフォントの文字間のスペース
-	bool proportional;              // プロポーショナルフォントの場合、true
-	bool underline;
-	bool bold;
-	textNS::Alignment align;        // アラインメント(center, left, etc)
+	TextureManager mFontTexture;		// それぞれのフォントのテクスチャ
+	LP_TEXTURE mTextureData;			// 一時保存用テクスチャデータ
+	char    *mFile;						// テクスチャファイル名
+	Graphics *mGraphics;				// graphicsへのポインタ
+	UINT mWidth, mHeight;				// 1文字の幅、高さ
+	textNS::FontData mFontData[textNS::ROWS][textNS::COLUMNS]; // それぞれの文字の左端と右端
+	COLOR_ARGB mColor;					// フォントカラー(a,r,g,b)
+	COLOR_ARGB mBackColor;				// 背景色(a,r,g,b)
+	UINT  mFontHeight;					// フォントの高さ
+	UINT  mTabSize;						// タブの幅
+	UINT  mProportionalSpacing;			// プロポーショナルフォントの文字間のスペース
+	bool mProportional;					// プロポーショナルフォントの場合、true
+	bool mUnderline;					// 下線ありの場合、true
+	bool mBold;							// 太字の場合、true
+	textNS::Alignment mAlign;			// アラインメント(center, left, etc)
 
 public:
 	// デフォルトコンストラクタ
@@ -108,63 +108,63 @@ public:
 	virtual void getWidthHeight(const std::string &str, UINT &width, UINT &height);
 
 	// フォントカラーをセット
-	virtual void setFontColor(COLOR_ARGB c) { color = c; }
+	virtual void setFontColor(COLOR_ARGB c) { mColor = c; }
 
 	// フォントカラーを戻す
-	virtual COLOR_ARGB getFontColor() { return color; }
+	virtual COLOR_ARGB getFontColor() { return mColor; }
 
 	// 背景色をセット
-	virtual void setBackColor(COLOR_ARGB bc) { backColor = bc; }
+	virtual void setBackColor(COLOR_ARGB bc) { mBackColor = bc; }
 
 	// 背景色を戻す
-	virtual COLOR_ARGB getBackColor() { return backColor; }
+	virtual COLOR_ARGB getBackColor() { return mBackColor; }
 
 	// フォントの高さをセット
 	virtual void setFontHeight(UINT height)
 	{
 		if (height == 0 || height > textNS::MAX_FONT_HEIGHT)  // 不可能な高さの場合
 			return;
-		fontHeight = height;
-		spriteData.scale = (float)height / (float)textNS::FONT_HEIGHT;
+		mFontHeight = height;
+		mSpriteData.scale = (float)height / (float)textNS::FONT_HEIGHT;
 	}
 
 	// フォントの高さを戻す
-	virtual UINT getFontHeight() { return fontHeight; }
+	virtual UINT getFontHeight() { return mFontHeight; }
 
 	// プロポーショナルフォントかどうかをセット
-	virtual void setProportional(bool p) { proportional = p; }
+	virtual void setProportional(bool p) { mProportional = p; }
 
 	// プロポーショナルフォントかどうかを戻す
-	virtual bool getProportional() { return proportional; }
+	virtual bool getProportional() { return mProportional; }
 
 	// プロポーショナルフォントの文字間のスペースをセット
-	virtual void setProportionalSpacing(UINT s) { proportionalSpacing = s; }
+	virtual void setProportionalSpacing(UINT s) { mProportionalSpacing = s; }
 
 	// プロポーショナルフォントの文字間のスペースを戻す
-	virtual UINT getProportionalSpacing() { return proportionalSpacing; }
+	virtual UINT getProportionalSpacing() { return mProportionalSpacing; }
 
 	// 下線を表示するかどうかをセット
-	virtual void setUnderline(bool u) { underline = u; }
+	virtual void setUnderline(bool u) { mUnderline = u; }
 
 	// 下線を表示するかどうかを戻す
-	virtual bool getUnderline() { return underline; }
+	virtual bool getUnderline() { return mUnderline; }
 
 	// 太字にするかどうかをセット
-	virtual void setBold(bool b) { bold = b; }
+	virtual void setBold(bool b) { mBold = b; }
 
 	// 太字にするかどうかを戻す
-	virtual bool getBold() { return bold; }
+	virtual bool getBold() { return mBold; }
 
 	// タブのサイズをセット
 	virtual void setTabSize(UINT size)
 	{
 		if (size == 0)
 			return;
-		tabSize = size;
+		mTabSize = size;
 	}
 
 	// タブのサイズを返す
-	virtual UINT getTabSize() { return tabSize; }
+	virtual UINT getTabSize() { return mTabSize; }
 
 	// 現在の文字列と配置の指定に合わせてspriteData.x、spriteData.yを設定
 	// デフォルトの配置はLEFT

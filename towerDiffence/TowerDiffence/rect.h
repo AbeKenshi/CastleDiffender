@@ -32,13 +32,13 @@ namespace rectNS
 class Rect
 {
 private:
-	Graphics    *graphics;              // grapicsへのポインタ
-	float       x, y;                   // rectの位置
-	int width, height;					// 幅、高さ（ピクセル単位）
-	COLOR_ARGB  backColor;              // 背景色(a,r,g,b)
-	VertexC vtx[4];                     // 背景用のvertexデータ
-	LP_VERTEXBUFFER vertexBuffer;       // vertexデータ保存用のバッファ
-    bool        initialized;            // 初期化に成功した場合、true
+	Graphics    *mGraphics;             // grapicsへのポインタ
+	float       mX, mY;                 // rectの位置
+	int mWidth, mHeight;				// 幅、高さ（ピクセル単位）
+	COLOR_ARGB  mBackColor;             // 背景色(a,r,g,b)
+	VertexC mVtx[4];                    // 背景用のvertexデータ
+	LP_VERTEXBUFFER mVertexBuffer;      // vertexデータ保存用のバッファ
+    bool        mInitialized;           // 初期化に成功した場合、true
 
 public:
 	// コンストラクタ
@@ -64,21 +64,21 @@ public:
 	void reset();
 	// setter
 	// X位置をセット
-	void setX(float nx) { x = nx; }
+	void setX(float nx) { mX = nx; }
 	// Y位置をセット
-	void setY(float ny) { y = ny; }
+	void setY(float ny) { mY = ny; }
 	// 幅をセット
-	void setWidth(int w) { width = w; }
+	void setWidth(int w) { mWidth = w; }
 	// 高さをセット
-	void setHeight(int h) { height = h; }
+	void setHeight(int h) { mHeight = h; }
 	// 背景色をセット
-	void setBackColor(COLOR_ARGB clr) { backColor = clr; }
+	void setBackColor(COLOR_ARGB clr) { mBackColor = clr; }
 	
 	// getter
 	// X位置を戻す
-	float getX() { return x; }
+	float getX() { return mX; }
 	// Y位置を戻す
-	float getY() { return y; }
+	float getY() { return mY; }
 };
 
 #endif

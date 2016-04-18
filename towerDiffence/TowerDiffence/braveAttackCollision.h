@@ -26,8 +26,8 @@ namespace braveAttackCollisionNS
 class BraveAttackCollision : public Entity
 {
 private:
-	float collisionTimer;			// 攻撃の当たり判定が出ている時間を計測するタイマー
-	AttackEffect attackEffect;		// 攻撃の衝撃派
+	float mCollisionTimer;			// 攻撃の当たり判定が出ている時間を計測するタイマー
+	AttackEffect mAttackEffect;		// 攻撃の衝撃派
 public:
 	// コンストラクタ
 	BraveAttackCollision();
@@ -45,7 +45,7 @@ public:
 	// getter
 	//==========================================================
 	// 攻撃の衝撃派の画像を戻す
-	AttackEffect& getAttackEffect() { return attackEffect; }
+	AttackEffect& getAttackEffect() { return mAttackEffect; }
 };
 
 #endif // !_ATTACK_COLLISION_H

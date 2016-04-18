@@ -27,28 +27,28 @@ namespace characterNS
 class Character : public Entity
 {
 protected:
-	characterNS::DIRECTION direction;	// キャラクターの向き（上下左右）
-	int oldStartFrame;					// 攻撃アニメーション終了後に戻るべきアニメーションフレーム保存用
-	int oldEndFrame;					// 攻撃アニメーション終了後に戻るべきアニメーションフレーム保存用
-	bool attackCollisionFlag;			// 攻撃用の衝突判定を出現させるフラグ。攻撃を開始してから一定時間後にtrueとなる。時間を調整することによってアニメーションと同期させるのが目的。
-	Map *map;							// ステージマップへのポインタ
-	characterNS::STATE state;			// 状態（移動中、攻撃中、第二撃中、ガード中、攻撃直前、待機、死亡）
-	int moveUpStartFrame;				// 上方向移動のアニメーションの最初のフレーム
-	int moveUpEndFrame;					// 上方向移動のアニメーションの最後のフレーム
-	int moveRightStartFrame;			// 右方向移動のアニメーションの最初のフレーム
-	int moveRightEndFrame;				// 右方向移動のアニメーションの最後のフレーム
-	int moveDownStartFrame;				// 下方向移動のアニメーションの最初のフレーム
-	int moveDownEndFrame;				// 下方向移動のアニメーションの最後のフレーム
-	int moveLeftStartFrame;				// 左方向移動のアニメーションの最初のフレーム
-	int moveLeftEndFrame;				// 左方向移動のアニメーションの最後のフレーム
-	int attackUpStartFrame;				// 上方向攻撃のアニメーションの最初のフレーム
-	int attackUpEndFrame;				// 上方向攻撃のアニメーションの最後のフレーム
-	int attackRightStartFrame;			// 右方向攻撃のアニメーションの最初のフレーム
-	int attackRightEndFrame;			// 右方向攻撃のアニメーションの最後のフレーム
-	int attackDownStartFrame;			// 下方向攻撃のアニメーションの最初のフレーム
-	int attackDownEndFrame;				// 下方向攻撃のアニメーションの最後のフレーム
-	int attackLeftStartFrame;			// 左方向攻撃のアニメーションの最初のフレーム
-	int attackLeftEndFrame;				// 左方向攻撃のアニメーションの最後のフレーム
+	characterNS::DIRECTION mDirection;	// キャラクターの向き（上下左右）
+	int mOldStartFrame;					// 攻撃アニメーション終了後に戻るべきアニメーションフレーム保存用
+	int mOldEndFrame;					// 攻撃アニメーション終了後に戻るべきアニメーションフレーム保存用
+	bool mAttackCollisionFlag;			// 攻撃用の衝突判定を出現させるフラグ。攻撃を開始してから一定時間後にtrueとなる。時間を調整することによってアニメーションと同期させるのが目的。
+	Map *mMap;							// ステージマップへのポインタ
+	characterNS::STATE mState;			// 状態（移動中、攻撃中、第二撃中、ガード中、攻撃直前、待機、死亡）
+	int mMoveUpStartFrame;				// 上方向移動のアニメーションの最初のフレーム
+	int mMoveUpEndFrame;				// 上方向移動のアニメーションの最後のフレーム
+	int mMoveRightStartFrame;			// 右方向移動のアニメーションの最初のフレーム
+	int mMoveRightEndFrame;				// 右方向移動のアニメーションの最後のフレーム
+	int mMoveDownStartFrame;			// 下方向移動のアニメーションの最初のフレーム
+	int mMoveDownEndFrame;				// 下方向移動のアニメーションの最後のフレーム
+	int mMoveLeftStartFrame;			// 左方向移動のアニメーションの最初のフレーム
+	int mMoveLeftEndFrame;				// 左方向移動のアニメーションの最後のフレーム
+	int mAttackUpStartFrame;			// 上方向攻撃のアニメーションの最初のフレーム
+	int mAttackUpEndFrame;				// 上方向攻撃のアニメーションの最後のフレーム
+	int mAttackRightStartFrame;			// 右方向攻撃のアニメーションの最初のフレーム
+	int mAttackRightEndFrame;			// 右方向攻撃のアニメーションの最後のフレーム
+	int mAttackDownStartFrame;			// 下方向攻撃のアニメーションの最初のフレーム
+	int mAttackDownEndFrame;			// 下方向攻撃のアニメーションの最後のフレーム
+	int mAttackLeftStartFrame;			// 左方向攻撃のアニメーションの最初のフレーム
+	int mAttackLeftEndFrame;			// 左方向攻撃のアニメーションの最後のフレーム
 public:
 	// コンストラクタ
 	Character();
@@ -86,9 +86,9 @@ public:
 	// setter
 	//==========================================================
 	// マップへのポインタをセットする関数
-	void setMapPointer(Map& m) { map = &(m); }
+	void setMapPointer(Map& m) { mMap = &(m); }
 	// 状態をセットする関数
-	void setState(characterNS::STATE st) { state = st; }
+	void setState(characterNS::STATE st) { mState = st; }
 	// 向いている方向をセットする
 	// 実行前：dir = セットするキャラクターの向き
 	void setDirection(characterNS::DIRECTION dir);
@@ -97,11 +97,11 @@ public:
 	// getter
 	//==========================================================
 	// 攻撃用の衝突判定を出現させるフラグを返す関数。攻撃状態に遷移した直後にtrueとなって、それ以外はfalse
-	bool getAttackCollisionFlag() { return attackCollisionFlag; }
+	bool getAttackCollisionFlag() { return mAttackCollisionFlag; }
 	// 向いている方向を返す関数
-	characterNS::DIRECTION getDirection() { return direction; }
+	characterNS::DIRECTION getDirection() { return mDirection; }
 	// 状態を返す関数
-	characterNS::STATE getState() { return state; }
+	characterNS::STATE getState() { return mState; }
 
 	// 移動中へと状態を遷移
 	void changeStateToMove();

@@ -12,15 +12,15 @@
 //==========================================================
 BraveIcon::BraveIcon() : Image()
 {
-	spriteData.width = braveIconNS::WIDTH;			// 勇者のアイコンのサイズ
-	spriteData.height = braveIconNS::HEIGHT;
-	spriteData.x = braveIconNS::X;					// 画面上の位置
-	spriteData.y = braveIconNS::Y;
-	spriteData.rect.bottom = braveIconNS::HEIGHT;	// 画面の一部を選択
-	spriteData.rect.right = braveIconNS::WIDTH;
-	startFrame = braveIconNS::START_FRAME;			// アニメーションの最初のフレーム
-	endFrame = braveIconNS::END_FRAME;				// アニメーションの最後のフレーム
-	currentFrame = startFrame;						// 現在のフレームはアニメーションの最初のフレームに設定
+	mSpriteData.width = braveIconNS::WIDTH;			// 勇者のアイコンのサイズ
+	mSpriteData.height = braveIconNS::HEIGHT;
+	mSpriteData.x = braveIconNS::X;					// 画面上の位置
+	mSpriteData.y = braveIconNS::Y;
+	mSpriteData.rect.bottom = braveIconNS::HEIGHT;	// 画面の一部を選択
+	mSpriteData.rect.right = braveIconNS::WIDTH;
+	mStartFrame = braveIconNS::START_FRAME;			// アニメーションの最初のフレーム
+	mEndFrame = braveIconNS::END_FRAME;				// アニメーションの最後のフレーム
+	mCurrentFrame = mStartFrame;						// 現在のフレームはアニメーションの最初のフレームに設定
 }
 
 //=============================================================================
@@ -32,12 +32,12 @@ BraveIcon::BraveIcon() : Image()
 void BraveIcon::update(float frameTime)
 {
 	// プレイヤーの体力に応じて、アニメーションを分岐
-	if (currentFrame == startFrame && brave->getHealth() < 75)
-		setCurrentFrame(startFrame + 1);
-	if (currentFrame == startFrame + 1 && brave->getHealth() < 50)
-		setCurrentFrame(startFrame + 2);
-	if (currentFrame == startFrame + 2 && brave->getHealth() < 25)
-		setCurrentFrame(startFrame + 3);
+	if (mCurrentFrame == mStartFrame && mBrave->getHealth() < 75)
+		setCurrentFrame(mStartFrame + 1);
+	if (mCurrentFrame == mStartFrame + 1 && mBrave->getHealth() < 50)
+		setCurrentFrame(mStartFrame + 2);
+	if (mCurrentFrame == mStartFrame + 2 && mBrave->getHealth() < 25)
+		setCurrentFrame(mStartFrame + 3);
 }
 
 //==========================================================
@@ -46,5 +46,5 @@ void BraveIcon::update(float frameTime)
 void BraveIcon::reset()
 {
 	// 現在のフレームはアニメーションの最初のフレームに設定
-	setCurrentFrame(startFrame);
+	setCurrentFrame(mStartFrame);
 }

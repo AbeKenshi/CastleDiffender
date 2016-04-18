@@ -13,24 +13,24 @@
 //=============================================================================
 Console::Console()
 {
-    initialized = false;                // 正常に初期化された場合、trueを設定
-    graphics = NULL;
-    visible = false;                    // 非表示にする
-    fontColor = consoleNS::FONT_COLOR;
-    backColor = consoleNS::BACK_COLOR;
+    mInitialized = false;                // 正常に初期化された場合、trueを設定
+    mGraphics = NULL;
+    mVisible = false;                    // 非表示にする
+    mFontColor = consoleNS::FONT_COLOR;
+    mBackColor = consoleNS::BACK_COLOR;
 
-    x = consoleNS::X;                   // 最初のコンソール位置
-    y = consoleNS::Y;
+    mX = consoleNS::X;                   // 最初のコンソール位置
+    mY = consoleNS::Y;
 
-    textRect.bottom = consoleNS::Y + consoleNS::HEIGHT - consoleNS::MARGIN;
-    textRect.left = consoleNS::X + consoleNS::MARGIN;
-    textRect.right = consoleNS::X + consoleNS::WIDTH - consoleNS::MARGIN;
-    textRect.top = consoleNS::Y + consoleNS::MARGIN;
+    mTextRect.bottom = consoleNS::Y + consoleNS::HEIGHT - consoleNS::MARGIN;
+    mTextRect.left = consoleNS::X + consoleNS::MARGIN;
+    mTextRect.right = consoleNS::X + consoleNS::WIDTH - consoleNS::MARGIN;
+    mTextRect.top = consoleNS::Y + consoleNS::MARGIN;
 
-    vertexBuffer = NULL;
+    mVertexBuffer = NULL;
 
-    rows = 0;
-    scrollAmount = 0;
+    mRows = 0;
+    mScrollAmount = 0;
 }
 
 //=============================================================================
@@ -47,50 +47,50 @@ Console::~Console()
 bool Console::initialize(Graphics *g, Input *in)
 {
     try {
-        graphics = g;                    // グラフィックシステム
-        input = in;
+        mGraphics = g;                    // グラフィックシステム
+        mInput = in;
 
         // 左上
-        vtx[0].x = x;
-        vtx[0].y = y;
-        vtx[0].z = 0.0f;
-        vtx[0].rhw = 1.0f;
-        vtx[0].color = backColor;
+        mVtx[0].x = mX;
+        mVtx[0].y = mY;
+        mVtx[0].z = 0.0f;
+        mVtx[0].rhw = 1.0f;
+        mVtx[0].color = mBackColor;
 
         // 右上
-        vtx[1].x = x + consoleNS::WIDTH;
-        vtx[1].y = y;
-        vtx[1].z = 0.0f;
-        vtx[1].rhw = 1.0f;
-        vtx[1].color = backColor;
+        mVtx[1].x = mX + consoleNS::WIDTH;
+        mVtx[1].y = mY;
+        mVtx[1].z = 0.0f;
+        mVtx[1].rhw = 1.0f;
+        mVtx[1].color = mBackColor;
 
         // 右下
-        vtx[2].x = x + consoleNS::WIDTH;
-        vtx[2].y = y + consoleNS::HEIGHT;
-        vtx[2].z = 0.0f;
-        vtx[2].rhw = 1.0f;
-        vtx[2].color = backColor;
+        mVtx[2].x = mX + consoleNS::WIDTH;
+        mVtx[2].y = mY + consoleNS::HEIGHT;
+        mVtx[2].z = 0.0f;
+        mVtx[2].rhw = 1.0f;
+        mVtx[2].color = mBackColor;
 
         // 左下
-        vtx[3].x = x;
-        vtx[3].y = y + consoleNS::HEIGHT;
-        vtx[3].z = 0.0f;
-        vtx[3].rhw = 1.0f;
-        vtx[3].color = backColor;
+        mVtx[3].x = mX;
+        mVtx[3].y = mY + consoleNS::HEIGHT;
+        mVtx[3].z = 0.0f;
+        mVtx[3].rhw = 1.0f;
+        mVtx[3].color = mBackColor;
 
-        graphics->createVertexBuffer(vtx, sizeof vtx, vertexBuffer);
+        mGraphics->createVertexBuffer(mVtx, sizeof mVtx, mVertexBuffer);
 
         // DirectXフォントを初期化
-        if(dxFont.initialize(graphics, consoleNS::FONT_HEIGHT, false,
+        if(mDxFont.initialize(mGraphics, consoleNS::FONT_HEIGHT, false,
                              false, consoleNS::FONT) == false)
             return false;      // 失敗の場合
-        dxFont.setFontColor(fontColor);
+        mDxFont.setFontColor(mFontColor);
 
     } catch(...) {
         return false;
     }
 
-    initialized = true;
+    mInitialized = true;
     return true;
 }
 
@@ -100,56 +100,56 @@ bool Console::initialize(Graphics *g, Input *in)
 //=============================================================================
 const void Console::draw()
 {
-    if (!visible || graphics == NULL || !initialized)
+    if (!mVisible || mGraphics == NULL || !mInitialized)
         return;
 
-    graphics->drawQuad(vertexBuffer);       // 背景を描画
-    if(text.size() == 0)
+    mGraphics->drawQuad(mVertexBuffer);       // 背景を描画
+    if(mText.size() == 0)
         return;
 
-    graphics->spriteBegin();                // スプライトの描画を開始
+    mGraphics->spriteBegin();                // スプライトの描画を開始
 
     // コンソールにテキストを表示
-    textRect.left = 0;
-    textRect.top = 0;
+    mTextRect.left = 0;
+    mTextRect.top = 0;
 
 	// textRectの下端を1行の高さに設定
-    dxFont.print("|",textRect,DT_CALCRECT); // 「|」を、全高を使う文字として使用
-    int rowHeight = textRect.bottom + 2;    // 1行の高さ（+2は行間スペース）
+    mDxFont.print("|",mTextRect,DT_CALCRECT); // 「|」を、全高を使う文字として使用
+    int rowHeight = mTextRect.bottom + 2;    // 1行の高さ（+2は行間スペース）
     if(rowHeight <= 0)                      // これはtrueにはならないと想定される
         rowHeight = 20;                     // 機能する値を強制的に設定
 
 	// コンソール上に表示可能な行数
-    rows = (consoleNS::HEIGHT - 2*consoleNS::MARGIN) / rowHeight;
-    rows -= 2;                              // 下部に、入力プロンプト用のスペースを空ける
-    if (rows <= 0)                          // これはtrueにはならないと想定される
-        rows = 5;                           // 機能する値を強制的に設定
+    mRows = (consoleNS::HEIGHT - 2*consoleNS::MARGIN) / rowHeight;
+    mRows -= 2;                              // 下部に、入力プロンプト用のスペースを空ける
+    if (mRows <= 0)                          // これはtrueにはならないと想定される
+        mRows = 5;                           // 機能する値を強制的に設定
 
 	// 1行のテキスト表示rectを設定
-    textRect.left = (long)(x + consoleNS::MARGIN);
-    textRect.right = (long)(textRect.right + consoleNS::WIDTH - consoleNS::MARGIN);
+    mTextRect.left = (long)(mX + consoleNS::MARGIN);
+    mTextRect.right = (long)(mTextRect.right + consoleNS::WIDTH - consoleNS::MARGIN);
     // -2*rowHeightは、入力プロンプト用のスペース
-    textRect.bottom = (long)(y + consoleNS::HEIGHT - 2*consoleNS::MARGIN - 2*rowHeight);
+    mTextRect.bottom = (long)(mY + consoleNS::HEIGHT - 2*consoleNS::MARGIN - 2*rowHeight);
     // すべての行（最大でtext.size())を下から上へ処理
-    for(int r=scrollAmount; r<rows+scrollAmount && r<(int)(text.size()); r++)
+    for(int r=mScrollAmount; r<mRows+mScrollAmount && r<(int)(mText.size()); r++)
     {
 		// この行のテキスト表示rectの上端を設定
-        textRect.top = textRect.bottom - rowHeight; 
+        mTextRect.top = mTextRect.bottom - rowHeight; 
         // テキストの1行を表示
-        dxFont.print(text[r],textRect,DT_LEFT);     
+        mDxFont.print(mText[r],mTextRect,DT_LEFT);     
 		// テキスト表示rectの下端を次の行用に調整
-        textRect.bottom -= rowHeight;               
+        mTextRect.bottom -= rowHeight;               
     }
 
 	// コマンド用プロンプトと、現在のコマンド文字列を表示
 	// プロンプト用のテキスト表示rectを設定
-    textRect.bottom = (long)(y + consoleNS::HEIGHT - consoleNS::MARGIN);
-    textRect.top = textRect.bottom - rowHeight;
+    mTextRect.bottom = (long)(mY + consoleNS::HEIGHT - consoleNS::MARGIN);
+    mTextRect.top = mTextRect.bottom - rowHeight;
     std::string prompt = ">";                   // プロンプト文字列を作成
-    prompt += input->getTextIn();
-    dxFont.print(prompt,textRect,DT_LEFT);      // プロンプトとコマンドを表示
+    prompt += mInput->getTextIn();
+    mDxFont.print(prompt,mTextRect,DT_LEFT);      // プロンプトとコマンドを表示
 
-    graphics->spriteEnd();                      // スプライトの描画を終了
+    mGraphics->spriteEnd();                      // スプライトの描画を終了
 }
 
 //=============================================================================
@@ -157,10 +157,10 @@ const void Console::draw()
 //=============================================================================
 void Console::showHide() 
 {
-    if (!initialized)
+    if (!mInitialized)
         return;
-    visible = !visible;
-    input->clear(inputNS::KEYS_PRESSED|inputNS::TEXT_IN);    // 古い入力を消去
+    mVisible = !mVisible;
+    mInput->clear(inputNS::KEYS_PRESSED|inputNS::TEXT_IN);    // 古い入力を消去
 }            
 
 
@@ -170,11 +170,11 @@ void Console::showHide()
 //=============================================================================
 void Console::print(const std::string &str)     // コンソールにテキストを追加
 {
-    if (!initialized)
+    if (!mInitialized)
         return;
-    text.push_front(str);                       // strを、デックtextに追加
-    if(text.size() > consoleNS::MAX_LINES)
-        text.pop_back();                        // 最も古い行を削除
+    mText.push_front(str);                       // strを、デックtextに追加
+    if(mText.size() > consoleNS::MAX_LINES)
+        mText.pop_back();                        // 最も古い行を削除
 }
 
 //=============================================================================
@@ -185,48 +185,48 @@ void Console::print(const std::string &str)     // コンソールにテキストを追加
 std::string Console::getCommand()
 {
 	// コンソールが初期化されていない場合、または表示されていない場合
-    if (!initialized || !visible)               
+    if (!mInitialized || !mVisible)               
         return "";
 
 	// コンソールキーをチェック
-    if (input->wasKeyPressed(CONSOLE_KEY))
+    if (mInput->wasKeyPressed(CONSOLE_KEY))
         hide();                                 // コンソールを非表示
 
 	// Escキーをチェック
-    if (input->wasKeyPressed(ESC_KEY))
+    if (mInput->wasKeyPressed(ESC_KEY))
         return "";
 
 	// スクロールをチェック
-    if (input->wasKeyPressed(VK_UP))            // 上方向キー
-        scrollAmount++;
-    else if (input->wasKeyPressed(VK_DOWN))     // 下方向キー
-        scrollAmount--;
-    else if (input->wasKeyPressed(VK_PRIOR))    // Page Upキー
-        scrollAmount += rows;
-    else if (input->wasKeyPressed(VK_NEXT))     // Page Downキー
-        scrollAmount -= rows;
-    if (scrollAmount < 0)
-        scrollAmount = 0;
-    if (scrollAmount > consoleNS::MAX_LINES-1)
-        scrollAmount = consoleNS::MAX_LINES-1;
-    if (scrollAmount > (int)(text.size())-1)
-        scrollAmount = (int)(text.size())-1;
+    if (mInput->wasKeyPressed(VK_UP))            // 上方向キー
+        mScrollAmount++;
+    else if (mInput->wasKeyPressed(VK_DOWN))     // 下方向キー
+        mScrollAmount--;
+    else if (mInput->wasKeyPressed(VK_PRIOR))    // Page Upキー
+        mScrollAmount += mRows;
+    else if (mInput->wasKeyPressed(VK_NEXT))     // Page Downキー
+        mScrollAmount -= mRows;
+    if (mScrollAmount < 0)
+        mScrollAmount = 0;
+    if (mScrollAmount > consoleNS::MAX_LINES-1)
+        mScrollAmount = consoleNS::MAX_LINES-1;
+    if (mScrollAmount > (int)(mText.size())-1)
+        mScrollAmount = (int)(mText.size())-1;
 
-    commandStr = input->getTextIn();            // ユーザーが入力したテキストを取得
+    mCommandStr = mInput->getTextIn();            // ユーザーが入力したテキストを取得
     // キーがゲームに渡さない
-    input->clear(inputNS::KEYS_DOWN|inputNS::KEYS_PRESSED|inputNS::MOUSE);
+    mInput->clear(inputNS::KEYS_DOWN|inputNS::KEYS_PRESSED|inputNS::MOUSE);
 
-    if (commandStr.length() == 0)               // コマンドが入力されていない場合
+    if (mCommandStr.length() == 0)               // コマンドが入力されていない場合
         return "";
 	// Enterキーが押されていない場合
-    if (commandStr.at(commandStr.length()-1) != '\r')
+    if (mCommandStr.at(mCommandStr.length()-1) != '\r')
         return "";                              // 戻る（コマンドでない）
 
 	// コマンドの末尾から「\r」を削除
-    commandStr.erase(commandStr.length()-1);
-    input->clearTextIn();						// 入力行をクリア
-    inputStr = commandStr;
-    return commandStr;                          // コマンドを戻す
+    mCommandStr.erase(mCommandStr.length()-1);
+    mInput->clearTextIn();						// 入力行をクリア
+    mInputStr = mCommandStr;
+    return mCommandStr;                          // コマンドを戻す
 }
 
 
@@ -235,10 +235,10 @@ std::string Console::getCommand()
 //=============================================================================
 void Console::onLostDevice()
 {
-    if (!initialized)
+    if (!mInitialized)
         return;
-    dxFont.onLostDevice();
-    SAFE_RELEASE(vertexBuffer);
+    mDxFont.onLostDevice();
+    SAFE_RELEASE(mVertexBuffer);
 }
 
 //=============================================================================
@@ -246,9 +246,9 @@ void Console::onLostDevice()
 //=============================================================================
 void Console::onResetDevice()
 {
-    if (!initialized)
+    if (!mInitialized)
         return;
-    graphics->createVertexBuffer(vtx, sizeof vtx, vertexBuffer);
-    dxFont.onResetDevice();
+    mGraphics->createVertexBuffer(mVtx, sizeof mVtx, mVertexBuffer);
+    mDxFont.onResetDevice();
 }
 

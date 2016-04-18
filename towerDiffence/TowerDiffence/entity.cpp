@@ -13,29 +13,29 @@
 //=============================================================================
 Entity::Entity() : Image()
 {
-    radius = 1.0;						// 円の衝突の大きさ
+    mRadius = 1.0;						// 円の衝突の大きさ
 	// BOXの衝突判定の四角形
-    edge.left = -1;
-    edge.top = -1;
-    edge.right = 1;
-    edge.bottom = 1;
+    mEdge.left = -1;
+    mEdge.top = -1;
+    mEdge.right = 1;
+    mEdge.bottom = 1;
 
-    mass = 1.0;							// 質量
-    velocity.x = 0.0;					// x速度
-    velocity.y = 0.0;					// y速度
-    deltaV.x = 0.0;						// x加速度
-    deltaV.y = 0.0;						// y加速度
-    active = true;						// エンティティはアクティブ
-    rotatedBoxReady = false;			// 回転の衝突判定のフラグ
-    collisionType = entityNS::CIRCLE;	// 衝突判定はデフォルトでは円
-    health = 100;						// 体力（MAX100）
-    gravity = entityNS::GRAVITY;		// 重力定数
-	isDamaged = false;					// ダメージは受けていない状態からスタート
-	drawFlag = true;					// 描画フラグオン
-	damagePer = 1.0f;					// ダメージを受ける割合
+    mMass = 1.0;							// 質量
+    mVelocity.x = 0.0;					// x速度
+    mVelocity.y = 0.0;					// y速度
+    mDeltaV.x = 0.0;						// x加速度
+    mDeltaV.y = 0.0;						// y加速度
+    mActive = true;						// エンティティはアクティブ
+    mRotatedBoxReady = false;			// 回転の衝突判定のフラグ
+    mCollisionType = entityNS::CIRCLE;	// 衝突判定はデフォルトでは円
+    mHealth = 100;						// 体力（MAX100）
+    mGravity = entityNS::GRAVITY;		// 重力定数
+	mIsDamaged = false;					// ダメージは受けていない状態からスタート
+	mDrawFlag = true;					// 描画フラグオン
+	mDamagePer = 1.0f;					// ダメージを受ける割合
 	// ダメージ時に使用するタイマーをリセット
-	damageTimer = 0.0f;
-	totalDamageTime = 0.0f;
+	mDamageTimer = 0.0f;
+	mTotalDamageTime = 0.0f;
 }
 
 //==========================================================
@@ -43,19 +43,19 @@ Entity::Entity() : Image()
 //==========================================================
 void Entity::reset()
 {
-	velocity.x = 0.0;					// x速度
-	velocity.y = 0.0;					// y速度
-	deltaV.x = 0.0;						// x加速度
-	deltaV.y = 0.0;						// y加速度
-	rotatedBoxReady = false;			// 回転の衝突判定のフラグ
-	active = true;						// エンティティはアクティブ
-	health = 100;						// 体力（MAX100）
-	isDamaged = false;					// ダメージは受けていない状態からスタート
-	drawFlag = true;					// 描画フラグオン
-	damagePer = 1.0f;					// ダメージを受ける割合
+	mVelocity.x = 0.0;					// x速度
+	mVelocity.y = 0.0;					// y速度
+	mDeltaV.x = 0.0;						// x加速度
+	mDeltaV.y = 0.0;						// y加速度
+	mRotatedBoxReady = false;			// 回転の衝突判定のフラグ
+	mActive = true;						// エンティティはアクティブ
+	mHealth = 100;						// 体力（MAX100）
+	mIsDamaged = false;					// ダメージは受けていない状態からスタート
+	mDrawFlag = true;					// 描画フラグオン
+	mDamagePer = 1.0f;					// ダメージを受ける割合
 	// ダメージ時に使用するタイマーをリセット
-	damageTimer = 0.0f;
-	totalDamageTime = 0.0f;
+	mDamageTimer = 0.0f;
+	mTotalDamageTime = 0.0f;
 	// イメージをリセット
 	Image::reset();
 }
@@ -72,8 +72,8 @@ void Entity::reset()
 bool Entity::initialize(Game *gamePtr, int width, int height, int ncols,
                             TextureManager *textureM)
 {
-    input = gamePtr->getInput();                // 入力システム
-    audio = gamePtr->getAudio();                // オーディオシステム
+    mInput = gamePtr->getInput();                // 入力システム
+    mAudio = gamePtr->getAudio();                // オーディオシステム
     return(Image::initialize(gamePtr->getGraphics(), width, height, ncols, textureM));
 }
 
@@ -84,7 +84,7 @@ bool Entity::initialize(Game *gamePtr, int width, int height, int ncols,
 void Entity::draw(COLOR_ARGB color)
 {
 	// 描画フラグがオンのときのみ描画
-	if (drawFlag)
+	if (mDrawFlag)
 		Image::draw(color);	// 雑魚敵を描画
 }
 
@@ -93,7 +93,7 @@ void Entity::draw(COLOR_ARGB color)
 //=============================================================================
 void Entity::activate()
 {
-    active = true;
+    mActive = true;
 }
 
 //=============================================================================
@@ -103,11 +103,11 @@ void Entity::activate()
 //=============================================================================
 void Entity::update(float frameTime)
 {
-    velocity += deltaV;
-    deltaV.x = 0;
-    deltaV.y = 0;
+    mVelocity += mDeltaV;
+    mDeltaV.x = 0;
+    mDeltaV.y = 0;
     Image::update(frameTime);
-    rotatedBoxReady = false;    // rotateBoxの衝突判定のため
+    mRotatedBoxReady = false;    // rotateBoxの衝突判定のため
 }
 
 //==========================================================
@@ -117,10 +117,10 @@ void Entity::update(float frameTime)
 //==========================================================
 void Entity::updateWithoutImage(float frameTime)
 {
-	velocity += deltaV;
-	deltaV.x = 0;
-	deltaV.y = 0;
-	rotatedBoxReady = false;	// rotateBoxの衝突判定のため
+	mVelocity += mDeltaV;
+	mDeltaV.x = 0;
+	mDeltaV.y = 0;
+	mRotatedBoxReady = false;	// rotateBoxの衝突判定のため
 }
 
 //==========================================================
@@ -152,22 +152,22 @@ void Entity::ai(float frameTime, Entity &ent)
 bool Entity::collidesWith(Entity &ent, VECTOR2 &collisionVector)
 { 
 	// どちらかのエンティティがアクティブでない場合、衝突は起こらない
-    if (!active || !ent.getActive())    
+    if (!mActive || !ent.getActive())    
         return false;
 
 	// 両方のエンティティがCIRCLE衝突である場合
-    if (collisionType == entityNS::CIRCLE && ent.getCollisionType() == entityNS::CIRCLE)
+    if (mCollisionType == entityNS::CIRCLE && ent.getCollisionType() == entityNS::CIRCLE)
         return collideCircle(ent, collisionVector);
 	// 両方のエンティティがBOX衝突である場合
-    if (collisionType == entityNS::BOX && ent.getCollisionType() == entityNS::BOX)
+    if (mCollisionType == entityNS::BOX && ent.getCollisionType() == entityNS::BOX)
         return collideBox(ent, collisionVector);
 	// 他のすべての組み合わせが使用する分離軸テスト
 	// どちらのエンティティもCIRCLE衝突を使用しない場合
-    if (collisionType != entityNS::CIRCLE && ent.getCollisionType() != entityNS::CIRCLE)
+    if (mCollisionType != entityNS::CIRCLE && ent.getCollisionType() != entityNS::CIRCLE)
         return collideRotatedBox(ent, collisionVector);
     else    // どちらか1つのエンティティが円の場合
 		// このエンティティがCIRCLE衝突を使用する場合
-        if (collisionType == entityNS::CIRCLE)
+        if (mCollisionType == entityNS::CIRCLE)
         {
             // Check for collision from other box with our circle
             bool collide = ent.collideRotatedBoxCircle(*this, collisionVector); 
@@ -189,16 +189,16 @@ bool Entity::collidesWith(Entity &ent, VECTOR2 &collisionVector)
 bool Entity::collideCircle(Entity &ent, VECTOR2 &collisionVector)
 {
 	// 中心と中心の間の差
-    distSquared = *getCenter() - *ent.getCenter();
-    distSquared.x = distSquared.x * distSquared.x;      // 差を2乗
-    distSquared.y = distSquared.y * distSquared.y;
+    mDistSquared = *getCenter() - *ent.getCenter();
+    mDistSquared.x = mDistSquared.x * mDistSquared.x;      // 差を2乗
+    mDistSquared.y = mDistSquared.y * mDistSquared.y;
 
 	// 半径の合計を計算（拡大縮小の倍率を調整）
-    sumRadiiSquared = (radius*getScale()) + (ent.radius*ent.getScale());
-    sumRadiiSquared *= sumRadiiSquared;                 // 2乗する
+    mSumRadiiSquared = (mRadius*getScale()) + (ent.mRadius*ent.getScale());
+    mSumRadiiSquared *= mSumRadiiSquared;                 // 2乗する
 
 	// エンティティが衝突している場合
-    if(distSquared.x + distSquared.y <= sumRadiiSquared)
+    if(mDistSquared.x + mDistSquared.y <= mSumRadiiSquared)
     {
 		// 衝突ベクトルを設定
         collisionVector = *ent.getCenter() - *getCenter();
@@ -216,14 +216,14 @@ bool Entity::collideCircle(Entity &ent, VECTOR2 &collisionVector)
 bool Entity::collideBox(Entity &ent, VECTOR2 &collisionVector)
 {
 	// どちらかのエンティティがアクティブでない場合、衝突は怒らない
-    if (!active || !ent.getActive())
+    if (!mActive || !ent.getActive())
         return false;
 
 	// 軸平行境界ボックスを使って衝突をチェック
-    if( (getCenterX() + edge.right*getScale() >= ent.getCenterX() + ent.getEdge().left*ent.getScale()) && 
-        (getCenterX() + edge.left*getScale() <= ent.getCenterX() + ent.getEdge().right*ent.getScale()) &&
-        (getCenterY() + edge.bottom*getScale() >= ent.getCenterY() + ent.getEdge().top*ent.getScale()) && 
-        (getCenterY() + edge.top*getScale() <= ent.getCenterY() + ent.getEdge().bottom*ent.getScale()) )
+    if( (getCenterX() + mEdge.right*getScale() >= ent.getCenterX() + ent.getEdge().left*ent.getScale()) && 
+        (getCenterX() + mEdge.left*getScale() <= ent.getCenterX() + ent.getEdge().right*ent.getScale()) &&
+        (getCenterY() + mEdge.bottom*getScale() >= ent.getCenterY() + ent.getEdge().top*ent.getScale()) && 
+        (getCenterY() + mEdge.top*getScale() <= ent.getCenterY() + ent.getEdge().bottom*ent.getScale()) )
     {
 		// 衝突ベクトルを設定
         collisionVector = *ent.getCenter() - *getCenter();
@@ -269,27 +269,27 @@ bool Entity::collideRotatedBox(Entity &entB, VECTOR2 &collisionVector)
         //            3
         //            
 
-        if (entA01min < entB01min)   // if A left of B
+        if (mEntA01min < mEntB01min)   // if A left of B
         {
-            overlap01 = entA01max - entB01min;
-            collisionVector = corners[1] - corners[0];
+            overlap01 = mEntA01max - mEntB01min;
+            collisionVector = mCorners[1] - mCorners[0];
         }
         else    // else, A right of B
         {
-            overlap01 = entB01max - entA01min;
-            collisionVector = corners[0] - corners[1];
+            overlap01 = mEntB01max - mEntA01min;
+            collisionVector = mCorners[0] - mCorners[1];
         }
-        if (entA03min < entB03min)   // if A above B
+        if (mEntA03min < mEntB03min)   // if A above B
         {
-            overlap03 = entA03max - entB03min;
+            overlap03 = mEntA03max - mEntB03min;
             if (overlap03 < overlap01)
-                collisionVector = corners[3] - corners[0];
+                collisionVector = mCorners[3] - mCorners[0];
         }
         else    // else, A below B
         {
-            overlap03 = entB03max - entA03min;
+            overlap03 = mEntB03max - mEntA03min;
             if (overlap03 < overlap01)
-                collisionVector = corners[0] - corners[3];
+                collisionVector = mCorners[0] - mCorners[3];
         }
         return true;
     }
@@ -306,40 +306,40 @@ bool Entity::projectionsOverlap(Entity &entB, VECTOR2 &collisionVector)
 	float projection;
 
 	// 相手のボックスをedge01に投影
-	projection = graphics->Vector2Dot(&edge01, entB.getCorner(0));
+	projection = mGraphics->Vector2Dot(&mEdge01, entB.getCorner(0));
 	// 頂点0を投影
-	entB01min = projection;
-	entB01max = projection;
+	mEntB01min = projection;
+	mEntB01max = projection;
 	// 残りの頂点それぞれを処理
 	for (int c = 1; c < 4; c++)
 	{
 		// 頂点をedge01に投影
-		projection = graphics->Vector2Dot(&edge01, entB.getCorner(c));
-		if (projection < entB01min)
-			entB01min = projection;
-		else if (projection > entB01max)
-			entB01max = projection;
+		projection = mGraphics->Vector2Dot(&mEdge01, entB.getCorner(c));
+		if (projection < mEntB01min)
+			mEntB01min = projection;
+		else if (projection > mEntB01max)
+			mEntB01max = projection;
 	}
 	// 投影が重ならない場合
-	if (entB01min > entA01max || entB01max < entA01min)
+	if (mEntB01min > mEntA01max || mEntB01max < mEntA01min)
 		return false;                       // 衝突の可能性なし
 	// 相手のボックスをedge03に投影
-	projection = graphics->Vector2Dot(&edge03, entB.getCorner(0));
+	projection = mGraphics->Vector2Dot(&mEdge03, entB.getCorner(0));
 	// 頂点0を投影
-	entB03min = projection;
-	entB03max = projection;
+	mEntB03min = projection;
+	mEntB03max = projection;
 	// 残りの頂点それぞれを処理
 	for (int c = 1; c < 4; c++)
 	{
 		// 頂点をedge03に投影
-		projection = graphics->Vector2Dot(&edge03, entB.getCorner(c));
-		if (projection < entB03min)
-			entB03min = projection;
-		else if (projection > entB03max)
-			entB03max = projection;
+		projection = mGraphics->Vector2Dot(&mEdge03, entB.getCorner(c));
+		if (projection < mEntB03min)
+			mEntB03min = projection;
+		else if (projection > mEntB03max)
+			mEntB03max = projection;
 	}
 	// 投影が重ならない場合
-	if (entB03min > entA03max || entB03max < entA03min)
+	if (mEntB03min > mEntA03max || mEntB03max < mEntA03min)
 		return false;                       // 衝突の可能性なし
 	return true;                            // 投影が重なっている場合
 }
@@ -372,36 +372,36 @@ bool Entity::collideRotatedBoxCircle(Entity &entB, VECTOR2 &collisionVector)
     computeRotatedBox();                    // 回転するボックスを準備
 
 	// 円の中心をedge01に投影
-    center01 = graphics->Vector2Dot(&edge01, entB.getCenter());
+    center01 = mGraphics->Vector2Dot(&mEdge01, entB.getCenter());
 	// 最小値と最大値は中心からの半径
-    entB01min = center01 - entB.getRadius()*entB.getScale();
-    entB01max = center01 + entB.getRadius()*entB.getScale();
-    if (entB01min > entA01max || entB01max < entA01min) // 投影が重ならない場合
+    mEntB01min = center01 - entB.getRadius()*entB.getScale();
+    mEntB01max = center01 + entB.getRadius()*entB.getScale();
+    if (mEntB01min > mEntA01max || mEntB01max < mEntA01min) // 投影が重ならない場合
         return false;                       // 衝突の可能性なし
         
 	// 円の中心をedge03に投影
-    center03 = graphics->Vector2Dot(&edge03, entB.getCenter());
+    center03 = mGraphics->Vector2Dot(&mEdge03, entB.getCenter());
 	// 最小値と最大値は中心からの半径
-    entB03min = center03 - entB.getRadius()*entB.getScale();
-    entB03max = center03 + entB.getRadius()*entB.getScale();
-    if (entB03min > entA03max || entB03max < entA03min) // 投影が重ならない場合
+    mEntB03min = center03 - entB.getRadius()*entB.getScale();
+    mEntB03max = center03 + entB.getRadius()*entB.getScale();
+    if (mEntB03min > mEntA03max || mEntB03max < mEntA03min) // 投影が重ならない場合
         return false;                       // 衝突の可能性なし
 
 	// 円の投影がボックスの投影に重なる場合
 	// 円が衝突ボックスのボロノイ領域にあるかどうかをチェック
 
 	// 中心がVoronoi0にある場合
-    if(center01 < entA01min && center03 < entA03min)
-        return collideCornerCircle(corners[0], entB, collisionVector);
+    if(center01 < mEntA01min && center03 < mEntA03min)
+        return collideCornerCircle(mCorners[0], entB, collisionVector);
 	// 中心がVoronoi1にある場合
-    if(center01 > entA01max && center03 < entA03min)
-        return collideCornerCircle(corners[1], entB, collisionVector);
+    if(center01 > mEntA01max && center03 < mEntA03min)
+        return collideCornerCircle(mCorners[1], entB, collisionVector);
 	// 中心がVoronoi2にある場合
-    if(center01 > entA01max && center03 > entA03max)
-        return collideCornerCircle(corners[2], entB, collisionVector);
+    if(center01 > mEntA01max && center03 > mEntA03max)
+        return collideCornerCircle(mCorners[2], entB, collisionVector);
 	// 中心がVoronoi3にある場合
-    if(center01 < entA01min && center03 > entA03max)
-        return collideCornerCircle(corners[3], entB, collisionVector);
+    if(center01 < mEntA01min && center03 > mEntA03max)
+        return collideCornerCircle(mCorners[3], entB, collisionVector);
 
     // Circle not in voronoi region so it is colliding with edge of box.
     // The edge with the smallest overlapping section is the edge where the
@@ -424,27 +424,27 @@ bool Entity::collideRotatedBoxCircle(Entity &entB, VECTOR2 &collisionVector)
     //            |   
     //            3
     //            
-    if (entA01min < entB01min)   // if A left of B
+    if (mEntA01min < mEntB01min)   // if A left of B
     {
-        overlap01 = entA01max - entB01min;
-        collisionVector = corners[1] - corners[0];
+        overlap01 = mEntA01max - mEntB01min;
+        collisionVector = mCorners[1] - mCorners[0];
     }
     else    // else, A right of B
     {
-        overlap01 = entB01max - entA01min;
-        collisionVector = corners[0] - corners[1];
+        overlap01 = mEntB01max - mEntA01min;
+        collisionVector = mCorners[0] - mCorners[1];
     }
-    if (entA03min < entB03min)   // if A above B
+    if (mEntA03min < mEntB03min)   // if A above B
     {
-        overlap03 = entA03max - entB03min;
+        overlap03 = mEntA03max - mEntB03min;
         if (overlap03 < overlap01)
-            collisionVector = corners[3] - corners[0];
+            collisionVector = mCorners[3] - mCorners[0];
     }
     else    // else, A below B
     {
-        overlap03 = entB03max - entA03min;
+        overlap03 = mEntB03max - mEntA03min;
         if (overlap03 < overlap01)
-            collisionVector = corners[0] - corners[3];
+            collisionVector = mCorners[0] - mCorners[3];
     }
     return true;
 }
@@ -457,16 +457,16 @@ bool Entity::collideRotatedBoxCircle(Entity &entB, VECTOR2 &collisionVector)
 //=============================================================================
 bool Entity::collideCornerCircle(VECTOR2 corner, Entity &ent, VECTOR2 &collisionVector)
 {
-    distSquared = corner - *ent.getCenter();            // 頂点 - 円
-    distSquared.x = distSquared.x * distSquared.x;      // 差を2乗
-    distSquared.y = distSquared.y * distSquared.y;
+    mDistSquared = corner - *ent.getCenter();            // 頂点 - 円
+    mDistSquared.x = mDistSquared.x * mDistSquared.x;      // 差を2乗
+    mDistSquared.y = mDistSquared.y * mDistSquared.y;
 
     // 半径の合計を計算してから、それを2乗
-	sumRadiiSquared = ent.getRadius()*ent.getScale();   // (0 + 円の半径)
-    sumRadiiSquared *= sumRadiiSquared;                 // 2乗する
+	mSumRadiiSquared = ent.getRadius()*ent.getScale();   // (0 + 円の半径)
+    mSumRadiiSquared *= mSumRadiiSquared;                 // 2乗する
 
 	// 頂点と円が衝突している場合
-    if(distSquared.x + distSquared.y <= sumRadiiSquared)
+    if(mDistSquared.x + mDistSquared.y <= mSumRadiiSquared)
     {
 		// 衝突ベクトルを設定
         collisionVector = *ent.getCenter() - corner;
@@ -483,51 +483,51 @@ bool Entity::collideCornerCircle(VECTOR2 corner, Entity &ent, VECTOR2 &collision
 //=============================================================================
 void Entity::computeRotatedBox()
 {
-    if(rotatedBoxReady)
+    if(mRotatedBoxReady)
         return;
     float projection;
 
-    VECTOR2 rotatedX(cos(spriteData.angle), sin(spriteData.angle));
-    VECTOR2 rotatedY(-sin(spriteData.angle), cos(spriteData.angle));
+    VECTOR2 rotatedX(cos(mSpriteData.angle), sin(mSpriteData.angle));
+    VECTOR2 rotatedY(-sin(mSpriteData.angle), cos(mSpriteData.angle));
 
     const VECTOR2 *center = getCenter();
-    corners[0] = *center + rotatedX * ((float)edge.left*getScale())  +
-                           rotatedY * ((float)edge.top*getScale());
-    corners[1] = *center + rotatedX * ((float)edge.right*getScale()) + 
-                           rotatedY * ((float)edge.top*getScale());
-    corners[2] = *center + rotatedX * ((float)edge.right*getScale()) + 
-                           rotatedY * ((float)edge.bottom*getScale());
-    corners[3] = *center + rotatedX * ((float)edge.left*getScale())  +
-                           rotatedY * ((float)edge.bottom*getScale());
+    mCorners[0] = *center + rotatedX * ((float)mEdge.left*getScale())  +
+                           rotatedY * ((float)mEdge.top*getScale());
+    mCorners[1] = *center + rotatedX * ((float)mEdge.right*getScale()) + 
+                           rotatedY * ((float)mEdge.top*getScale());
+    mCorners[2] = *center + rotatedX * ((float)mEdge.right*getScale()) + 
+                           rotatedY * ((float)mEdge.bottom*getScale());
+    mCorners[3] = *center + rotatedX * ((float)mEdge.left*getScale())  +
+                           rotatedY * ((float)mEdge.bottom*getScale());
 
     // corners[0]を基点として使用
 	// corners[0]に接する2辺を投影線として使用
-    edge01 = VECTOR2(corners[1].x - corners[0].x, corners[1].y - corners[0].y);
-    graphics->Vector2Normalize(&edge01);
-    edge03 = VECTOR2(corners[3].x - corners[0].x, corners[3].y - corners[0].y);
-    graphics->Vector2Normalize(&edge03);
+    mEdge01 = VECTOR2(mCorners[1].x - mCorners[0].x, mCorners[1].y - mCorners[0].y);
+    mGraphics->Vector2Normalize(&mEdge01);
+    mEdge03 = VECTOR2(mCorners[3].x - mCorners[0].x, mCorners[3].y - mCorners[0].y);
+    mGraphics->Vector2Normalize(&mEdge03);
 
 	// このエンティティを投影線上に投影したときの最小値と最大値
-    projection = graphics->Vector2Dot(&edge01, &corners[0]);
-    entA01min = projection;
-    entA01max = projection;
+    projection = mGraphics->Vector2Dot(&mEdge01, &mCorners[0]);
+    mEntA01min = projection;
+    mEntA01max = projection;
 	// edge01への投影
-    projection = graphics->Vector2Dot(&edge01, &corners[1]);
-    if (projection < entA01min)
-        entA01min = projection;
-    else if (projection > entA01max)
-        entA01max = projection;
+    projection = mGraphics->Vector2Dot(&mEdge01, &mCorners[1]);
+    if (projection < mEntA01min)
+        mEntA01min = projection;
+    else if (projection > mEntA01max)
+        mEntA01max = projection;
 	// edge03への投影
-    projection = graphics->Vector2Dot(&edge03, &corners[0]);
-    entA03min = projection;
-    entA03max = projection;
-    projection = graphics->Vector2Dot(&edge03, &corners[3]);
-    if (projection < entA03min)
-        entA03min = projection;
-    else if (projection > entA03max)
-        entA03max = projection;
+    projection = mGraphics->Vector2Dot(&mEdge03, &mCorners[0]);
+    mEntA03min = projection;
+    mEntA03max = projection;
+    projection = mGraphics->Vector2Dot(&mEdge03, &mCorners[3]);
+    if (projection < mEntA03min)
+        mEntA03min = projection;
+    else if (projection > mEntA03max)
+        mEntA03max = projection;
 
-    rotatedBoxReady = true;
+    mRotatedBoxReady = true;
 }
 
 //=============================================================================
@@ -536,10 +536,10 @@ void Entity::computeRotatedBox()
 //=============================================================================
 bool Entity::outsideRect(RECT rect)
 {
-    if( spriteData.x + spriteData.width*getScale() < rect.left || 
-        spriteData.x > rect.right ||
-        spriteData.y + spriteData.height*getScale() < rect.top || 
-        spriteData.y > rect.bottom)
+    if( mSpriteData.x + mSpriteData.width*getScale() < rect.left || 
+        mSpriteData.x > rect.right ||
+        mSpriteData.y + mSpriteData.height*getScale() < rect.top || 
+        mSpriteData.y > rect.bottom)
         return true;
     return false;
 }
@@ -558,10 +558,10 @@ void Entity::damage(int weapon)
 void Entity::bounce(VECTOR2 &collisionVector, Entity &ent)
 {
     float cUVdotVdiff;
-    VECTOR2 Vdiff = ent.getVelocity() - velocity;
+    VECTOR2 Vdiff = ent.getVelocity() - mVelocity;
     VECTOR2 cUV = collisionVector;              // 衝突単位ベクトル
     Graphics::Vector2Normalize(&cUV);
-    if(collisionType == entityNS::ROTATED_BOX)  // if ROTATED_BOX collision
+    if(mCollisionType == entityNS::ROTATED_BOX)  // if ROTATED_BOX collision
         // The collision vector is perpendicular to the edge. 
         cUVdotVdiff = 1.0f;                 // do not change velocity
     else
@@ -579,12 +579,12 @@ void Entity::bounce(VECTOR2 &collisionVector, Entity &ent)
     {
         setX(getX() - cUV.x);
         setY(getY() - cUV.y);
-        rotatedBoxReady = false;
+        mRotatedBoxReady = false;
         count--;
     } while( this->collidesWith(ent, cv) && count);
 
     // bounce
-    deltaV += ((massRatio * cUVdotVdiff) * cUV);
+    mDeltaV += ((massRatio * cUVdotVdiff) * cUV);
 }
 
 //=============================================================================
@@ -597,12 +597,12 @@ void Entity::bounce(VECTOR2 &collisionVector, Entity &ent)
 void Entity::gravityForce(Entity *ent, float frameTime)
 {
 	// どちらかのエンティティがアクティブでない場合、重力の影響はない
-    if (!active || !ent->getActive())
+    if (!mActive || !ent->getActive())
         return ;
 
-    rr = pow((ent->getCenterX() - getCenterX()),2) + 
+    mRr = pow((ent->getCenterX() - getCenterX()),2) + 
             pow((ent->getCenterY() - getCenterY()),2);
-    force = gravity * ent->getMass() * mass/rr;
+    mForce = mGravity * ent->getMass() * mMass/mRr;
 
     // --- ベクトル計算を使って重力ベクトルを作成 ---
     // エンティティ間のベクトルを作成
@@ -611,9 +611,9 @@ void Entity::gravityForce(Entity *ent, float frameTime)
     // ベクトルを正規化
     Graphics::Vector2Normalize(&gravityV);
 	// 重力で乗算して、重力ベクトルを作成
-    gravityV *= force * frameTime;
+    gravityV *= mForce * frameTime;
 	// 重力ベクトルを、移動中の速度ベクトルに加算して、方向を変える
-    velocity += gravityV;
+    mVelocity += gravityV;
 }
 
 //==========================================================
@@ -621,6 +621,6 @@ void Entity::gravityForce(Entity *ent, float frameTime)
 //==========================================================
 void Entity::initTileXY()
 {
-	tileX = (int)spriteData.x / 32;
-	tileY = (int)spriteData.y / 32;
+	mTileX = (int)mSpriteData.x / 32;
+	mTileY = (int)mSpriteData.y / 32;
 }

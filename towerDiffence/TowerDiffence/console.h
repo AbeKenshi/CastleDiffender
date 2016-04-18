@@ -35,22 +35,22 @@ namespace consoleNS
 class Console
 {
 private:
-    Graphics    *graphics;              // グラフィックシステムへのポインタ
-    Input       *input;                 // 入力システムへのポインタ
-    TextDX      dxFont;                 // DirectXフォント
-    float       x,y;                    // コンソールの位置
-    int         rows;                   // コンソールに収まるテキストの行数
-    std::string commandStr;             // コンソールコマンド
-    std::string inputStr;               // コンソールへの入力テキスト
-    std::deque<std::string> text;       // デックtext
-    RECT        textRect;               // テキスト表示rect
-    COLOR_ARGB  fontColor;              // フォントカラー(a,r,g,b)
-    COLOR_ARGB  backColor;              // 背景色(a,r,g,b)
-    VertexC vtx[4];                     // 背景用のvertexデータ
-    LP_VERTEXBUFFER vertexBuffer;       // vertexデータ保存用のバッファ
-    int         scrollAmount;           // スクロールされている行数
-    bool        initialized;            // 初期化に成功した場合、true
-    bool        visible;                // コンソールを表示させる場合、true
+    Graphics    *mGraphics;              // グラフィックシステムへのポインタ
+    Input       *mInput;                 // 入力システムへのポインタ
+    TextDX      mDxFont;                 // DirectXフォント
+    float       mX,mY;                   // コンソールの位置
+    int         mRows;                   // コンソールに収まるテキストの行数
+    std::string mCommandStr;             // コンソールコマンド
+    std::string mInputStr;               // コンソールへの入力テキスト
+    std::deque<std::string> mText;       // デックtext
+    RECT        mTextRect;               // テキスト表示rect
+    COLOR_ARGB  mFontColor;              // フォントカラー(a,r,g,b)
+    COLOR_ARGB  mBackColor;              // 背景色(a,r,g,b)
+    VertexC mVtx[4];                     // 背景用のvertexデータ
+    LP_VERTEXBUFFER mVertexBuffer;       // vertexデータ保存用のバッファ
+    int         mScrollAmount;           // スクロールされている行数
+    bool        mInitialized;            // 初期化に成功した場合、true
+    bool        mVisible;                // コンソールを表示させる場合、true
 
 public:
 	// コンストラクタ
@@ -72,13 +72,13 @@ public:
     void showHide();
 
 	// 表示/非表示を制御するプロパティの現在の状態を戻します。
-    bool getVisible() {return visible;}
+    bool getVisible() {return mVisible;}
 
 	// コンソールを表示します。
-    void show() {visible = true;}
+    void show() {mVisible = true;}
 
 	// コンソールを非表示にします。
-    void hide() {visible = false;}
+    void hide() {mVisible = false;}
 
 	// コンソールディスプレイにテキスト文字列を追加します。
     void print(const std::string &str);
@@ -88,10 +88,10 @@ public:
     std::string getCommand();
 
 	// コンソールの入力テキストを戻します
-    std::string getInput() {return inputStr;}
+    std::string getInput() {return mInputStr;}
 
 	// コンソールの入力テキストをクリアします
-    void clearInput()   {inputStr = "";}
+    void clearInput()   {mInputStr = "";}
 
 	// グラフィックスデバイスが消失したときに呼び出される
     void onLostDevice();

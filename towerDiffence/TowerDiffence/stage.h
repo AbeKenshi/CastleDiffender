@@ -19,20 +19,20 @@
 class Stage
 {
 private:
-	Map map;									// ステージのマップ情報
-	Barricade barricades[mapNS::BARRICADE_NUM];	// バリケードの配列
-	Brave brave;								// プレイヤー
-	Castle castle;								// 城
-	Enemy **enemy;	    						// 敵へのポインタの配列
-	float *enemyX;								// 敵の初期位置Xの配列
-	float *enemyY;								// 敵の初期位置Yの配列
-	float remainingTime;						// ゲーム内の残り時間
-	int enemyNum;								// 敵の数
-	int stageNum;								// 選択しているステージの番号
-	int enemyWaveNum;							// 現在の敵の波の番号（第一波、第二波、、、）
-	bool    roundOver;							// ラウンドが終了した場合、true
-	bool clearedStage;							// ステージをクリアした場合、true
-	bool initializedEnemies;					// 敵を初期化できたらtrue
+	Map mMap;									// ステージのマップ情報
+	Barricade mBarricades[mapNS::BARRICADE_NUM];// バリケードの配列
+	Brave mBrave;								// プレイヤー
+	Castle mCastle;								// 城
+	Enemy **mEnemy;	    						// 敵へのポインタの配列
+	float *mEnemyX;								// 敵の初期位置Xの配列
+	float *mEnemyY;								// 敵の初期位置Yの配列
+	float mRemainingTime;						// ゲーム内の残り時間
+	int mEnemyNum;								// 敵の数
+	int mStageNum;								// 選択しているステージの番号
+	int mEnemyWaveNum;							// 現在の敵の波の番号（第一波、第二波、、、）
+	bool    mRoundOver;							// ラウンドが終了した場合、true
+	bool mClearedStage;							// ステージをクリアした場合、true
+	bool mInitializedEnemies;					// 敵を初期化できたらtrue
 public:
 	// コンストラクタ
 	Stage();
@@ -43,38 +43,38 @@ public:
 	// getter
 	//==========================================================
 	// マップ情報を返す
-	Map& getMap() { return map; }
+	Map& getMap() { return mMap; }
 	// 敵の数を返す
-	int getEnemyNum() { return enemyNum; }
+	int getEnemyNum() { return mEnemyNum; }
 	// ステージ番号を返す
-	int getStageNum() { return stageNum; }
+	int getStageNum() { return mStageNum; }
 	// ゲーム内の残り時間を返す
-	float getRemainingTime() { return remainingTime; }
+	float getRemainingTime() { return mRemainingTime; }
 	// 指定したインデックスの敵を返す
-	Enemy& getEnemy(int index) { return *enemy[index]; }
+	Enemy& getEnemy(int index) { return *mEnemy[index]; }
 	// 勇者を返す
-	Brave& getBrave() { return brave; }
+	Brave& getBrave() { return mBrave; }
 	// 指定したインデックスのバリケードを返す
-	Barricade& getBarricade(int index) { return barricades[index]; }
+	Barricade& getBarricade(int index) { return mBarricades[index]; }
 	// 城を返す
-	Castle& getCastle() { return castle; }
+	Castle& getCastle() { return mCastle; }
 	// ゲームオーバーかどうかを返す
-	bool getRoundOver() { return roundOver; }
+	bool getRoundOver() { return mRoundOver; }
 	// ステージをクリアしたかどうかを返す
-	bool getClearedStage() { return clearedStage; }
+	bool getClearedStage() { return mClearedStage; }
 	// 敵を初期化できているかどうか
-	bool getInitializedEnemies() { return initializedEnemies; }
+	bool getInitializedEnemies() { return mInitializedEnemies; }
 
 
 	//==========================================================
 	// setter
 	//==========================================================
 	// ステージをクリアしたかどうかをセット
-	void setClearedStage(bool cs) { clearedStage = cs; }
+	void setClearedStage(bool cs) { mClearedStage = cs; }
 	// ステージ番号をセット
-	void setStageNum(int sn) { stageNum = sn; }
+	void setStageNum(int sn) { mStageNum = sn; }
 	// 敵を初期化できているかどうかをセット
-	void setInitializedEnemies(bool initializedE) { initializedEnemies = initializedE; }
+	void setInitializedEnemies(bool initializedE) { mInitializedEnemies = initializedE; }
 
 	// ステージ情報を初期化
 	void reset();

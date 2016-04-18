@@ -7,7 +7,7 @@
 ///             利用条件に従ってください
 
 #ifndef _TEXTDX_H               // このファイルが複数の箇所でインクルードされる場合に、
-#define _TEXTDX_H                 // 多重に定義されることを防ぎます。
+#define _TEXTDX_H               // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 #include <string>
@@ -17,12 +17,12 @@
 class TextDX
 {
 private:
-    Graphics    *graphics;		// graphicsへのポインタ
-    COLOR_ARGB  color;          // フォントカラー(a,r,g,b)
-    LP_DXFONT   dxFont;			// DXFONT
-    RECT        fontRect;       // テキストの四角形
-    D3DXMATRIX  matrix;			// テキストの回転行列
-    float       angle;          // テキストの回転角度
+    Graphics    *mGraphics;		// graphicsへのポインタ
+    COLOR_ARGB  mColor;         // フォントカラー(a,r,g,b)
+    LP_DXFONT   mDxFont;		// DXFONT
+    RECT        mFontRect;      // テキストの四角形
+    D3DXMATRIX  mMatrix;		// テキストの回転行列
+    float       mAngle;         // テキストの回転角度
 
 public:
 	// コンストラクタ
@@ -52,22 +52,22 @@ public:
     virtual int print(const std::string &str, RECT &rect, UINT format);
 
 	// 回転角を戻す（度）
-    virtual float getDegrees()      {return angle*(180.0f/(float)PI);}
+    virtual float getDegrees()      {return mAngle*(180.0f/(float)PI);}
 
     // 回転角を戻す（ラジアン）
-    virtual float getRadians()      {return angle;}
+    virtual float getRadians()      {return mAngle;}
 
 	// フォントカラーを戻す
-    virtual COLOR_ARGB getFontColor() {return color;}
+    virtual COLOR_ARGB getFontColor() {return mColor;}
 
 	// 回転角をセット（度）
-    virtual void setDegrees(float deg)  {angle = deg*((float)PI/180.0f);}
+    virtual void setDegrees(float deg)  {mAngle = deg*((float)PI/180.0f);}
 
 	// 回転角をセット（ラジアン）
-    virtual void setRadians(float rad)  {angle = rad;}
+    virtual void setRadians(float rad)  {mAngle = rad;}
 
     // フォントカラーをセット
-	virtual void setFontColor(COLOR_ARGB c) {color = c;}
+	virtual void setFontColor(COLOR_ARGB c) {mColor = c;}
 
 	// グラフィックスデバイスが消失したときに呼び出される
     virtual void onLostDevice();

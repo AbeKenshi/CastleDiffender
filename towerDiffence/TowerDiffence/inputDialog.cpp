@@ -13,10 +13,10 @@
 //=============================================================================
 InputDialog::InputDialog()
 {
-    textBackColor = inputDialogNS::TEXT_BACK_COLOR;
-    textFontColor = inputDialogNS::TEXT_COLOR;
-    inTextVerts = NULL;
-    inText = "";
+    mTextBackColor = inputDialogNS::TEXT_BACK_COLOR;
+    mTextFontColor = inputDialogNS::TEXT_COLOR;
+    mInTextVerts = NULL;
+    mInText = "";
 }
 
 //=============================================================================
@@ -33,39 +33,39 @@ InputDialog::~InputDialog()
 void InputDialog::prepareVerts()
 {
     MessageDialog::prepareVerts();  // 基本クラスのprepareVertsを呼び出す
-    SAFE_RELEASE(inTextVerts);
+    SAFE_RELEASE(mInTextVerts);
 
     // inText top left
-    vtx[0].x = x + messageDialogNS::BORDER*2;
-    vtx[0].y = y + height - messageDialogNS::BORDER - messageDialogNS::MARGIN - messageDialogNS::BUTTON_HEIGHT*2.5f;
-    vtx[0].z = 0.0f;
-    vtx[0].rhw = 1.0f;
-    vtx[0].color = textBackColor;
+    mVtx[0].x = mX + messageDialogNS::BORDER*2;
+    mVtx[0].y = mY + mHeight - messageDialogNS::BORDER - messageDialogNS::MARGIN - messageDialogNS::BUTTON_HEIGHT*2.5f;
+    mVtx[0].z = 0.0f;
+    mVtx[0].rhw = 1.0f;
+    mVtx[0].color = mTextBackColor;
     // inText top right
-    vtx[1].x = x + width - messageDialogNS::BORDER*2;
-    vtx[1].y = vtx[0].y;
-    vtx[1].z = 0.0f;
-    vtx[1].rhw = 1.0f;
-    vtx[1].color = textBackColor;
+    mVtx[1].x = mX + mWidth - messageDialogNS::BORDER*2;
+    mVtx[1].y = mVtx[0].y;
+    mVtx[1].z = 0.0f;
+    mVtx[1].rhw = 1.0f;
+    mVtx[1].color = mTextBackColor;
     // inText bottom right
-    vtx[2].x =  vtx[1].x;
-    vtx[2].y = vtx[0].y + messageDialogNS::BUTTON_HEIGHT;
-    vtx[2].z = 0.0f;
-    vtx[2].rhw = 1.0f;
-    vtx[2].color = textBackColor;
+    mVtx[2].x =  mVtx[1].x;
+    mVtx[2].y = mVtx[0].y + messageDialogNS::BUTTON_HEIGHT;
+    mVtx[2].z = 0.0f;
+    mVtx[2].rhw = 1.0f;
+    mVtx[2].color = mTextBackColor;
     // inText bottom left
-    vtx[3].x = vtx[0].x;
-    vtx[3].y = vtx[2].y;
-    vtx[3].z = 0.0f;
-    vtx[3].rhw = 1.0f;
-    vtx[3].color = textBackColor;
-    graphics->createVertexBuffer(vtx, sizeof vtx, inTextVerts);
+    mVtx[3].x = mVtx[0].x;
+    mVtx[3].y = mVtx[2].y;
+    mVtx[3].z = 0.0f;
+    mVtx[3].rhw = 1.0f;
+    mVtx[3].color = mTextBackColor;
+    mGraphics->createVertexBuffer(mVtx, sizeof mVtx, mInTextVerts);
 
     // set inTextRect
-    inTextRect.left   = (long)vtx[0].x;
-    inTextRect.right  = (long)vtx[1].x;
-    inTextRect.top    = (long)vtx[0].y;
-    inTextRect.bottom = (long)vtx[2].y;
+    mInTextRect.left   = (long)mVtx[0].x;
+    mInTextRect.right  = (long)mVtx[1].x;
+    mInTextRect.top    = (long)mVtx[0].y;
+    mInTextRect.bottom = (long)mVtx[2].y;
 }
 
 //=============================================================================
@@ -73,39 +73,39 @@ void InputDialog::prepareVerts()
 //=============================================================================
 const void InputDialog::draw()
 {
-    if (!visible || graphics == NULL || !initialized)
+    if (!mVisible || mGraphics == NULL || !mInitialized)
         return;
 
-    graphics->drawQuad(borderVerts);        // draw border
-    graphics->drawQuad(dialogVerts);        // draw backdrop
-    graphics->drawQuad(buttonVerts);        // draw button
-    graphics->drawQuad(button2Verts);       // draw button2
-    graphics->drawQuad(inTextVerts);        // draw input text area
+    mGraphics->drawQuad(mBorderVerts);        // draw border
+    mGraphics->drawQuad(mDialogVerts);        // draw backdrop
+    mGraphics->drawQuad(mButtonVerts);        // draw button
+    mGraphics->drawQuad(mButton2Verts);       // draw button2
+    mGraphics->drawQuad(mInTextVerts);        // draw input text area
 
-    graphics->spriteBegin();                // begin drawing sprites
+    mGraphics->spriteBegin();                // begin drawing sprites
 
-    if(text.size() == 0)
+    if(mText.size() == 0)
         return;
     // display text on MessageDialog
-    dxFont.setFontColor(fontColor);
-    dxFont.print(text,textRect,DT_CENTER|DT_WORDBREAK);
+    mDxFont.setFontColor(mFontColor);
+    mDxFont.print(mText,mTextRect,DT_CENTER|DT_WORDBREAK);
 
     // display text on buttons
-    dxFont.setFontColor(buttonFontColor);
-    dxFont.print(messageDialogNS::BUTTON1_TEXT[buttonType],buttonRect,DT_SINGLELINE|DT_CENTER|DT_VCENTER);
-    dxFont.print(messageDialogNS::BUTTON2_TEXT[buttonType],button2Rect,DT_SINGLELINE|DT_CENTER|DT_VCENTER);
+    mDxFont.setFontColor(mButtonFontColor);
+    mDxFont.print(messageDialogNS::BUTTON1_TEXT[mButtonType],mButtonRect,DT_SINGLELINE|DT_CENTER|DT_VCENTER);
+    mDxFont.print(messageDialogNS::BUTTON2_TEXT[mButtonType],mButton2Rect,DT_SINGLELINE|DT_CENTER|DT_VCENTER);
 
     // display input text
-    dxFont.setFontColor(textFontColor);
-    tempRect = inTextRect;      // save
+    mDxFont.setFontColor(mTextFontColor);
+    mTempRect = mInTextRect;      // save
     // No text is printed with DT_CALDRECT option. It moves RECT.right
-    dxFont.print(inText,tempRect,DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_CALCRECT);
-    if(tempRect.right > inTextRect.right)   // if text too long, right justify
-        dxFont.print(inText,inTextRect,DT_SINGLELINE|DT_RIGHT|DT_VCENTER);
+    mDxFont.print(mInText,mTempRect,DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_CALCRECT);
+    if(mTempRect.right > mInTextRect.right)   // if text too long, right justify
+        mDxFont.print(mInText,mInTextRect,DT_SINGLELINE|DT_RIGHT|DT_VCENTER);
     else    // else, left justify
-        dxFont.print(inText,inTextRect,DT_SINGLELINE|DT_LEFT|DT_VCENTER);
+        mDxFont.print(mInText,mInTextRect,DT_SINGLELINE|DT_LEFT|DT_VCENTER);
 
-    graphics->spriteEnd();                  // end drawing sprites
+    mGraphics->spriteEnd();                  // end drawing sprites
 }
 
 //=============================================================================
@@ -114,13 +114,13 @@ const void InputDialog::draw()
 void InputDialog::update()
 {
     MessageDialog::update();        // call update in base class
-    if (!initialized || !visible)
+    if (!mInitialized || !mVisible)
     {
-        if(buttonClicked == 2)      // if Cancel button
-            inText = "";            // clear input text
+        if(mButtonClicked == 2)      // if Cancel button
+            mInText = "";            // clear input text
         return;
     }
-    inText = input->getTextIn();    // get input text
+    mInText = mInput->getTextIn();    // get input text
 }
 
 //=============================================================================
@@ -128,26 +128,26 @@ void InputDialog::update()
 //=============================================================================
 void InputDialog::print(const std::string &str)         
 {
-    if (!initialized || visible)    // if not initialized or already in use
+    if (!mInitialized || mVisible)    // if not initialized or already in use
         return;
-    text = str + "\n\n\n\n\n";   // leave some room for input text and buttons
+    mText = str + "\n\n\n\n\n";   // leave some room for input text and buttons
 
     // Set textRect to text area of dialog
-    textRect.left   = (long)(x + messageDialogNS::MARGIN);
-    textRect.right  = (long)(x + messageDialogNS::WIDTH - messageDialogNS::MARGIN);
-    textRect.top    = (long)(y + messageDialogNS::MARGIN);
-    textRect.bottom = (long)(y + messageDialogNS::HEIGHT - messageDialogNS::MARGIN);
+    mTextRect.left   = (long)(mX + messageDialogNS::MARGIN);
+    mTextRect.right  = (long)(mX + messageDialogNS::WIDTH - messageDialogNS::MARGIN);
+    mTextRect.top    = (long)(mY + messageDialogNS::MARGIN);
+    mTextRect.bottom = (long)(mY + messageDialogNS::HEIGHT - messageDialogNS::MARGIN);
 
     // Set textRect.bottom to precise height required for text
     // No text is printed with DT_CALDRECT option.
-    dxFont.print(text,textRect,DT_CENTER|DT_WORDBREAK|DT_CALCRECT);
-    height = textRect.bottom - (int)y + messageDialogNS::BORDER + messageDialogNS::MARGIN;
+    mDxFont.print(mText,mTextRect,DT_CENTER|DT_WORDBREAK|DT_CALCRECT);
+    mHeight = mTextRect.bottom - (int)mY + messageDialogNS::BORDER + messageDialogNS::MARGIN;
 
     prepareVerts();                 // prepare the vertex buffers
-    inText = "";                    // clear old input
-    input->clearTextIn();
-    buttonClicked = 0;              // clear buttonClicked
-    visible = true;
+    mInText = "";                    // clear old input
+    mInput->clearTextIn();
+    mButtonClicked = 0;              // clear buttonClicked
+    mVisible = true;
 }
 
 //=============================================================================
@@ -155,9 +155,9 @@ void InputDialog::print(const std::string &str)
 //=============================================================================
 void InputDialog::onLostDevice()
 {
-    if (!initialized)
+    if (!mInitialized)
         return;
     MessageDialog::onLostDevice();
-    SAFE_RELEASE(inTextVerts);
+    SAFE_RELEASE(mInTextVerts);
 }
 

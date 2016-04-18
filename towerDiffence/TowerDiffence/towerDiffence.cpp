@@ -13,12 +13,12 @@
 //==========================================================
 TowerDiffence::TowerDiffence()
 {
-	initialized = false;
-	fontCK = new Text();   // sprite based font
-	menuOn = true;
-	stageSelectOn = false;
-	descriptionOn = false;
-	rect = NULL;
+	mInitialized = false;	// ゲームが初期化された場合、trueになる
+	mFontCK = new Text();	// スプライトフォント
+	mMenuOn = true;			// メニュー表示フラグ
+	mStageSelectOn = false;	// ステージ選択画面表示フラグ
+	mDescriptionOn = false;	// 操作説明画面表示フラグ
+	mRect = NULL;			// システムグラフィックス用の四角形
 }
 
 //==========================================================
@@ -26,9 +26,9 @@ TowerDiffence::TowerDiffence()
 //==========================================================
 TowerDiffence::~TowerDiffence()
 {
-	safeDelete(rect);
-	safeDelete(fontCK);
-	releaseAll();	// すべてのグラフィックスアイテムについて、onLostDevice()を呼び出す
+	safeDelete(mRect);		// システムグラフィックス用の四角形のメモリを解放
+	safeDelete(mFontCK);		// スプライトフォントのメモリを解放
+	releaseAll();			// すべてのグラフィックスアイテムについて、onLostDevice()を呼び出す
 }
 
 //==========================================================
@@ -38,316 +38,160 @@ TowerDiffence::~TowerDiffence()
 void TowerDiffence::initialize(HWND hwnd)
 {
 	Game::initialize(hwnd);	// GameErrorをスロー
-	rect = new Rect();
-	rect->initialize(graphics);
 
-	// init text
-	if (!fontCK->initialize(graphics, FONT_IMAGE))
+	// システムグラフィックス用の四角形を生成、初期化
+	mRect = new Rect();
+	mRect->initialize(mGraphics);
+
+	// スプライトテキストを初期化
+	if (!mFontCK->initialize(mGraphics, FONT_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing CKfont"));
 
 
 	// メニューのテクスチャ
-	if (!menuTexture.initialize(graphics, MENU_IMAGE))
+	if (!mMenuTexture.initialize(mGraphics, MENU_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing menu texture"));
 	// メニューの画像
-	if (!menu.initialize(graphics, 0, 0, 0, &menuTexture))
+	if (!mMenu.initialize(mGraphics, 0, 0, 0, &mMenuTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing menu"));
 
 	// ステージ選択画面のテクスチャ
-	if (!stageSelectTexture.initialize(graphics, STAGE_SELECT_IMAGE))
+	if (!mStageSelectTexture.initialize(mGraphics, STAGE_SELECT_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing stage select texture"));
 	// ステージ選択画面の画像
-	if (!stageSelect.initialize(graphics, 0, 0, 0, &stageSelectTexture))
+	if (!mStageSelect.initialize(mGraphics, 0, 0, 0, &mStageSelectTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing stage select"));
 
 	// リザルトのテクスチャ
-	if (!resultTexture.initialize(graphics, RESULT_IMAGE))
+	if (!mResultTexture.initialize(mGraphics, RESULT_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing result texture"));
 	// リザルトの画像
-	if (!result.initialize(graphics, 0, 0, 0, &resultTexture))
+	if (!mResult.initialize(mGraphics, 0, 0, 0, &mResultTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing result"));
-	result.setX(GAME_WIDTH / 2.0f - result.getWidth() / 2.0f);
-	result.setY((float)-result.getHeight());
+	mResult.setX(GAME_WIDTH / 2.0f - mResult.getWidth() / 2.0f);
+	mResult.setY((float)-mResult.getHeight());
 
 	// ステージクリア画面のテクスチャ
-	if (!stageClearTexture.initialize(graphics, STAGE_CLEAR_IMAGE))
+	if (!mStageClearTexture.initialize(mGraphics, STAGE_CLEAR_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing stage clear texture"));
 	// ステージクリア画像
-	if (!stageClear.initialize(graphics, 0, 0, 0, &stageClearTexture))
+	if (!mStageClear.initialize(mGraphics, 0, 0, 0, &mStageClearTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing stage clear"));
-	stageClear.setX(GAME_WIDTH / 2.0f - stageClear.getWidth() / 2.0f);
-	stageClear.setY((float)GAME_HEIGHT);
+	mStageClear.setX(GAME_WIDTH / 2.0f - mStageClear.getWidth() / 2.0f);
+	mStageClear.setY((float)GAME_HEIGHT);
 
 	// 操作説明のテクスチャ
-	if (!descriptionTexture.initialize(graphics, DESCRIPTION_IMAGE))
+	if (!mDescriptionTexture.initialize(mGraphics, DESCRIPTION_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing description texture"));
 	// 操作説明の画像
-	if (!description.initialize(graphics, 0, 0, 0, &descriptionTexture))
+	if (!mDescription.initialize(mGraphics, 0, 0, 0, &mDescriptionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing description"));
 
 	// マップのテクスチャ
-	if (!tileTexture.initialize(graphics, TILE_IMAGES))
+	if (!mTileTexture.initialize(mGraphics, TILE_IMAGES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing map texture"));
 	// マップの画像
-	if (!stage.getMap().initialize(this, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_COLS, &tileTexture))
+	if (!mStage.getMap().initialize(this, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_SIZE, mapNS::TEXTURE_COLS, &mTileTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing tile"));
 
 	// バリケードのテクスチャ
-	if (!barricadeTexture.initialize(graphics, BARRICADE_IMAGE))
+	if (!mBarricadeTexture.initialize(mGraphics, BARRICADE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade texture"));
-	if (!hitEffectTexture.initialize(graphics, HIT_EFFECT_IMAGE))
+	if (!mHitEffectTexture.initialize(mGraphics, HIT_EFFECT_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hit effect texture"));
 	// バリケードの画像
 	for (int i = 0; i < mapNS::BARRICADE_NUM; i++)
 	{
-		if (!stage.getBarricade(i).initialize(this, barricadeNS::WIDTH, barricadeNS::HEIGHT, barricadeNS::TEXTURE_COLS, &barricadeTexture))
+		if (!mStage.getBarricade(i).initialize(this, barricadeNS::WIDTH, barricadeNS::HEIGHT, barricadeNS::TEXTURE_COLS, &mBarricadeTexture))
 			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing barricade"));
-		stage.getBarricade(i).setScale(1);
-		if (!stage.getBarricade(i).getHitEffect().initialize(graphics, hitEffectNS::WIDTH, hitEffectNS::HEIGHT, hitEffectNS::TEXTURE_COLS, &hitEffectTexture))
+		mStage.getBarricade(i).setScale(1);
+		if (!mStage.getBarricade(i).getHitEffect().initialize(mGraphics, hitEffectNS::WIDTH, hitEffectNS::HEIGHT, hitEffectNS::TEXTURE_COLS, &mHitEffectTexture))
 			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hitEffect"));
 	}
 
 	// 城のテクスチャ
-	if (!castleTexture.initialize(graphics, CASTLE_IMAGE))
+	if (!mCastleTexture.initialize(mGraphics, CASTLE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle texture"));
 	// 城の画像
-	if (!stage.getCastle().initialize(this, castleNS::WIDTH, castleNS::HEIGHT, castleNS::TEXTURE_COLS, &castleTexture))
+	if (!mStage.getCastle().initialize(this, castleNS::WIDTH, castleNS::HEIGHT, castleNS::TEXTURE_COLS, &mCastleTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle"));
 
 	// 城のアイコンのテクスチャ
-	if (!castleIconTexture.initialize(graphics, CASTLE_ICON_IMAGE))
+	if (!mCastleIconTexture.initialize(mGraphics, CASTLE_ICON_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle icon texture"));
 	// 城のアイコンの画像
-	if (!castleIcon.initialize(graphics, castleIconNS::WIDTH, castleIconNS::HEIGHT, castleIconNS::TEXTURE_COLS, &castleIconTexture))
+	if (!mCastleIcon.initialize(mGraphics, castleIconNS::WIDTH, castleIconNS::HEIGHT, castleIconNS::TEXTURE_COLS, &mCastleIconTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing castle icon"));
 
 	// 勇者のテクスチャ
-	if (!braveTexture.initialize(graphics, BRAVE_MOVE_IMAGE))
+	if (!mBraveTexture.initialize(mGraphics, BRAVE_MOVE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave_move texture"));
 	// 勇者
-	if (!stage.getBrave().initialize(this, braveNS::WIDTH, braveNS::HEIGHT, braveNS::TEXTURE_COLS, &braveTexture))
+	if (!mStage.getBrave().initialize(this, braveNS::WIDTH, braveNS::HEIGHT, braveNS::TEXTURE_COLS, &mBraveTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave_move"));
-	stage.getBrave().setScale(1.5);
-	stage.getBrave().setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
-	stage.getBrave().setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
-	stage.getBrave().setMapPointer(stage.getMap());
+	mStage.getBrave().setScale(1.5);
+	mStage.getBrave().setFrames(braveNS::MOVE_UP_START_FRAME, braveNS::MOVE_UP_END_FRAME);
+	mStage.getBrave().setCurrentFrame(braveNS::MOVE_UP_START_FRAME);
+	mStage.getBrave().setMapPointer(mStage.getMap());
 
 	// 勇者のアイコンのテクスチャ
-	if (!braveIconTexture.initialize(graphics, BRAVE_ICON_IMAGE))
+	if (!mBraveIconTexture.initialize(mGraphics, BRAVE_ICON_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave icon texture"));
 	// 勇者のアイコンの画像
-	if (!braveIcon.initialize(graphics, braveIconNS::WIDTH, braveIconNS::HEIGHT, braveIconNS::TEXTURE_COLS, &braveIconTexture))
+	if (!mBraveIcon.initialize(mGraphics, braveIconNS::WIDTH, braveIconNS::HEIGHT, braveIconNS::TEXTURE_COLS, &mBraveIconTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing brave icon"));
-	braveIcon.linkEntity(stage.getBrave());
+	mBraveIcon.linkEntity(mStage.getBrave());
 
 	// 勇者の当たり判定用のテクスチャ
-	if (!attackCollisionTexture.initialize(graphics, COLLISION_IMAGE))
+	if (!mAttackCollisionTexture.initialize(mGraphics, COLLISION_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision texture"));
 	// 勇者のあたり判定用
-	if (!stage.getBrave().getBraveAttackCollision().initialize(this, braveAttackCollisionNS::WIDTH, braveAttackCollisionNS::HEIGHT, 0, &attackCollisionTexture))
+	if (!mStage.getBrave().getBraveAttackCollision().initialize(this, braveAttackCollisionNS::WIDTH, braveAttackCollisionNS::HEIGHT, 0, &mAttackCollisionTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack collision"));
-	if (!attackEffectTexture.initialize(graphics, ATTACK_EFFECT_IMAGE))
+	if (!mAttackEffectTexture.initialize(mGraphics, ATTACK_EFFECT_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack effect texture"));
-	if (!stage.getBrave().getBraveAttackCollision().getAttackEffect().initialize(graphics, attackEffectNS::WIDTH, attackEffectNS::HEIGHT, attackEffectNS::TEXTURE_COLS, &attackEffectTexture))
+	if (!mStage.getBrave().getBraveAttackCollision().getAttackEffect().initialize(mGraphics, attackEffectNS::WIDTH, attackEffectNS::HEIGHT, attackEffectNS::TEXTURE_COLS, &mAttackEffectTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing attack effect"));
 
 	// 炎のテクスチャ
-	if (!fireTexture.initialize(graphics, FIRE_IMAGE))
+	if (!mFireTexture.initialize(mGraphics, FIRE_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire texture"));
-	if (!stage.getBrave().getFire().initialize(this, fireNS::WIDTH, fireNS::HEIGHT, fireNS::TEXTURE_COLS, &fireTexture))
+	if (!mStage.getBrave().getFire().initialize(this, fireNS::WIDTH, fireNS::HEIGHT, fireNS::TEXTURE_COLS, &mFireTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing fire"));
-	stage.getBrave().getFire().setScale(1.5);
+	mStage.getBrave().getFire().setScale(1.5);
 
 	// 雑魚敵のテクスチャ
-	if (!enemyTexture.initialize(graphics, ENEMY_IMAGE))
+	if (!mEnemyTexture.initialize(mGraphics, ENEMY_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy texture"));
 	// 中ボスのテクスチャ
-	if (!midBossTexture.initialize(graphics, MID_BOSS_IMAGE))
+	if (!mMidBossTexture.initialize(mGraphics, MID_BOSS_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss texture"));
 
 	// ダッシュボード
-	if (!dashboardTextures.initialize(graphics, DASHBOARD_TEXTURES))
+	if (!mDashboardTextures.initialize(mGraphics, DASHBOARD_TEXTURES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing dashboard textures"));
-	braveHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_HEALTH_BAR_X, towerDiffenceNS::BRAVE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::RED);
-	braveHealthBar.set(stage.getBrave().getHealth());
-	braveMpBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::BRAVE_MP_BAR_X, towerDiffenceNS::BRAVE_MP_BAR_Y, 0.5f, 100, graphicsNS::GREEN);
-	braveMpBar.set((float)stage.getBrave().getMP());
-	castleHealthBar.initialize(graphics, &dashboardTextures, towerDiffenceNS::CASTLE_HEALTH_BAR_X + 40, towerDiffenceNS::CASTLE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::BLUE);
-	castleHealthBar.set(stage.getCastle().getHealth());
+	mBraveHealthBar.initialize(mGraphics, &mDashboardTextures, towerDiffenceNS::BRAVE_HEALTH_BAR_X, towerDiffenceNS::BRAVE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::RED);
+	mBraveHealthBar.set(mStage.getBrave().getHealth());
+	mBraveMpBar.initialize(mGraphics, &mDashboardTextures, towerDiffenceNS::BRAVE_MP_BAR_X, towerDiffenceNS::BRAVE_MP_BAR_Y, 0.5f, 100, graphicsNS::GREEN);
+	mBraveMpBar.set((float)mStage.getBrave().getMP());
+	mCastleHealthBar.initialize(mGraphics, &mDashboardTextures, towerDiffenceNS::CASTLE_HEALTH_BAR_X + 40, towerDiffenceNS::CASTLE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::BLUE);
+	mCastleHealthBar.set(mStage.getCastle().getHealth());
 
 	// テキスト画像
-	if (!textTexture.initialize(graphics, TEXT_IMAGE))
+	if (!mTextTexture.initialize(mGraphics, TEXT_IMAGE))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing text textures"));
-	if (!braveHpText.initialize(graphics, hpTextImageNS::WIDTH, hpTextImageNS::HEIGHT, hpTextImageNS::TEXTURE_COLS, &textTexture))
+	if (!mBraveHpText.initialize(mGraphics, hpTextImageNS::WIDTH, hpTextImageNS::HEIGHT, hpTextImageNS::TEXTURE_COLS, &mTextTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hp text"));
-	if (!braveMpText.initialize(graphics, mpTextImageNS::WIDTH, mpTextImageNS::HEIGHT, mpTextImageNS::TEXTURE_COLS, &textTexture))
+	if (!mBraveMpText.initialize(mGraphics, mpTextImageNS::WIDTH, mpTextImageNS::HEIGHT, mpTextImageNS::TEXTURE_COLS, &mTextTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hp text"));
-	if (!castleHpText.initialize(graphics, hpTextImageNS::WIDTH, hpTextImageNS::HEIGHT, hpTextImageNS::TEXTURE_COLS, &textTexture))
+	if (!mCastleHpText.initialize(mGraphics, hpTextImageNS::WIDTH, hpTextImageNS::HEIGHT, hpTextImageNS::TEXTURE_COLS, &mTextTexture))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing hp text"));
-	castleHpText.setX(830);
+	mCastleHpText.setX(830);
 
 	// タイトルBGM再生
-	audio->playCue("title");
+	mAudio->playCue("title");
 
 	return;
-}
-
-//==========================================================
-// すべてのゲームアイテムを更新
-//==========================================================
-void TowerDiffence::update()
-{
-	if (menuOn)		// メニュー画面表示中にZキーが押されるまではメニュー画面を表示し続ける
-	{
-		if (input->isKeyDown('Z')) // Zキーでステージ選択画面に以降
-		{
-			menuOn = false;
-			input->clearAll();
-			stageSelectOn = true;
-			stage.reset();
-
-			rect->setX(380);
-			rect->setY(80);
-			rect->setWidth(510);
-			rect->setHeight(81);
-			rect->setBackColor(SETCOLOR_ARGB(50, 120, 120, 255));
-			rect->reset();
-		}
-		else if (input->isKeyDown('X')) // Xキーで操作説明表示
-		{
-			descriptionOn = true;
-			menuOn = false;
-			input->clearAll();
-		}
-		else if (input->isKeyDown('E'))
-		{
-			exitGame();
-		}
-	}
-	else if (stageSelectOn)
-	{
-		if (input->isKeyDown('Z'))	// Zキーでステージ決定
-		{
-			stageSelectOn = false;
-			audio->stopCue("title");
-			roundStart();
-
-			rect->setX((float)rectNS::X);
-			rect->setY((float)rectNS::Y);
-			rect->setWidth(rectNS::WIDTH);
-			rect->setHeight(rectNS::HEIGHT);
-			rect->setBackColor(rectNS::BACK_COLOR);
-			rect->reset();
-		}
-		else if (input->isKeyDown(BRAVE_DOWN_KEY))
-		{
-			if (stage.getStageNum() < 3 - 1)
-			{
-				stage.setStageNum(stage.getStageNum() + 1);
-				rect->setY(rect->getY() + 240);
-				rect->reset();
-			}
-			input->clearAll();
-		}
-		else if (input->isKeyDown(BRAVE_UP_KEY))
-		{
-			if (stage.getStageNum() > 0)
-			{
-				stage.setStageNum(stage.getStageNum() - 1);
-				rect->setY(rect->getY() - 240);
-				rect->reset();
-			}
-			input->clearAll();
-		}
-	}
-	else if (descriptionOn) // 操作説明中はXキーでタイトルに戻る
-	{
-		if (input->isKeyDown('X'))
-		{
-			descriptionOn = false;
-			menuOn = true;
-			input->clearAll();
-		}
-	}
-	else if (stage.getRoundOver())	// ゲームオーバー中にZが押されたらメニュー画面に戻る、Xが押されたらプログラム終了
-	{
-		if (result.getY() > 50)
-		{
-			if (input->isKeyDown('X'))
-			{
-				menuOn = true;
-				input->clearAll();
-				audio->stopCue("gameover");
-				audio->playCue("title");
-			}
-			else if (input->isKeyDown('E'))
-			{
-				exitGame();
-			}
-			else if (input->isKeyDown('Z'))
-			{
-				input->clearAll();
-				audio->stopCue("gameover");
-				roundStart();
-			}
-		}
-		else
-		{
-			result.setY(result.getY() + frameTime * 120.0f);
-		}
-	}
-	else if (stage.getClearedStage())
-	{
-		if (stageClear.getY() < 250)
-		{
-			if (input->isKeyDown('X'))
-			{
-				menuOn = true;
-				input->clearAll();
-				audio->stopCue("clear");
-				audio->playCue("title");
-				stage.setClearedStage(false);
-			}
-			else if (input->isKeyDown('E'))
-			{
-				exitGame();
-			}
-			else if (input->isKeyDown('Z'))
-			{
-				input->clearAll();
-				audio->stopCue("clear");
-				roundStart();
-			}
-		}
-		else
-		{
-			stageClear.setY(stageClear.getY() - frameTime * 320.0f);
-		}
-	}
-	else				// ゲーム中の場合、
-	{
-		if (roundTimer > 0.0f)
-		{
-			roundTimer -= frameTime;
-			return;
-		}
-		stage.runStage(frameTime);
-		if (stage.getInitializedEnemies())
-		{
-			initializeEnemiesTexture();
-		}
-		if (stage.getRoundOver())
-		{
-			gameOver();
-		}
-		if (stage.getClearedStage())
-		{
-			clearStage();
-		}
-
-		// 勇者のアイコン画像を更新
-		braveIcon.update(frameTime);
-	}
 }
 
 //==========================================================
@@ -355,12 +199,234 @@ void TowerDiffence::update()
 //==========================================================
 void TowerDiffence::roundStart()
 {
-	stage.roundStart();
-	result.setY((float)-result.getHeight());
-	stageClear.setY((float)GAME_HEIGHT);
-	braveIcon.reset();
-	roundTimer = towerDiffenceNS::ROUND_TIME;
-	audio->playCue("stage");
+	// 現在のステージ番号でゲーム開始
+	mStage.roundStart();
+	// リザルト画面の位置をリセット
+	mResult.setY((float)-mResult.getHeight());
+	// ステージクリア画面の位置をリセット
+	mStageClear.setY((float)GAME_HEIGHT);
+	// 勇者のアイコンの初期化
+	mBraveIcon.reset();
+	// ラウンドが開始するまでの時間をリセット
+	mRoundTimer = towerDiffenceNS::ROUND_TIME;
+	// ステージ中BGM再生
+	mAudio->playCue("stage");
+}
+
+//==========================================================
+// すべてのゲームアイテムを更新
+//==========================================================
+void TowerDiffence::update()
+{
+	if (mMenuOn)		// メニュー画面表示中
+	{
+		if (mInput->isKeyDown('Z')) // Zキーでステージ選択画面に以降
+		{
+			// メニュー画面オフ
+			mMenuOn = false;
+			// ステージ選択画面に遷移
+			mStageSelectOn = true;
+			// 入力をクリア
+			mInput->clearAll();
+			// ステージ情報をリセット
+			mStage.reset();
+			// システムグラフィックス用の四角形をリセット
+			mRect->setX(380);
+			mRect->setY(80);
+			mRect->setWidth(510);
+			mRect->setHeight(81);
+			mRect->setBackColor(SETCOLOR_ARGB(50, 120, 120, 255));
+			mRect->reset();
+		}
+		else if (mInput->isKeyDown('X')) // Xキーで操作説明表示
+		{
+			// メニュー画面オフ
+			mMenuOn = false;
+			// 操作説明画面に遷移
+			mDescriptionOn = true;
+			// 入力をクリア
+			mInput->clearAll();
+		}
+		else if (mInput->isKeyDown('E'))	// Eキーでゲーム終了
+		{
+			// ゲーム終了
+			exitGame();
+		}
+	}
+	else if (mStageSelectOn)	// ステージ選択画面表示中
+	{
+		if (mInput->isKeyDown('Z'))	// Zキーでステージ決定
+		{
+			// ステージ選択画面オフ
+			mStageSelectOn = false;
+			// タイトルBGMをオフ
+			mAudio->stopCue("title");
+			// ゲームスタート
+			roundStart();
+			// システムグラフィックス用の四角形をリセット
+			mRect->setX((float)rectNS::X);
+			mRect->setY((float)rectNS::Y);
+			mRect->setWidth(rectNS::WIDTH);
+			mRect->setHeight(rectNS::HEIGHT);
+			mRect->setBackColor(rectNS::BACK_COLOR);
+			mRect->reset();
+		}
+		else if (mInput->isKeyDown(BRAVE_DOWN_KEY))	// 下キーで難しいステージを選択
+		{
+			// ステージ番号が最大ステージ数より少なければ、
+			if (mStage.getStageNum() < 3 - 1)
+			{
+				// ステージ数をインクリメント
+				mStage.setStageNum(mStage.getStageNum() + 1);
+				// システムグラフィックス用の四角形をリセット
+				mRect->setY(mRect->getY() + 240);
+				mRect->reset();
+			}
+			// 入力をクリア
+			mInput->clearAll();
+		}
+		else if (mInput->isKeyDown(BRAVE_UP_KEY))	// 上キーで簡単なステージを選択
+		{
+			// ステージ番号が最小ステージ数より多ければ、
+			if (mStage.getStageNum() > 0)
+			{
+				// ステージ数をデクリメント
+				mStage.setStageNum(mStage.getStageNum() - 1);
+				// システムグラフィックス用の四角形をリセット
+				mRect->setY(mRect->getY() - 240);
+				mRect->reset();
+			}
+			// 入力をクリア
+			mInput->clearAll();
+		}
+	}
+	else if (mDescriptionOn) // 操作説明中
+	{
+		// Xキーでタイトルに戻る
+		if (mInput->isKeyDown('X'))
+		{
+			// 操作説明画面オフ
+			mDescriptionOn = false;
+			// メニュー画面オン
+			mMenuOn = true;
+			// 入力をクリア
+			mInput->clearAll();
+		}
+	}
+	else if (mStage.getRoundOver())	// ゲームオーバー中
+	{
+		// リザルト画面が一定以上降下したら
+		if (mResult.getY() > 50)
+		{
+			// Xが押されたらメニュー画面に戻る
+			if (mInput->isKeyDown('X'))
+			{
+				// メニュー画面オン
+				mMenuOn = true;
+				// 入力をクリア
+				mInput->clearAll();
+				// ゲームオーバーBGMをオフ
+				mAudio->stopCue("gameover");
+				// タイトルBGMをオン
+				mAudio->playCue("title");
+			}
+			// Eが押されたらゲーム終了
+			else if (mInput->isKeyDown('E'))
+			{
+				// ゲーム終了
+				exitGame();
+			}
+			// Zが押されたらステージをリトライ
+			else if (mInput->isKeyDown('Z'))
+			{
+				// 入力をクリア
+				mInput->clearAll();
+				// ゲームオーバーBGMをオフ
+				mAudio->stopCue("gameover");
+				// ステージスタート
+				roundStart();
+			}
+		}
+		else // リザルト画面が一定以上降下していなければ
+		{
+			// リザルト画面を降下
+			mResult.setY(mResult.getY() + mFrameTime * 120.0f);
+		}
+	}
+	else if (mStage.getClearedStage())	// ステージをクリア中なら
+	{
+		// ステージクリア画面が一定以上上昇したら
+		if (mStageClear.getY() < 250)
+		{
+			// Xが押されたらメニュー画面に戻る
+			if (mInput->isKeyDown('X'))
+			{
+				// メニュー画面オン
+				mMenuOn = true;
+				// 入力をクリア
+				mInput->clearAll();
+				// クリアBGMをオフ
+				mAudio->stopCue("clear");
+				// タイトルBGMをオン
+				mAudio->playCue("title");
+				// ステージクリアフラグをリセット
+				mStage.setClearedStage(false);
+			}
+			// Eが押されたらゲーム終了
+			else if (mInput->isKeyDown('E'))
+			{
+				// ゲーム終了
+				exitGame();
+			}
+			// Zが押されたらステージをリトライ
+			else if (mInput->isKeyDown('Z'))
+			{
+				// 入力をクリア
+				mInput->clearAll();
+				// クリアBGMをオフ
+				mAudio->stopCue("clear");
+				// ステージスタート
+				roundStart();
+			}
+		}
+		else // ステージクリア画面が一定以上上昇していなければ
+		{
+			// ステージクリア画面を上昇
+			mStageClear.setY(mStageClear.getY() - mFrameTime * 320.0f);
+		}
+	}
+	else // ゲーム中の場合、
+	{
+		// ラウンド開始までの時間が過ぎていなければステージ情報は更新しない
+		if (mRoundTimer > 0.0f)
+		{
+			mRoundTimer -= mFrameTime;
+			return;
+		}
+		// ステージ情報を更新
+		mStage.runStage(mFrameTime);
+		// 敵を初期化した直後なら
+		if (mStage.getInitializedEnemies())
+		{
+			// 敵のテクスチャを初期化
+			initializeEnemiesTexture();
+		}
+		// ゲームオーバーなら
+		if (mStage.getRoundOver())
+		{
+			// ゲームオーバー時の処理を実行
+			gameOver();
+		}
+		// ステージをクリアしたら
+		if (mStage.getClearedStage())
+		{
+			// ステージクリア時の処理を実行
+			clearStage();
+		}
+
+		// 勇者のアイコン画像を更新
+		mBraveIcon.update(mFrameTime);
+	}
 }
 
 //==========================================================
@@ -368,7 +434,8 @@ void TowerDiffence::roundStart()
 //==========================================================
 void TowerDiffence::ai()
 {
-	stage.ai(frameTime);
+	// ステージ内のゲームアイテムの人工知能
+	mStage.ai(mFrameTime);
 }
 
 //==========================================================
@@ -376,7 +443,8 @@ void TowerDiffence::ai()
 //==========================================================
 void TowerDiffence::collisions()
 {
-	stage.collisions();
+	// ステージ内のゲームアイテムの衝突を処理
+	mStage.collisions();
 }
 
 //==========================================================
@@ -385,237 +453,280 @@ void TowerDiffence::collisions()
 //==========================================================
 void TowerDiffence::render()
 {
-	graphics->spriteBegin();	// スプライトの描画を開始
-	if (menuOn)
+	// スプライトの描画を開始
+	mGraphics->spriteBegin();	
+	if (mMenuOn)	// メニュー画面オンの場合、
 	{
-		menu.draw();
-
+		// メニュー画面を描画
+		mMenu.draw();
+		// システムグラフィックスを描画
 		char str[128] = "PUSH Z KEY : STAGE SELECT";
 		char str2[128] = "PUSH X KEY : OPERATION DESCRIPTION";
 		char str3[128] = "PUSH E KEY : EXIT";
-		fontCK->setFontHeight(35);
-		fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-		fontCK->print(str, 273, 353);
-		fontCK->print(str2, 273, 453);
-		fontCK->print(str3, 273, 553);
-		fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
-		fontCK->print(str, 273, 350);
-		fontCK->print(str2, 273, 450);
-		fontCK->print(str3, 273, 550);
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str, 273, 353);
+		mFontCK->print(str2, 273, 453);
+		mFontCK->print(str3, 273, 553);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+		mFontCK->print(str, 273, 350);
+		mFontCK->print(str2, 273, 450);
+		mFontCK->print(str3, 273, 550);
 	}
-	else if (stageSelectOn)
+	else if (mStageSelectOn)	// ステージ選択画面オンの場合、
 	{
-		stageSelect.draw();
-		graphics->spriteEnd();		// スプライトの描画を開始
-		rect->draw();
-		graphics->spriteBegin();	// スプライトの描画を開始
+		// ステージ選択画面を描画
+		mStageSelect.draw();
+		// スプライトの描画を終了
+		mGraphics->spriteEnd();	
+		// システムグラフィックス用の四角形を描画
+		mRect->draw();
+		// スプライトの描画を開始
+		mGraphics->spriteBegin();
+		// システムグラフィックスを描画
 		char str[128] = "PUSH Z KEY : START STAGE!";
-		fontCK->setFontHeight(35);
-		fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-		fontCK->print(str, 373, 653);
-		fontCK->setFontHeight(35);
-		fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
-		fontCK->print(str, 370, 650);
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str, 373, 653);
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+		mFontCK->print(str, 370, 650);
 	}
-	else if (descriptionOn)
+	else if (mDescriptionOn)	// 操作説明画面オンの場合、
 	{
-		menu.draw();
-		description.draw();
+		// 操作説明画面をオン
+		mDescription.draw();
 	}
-	else
+	else // ステージ中の場合、
 	{
-		// マップとバリケードは初めだけ描画
-		for (int row = 0; row<mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
+		// マップタイルを描画
+		for (int row = 0; row < mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
 		{
-			stage.getMap().setY((float)(row*mapNS::TEXTURE_SIZE));       // タイルのYを設定
-			for (int col = 0; col<mapNS::MAP_WIDTH; col++)    // マップの各列を処理
+			mStage.getMap().setY((float)(row*mapNS::TEXTURE_SIZE));      // タイルのYを設定
+			for (int col = 0; col < mapNS::MAP_WIDTH; col++)			// マップの各列を処理
 			{
-				if (stage.getMap().getMapData(row, col) >= 0)            // タイルが存在する場合
+				if (mStage.getMap().getMapData(row, col) >= 0)           // タイルが存在する場合
 				{
-					stage.getMap().setCurrentFrame(stage.getMap().getMapData(row, col));                       // タイルのテクスチャを設定
-					stage.getMap().setX((float)(col*mapNS::TEXTURE_SIZE));                    // タイルのXを設定
-					if (stage.getMap().getX() > -mapNS::TEXTURE_SIZE && stage.getMap().getX() < GAME_WIDTH)     // タイルが画面上にあるかどうか
-						stage.getMap().draw();    // タイルを描画
+					mStage.getMap().setCurrentFrame(mStage.getMap().getMapData(row, col));                       // タイルのテクスチャを設定
+					mStage.getMap().setX((float)(col*mapNS::TEXTURE_SIZE));										// タイルのXを設定
+					if (mStage.getMap().getX() > -mapNS::TEXTURE_SIZE && mStage.getMap().getX() < GAME_WIDTH)     // タイルが画面上にあるかどうか
+						mStage.getMap().draw();    // タイルを描画
 				}
 			}
 		}
+		// バリケードを描画
 		for (int i = 0; i < 8; ++i)
 		{
-			stage.getBarricade(i).draw();   // オブジェクトを描画
-			stage.getBarricade(i).getHitEffect().draw();
+			mStage.getBarricade(i).draw();				// オブジェクトを描画
+			mStage.getBarricade(i).getHitEffect().draw();// バリケードに攻撃がヒットしたときのアニメーションを描画
 		}
 
-		graphics->spriteEnd();		// スプライトの描画を開始
-		rect->draw();
-		graphics->spriteBegin();	// スプライトの描画を開始
+		// スプライトの描画を終了
+		mGraphics->spriteEnd();
+		// システムグラフィックス用の四角形を描画
+		mRect->draw();
+		// スプライトの描画を開始
+		mGraphics->spriteBegin();
 
-		for (int i = 0; i < stage.getEnemyNum(); i++) {
-			float tmpX = stage.getEnemy(i).getX();
-			float tmpY = stage.getEnemy(i).getY();
-			stage.getEnemy(i).setX((float)(tmpX - stage.getEnemy(i).getWidth() * (stage.getEnemy(i).getScale() - 1) / 2.0));
-			stage.getEnemy(i).setY((float)(tmpY - stage.getEnemy(i).getHeight() * (stage.getEnemy(i).getScale() - 1) / 2.0 - 10.0));
-			switch (stage.getEnemy(i).getEnemyType())
+		// 敵を描画
+		for (int i = 0; i < mStage.getEnemyNum(); i++) {
+			// 画像に偏りがあるため、位置を修正
+			float tmpX = mStage.getEnemy(i).getX();
+			float tmpY = mStage.getEnemy(i).getY();
+			mStage.getEnemy(i).setX((float)(tmpX - mStage.getEnemy(i).getWidth() * (mStage.getEnemy(i).getScale() - 1) / 2.0));
+			mStage.getEnemy(i).setY((float)(tmpY - mStage.getEnemy(i).getHeight() * (mStage.getEnemy(i).getScale() - 1) / 2.0 - 10.0));
+			// 敵の種類に応じてカラーフィルターを設定
+			// 敵を描画
+			switch (mStage.getEnemy(i).getEnemyType())
 			{
 			case enemyNS::RED:
-				stage.getEnemy(i).draw(graphicsNS::RED);
+				mStage.getEnemy(i).draw(graphicsNS::RED);
 				break;
 			case enemyNS::BLUE:
-				stage.getEnemy(i).draw(graphicsNS::BLUE);
+				mStage.getEnemy(i).draw(graphicsNS::BLUE);
 				break;
 			default:
-				stage.getEnemy(i).draw(graphicsNS::WHITE);
+				mStage.getEnemy(i).draw(graphicsNS::WHITE);
 				break;
 			}
-			stage.getEnemy(i).getAttackCollision().draw();
-			stage.getEnemy(i).setX(tmpX);
-			stage.getEnemy(i).setY(tmpY);
+			// 敵の攻撃判定用のエンティティを描画（デバッグ用に色を付けて表示できるようにしている）
+			mStage.getEnemy(i).getAttackCollision().draw();
+			// 位置をもとに戻す
+			mStage.getEnemy(i).setX(tmpX);
+			mStage.getEnemy(i).setY(tmpY);
 		}
-		braveHpText.draw();
-		braveMpText.draw();
-		castleHpText.draw();
-		braveIcon.draw();
-		castleIcon.draw();
-		stage.getCastle().draw();
-		stage.getBrave().getFire().draw();
-		float tmpX = stage.getBrave().getX();
-		float tmpY = stage.getBrave().getY();
-		stage.getBrave().setX((float)(tmpX - stage.getBrave().getWidth() * (stage.getBrave().getScale() - 1) / 2.0));
-		stage.getBrave().setY((float)(tmpY - stage.getBrave().getHeight() * (stage.getBrave().getScale() - 1) / 2.0 - 10));
-		stage.getBrave().draw(graphicsNS::WHITE);
-		stage.getBrave().setX(tmpX);
-		stage.getBrave().setY(tmpY);
-		stage.getBrave().getBraveAttackCollision().draw();
-		stage.getBrave().getBraveAttackCollision().getAttackEffect().draw();
-		braveHealthBar.set(stage.getBrave().getHealth());
-		braveMpBar.set((float)stage.getBrave().getMP());
-		castleHealthBar.set(stage.getCastle().getHealth());
-		braveHealthBar.draw(graphicsNS::FILTER);	// 体力バーを描画
-		braveMpBar.draw(graphicsNS::FILTER);
-		castleHealthBar.draw(graphicsNS::FILTER);
-		// shadow
+		// プレイヤーのアイコンを描画
+		mBraveIcon.draw();
+		// 城のアイコンを描画
+		mCastleIcon.draw();
+		// 城を描画
+		mStage.getCastle().draw();
+		// プレイヤーの炎を描画
+		mStage.getBrave().getFire().draw();
+		// プレイヤーを描画
+		// 画像に偏りがあるため、位置を修正
+		float tmpX = mStage.getBrave().getX();
+		float tmpY = mStage.getBrave().getY();
+		mStage.getBrave().setX((float)(tmpX - mStage.getBrave().getWidth() * (mStage.getBrave().getScale() - 1) / 2.0));
+		mStage.getBrave().setY((float)(tmpY - mStage.getBrave().getHeight() * (mStage.getBrave().getScale() - 1) / 2.0 - 10));
+		mStage.getBrave().draw(graphicsNS::WHITE);
+		mStage.getBrave().setX(tmpX);
+		mStage.getBrave().setY(tmpY);
+		// プレイヤーの攻撃判定用のエンティティを描画（デバッグ用に色を付けて表示できるようにしている）
+		mStage.getBrave().getBraveAttackCollision().draw();
+		// プレイヤーの攻撃の衝撃派を描画
+		mStage.getBrave().getBraveAttackCollision().getAttackEffect().draw();
+		// プレイヤーのHPを棒グラフで描画
+		mBraveHealthBar.set(mStage.getBrave().getHealth());
+		mBraveHealthBar.draw(graphicsNS::FILTER);
+		// プレイヤーのMPを棒グラフで描画
+		mBraveMpBar.set((float)mStage.getBrave().getMP());
+		mBraveMpBar.draw(graphicsNS::FILTER);
+		// 城のHPを棒グラフで描画
+		mCastleHealthBar.set(mStage.getCastle().getHealth());
+		mCastleHealthBar.draw(graphicsNS::FILTER);
+
+		// システムグラフィックスを描画
+		// 勇者用のHPテキストを描画
+		mBraveHpText.draw();
+		// 勇者用のMPテキストを描画
+		mBraveMpText.draw();
+		// 城用のHPテキストを描画
+		mCastleHpText.draw();
+		// システムテキストを描画
 		char str[128] = "TIME-";
 		char time[5] = { 0 };
-		sprintf_s(time, "%04d", (int)stage.getRemainingTime());
+		sprintf_s(time, "%04d", (int)mStage.getRemainingTime());
 		strcat_s(str, time);
-		fontCK->setFontHeight(40);
-		fontCK->setFontColor(SETCOLOR_ARGB(128, 128, 128, 128));  // shadow grey
-		fontCK->print(str, 512, 10);
-		fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
-		fontCK->print(str, 505, 7);
-		fontCK->setFontHeight(14);
-		if (roundTimer > 0.0f)
+		mFontCK->setFontHeight(40);
+		mFontCK->setFontColor(SETCOLOR_ARGB(128, 128, 128, 128));  // shadow grey
+		mFontCK->print(str, 512, 10);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+		mFontCK->print(str, 505, 7);
+		mFontCK->setFontHeight(14);
+		if (mRoundTimer > 0.0f)
 		{
-			string str1 = "STAGE" + to_string(stage.getStageNum() + 1);
+			// ラウンドが開始するまでは、「STAGE START!」と一定時間表示させる
+			string str1 = "STAGE" + to_string(mStage.getStageNum() + 1);
 			char str2[128] = "START!";
 			float fontSize = 60.0f;
 			float fastSpeed = 900.0f;
 			float secondSpeed = 50.0f;
 			float initX = -fontSize * 6.0f;
-			fontCK->setFontHeight((UINT)fontSize);
+			mFontCK->setFontHeight((UINT)fontSize);
 			float T = (GAME_WIDTH - initX * 2.0f - fontSize * 6) / (2.0f * fastSpeed);
-			if (roundTimer > towerDiffenceNS::ROUND_TIME - T)
+			if (mRoundTimer > towerDiffenceNS::ROUND_TIME - T)
 			{
-				fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed), 303);
-				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed), 403);
-				fontCK->setFontColor(graphicsNS::BLUE);
-				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed), 300);
-				fontCK->setFontColor(graphicsNS::RED);
-				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer) * fastSpeed), 400);
+				mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer) * fastSpeed), 303);
+				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer) * fastSpeed), 403);
+				mFontCK->setFontColor(graphicsNS::BLUE);
+				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer) * fastSpeed), 300);
+				mFontCK->setFontColor(graphicsNS::RED);
+				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer) * fastSpeed), 400);
 			}
-			else if (roundTimer > towerDiffenceNS::ROUND_TIME - T * 2.0f)
+			else if (mRoundTimer > towerDiffenceNS::ROUND_TIME - T * 2.0f)
 			{
-				fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T), 303);
-				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T), 403);
-				fontCK->setFontColor(graphicsNS::BLUE);
-				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T), 300);
-				fontCK->setFontColor(graphicsNS::RED);
-				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T) * secondSpeed + fastSpeed * T), 400);
+				mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 303);
+				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 403);
+				mFontCK->setFontColor(graphicsNS::BLUE);
+				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 300);
+				mFontCK->setFontColor(graphicsNS::RED);
+				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 400);
 			}
 			else
 			{
-				fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 303);
-				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 403);
-				fontCK->setFontColor(graphicsNS::BLUE);
-				fontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 300);
-				fontCK->setFontColor(graphicsNS::RED);
-				fontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - roundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 400);
+				mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 303);
+				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 403);
+				mFontCK->setFontColor(graphicsNS::BLUE);
+				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 300);
+				mFontCK->setFontColor(graphicsNS::RED);
+				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 400);
 			}
 		}
 	}
-	if (stage.getRoundOver())
+
+	// ゲームオーバー画面とステージクリア画面はゲーム画面の一部に表示されるため、ゲーム画面と重ねて表示
+	if (mStage.getRoundOver())	// ゲームオーバーの場合、
 	{
-		result.draw();
-		if (result.getY() > 50)
+		// ゲームオーバー画面を描画
+		mResult.draw();
+		// リザルト画面が一定以上降下したら
+		if (mResult.getY() > 50)
 		{
+			// システムグラフィックスのテキストを表示
 			char str[128] = "CONTINUE?";
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(result.getHeight() + result.getY()));
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(result.getHeight() + result.getY() - 3));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mResult.getHeight() + mResult.getY()));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mResult.getHeight() + mResult.getY() - 3));
 			char str2[128] = "PUSH Z KEY : RETRY STAGE";
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() + 55));
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() - 3 + 55));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() + 55));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() - 3 + 55));
 			char str3[128] = "PUSH X KEY : RETURN TITLE";
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() + 55 * 2));
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() - 3 + 55 * 2));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() + 55 * 2));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() - 3 + 55 * 2));
 			char str4[128] = "PUSH E KEY : EXIT";
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() + 55 * 3));
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(result.getHeight() + result.getY() - 3 + 55 * 3));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() + 55 * 3));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() - 3 + 55 * 3));
 		}
 	}
-	else if (stage.getClearedStage())
+	else if (mStage.getClearedStage())	// ステージクリアの場合、
 	{
-		stageClear.draw();
-		if (stageClear.getY() < 250)
+		// ステージクリア画面を描画
+		mStageClear.draw();
+		// ステージクリア画面が一定以上上昇したら
+		if (mStageClear.getY() < 250)
 		{
+			// システムグラフィックスのテキストを表示
 			char str[128] = "CONTINUE?";
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(stageClear.getHeight() + stageClear.getY()));
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(stageClear.getHeight() + stageClear.getY() - 3));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mStageClear.getHeight() + mStageClear.getY()));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3));
 			char str2[128] = "PUSH Z KEY : RETRY STAGE";
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() + 55));
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() - 3 + 55));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() + 55));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3 + 55));
 			char str3[128] = "PUSH X KEY : RETURN TITLE";
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() + 55 * 2));
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() - 3 + 55 * 2));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() + 55 * 2));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3 + 55 * 2));
 			char str4[128] = "PUSH E KEY : EXIT";
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			fontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() + 55 * 3));
-			fontCK->setFontHeight(35);
-			fontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			fontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(stageClear.getHeight() + stageClear.getY() - 3 + 55 * 3));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() + 55 * 3));
+			mFontCK->setFontHeight(35);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+			mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3 + 55 * 3));
 		}
 	}
-	graphics->spriteEnd();		// スプライトの描画を開始
+	// スプライトの描画を開始
+	mGraphics->spriteEnd();
 }
 
 //==========================================================
@@ -625,12 +736,12 @@ void TowerDiffence::render()
 //==========================================================
 void TowerDiffence::releaseAll()
 {
-	SAFE_ON_LOST_DEVICE(fontCK);
-	menuTexture.onLostDevice();
-	stageSelectTexture.onLostDevice();
-	braveTexture.onLostDevice();
-	dashboardTextures.onLostDevice();
-	safeOnLostDevice(rect);
+	SAFE_ON_LOST_DEVICE(mFontCK);
+	mMenuTexture.onLostDevice();
+	mStageSelectTexture.onLostDevice();
+	mBraveTexture.onLostDevice();
+	mDashboardTextures.onLostDevice();
+	safeOnLostDevice(mRect);
 	Game::releaseAll();
 	return;
 }
@@ -641,12 +752,12 @@ void TowerDiffence::releaseAll()
 //==========================================================
 void TowerDiffence::resetAll()
 {
-	SAFE_ON_RESET_DEVICE(fontCK);
-	dashboardTextures.onLostDevice();
-	braveTexture.onResetDevice();
-	menuTexture.onResetDevice();
-	stageSelectTexture.onResetDevice();
-	safeOnResetDevice(rect);
+	SAFE_ON_RESET_DEVICE(mFontCK);
+	mDashboardTextures.onLostDevice();
+	mBraveTexture.onResetDevice();
+	mMenuTexture.onResetDevice();
+	mStageSelectTexture.onResetDevice();
+	safeOnResetDevice(mRect);
 	Game::resetAll();
 	return;
 }
@@ -654,87 +765,88 @@ void TowerDiffence::resetAll()
 
 //=============================================================================
 // コンソールコマンドを処理
+// デバッグ用
 //=============================================================================
 void TowerDiffence::consoleCommand()
 {
-	command = console->getCommand();    // コンソールからのコマンドを取得
-	if (command == "")                  // コマンドがない場合
+	mCommand = mConsole->getCommand();    // コンソールからのコマンドを取得
+	if (mCommand == "")                  // コマンドがない場合
 		return;
 
-	if (command == "help")              // 「help」コマンドの場合
+	if (mCommand == "help")              // 「help」コマンドの場合
 	{
-		console->print("Console Commands:");
-		console->print("fps - toggle display of frames per second");
-		console->print("mapobj - display map object data");
-		console->print("mapcol - display map collision data");
-		console->print("mapdata - display map data");
+		mConsole->print("Console Commands:");
+		mConsole->print("fps - toggle display of frames per second");
+		mConsole->print("mapobj - display map object data");
+		mConsole->print("mapcol - display map collision data");
+		mConsole->print("mapdata - display map data");
 		return;
 	}
-	if (command == "fps")
+	if (mCommand == "fps")
 	{
-		fpsOn = !fpsOn;                 // フレームレートの表示を切り替える
-		if (fpsOn)
-			console->print("fps On");
+		mFpsOn = !mFpsOn;                 // フレームレートの表示を切り替える
+		if (mFpsOn)
+			mConsole->print("fps On");
 		else
-			console->print("fps Off");
+			mConsole->print("fps Off");
 	}
-	if (command == "mapobj")
+	if (mCommand == "mapobj")
 	{
 		for (int i = 0; i < mapNS::MAP_HEIGHT; ++i)
 		{
 			string str = "";
 			for (int j = 0; j < mapNS::MAP_WIDTH; ++j)
 			{
-				if (stage.getMap().getMapObj(i, j) >= 0)
+				if (mStage.getMap().getMapObj(i, j) >= 0)
 				{
-					str += " " + to_string(stage.getMap().getMapObj(i, j)) + ",";
+					str += " " + to_string(mStage.getMap().getMapObj(i, j)) + ",";
 				}
 				else
 				{
-					str += to_string(stage.getMap().getMapObj(i, j)) + ",";
+					str += to_string(mStage.getMap().getMapObj(i, j)) + ",";
 				}
 			}
-			console->print(str);
+			mConsole->print(str);
 		}
 	}
-	if (command == "mapcol")
+	if (mCommand == "mapcol")
 	{
 		for (int i = 0; i < mapNS::MAP_HEIGHT; ++i)
 		{
 			string str = "";
 			for (int j = 0; j < mapNS::MAP_WIDTH; ++j)
 			{
-				if (stage.getMap().getMapCol(i, j) >= 0)
+				if (mStage.getMap().getMapCol(i, j) >= 0)
 				{
-					str += " " + to_string(stage.getMap().getMapCol(i, j)) + ",";
+					str += " " + to_string(mStage.getMap().getMapCol(i, j)) + ",";
 				}
 				else
 				{
-					str += to_string(stage.getMap().getMapCol(i, j)) + ",";
+					str += to_string(mStage.getMap().getMapCol(i, j)) + ",";
 				}
 			}
-			console->print(str);
+			mConsole->print(str);
 		}
 	}
-	if (command == "barricade")
+	if (mCommand == "barricade")
 	{
 		for (int i = 0; i < 8; ++i)
 		{
-			console->print(to_string(stage.getBarricade(i).getActive()));
+			mConsole->print(to_string(mStage.getBarricade(i).getActive()));
 		}
 	}
-	if (command == "enemystate")
+	if (mCommand == "enemystate")
 	{
-		for (int i = 0; i < stage.getEnemyNum(); ++i)
+		for (int i = 0; i < mStage.getEnemyNum(); ++i)
 		{
-			console->print(to_string(stage.getEnemy(i).getState()));
+			mConsole->print(to_string(mStage.getEnemy(i).getState()));
 		}
 	}
-	if (command == "enemytile")
+	if (mCommand == "enemytile")
 	{
-		for (int i = 0; i < stage.getEnemyNum(); ++i)
+		for (int i = 0; i < mStage.getEnemyNum(); ++i)
 		{
-			console->print(to_string(stage.getEnemy(i).getTileX()) + "," + to_string(stage.getEnemy(i).getTileY()));
+			mConsole->print(to_string(mStage.getEnemy(i).getTileX()) + "," + to_string(mStage.getEnemy(i).getTileY()));
 		}
 	}
 }
@@ -744,8 +856,10 @@ void TowerDiffence::consoleCommand()
 //==========================================================
 void TowerDiffence::gameOver()
 {
-	audio->stopCue("stage");
-	audio->playCue("gameover");
+	// ステージ中のBGMをオフ
+	mAudio->stopCue("stage");
+	// ゲームオーバーBGMをオン
+	mAudio->playCue("gameover");
 }
 
 //==========================================================
@@ -753,8 +867,10 @@ void TowerDiffence::gameOver()
 //==========================================================
 void TowerDiffence::clearStage()
 {
-	audio->stopCue("stage");
-	audio->playCue("clear");
+	// ステージ中のBGMをオフ
+	mAudio->stopCue("stage");
+	// ステージクリアBGMをオン
+	mAudio->playCue("clear");
 }
 
 //==========================================================
@@ -762,21 +878,24 @@ void TowerDiffence::clearStage()
 //==========================================================
 void TowerDiffence::initializeEnemiesTexture()
 {
-	for (int i = 0; i < stage.getEnemyNum(); i++) {
-		if (typeid(stage.getEnemy(i)) == typeid(Enemy))
+	// それぞれの敵について
+	for (int i = 0; i < mStage.getEnemyNum(); i++) {
+		// 雑魚敵か中ボスかで初期化を分岐
+		if (typeid(mStage.getEnemy(i)) == typeid(Enemy))
 		{
-			if (!stage.getEnemy(i).initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &enemyTexture))
+			if (!mStage.getEnemy(i).initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &mEnemyTexture))
 				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy"));
 		}
-		else if (typeid(stage.getEnemy(i)) == typeid(MidBoss))
+		else if (typeid(mStage.getEnemy(i)) == typeid(MidBoss))
 		{
-			if (!stage.getEnemy(i).initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &midBossTexture))
+			if (!mStage.getEnemy(i).initialize(this, enemyNS::WIDTH, enemyNS::HEIGHT, enemyNS::TEXTURE_COLS, &mMidBossTexture))
 				throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing midBoss"));
 		}
 
-		// 雑魚敵の当たり判定用
-		if (!stage.getEnemy(i).getAttackCollision().initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &attackCollisionTexture))
+		// 雑魚敵の当たり判定用エンティティを初期化
+		if (!mStage.getEnemy(i).getAttackCollision().initialize(this, enemyCollisionNS::ATTACK_WIDTH, enemyCollisionNS::ATTACK_HEIGHT, 0, &mAttackCollisionTexture))
 			throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing enemy attack collision"));
 	}
-	stage.setInitializedEnemies(false);
+	// 敵の初期化フラグをオフ
+	mStage.setInitializedEnemies(false);
 }

@@ -26,7 +26,7 @@ namespace enemyCollisionNS
 class EnemyCollision : public Entity
 {
 private:
-	float collisionTimer;				// 攻撃の当たり判定が出ている時間を計測するタイマー
+	float mCollisionTimer;				// 攻撃の当たり判定が出ている時間を計測するタイマー
 public:
 	// コンストラクタ
 	EnemyCollision();

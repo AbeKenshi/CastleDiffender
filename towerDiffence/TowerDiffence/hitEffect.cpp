@@ -13,18 +13,18 @@
 //==========================================================
 HitEffect::HitEffect() : Image()
 {
-	visible = false;								// 非表示がデフォルト
-	spriteData.width = hitEffectNS::WIDTH;			// １つの画像のサイズ
-	spriteData.height = hitEffectNS::HEIGHT;
-	spriteData.rect.bottom = hitEffectNS::HEIGHT;	// 画像内の選択する部分
-	spriteData.rect.right = hitEffectNS::WIDTH;
-	cols = hitEffectNS::TEXTURE_COLS;				// テクスチャの列数
-	frameDelay = hitEffectNS::ANIMATION_DELAY;		// アニメーションの各フレームの間隔
-	startFrame = hitEffectNS::START_FRAME;			// アニメーションの最初のフレーム
-	endFrame = hitEffectNS::END_FRAME;				// アニメーションの最後のフレーム
-	currentFrame = startFrame;						// 現在のフレームはアニメーションの最初のフレームに設定
+	mVisible = false;								// 非表示がデフォルト
+	mSpriteData.width = hitEffectNS::WIDTH;			// １つの画像のサイズ
+	mSpriteData.height = hitEffectNS::HEIGHT;
+	mSpriteData.rect.bottom = hitEffectNS::HEIGHT;	// 画像内の選択する部分
+	mSpriteData.rect.right = hitEffectNS::WIDTH;
+	mCols = hitEffectNS::TEXTURE_COLS;				// テクスチャの列数
+	mFrameDelay = hitEffectNS::ANIMATION_DELAY;		// アニメーションの各フレームの間隔
+	mStartFrame = hitEffectNS::START_FRAME;			// アニメーションの最初のフレーム
+	mEndFrame = hitEffectNS::END_FRAME;				// アニメーションの最後のフレーム
+	mCurrentFrame = mStartFrame;						// 現在のフレームはアニメーションの最初のフレームに設定
 	setScale(0.5);									// スケール
-	loop = false;									// アニメーションはループさせない
+	mLoop = false;									// アニメーションはループさせない
 }
 
 //==========================================================
@@ -35,13 +35,13 @@ HitEffect::HitEffect() : Image()
 void HitEffect::update(float frameTime)
 {
 	// 非表示時には何もしない
-	if (visible == false)
+	if (mVisible == false)
 		return;
 	// 画像を更新
 	Image::update(frameTime);
 	// アニメーションが終了した場合、非表示にする
-	if (animComplete)
-		visible = false;
+	if (mAnimComplete)
+		mVisible = false;
 }
 
 //==========================================================
@@ -51,8 +51,8 @@ void HitEffect::update(float frameTime)
 void HitEffect::hit(float x, float y)
 {
 	// 指定された座標の四方にランダムに表示
-	spriteData.x = x - spriteData.width * spriteData.scale / 2.0f + (rand() % 2) * 20 - 10;
-	spriteData.y = y - spriteData.height * spriteData.scale / 2.0f + (rand() % 2) * 20 - 10;
-	visible = true;
-	setCurrentFrame(startFrame);
+	mSpriteData.x = x - mSpriteData.width * mSpriteData.scale / 2.0f + (rand() % 2) * 20 - 10;
+	mSpriteData.y = y - mSpriteData.height * mSpriteData.scale / 2.0f + (rand() % 2) * 20 - 10;
+	mVisible = true;
+	setCurrentFrame(mStartFrame);
 }

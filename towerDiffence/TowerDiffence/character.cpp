@@ -14,13 +14,13 @@
 Character::Character() : Entity()
 {
 	// 初期の方向は右
-	direction = characterNS::RIGHT;
+	mDirection = characterNS::RIGHT;
 	// Boxの衝突判定を使用
-	collisionType = entityNS::BOX;
+	mCollisionType = entityNS::BOX;
 	// 攻撃判定のコリジョンは最初はなし
-	attackCollisionFlag = false;
+	mAttackCollisionFlag = false;
 	// 状態は何もしない状態からスタート
-	state = characterNS::STATE::MOVE;
+	mState = characterNS::STATE::MOVE;
 }
 
 //==========================================================
@@ -29,14 +29,14 @@ Character::Character() : Entity()
 void Character::reset()
 {
 	// 攻撃アニメーション終了後に戻るべきアニメーションフレーム保存用
-	oldStartFrame = startFrame;
-	oldEndFrame = endFrame;
+	mOldStartFrame = mStartFrame;
+	mOldEndFrame = mEndFrame;
 	// 初期の方向は右
-	direction = characterNS::RIGHT;
+	mDirection = characterNS::RIGHT;
 	// 攻撃判定のコリジョンはなしでリセット
-	attackCollisionFlag = false;
+	mAttackCollisionFlag = false;
 	// 状態は何もしない状態からスタート
-	state = characterNS::STATE::MOVE;
+	mState = characterNS::STATE::MOVE;
 	// エンティティをリセット
 	Entity::reset();
 }
@@ -66,9 +66,9 @@ void Character::updateAttacking(float frameTime)
 void Character::dead()
 {
 	// キャラクターを非アクティブにする
-	active = false;
-	visible = false;
-	health = 0;
+	mActive = false;
+	mVisible = false;
+	mHealth = 0;
 }
 
 //==========================================================
@@ -92,7 +92,7 @@ bool Character::checkCanMove(float x, float y)
 		map_y = mapNS::MAP_HEIGHT - 1;
 
 	// 進もうとするマップタイルに障害物があった場合、
-	if (map->getMapCol(map_y, map_x) == 1 || map->getMapCol(map_y, map_x) == 2)
+	if (mMap->getMapCol(map_y, map_x) == 1 || mMap->getMapCol(map_y, map_x) == 2)
 	{
 		// 移動不可
 		return false;
@@ -115,45 +115,45 @@ void Character::setDirection(characterNS::DIRECTION dir)
 	{
 	case characterNS::LEFT:
 		// 左方向を向いていなければ左方向にアニメーションをリセット
-		if (direction != characterNS::DIRECTION::LEFT)
+		if (mDirection != characterNS::DIRECTION::LEFT)
 		{
-			direction = characterNS::DIRECTION::LEFT;
-			startFrame = moveLeftStartFrame;
-			currentFrame = endFrame - currentFrame + moveLeftStartFrame;
-			endFrame = moveLeftEndFrame;
+			mDirection = characterNS::DIRECTION::LEFT;
+			mStartFrame = mMoveLeftStartFrame;
+			mCurrentFrame = mEndFrame - mCurrentFrame + mMoveLeftStartFrame;
+			mEndFrame = mMoveLeftEndFrame;
 			setRect();
 		}
 		break;
 	case characterNS::RIGHT:
 		// 右方向を向いていなければ右方向にアニメーションをリセット
-		if (direction != characterNS::DIRECTION::RIGHT)
+		if (mDirection != characterNS::DIRECTION::RIGHT)
 		{
-			direction = characterNS::DIRECTION::RIGHT;
-			startFrame = moveRightStartFrame;
-			currentFrame = endFrame - currentFrame + moveRightStartFrame;
-			endFrame = moveRightEndFrame;
+			mDirection = characterNS::DIRECTION::RIGHT;
+			mStartFrame = mMoveRightStartFrame;
+			mCurrentFrame = mEndFrame - mCurrentFrame + mMoveRightStartFrame;
+			mEndFrame = mMoveRightEndFrame;
 			setRect();
 		}
 		break;
 	case characterNS::UP:
 		// 上方向を向いていなければ上方向にアニメーションをリセット
-		if (direction != characterNS::DIRECTION::UP)
+		if (mDirection != characterNS::DIRECTION::UP)
 		{
-			direction = characterNS::DIRECTION::UP;
-			startFrame = moveUpStartFrame;
-			currentFrame = endFrame - currentFrame + moveUpStartFrame;
-			endFrame = moveUpEndFrame;
+			mDirection = characterNS::DIRECTION::UP;
+			mStartFrame = mMoveUpStartFrame;
+			mCurrentFrame = mEndFrame - mCurrentFrame + mMoveUpStartFrame;
+			mEndFrame = mMoveUpEndFrame;
 			setRect();
 		}
 		break;
 	case characterNS::DOWN:
 		// 下方向を向いていなければ下方向にアニメーションをリセット
-		if (direction != characterNS::DIRECTION::DOWN)
+		if (mDirection != characterNS::DIRECTION::DOWN)
 		{
-			direction = characterNS::DIRECTION::DOWN;
-			startFrame = moveDownStartFrame;
-			currentFrame = endFrame - currentFrame + moveDownStartFrame;
-			endFrame = moveDownEndFrame;
+			mDirection = characterNS::DIRECTION::DOWN;
+			mStartFrame = mMoveDownStartFrame;
+			mCurrentFrame = mEndFrame - mCurrentFrame + mMoveDownStartFrame;
+			mEndFrame = mMoveDownEndFrame;
 			setRect();
 		}
 		break;
@@ -168,13 +168,13 @@ void Character::setDirection(characterNS::DIRECTION dir)
 void Character::changeStateToMove()
 {
 	// 状態は移動中へと遷移
-	state = characterNS::MOVE;
+	mState = characterNS::MOVE;
 	// アニメーションフレームの遷移は水平方向
-	mode = imageNS::HORIZONTAL;
+	mMode = imageNS::HORIZONTAL;
 	// 移動中はアニメーションはループさせる
-	loop = true;
+	mLoop = true;
 	// アニメーションを向いている方向に合わせてセット
-	startFrame = oldStartFrame;
-	endFrame = oldEndFrame;
-	setCurrentFrame(startFrame);
+	mStartFrame = mOldStartFrame;
+	mEndFrame = mOldEndFrame;
+	setCurrentFrame(mStartFrame);
 }

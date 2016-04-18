@@ -19,13 +19,13 @@ class TextureManager
 {
 private:
 	// TextureManager プロパティ
-	std::vector<UINT>       width;      // テクスチャの幅（ピクセル単位）
-	std::vector<UINT>       height;     // テクスチャの高さ（ピクセル単位）
-	std::vector<LP_TEXTURE> texture;    // テクスチャへのポインタ
-	std::vector<std::string> fileNames; // テクスチャのファイル名
-	Graphics *graphics;		// graphicsへのポインタ
-	bool initialized;		// 初期化に成功した場合、true
-	HRESULT hr;				// 標準の戻り値
+	std::vector<UINT>       mWidth;			// テクスチャの幅（ピクセル単位）
+	std::vector<UINT>       mHeight;		// テクスチャの高さ（ピクセル単位）
+	std::vector<LP_TEXTURE> mTexture;		// テクスチャへのポインタ
+	std::vector<std::string> mFileNames;	// テクスチャのファイル名
+	Graphics *mGraphics;					// graphicsへのポインタ
+	bool mInitialized;						// 初期化に成功した場合、true
+	HRESULT mHr;							// 標準の戻り値
 public:
 	// コンストラクタ
 	TextureManager();
@@ -35,25 +35,25 @@ public:
 
 	// テクスチャへのポインタを戻す
 	LP_TEXTURE getTexture(UINT n = 0) const {
-		if (n >= texture.size())
+		if (n >= mTexture.size())
 			return NULL;
-		return texture[n];
+		return mTexture[n];
 	}
 
 	// テクスチャの幅を戻す
 	UINT getWidth(UINT n = 0) const
 	{
-		if (n >= texture.size())
+		if (n >= mTexture.size())
 			return 0;
-		return width[n];
+		return mWidth[n];
 	}
 
 	// テクスチャの高さを戻す
 	UINT getHeight(UINT n = 0) const
 	{
-		if (n >= texture.size())
+		if (n >= mTexture.size())
 			return 0;
-		return height[n];
+		return mHeight[n];
 	}
 
 	// テクスチャファイルをディスクから読み込む

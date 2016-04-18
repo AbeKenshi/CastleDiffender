@@ -47,32 +47,32 @@ namespace messageDialogNS
 class MessageDialog
 {
 protected:
-    Graphics    *graphics;              // グラフィックシステム
-    Input       *input;                 // 入力システム
-    TextDX      dxFont;                 // DirectXフォント
-    float       x,y;                    // 画面の位置
-    UINT        height;                 // ダイアログの高さ、print()で計算
-    UINT        width;                  // ダイアログの幅
-    std::string text;                   // ダイアログテキスト
-    RECT        textRect;               // テキストの矩形
-    RECT        buttonRect;             // ボタンの矩形
-    RECT        button2Rect;            // ボタン2の矩形
-    COLOR_ARGB  fontColor;              // フォントの色(a,r,g,b)
-    COLOR_ARGB  borderColor;            // 枠の色(a,r,g,b)
-    COLOR_ARGB  backColor;              // 背景の色(a,r,g,b)
-    COLOR_ARGB  buttonColor;            // ボタンの色
-    COLOR_ARGB  buttonFontColor;        // ボタンフォントの色
-    VertexC vtx[4];                     // 頂点データ
-    LP_VERTEXBUFFER dialogVerts;        // ダイアログの頂点バッファ
-    LP_VERTEXBUFFER borderVerts;        // 枠の頂点バッファ
-    LP_VERTEXBUFFER buttonVerts;        // ボタンの頂点バッファ
-    LP_VERTEXBUFFER button2Verts;       // ボタン2の頂点バッファ
-    int buttonClicked;                  // どのボタンがクリックされたか（1または2）
-    int buttonType;                     // 0 = OK/Cancel, 1 = Yes/No
-    bool    initialized;                // 正常に初期化された場合、true
-    bool    visible;                    // trueの場合は表示する
-    HWND    hwnd;                       // ウィンドウへのハンドル
-    float   screenRatioX, screenRatioY;
+    Graphics    *mGraphics;              // グラフィックシステム
+    Input       *mInput;                 // 入力システム
+    TextDX      mDxFont;                 // DirectXフォント
+    float       mX,mY;                   // 画面の位置
+    UINT        mHeight;                 // ダイアログの高さ、print()で計算
+    UINT        mWidth;                  // ダイアログの幅
+    std::string mText;                   // ダイアログテキスト
+    RECT        mTextRect;               // テキストの矩形
+    RECT        mButtonRect;             // ボタンの矩形
+    RECT        mButton2Rect;            // ボタン2の矩形
+    COLOR_ARGB  mFontColor;              // フォントの色(a,r,g,b)
+    COLOR_ARGB  mBorderColor;            // 枠の色(a,r,g,b)
+    COLOR_ARGB  mBackColor;              // 背景の色(a,r,g,b)
+    COLOR_ARGB  mButtonColor;            // ボタンの色
+    COLOR_ARGB  mButtonFontColor;        // ボタンフォントの色
+    VertexC mVtx[4];                     // 頂点データ
+    LP_VERTEXBUFFER mDialogVerts;        // ダイアログの頂点バッファ
+    LP_VERTEXBUFFER mBorderVerts;        // 枠の頂点バッファ
+    LP_VERTEXBUFFER mButtonVerts;        // ボタンの頂点バッファ
+    LP_VERTEXBUFFER mButton2Verts;       // ボタン2の頂点バッファ
+    int mButtonClicked;                  // どのボタンがクリックされたか（1または2）
+    int mButtonType;                     // 0 = OK/Cancel, 1 = Yes/No
+    bool    mInitialized;                // 正常に初期化された場合、true
+    bool    mVisible;                    // trueの場合は表示する
+    HWND    mHwnd;                       // ウィンドウへのハンドル
+    float   mScreenRatioX, mScreenRatioY;
 
 public:
 	// コンストラクタ
@@ -95,34 +95,34 @@ public:
 	// クリックされたボタンを戻す
 	// 0 = ボタンはクリックされていない
 	// 1は左のボタン、2は右のボタン
-    int getButtonClicked()  {return buttonClicked;}
+    int getButtonClicked()  {return mButtonClicked;}
 
 	// 表示/非表示の状態を戻す
-    bool getVisible() {return visible;}
+    bool getVisible() {return mVisible;}
 
 	// フォントの色を設定
-    void setFontColor(COLOR_ARGB fc)    {fontColor = fc;}
+    void setFontColor(COLOR_ARGB fc)    {mFontColor = fc;}
 
 	// 枠の色を設定
-    void setBorderColor(COLOR_ARGB bc)  {borderColor = bc;}
+    void setBorderColor(COLOR_ARGB bc)  {mBorderColor = bc;}
 
 	// 背景の色を設定
-    void setBackColor(COLOR_ARGB bc)    {backColor = bc;}
+    void setBackColor(COLOR_ARGB bc)    {mBackColor = bc;}
 
 	// ボタンの色を設定
-    void setButtonColor(COLOR_ARGB bc)  {buttonColor = bc;}
+    void setButtonColor(COLOR_ARGB bc)  {mButtonColor = bc;}
 
 	// ボタンフォントの色を設定
-    void setButtonFontColor(COLOR_ARGB bfc) {buttonFontColor = bfc;}
+    void setButtonFontColor(COLOR_ARGB bfc) {mButtonFontColor = bfc;}
 
 	// 表示/非表示を設定
-    void setVisible(bool v) {visible = v;}
+    void setVisible(bool v) {mVisible = v;}
 
     // ボタンタイプを設定（0 = OK/CANCEL, 1 = YES/NO）
     void setButtonType(UINT t)
     {
         if(t < messageDialogNS::MAX_TYPE)
-            buttonType = t;
+            mButtonType = t;
     }
 
 	// テキストstrをMessageDialogに表示

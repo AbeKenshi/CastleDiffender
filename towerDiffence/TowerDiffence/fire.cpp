@@ -13,21 +13,21 @@
 //==========================================================
 Fire::Fire() : Entity()
 {
-	active = false;								// 炎はアクティブでない状態から開始
-	visible = false;
-	spriteData.width = fireNS::WIDTH;			// １つの画像のサイズ
-	spriteData.height = fireNS::HEIGHT;
-	spriteData.rect.bottom = fireNS::HEIGHT;	// 画像内の選択する部分
-	spriteData.rect.right = fireNS::WIDTH;
-	cols = fireNS::TEXTURE_COLS;				// テクスチャの列数
-	frameDelay = fireNS::ANIMATION_DELAY;		// アニメーションの各フレームの間隔
-	startFrame = fireNS::START_FRAME;			// ファイアーアニメーションの最初のフレーム
-	endFrame = fireNS::END_FRAME;				// ファイアーアニメーションの最後のフレーム
-	currentFrame = startFrame;					// 現在のフレームはアニメーションの最初のフレームに設定
-	collisionType = entityNS::CIRCLE;			// 円の衝突判定
-	radius = fireNS::COLLISION_RADIUS;			// 円の衝突判定用
-	fireTimer = 0.0f;							// 炎が発射可能になるまでの残り時間
-	mode = imageNS::VERTICAL;					// アニメーションのモード
+	mActive = false;								// 炎はアクティブでない状態から開始
+	mVisible = false;
+	mSpriteData.width = fireNS::WIDTH;			// １つの画像のサイズ
+	mSpriteData.height = fireNS::HEIGHT;
+	mSpriteData.rect.bottom = fireNS::HEIGHT;	// 画像内の選択する部分
+	mSpriteData.rect.right = fireNS::WIDTH;
+	mCols = fireNS::TEXTURE_COLS;				// テクスチャの列数
+	mFrameDelay = fireNS::ANIMATION_DELAY;		// アニメーションの各フレームの間隔
+	mStartFrame = fireNS::START_FRAME;			// ファイアーアニメーションの最初のフレーム
+	mEndFrame = fireNS::END_FRAME;				// ファイアーアニメーションの最後のフレーム
+	mCurrentFrame = mStartFrame;					// 現在のフレームはアニメーションの最初のフレームに設定
+	mCollisionType = entityNS::CIRCLE;			// 円の衝突判定
+	mRadius = fireNS::COLLISION_RADIUS;			// 円の衝突判定用
+	mFireTimer = 0.0f;							// 炎が発射可能になるまでの残り時間
+	mMode = imageNS::VERTICAL;					// アニメーションのモード
 }
 
 //==========================================================
@@ -35,16 +35,16 @@ Fire::Fire() : Entity()
 //==========================================================
 void Fire::reset()
 {
-	active = false;								// 炎はアクティブでない状態から開始	
-	visible = false;
-	frameDelay = fireNS::ANIMATION_DELAY;		// アニメーションの各フレームの間隔
-	startFrame = fireNS::START_FRAME;			// ファイアーアニメーションの最初のフレーム
-	endFrame = fireNS::END_FRAME;				// ファイアーアニメーションの最後のフレーム
-	currentFrame = startFrame;					// 現在のフレームはアニメーションの最初のフレームに設定
-	collisionType = entityNS::CIRCLE;			// 円の衝突判定
-	radius = fireNS::COLLISION_RADIUS;			// 円の衝突判定用
-	fireTimer = 0.0f;							// 炎が発射可能になるまでの残り時間
-	mode = imageNS::VERTICAL;					// アニメーションのモード
+	mActive = false;								// 炎はアクティブでない状態から開始	
+	mVisible = false;
+	mFrameDelay = fireNS::ANIMATION_DELAY;		// アニメーションの各フレームの間隔
+	mStartFrame = fireNS::START_FRAME;			// ファイアーアニメーションの最初のフレーム
+	mEndFrame = fireNS::END_FRAME;				// ファイアーアニメーションの最後のフレーム
+	mCurrentFrame = mStartFrame;					// 現在のフレームはアニメーションの最初のフレームに設定
+	mCollisionType = entityNS::CIRCLE;			// 円の衝突判定
+	mRadius = fireNS::COLLISION_RADIUS;			// 円の衝突判定用
+	mFireTimer = 0.0f;							// 炎が発射可能になるまでの残り時間
+	mMode = imageNS::VERTICAL;					// アニメーションのモード
 }
 
 //==========================================================
@@ -54,26 +54,26 @@ void Fire::reset()
 //==========================================================
 void Fire::update(float frameTime)
 {
-	fireTimer -= frameTime;						// 発射が可能になるまでの残り時間
+	mFireTimer -= frameTime;						// 発射が可能になるまでの残り時間
 	
-	if (visible == false)
+	if (mVisible == false)
 		return;
 
-	if (fireTimer < 0)							// 発射可能な場合
+	if (mFireTimer < 0)							// 発射可能な場合
 	{
-		visible = false;						// 古い炎を無効化
-		active = false;
+		mVisible = false;						// 古い炎を無効化
+		mActive = false;
 	}
 
 	Image::update(frameTime);
 
-	spriteData.x += frameTime * velocity.x;		// X方向に移動
-	spriteData.y += frameTime * velocity.y;		// Y方向に移動
+	mSpriteData.x += frameTime * mVelocity.x;		// X方向に移動
+	mSpriteData.y += frameTime * mVelocity.y;		// Y方向に移動
 	// 画面の端まで来たら消去
-	if (spriteData.x > GAME_WIDTH || spriteData.x < 0 || spriteData.y < 0 || spriteData.y > GAME_HEIGHT)
+	if (mSpriteData.x > GAME_WIDTH || mSpriteData.x < 0 || mSpriteData.y < 0 || mSpriteData.y > GAME_HEIGHT)
 	{
-		visible = false;
-		active = false;
+		mVisible = false;
+		mActive = false;
 	}
 }
 
@@ -83,37 +83,37 @@ void Fire::update(float frameTime)
 //==========================================================
 void Fire::fire(float centerX, float centerY, float width, float height, float scale, int& mp, characterNS::DIRECTION direction)
 {
-	if (fireTimer <= 0.0f && mp > fireNS::FIRE_MP)	// 発射可能な場合
+	if (mFireTimer <= 0.0f && mp > fireNS::FIRE_MP)	// 発射可能な場合
 	{
-		audio->playCue("fire");
+		mAudio->playCue("fire");
 		switch (direction)
 		{
 		case characterNS::UP:
-			velocity.x = 0.0f;
-			velocity.y = -fireNS::SPEED;
-			spriteData.angle = (float)PI / 2.0f;
+			mVelocity.x = 0.0f;
+			mVelocity.y = -fireNS::SPEED;
+			mSpriteData.angle = (float)PI / 2.0f;
 			break;
 		case characterNS::RIGHT:
-			velocity.x = fireNS::SPEED;
-			velocity.y = 0.0f;
-			spriteData.angle = (float)-PI;
+			mVelocity.x = fireNS::SPEED;
+			mVelocity.y = 0.0f;
+			mSpriteData.angle = (float)-PI;
 			break;
 		case characterNS::DOWN:
-			velocity.x = 0.0f;
-			velocity.y = fireNS::SPEED;
-			spriteData.angle = (float)-PI / 2;
+			mVelocity.x = 0.0f;
+			mVelocity.y = fireNS::SPEED;
+			mSpriteData.angle = (float)-PI / 2;
 			break;
 		case characterNS::LEFT:
-			velocity.x = -fireNS::SPEED;
-			velocity.y = 0.0f;
-			spriteData.angle = 0.0f;
+			mVelocity.x = -fireNS::SPEED;
+			mVelocity.y = 0.0f;
+			mSpriteData.angle = 0.0f;
 			break;
 		}
-		spriteData.x = (float)(centerX - spriteData.width / 2 - width * (scale - 1) / 2.0);
-		spriteData.y = (float)(centerY - spriteData.height / 2 - height * (scale - 1) / 2.0f - 10.0f);
-		visible = true;									// 炎を表示
-		active = true;									// 衝突可能にする
-		fireTimer = fireNS::FIRE_DELAY;					// 発射の間隔
+		mSpriteData.x = (float)(centerX - mSpriteData.width / 2 - width * (scale - 1) / 2.0);
+		mSpriteData.y = (float)(centerY - mSpriteData.height / 2 - height * (scale - 1) / 2.0f - 10.0f);
+		mVisible = true;									// 炎を表示
+		mActive = true;									// 衝突可能にする
+		mFireTimer = fireNS::FIRE_DELAY;					// 発射の間隔
 		mp -= fireNS::FIRE_MP;							// MPを減少
 	}
 }

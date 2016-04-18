@@ -36,25 +36,25 @@ class Game
 {
 protected:
 	// 共通のゲームプロパティ
-	Graphics *graphics;             // Graphicsへのポインタ
-	Input   *input;                 // Inputへのポインタ
-	Audio   *audio;                 // Audioへのポインタ
-	Console *console;               // Consoleへのポインタ
-	MessageDialog *messageDialog;   // MessageDialogへのポインタ
-	InputDialog *inputDialog;       // pointer to InputDialog
-	HWND    hwnd;                   // ウィンドウハンドル
-	HRESULT hr;                     // 標準の戻り型
-	LARGE_INTEGER timeStart;        // パフォーマンスカウンターの開始値
-	LARGE_INTEGER timeEnd;          // パフォーマンスカウンターの終了値
-	LARGE_INTEGER timerFreq;        // パフォーマンスカウンターの周波数
-	float   frameTime;              // 最後のフレームに要した時間
-	float   fps;                    // フレームレート（1秒あたりのフレーム数）
-	TextDX  dxFont;                 // フレームレート用のDirectXフォント
-	bool    fpsOn;                  // trueの場合フレームレートを表示
-	DWORD   sleepTime;              // フレーム間でスリープする時間（ミリ秒）
-	bool    paused;                 // ゲームが一時停止されている場合、true
-	bool    initialized;
-	std::string  command;           // コンソールコマンド
+	Graphics *mGraphics;            // Graphicsへのポインタ
+	Input   *mInput;                // Inputへのポインタ
+	Audio   *mAudio;                // Audioへのポインタ
+	Console *mConsole;              // Consoleへのポインタ
+	MessageDialog *mMessageDialog;  // MessageDialogへのポインタ
+	InputDialog *mInputDialog;      // pointer to InputDialog
+	HWND    mHwnd;                  // ウィンドウハンドル
+	HRESULT mHr;                    // 標準の戻り型
+	LARGE_INTEGER mTimeStart;       // パフォーマンスカウンターの開始値
+	LARGE_INTEGER mTimeEnd;         // パフォーマンスカウンターの終了値
+	LARGE_INTEGER mTimerFreq;       // パフォーマンスカウンターの周波数
+	float   mFrameTime;             // 最後のフレームに要した時間
+	float   mFps;                   // フレームレート（1秒あたりのフレーム数）
+	TextDX  mDxFont;                // フレームレート用のDirectXフォント
+	bool    mFpsOn;                 // trueの場合フレームレートを表示
+	DWORD   mSleepTime;             // フレーム間でスリープする時間（ミリ秒）
+	bool    mPaused;                // ゲームが一時停止されている場合、true
+	bool    mInitialized;			// ゲームの初期化に成功した場合、true
+	std::string  mCommand;          // コンソールコマンド
 
 public:
 	// コンストラクタ
@@ -98,16 +98,16 @@ public:
 	void setDisplayMode(graphicsNS::DISPLAY_MODE mode = graphicsNS::TOGGLE);
 
 	// Grpahicsへのポインタを戻す
-	Graphics* getGraphics() { return graphics; }
+	Graphics* getGraphics() { return mGraphics; }
 
 	// Inputへのポインタを戻す
-	Input* getInput() { return input; }
+	Input* getInput() { return mInput; }
 
 	// ゲームを終了
-	void exitGame() { PostMessage(hwnd, WM_DESTROY, 0, 0); }
+	void exitGame() { PostMessage(mHwnd, WM_DESTROY, 0, 0); }
 
 	// Audioへのポインタを戻す
-	Audio* getAudio() { return audio; }
+	Audio* getAudio() { return mAudio; }
 
 	// 純粋仮想関数の宣言
 	// これらの関数は、Gameを継承するクラス内で記述する必要があります。

@@ -13,13 +13,13 @@
 //==========================================================
 HpTextImage::HpTextImage() : Image()
 {
-	spriteData.width = hpTextImageNS::WIDTH;		// テキスト画像のサイズ
-	spriteData.height = hpTextImageNS::HEIGHT;
-	spriteData.x = hpTextImageNS::X;				// 画面上の初期位置
-	spriteData.y = hpTextImageNS::Y;
-	spriteData.rect.bottom = hpTextImageNS::HEIGHT;	// 画面の一部を選択
-	spriteData.rect.right = hpTextImageNS::WIDTH;
-	startFrame = hpTextImageNS::START_FRAME;		// アニメーションの最初のフレーム
-	endFrame = startFrame;							// アニメーションの最後のフレーム
-	currentFrame = startFrame;						// 現在のフレームはアニメーションの最初のフレームにセット
+	mSpriteData.width = hpTextImageNS::WIDTH;		// テキスト画像のサイズ
+	mSpriteData.height = hpTextImageNS::HEIGHT;
+	mSpriteData.x = hpTextImageNS::X;				// 画面上の初期位置
+	mSpriteData.y = hpTextImageNS::Y;
+	mSpriteData.rect.bottom = hpTextImageNS::HEIGHT;	// 画面の一部を選択
+	mSpriteData.rect.right = hpTextImageNS::WIDTH;
+	mStartFrame = hpTextImageNS::START_FRAME;		// アニメーションの最初のフレーム
+	mEndFrame = mStartFrame;							// アニメーションの最後のフレーム
+	mCurrentFrame = mStartFrame;						// 現在のフレームはアニメーションの最初のフレームにセット
 }

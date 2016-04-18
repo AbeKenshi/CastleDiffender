@@ -29,12 +29,12 @@ namespace inputDialogNS
 class InputDialog : public MessageDialog
 {
 private:
-    std::string inText;                 // 入力テキスト
-    RECT        inTextRect;
-    RECT        tempRect;
-    COLOR_ARGB  textBackColor;          // テキスト領域の背景の色
-    COLOR_ARGB  textFontColor;          // テキスト領域のフォントの色
-    LP_VERTEXBUFFER inTextVerts;        // テキスト領域の頂点バッファ
+    std::string mInText;                 // 入力テキスト
+    RECT        mInTextRect;
+    RECT        mTempRect;
+    COLOR_ARGB  mTextBackColor;          // テキスト領域の背景の色
+    COLOR_ARGB  mTextFontColor;          // テキスト領域のフォントの色
+    LP_VERTEXBUFFER mInTextVerts;        // テキスト領域の頂点バッファ
 
 public:
 	// コンストラクタ
@@ -51,17 +51,17 @@ public:
 	// 入力テキストを戻す
     std::string getText()   
     {
-        if(!visible)
-            return inText;
+        if(!mVisible)
+            return mInText;
         else
             return "";
     }
 
 	// 入力テキストのフォントの色を設定
-    void setTextFontColor(COLOR_ARGB fc)  {textFontColor = fc;}
+    void setTextFontColor(COLOR_ARGB fc)  {mTextFontColor = fc;}
 
 	// 入力テキストの背景の色を設定
-    void setTextBackColor(COLOR_ARGB bc)  {textBackColor = bc;}
+    void setTextBackColor(COLOR_ARGB bc)  {mTextBackColor = bc;}
 
 	// テキストstrをInputDialogに表示
     void print(const std::string &str);
