@@ -30,7 +30,6 @@ MidBoss::MidBoss() : Enemy()
 	attackLeftEndFrame = midBossNS::ATTACK_LEFT_END_FRAME;
 	attackTime = midBossNS::ATTACK_TIME;
 	continueAttackTime = midBossNS::CONTINUE_ATTACK_TIME;
-	attackDamage = midBossNS::ATTACK_DAMAGE;
 }
 
 //==========================================================

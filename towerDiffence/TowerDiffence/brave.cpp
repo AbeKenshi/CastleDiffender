@@ -361,7 +361,7 @@ void Brave::damage(WEAPON weapon)
 		else  // ガード中でないなら、
 		{
 			// 一定ダメージを受ける
-			health -= enemyNS::ATTACK_DAMAGE * damagePer;
+			health -= enemyAttackDamage * damagePer;
 			// ダメージ状態のフラグをオン
 			isDamaged = true;
 		}
@@ -373,7 +373,7 @@ void Brave::damage(WEAPON weapon)
 		else  // ガード中でないなら、
 		{
 			// 一定ダメージを受ける
-			health -= midBossNS::ATTACK_DAMAGE * damagePer;
+			health -= midBossAttackDamage * damagePer;
 			// ダメージ状態のフラグをオン
 			isDamaged = true;
 		}
@@ -441,21 +441,4 @@ void Brave::changeWithMove(float frameTime)
 	}
 	// アニメーションのみ更新（エンティティは更新しない）
 	Entity::updateOnlyImage(frameTime);
-}
-
-//==========================================================
-// 移動中へと状態を遷移
-//==========================================================
-void Brave::changeStateToMove()
-{
-	// 状態は移動中へと遷移
-	state = characterNS::MOVE;
-	// アニメーションフレームの遷移は水平方向
-	mode = imageNS::HORIZONTAL;
-	// 移動中はアニメーションはループさせる
-	loop = true;
-	// アニメーションを向いている方向に合わせてセット
-	startFrame = oldStartFrame;
-	endFrame = oldEndFrame;
-	setCurrentFrame(startFrame);
 }

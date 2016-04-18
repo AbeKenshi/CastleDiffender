@@ -28,9 +28,12 @@ Entity::Entity() : Image()
     collisionType = entityNS::CIRCLE;
     health = 100;
     gravity = entityNS::GRAVITY;
-	isDamaged = false;
-	drawFlag = true;
+	isDamaged = false;							// ダメージは受けていない状態からスタート
+	drawFlag = true;							// 描画フラグオン
 	damagePer = 1.0f;
+	// ダメージ時に使用するタイマーをリセット
+	damageTimer = 0.0f;
+	totalDamageTime = 0.0f;
 }
 
 //==========================================================
@@ -41,9 +44,12 @@ void Entity::reset()
 	rotatedBoxReady = false;
 	active = true;
 	health = 100;
-	isDamaged = false;
-	drawFlag = true;
+	isDamaged = false;							// ダメージは受けていない状態からスタート
+	drawFlag = true;							// 描画フラグオン
 	damagePer = 1.0f;
+	// ダメージ時に使用するタイマーをリセット
+	damageTimer = 0.0f;
+	totalDamageTime = 0.0f;
 	Image::reset();
 }
 
@@ -62,6 +68,17 @@ bool Entity::initialize(Game *gamePtr, int width, int height, int ncols,
     input = gamePtr->getInput();                // 入力システム
     audio = gamePtr->getAudio();                // オーディオシステム
     return(Image::initialize(gamePtr->getGraphics(), width, height, ncols, textureM));
+}
+
+//==========================================================
+// キャラクターを描画
+// 描画フラグがオンのときのみ描画
+//==========================================================
+void Entity::draw(COLOR_ARGB color)
+{
+	// 描画フラグがオンのときのみ描画
+	if (drawFlag)
+		Image::draw(color);	// 雑魚敵を描画
 }
 
 //=============================================================================

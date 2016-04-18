@@ -13,6 +13,8 @@
 #include "constants.h"
 #include "hitEffect.h"
 
+// Barricadeクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace barricadeNS
 {
 	const int WIDTH = 32;			// 画像の幅（各フレーム）
