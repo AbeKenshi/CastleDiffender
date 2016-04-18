@@ -191,6 +191,8 @@ void TowerDiffence::initialize(HWND hwnd)
 	// タイトルBGM再生
 	mAudio->playCue("title");
 
+	// 各ステージのハイスコア読み取り
+	loadHighScore();
 	return;
 }
 
@@ -487,10 +489,22 @@ void TowerDiffence::render()
 		char str[128] = "PUSH Z KEY : START STAGE!";
 		mFontCK->setFontHeight(35);
 		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-		mFontCK->print(str, 373, 653);
+		mFontCK->print(str, 353, 653);
 		mFontCK->setFontHeight(35);
 		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
-		mFontCK->print(str, 370, 650);
+		mFontCK->print(str, 350, 650);
+		for (int i = 0; i < 3; ++i)
+		{
+			char str2[128] = "HIGH SCORE IS ";
+			char time[5] = { 0 };
+			sprintf_s(time, "%04d", (int)mHighScores[i]);
+			strcat_s(str2, time);
+			mFontCK->setFontHeight(20);
+			mFontCK->setFontColor(SETCOLOR_ARGB(128, 128, 128, 128));  // shadow grey
+			mFontCK->print(str2, 512, 50 + i * 240);
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+			mFontCK->print(str2, 505, 3 + 50 + i * 240);
+		}
 	}
 	else if (mDescriptionOn)	// 操作説明画面オンの場合、
 	{
@@ -695,13 +709,16 @@ void TowerDiffence::render()
 		if (mStageClear.getY() < 250)
 		{
 			// システムグラフィックスのテキストを表示
-			char str[128] = "CONTINUE?";
-			mFontCK->setFontHeight(35);
+			char str[128] = "YOUR SCORE IS ";
+			char time[5] = { 0 };
+			sprintf_s(time, "%04d", (int)mStage.getRemainingTime());
+			strcat_s(str, time);
+			mFontCK->setFontHeight(45);
 			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mStageClear.getHeight() + mStageClear.getY()));
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3));
+			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 45 * 16 / 2), (int)(mStageClear.getHeight() + mStageClear.getY()));
+			mFontCK->setFontHeight(45);
+			mFontCK->setFontColor(graphicsNS::RED);
+			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 45 * 16 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3));
 			char str2[128] = "PUSH Z KEY : RETRY STAGE";
 			mFontCK->setFontHeight(35);
 			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
@@ -871,6 +888,18 @@ void TowerDiffence::clearStage()
 	mAudio->stopCue("stage");
 	// ステージクリアBGMをオン
 	mAudio->playCue("clear");
+	// ステージのハイスコアを更新した場合、新しくハイスコアを書き込む
+	if (mHighScores[mStage.getStageNum()] < (int)mStage.getRemainingTime())
+	{
+		mHighScores[mStage.getStageNum()] = (int)mStage.getRemainingTime();
+	}
+	// 各ステージのハイスコアを書き込む
+	ofstream ofs("savedata\\highscore.csv");
+	for (int i = 0; i < 3; ++i)
+	{
+		ofs << mHighScores[i] << std::endl;
+	}
+
 }
 
 //==========================================================
@@ -898,4 +927,27 @@ void TowerDiffence::initializeEnemiesTexture()
 	}
 	// 敵の初期化フラグをオフ
 	mStage.setInitializedEnemies(false);
+}
+
+//==========================================================
+// 各ステージのハイスコアを読み込み
+//==========================================================
+void TowerDiffence::loadHighScore()
+{
+	ifstream ifs("savedata\\highscore.csv");
+	//csvファイルを1行ずつ読み込む
+	string str;
+	if (getline(ifs, str))
+	{
+		string token;
+		istringstream stream(str);
+		// すべてのステージについてハイスコアを読み込む
+		for (int i = 0; i < 3; ++i)
+		{
+			if (getline(stream, token, ','))
+			{
+				mHighScores[i] = stof(token);
+			}
+		}
+	}
 }
