@@ -117,6 +117,7 @@ void EnemyCollision::attack(float centerX, float centerY, float width, float hei
 	}
 	// 攻撃の当たり判定が出ている時間をリセット
 	collisionTimer = 0.0f;
-	//visible = true;							// 攻撃を表示
-	active = true;							// 衝突可能にする
+	visible = true;							// 攻撃を表示
+	active = true;							// 衝突可能にする	
+	setRect();
 }

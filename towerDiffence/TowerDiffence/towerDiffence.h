@@ -32,6 +32,7 @@
 #include "hitEffect.h"
 #include "attackEffect.h"
 #include <string>
+#include "stage.h"
 
 // TowerDiffenceクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -60,44 +61,38 @@ class TowerDiffence : public Game
 {
 private:
 	// ゲームアイテム
+	Stage stage;										// ステージ情報
 	TextDX  fontBig;									// ゲームバナーのDirectXフォン
 	Text    *fontCK;									// sprite based font
 	TextureManager menuTexture;							// タイトルのテクスチャ
-	Image menu;											// タイトル画像
 	TextureManager stageSelectTexture;					// ステージ選択画面のテクスチャ
-	Image stageSelect;									// ステージ選択画面の画像
 	TextureManager resultTexture;                       // リザルトのテクスチャ
-	Image result;                                       // リザルト画像
 	TextureManager stageClearTexture;					// ステージクリア画面のテクスチャ
-	Image stageClear;									// ステージクリア画像
 	TextureManager descriptionTexture;                  // 操作説明のテクスチャ
-	Image description;                                  // 操作説明画像
 	TextureManager braveTexture;						// 勇者のテクスチャ
 	TextureManager attackEffectTexture;					// 攻撃の衝撃波のテクスチャ
 	TextureManager braveIconTexture;					// 勇者のアイコンのテクスチャ
 	TextureManager attackCollisionTexture;				// 勇者の攻撃の当たり判定用のテクスチャ
-	Brave brave;										// 勇者
-	BraveIcon braveIcon;								// 勇者のアイコン
 	TextureManager tileTexture;							// タイルのテクスチャ
-	Map map;											// タイル画像
 	TextureManager barricadeTexture;					// バリケードのテクスチャ
-	Barricade barricades[mapNS::BARRICADE_NUM];         // バリケードの配列
 	TextureManager hitEffectTexture;					// 攻撃がヒットしたときのアニメーション画像のテクスチャ
 	TextureManager castleTexture;						// 城のテクスチャ
-	Castle castle;										// 城
 	TextureManager castleIconTexture;					// 城のアイコンのテクスチャ
-	CastleIcon castleIcon;								// 城のアイコン
 	TextureManager fireTexture;							// 炎のテクスチャ
 	TextureManager enemyTexture;						// 雑魚敵のテクスチャ
-	Enemy **enemy;	    								// 敵へのポインタの配列
-	float *enemyX;										// 敵の初期位置Xの配列
-	float *enemyY;										// 敵の初期位置Yの配列
 	TextureManager midBossTexture;						// 中ボスのテクスチャ
 	TextureManager dashboardTextures;					// ダッシュボードテクスチャ
+	TextureManager textTexture;							// テキスト（ＭＰ、ＨＰ）のテクスチャ
+	Image menu;											// タイトル画像
+	Image stageSelect;									// ステージ選択画面の画像
+	Image result;                                       // リザルト画像
+	Image stageClear;									// ステージクリア画像
+	Image description;                                  // 操作説明画像
+	BraveIcon braveIcon;								// 勇者のアイコン
+	CastleIcon castleIcon;								// 城のアイコン
 	BarGraph braveHealthBar;							// 勇者の体力バー
 	BarGraph braveMpBar;								// 勇者のMPバー
 	BarGraph castleHealthBar;							// 城の体力バー
-	TextureManager textTexture;							// テキスト（ＭＰ、ＨＰ）のテクスチャ
 	HpTextImage braveHpText;							// 勇者のＨＰテキスト
 	MpTextImage braveMpText;							// 勇者のＭＰテキスト
 	HpTextImage castleHpText;							// 城のＨＰテキスト
@@ -105,13 +100,7 @@ private:
 	bool menuOn;										// メニューフラグ
 	bool stageSelectOn;									// ステージ選択フラグ
 	bool descriptionOn;                                 // 操作説明フラグ
-	float remainingTime;								// ゲーム内の残り時間
-	bool    roundOver;									// ラウンドが終了した場合、true
-	bool clearedStage;									// ステージをクリアした場合、true
 	float   roundTimer;									// 新しいラウンドが開始するまでの時間
-	int enemyNum;										// ステージ上に存在する敵の数
-	int stageNum;										// 選択しているステージの番号
-	int enemyWaveNum;									// 現在の敵の波の番号（第一波、第二波、、、）
 public:
 	// コンストラクタ
 	TowerDiffence();
@@ -130,8 +119,6 @@ public:
 
 	// プレイの新しいラウンドを開始
 	void roundStart();
-	// 敵の数をチェックし、マップ上に敵がいなければ新たに生成
-	void checkCurrentEnemyNum();
 
 	void consoleCommand();	// コンソールコマンドを処理
 
@@ -144,16 +131,14 @@ public:
 	// すべてのサーフェイスを再作成
 	void resetAll();
 
-	// 指定されたステージの敵データを読み込む
-	bool readEnemyFile(int stageNum, int enemyWave);
-
-	// 指定されたステージ、派の敵データを読み込み敵を初期化する
-	void initializeEnemies(int stageNum, int enemyWave);
 
 	// ゲームオーバー時に呼び出す
 	void gameOver();
 
 	// ステージクリア時に呼び出す
 	void clearStage();
+
+	// 敵のテクスチャを初期化する
+	void initializeEnemiesTexture();
 };
 #endif
