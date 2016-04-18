@@ -1,10 +1,13 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// console.h v1.0
+//==========================================================
+/// @file
+/// @brief    Rectクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
 
-#ifndef _RECT_H              // Prevent multiple definitions if this 
-#define _RECT_H              // file is included in more than one place
+#ifndef _RECT_H              // このファイルが複数の箇所でインクルードされる場合に、
+#define _RECT_H              // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 #include <string>
@@ -14,26 +17,28 @@
 #include "graphics.h"
 #include "input.h"
 
+// Rectクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace rectNS
 {
-	const UINT WIDTH = GAME_WIDTH;     // 矩形の幅（ピクセル単位）
-	const UINT HEIGHT = 50;            // 矩形の高さ（ピクセル単位）
-	const UINT X = 0;                  // 左上隅からの画面位置
+	const UINT WIDTH = GAME_WIDTH;						// 矩形の幅（ピクセル単位）
+	const UINT HEIGHT = 50;								// 矩形の高さ（ピクセル単位）
+	const UINT X = 0;									// 左上隅からの画面位置
 	const UINT Y = 0;
-	const COLOR_ARGB BACK_COLOR = graphicsNS::BLACK;
+	const COLOR_ARGB BACK_COLOR = graphicsNS::BLACK;	// 背景の色
 }
 
 // 単純な四角形クラス
 class Rect
 {
 private:
-	Graphics    *graphics;              // graphics system
-	float       x, y;                   // console location (dynamic)
+	Graphics    *graphics;              // grapicsへのポインタ
+	float       x, y;                   // rectの位置
 	int width, height;					// 幅、高さ（ピクセル単位）
-	COLOR_ARGB  backColor;              // background color (a,r,g,b)
-	VertexC vtx[4];                     // vertex data for background
-	LP_VERTEXBUFFER vertexBuffer;       // buffer to hold vertex data
-	bool        initialized;            // true when initialized successfully
+	COLOR_ARGB  backColor;              // 背景色(a,r,g,b)
+	VertexC vtx[4];                     // 背景用のvertexデータ
+	LP_VERTEXBUFFER vertexBuffer;       // vertexデータ保存用のバッファ
+    bool        initialized;            // 初期化に成功した場合、true
 
 public:
 	// コンストラクタ
@@ -49,24 +54,31 @@ public:
 	// 実行前：BeginSceneとEndSceneの内側にする
 	const void draw();
 
-	// Call when graphics device is lost.
+	// グラフィックスデバイスが消失したときに呼び出される
 	void onLostDevice();
 
-	// Call when graphics device is reset.
+	// グラフィックスデバイスがリセットされたときに呼び出される
 	void onResetDevice();
 
+	// パラメータリセット
 	void reset();
 	// setter
+	// X位置をセット
 	void setX(float nx) { x = nx; }
+	// Y位置をセット
 	void setY(float ny) { y = ny; }
+	// 幅をセット
 	void setWidth(int w) { width = w; }
+	// 高さをセット
 	void setHeight(int h) { height = h; }
-
-	// getter
-	float getX() { return x; }
-	float getY() { return y; }
 	// 背景色をセット
 	void setBackColor(COLOR_ARGB clr) { backColor = clr; }
+	
+	// getter
+	// X位置を戻す
+	float getX() { return x; }
+	// Y位置を戻す
+	float getY() { return y; }
 };
 
 #endif

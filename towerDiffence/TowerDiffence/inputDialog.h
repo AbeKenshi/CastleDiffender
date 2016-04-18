@@ -17,6 +17,8 @@
 #include "input.h"
 #include "messageDialog.h"
 
+// InputDailogクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace inputDialogNS
 {
     const COLOR_ARGB TEXT_BACK_COLOR = graphicsNS::WHITE;   // 入力テキストの背景

@@ -1,9 +1,19 @@
+//==========================================================
+/// @file
+/// @brief    HpTextImageクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #ifndef _HP_TEXT_IMAGE_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _HP_TEXT_IMAGE_H		// 多重に定義されることを防ぎます。
 
 #include "image.h"
 #include "constants.h"
 
+// HpTextImageクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace hpTextImageNS
 {
 	const int WIDTH = 40;		// 画像の幅（各フレーム）

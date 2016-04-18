@@ -17,12 +17,11 @@
 class TextDX
 {
 private:
-    Graphics    *graphics;
+    Graphics    *graphics;		// graphicsへのポインタ
     COLOR_ARGB  color;          // フォントカラー(a,r,g,b)
-    LP_DXFONT   dxFont;
+    LP_DXFONT   dxFont;			// DXFONT
     RECT        fontRect;       // テキストの四角形
-    // テキストの回転行列
-    D3DXMATRIX  matrix;
+    D3DXMATRIX  matrix;			// テキストの回転行列
     float       angle;          // テキストの回転角度
 
 public:

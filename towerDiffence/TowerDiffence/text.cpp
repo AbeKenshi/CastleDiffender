@@ -1,8 +1,11 @@
-// Programming 2D Games
-// Copyright (c) 2011 by: 
-// Charles Kelly
-// text.cpp v1.0
-// Sprite based font.
+//==========================================================
+/// @file
+/// @brief    text.hの実装
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 
 #include "text.h"
 

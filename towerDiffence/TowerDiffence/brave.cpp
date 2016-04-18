@@ -83,11 +83,11 @@ void Brave::update(float frameTime)
 
 	// 勇者の攻撃判定がでている場合はコリジョンを生成して当たり判定をとる
 	if (attackCollisionFlag)
-		braveAttackCollision.attack(getCenterX(), getCenterY(), getWidth(), getHeight(), direction);
+		braveAttackCollision.attack(getCenterX(), getCenterY(), (float)getWidth(), (float)getHeight(), direction);
 
 	// FIRE_KEYに対応するキーが押されたら勇者から炎を発射
 	if (input->isKeyDown(BRAVE_FIRE_KEY))
-		fire.fire(getCenterX(), getCenterY(), getWidth(), getHeight(), getScale(), magicPoint, direction);
+		fire.fire(getCenterX(), getCenterY(), (float)getWidth(), (float)getHeight(), getScale(), magicPoint, direction);
 
 	// 攻撃用のエンティティを出現させるフラグをオフ
 	attackCollisionFlag = false;

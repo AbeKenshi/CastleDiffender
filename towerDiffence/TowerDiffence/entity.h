@@ -16,10 +16,12 @@ class Entity;
 #include "input.h"
 #include "game.h"
 
+// Entityクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace entityNS
 {
-	enum COLLISION_TYPE { NONE, CIRCLE, BOX, ROTATED_BOX };
-	const float GRAVITY = 6.67428e-11f;         // 重力定数
+	enum COLLISION_TYPE { NONE, CIRCLE, BOX, ROTATED_BOX };	// 衝突判定の種類
+	const float GRAVITY = 6.67428e-11f;						// 重力定数
 }
 
 class Entity : public Image

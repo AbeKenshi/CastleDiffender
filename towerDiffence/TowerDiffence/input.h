@@ -29,11 +29,13 @@ class Input;
 #endif
 //--------------------------
 
+// Inputクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace inputNS
 {
-	const int KEYS_ARRAY_LEN = 256;     // size of key arrays
+	const int KEYS_ARRAY_LEN = 256;     // キー配列の長さ
 
-										// what values for clear(), bit flag
+	// what values for clear(), bit flag
 	const UCHAR KEYS_DOWN = 1;
 	const UCHAR KEYS_PRESSED = 2;
 	const UCHAR MOUSE = 4;

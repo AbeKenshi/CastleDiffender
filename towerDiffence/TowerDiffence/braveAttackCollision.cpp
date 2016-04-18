@@ -1,6 +1,6 @@
 //==========================================================
 /// @file
-/// @brief    braveAttackCollision,hの実装
+/// @brief    braveAttackCollision.hの実装
 /// @author   阿部拳之
 ///
 /// @attention  このファイルの利用は、同梱のREADMEにある

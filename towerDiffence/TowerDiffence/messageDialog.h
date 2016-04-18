@@ -16,6 +16,8 @@
 #include "graphics.h"
 #include "input.h"
 
+// MessageDialogクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace messageDialogNS
 {
     const UINT WIDTH = 400;             // ダイアログのデフォルトの幅

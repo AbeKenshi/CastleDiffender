@@ -1,9 +1,19 @@
+//==========================================================
+/// @file
+/// @brief    HitEffectクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #ifndef _HIT_EFFECT_H	// このファイルが複数の箇所でインクルードされる場合に、
 #define _HIT_EFFECT_H	// 多重に定義されることを防ぎます。
 
 #include "image.h"
 #include "constants.h"
 
+// HitEffectクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace hitEffectNS
 {
 	const int WIDTH = 108;				// 画像の幅（各フレーム）

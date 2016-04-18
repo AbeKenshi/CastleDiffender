@@ -11,9 +11,11 @@
 #include "textureManager.h"
 #include "constants.h"
 
+// Imageクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace imageNS
 {
-	enum MODE { HORIZONTAL, VERTICAL };
+	enum MODE { HORIZONTAL, VERTICAL };	// 読み込んだ画像に対して横にアニメーションが流れる場合はHORIZONTAL、縦の場合はVERTICAL
 }
 
 class Image

@@ -1,3 +1,11 @@
+//==========================================================
+/// @file
+/// @brief    TowerDiffenceクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #ifndef _TOWERDIFFENCE_H	// このファイルが複数の箇所でインクルードされる場合に、
 #define _TOWERDIFFENCE_H	// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
@@ -25,6 +33,8 @@
 #include "attackEffect.h"
 #include <string>
 
+// TowerDiffenceクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace towerDiffenceNS
 {
 	const char FONT[] = "Arial Bold";	// フォント

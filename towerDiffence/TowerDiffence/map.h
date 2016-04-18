@@ -1,3 +1,11 @@
+//==========================================================
+/// @file
+/// @brief    Mapクラス
+/// @author   阿部拳之
+///
+/// @attention  このファイルの利用は、同梱のREADMEにある
+///             利用条件に従ってください
+
 #ifndef _MAP_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _MAP_H		// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
@@ -11,6 +19,8 @@
 
 using namespace std;
 
+// Mapクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace mapNS
 {
 	const int TEXTURE_SIZE = 32;  // 画像サイズ（1タイル分）
@@ -67,7 +77,7 @@ public:
 	void updateMapObj(float x, float y, int val);
 	// マップ上のオブジェクトデータ更新　引数は更新したい座標値と更新する値
 	void updateMapObjInt(int y, int x, int val);
-	// マップ上の当たり判定データをリセットする関数
+	// マップ上の当たり判定データすべてをリセットする関数
 	void resetMapCol() {
 		for (int i = 0; i < mapNS::MAP_HEIGHT; ++i)
 		{
@@ -77,6 +87,7 @@ public:
 			}
 		}
 	}
+	// 指定されたマップの当たり判定データをリセットする
 	void resetMapCol(int y, int x) {
 		if (x < 0 || x >= mapNS::MAP_WIDTH || y < 0 || y >= mapNS::MAP_HEIGHT) { return; }
 		tileCol[y][x] = tileColInit[y][x];
