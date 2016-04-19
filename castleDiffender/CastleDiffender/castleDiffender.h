@@ -1,13 +1,13 @@
 //==========================================================
 /// @file
-/// @brief    TowerDiffenceクラス
+/// @brief    CastleDiffenceクラス
 /// @author   阿部拳之
 ///
 /// @attention  このファイルの利用は、同梱のREADMEにある
 ///             利用条件に従ってください
 
-#ifndef _TOWERDIFFENCE_H	// このファイルが複数の箇所でインクルードされる場合に、
-#define _TOWERDIFFENCE_H	// 多重に定義されることを防ぎます。
+#ifndef _CASTLE_DIFFENDER_H	// このファイルが複数の箇所でインクルードされる場合に、
+#define _CASTLE_DIFFENDER_H	// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
 
 #include "game.h"
@@ -34,9 +34,9 @@
 #include <string>
 #include "stage.h"
 
-// TowerDiffenceクラスの定数
+// CastleDiffenderクラスの定数
 // ゲーム内でのステータス以外をここに記述
-namespace towerDiffenceNS
+namespace castleDiffenderNS
 {
 	const char FONT[] = "Arial Bold";	// フォント
 	const int FONT_BIG_SIZE = 256;		// フォントの高さ
@@ -55,9 +55,9 @@ namespace towerDiffenceNS
 }
 
 //==========================================================
-// Gameクラスを継承してTowerDiffenceクラスを作成
+// Gameクラスを継承してCastleDiffenderクラスを作成
 //==========================================================
-class TowerDiffence : public Game
+class castleDiffender : public Game
 {
 private:
 	// ゲームアイテム
@@ -104,10 +104,10 @@ private:
 	int mHighScores[3];									// 各ステージのハイスコア
 public:
 	// コンストラクタ
-	TowerDiffence();
+	castleDiffender();
 
 	// デストラクタ
-	virtual ~TowerDiffence();
+	virtual ~castleDiffender();
 
 	// ゲームを初期化
 	// エラー時にGameErrorをスロー

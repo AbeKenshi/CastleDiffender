@@ -91,13 +91,13 @@
     <ClCompile Include="textureManager.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
-    <ClCompile Include="towerDiffence.cpp">
-      <Filter>ソースファイル</Filter>
-    </ClCompile>
     <ClCompile Include="winmain.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
     <ClCompile Include="stage.cpp">
+      <Filter>ソースファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="castleDiffender.cpp">
       <Filter>ソースファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -201,7 +201,7 @@
     <ClInclude Include="textureManager.h">
       <Filter>ヘッダーファイル</Filter>
     </ClInclude>
-    <ClInclude Include="towerDiffence.h">
+    <ClInclude Include="castleDiffender.h">
       <Filter>ヘッダーファイル</Filter>
     </ClInclude>
   </ItemGroup>
