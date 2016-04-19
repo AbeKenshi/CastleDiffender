@@ -1,17 +1,17 @@
 //==========================================================
 /// @file
-/// @brief    towerDiffence.hの実装
+/// @brief    castleDiffender.hの実装
 /// @author   阿部拳之
 ///
 /// @attention  このファイルの利用は、同梱のREADMEにある
 ///             利用条件に従ってください
 
-#include "towerDiffence.h"
+#include "castleDiffender.h"
 
 //==========================================================
 // コンストラクタ
 //==========================================================
-TowerDiffence::TowerDiffence()
+castleDiffender::castleDiffender()
 {
 	mInitialized = false;	// ゲームが初期化された場合、trueになる
 	mFontCK = new Text();	// スプライトフォント
@@ -24,7 +24,7 @@ TowerDiffence::TowerDiffence()
 //==========================================================
 // デストラクタ
 //==========================================================
-TowerDiffence::~TowerDiffence()
+castleDiffender::~castleDiffender()
 {
 	safeDelete(mRect);		// システムグラフィックス用の四角形のメモリを解放
 	safeDelete(mFontCK);		// スプライトフォントのメモリを解放
@@ -35,7 +35,7 @@ TowerDiffence::~TowerDiffence()
 // ゲームを初期化
 // エラー時にGameErrorをスロー
 //==========================================================
-void TowerDiffence::initialize(HWND hwnd)
+void castleDiffender::initialize(HWND hwnd)
 {
 	Game::initialize(hwnd);	// GameErrorをスロー
 
@@ -170,11 +170,11 @@ void TowerDiffence::initialize(HWND hwnd)
 	// ダッシュボード
 	if (!mDashboardTextures.initialize(mGraphics, DASHBOARD_TEXTURES))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing dashboard textures"));
-	mBraveHealthBar.initialize(mGraphics, &mDashboardTextures, towerDiffenceNS::BRAVE_HEALTH_BAR_X, towerDiffenceNS::BRAVE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::RED);
+	mBraveHealthBar.initialize(mGraphics, &mDashboardTextures, castleDiffenderNS::BRAVE_HEALTH_BAR_X, castleDiffenderNS::BRAVE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::RED);
 	mBraveHealthBar.set(mStage.getBrave().getHealth());
-	mBraveMpBar.initialize(mGraphics, &mDashboardTextures, towerDiffenceNS::BRAVE_MP_BAR_X, towerDiffenceNS::BRAVE_MP_BAR_Y, 0.5f, 100, graphicsNS::GREEN);
+	mBraveMpBar.initialize(mGraphics, &mDashboardTextures, castleDiffenderNS::BRAVE_MP_BAR_X, castleDiffenderNS::BRAVE_MP_BAR_Y, 0.5f, 100, graphicsNS::GREEN);
 	mBraveMpBar.set((float)mStage.getBrave().getMP());
-	mCastleHealthBar.initialize(mGraphics, &mDashboardTextures, towerDiffenceNS::CASTLE_HEALTH_BAR_X + 40, towerDiffenceNS::CASTLE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::BLUE);
+	mCastleHealthBar.initialize(mGraphics, &mDashboardTextures, castleDiffenderNS::CASTLE_HEALTH_BAR_X + 40, castleDiffenderNS::CASTLE_HEALTH_BAR_Y, 0.5f, 100, graphicsNS::BLUE);
 	mCastleHealthBar.set(mStage.getCastle().getHealth());
 
 	// テキスト画像
@@ -199,7 +199,7 @@ void TowerDiffence::initialize(HWND hwnd)
 //==========================================================
 // プレイの新しいラウンドを開始
 //==========================================================
-void TowerDiffence::roundStart()
+void castleDiffender::roundStart()
 {
 	// 現在のステージ番号でゲーム開始
 	mStage.roundStart();
@@ -210,7 +210,7 @@ void TowerDiffence::roundStart()
 	// 勇者のアイコンの初期化
 	mBraveIcon.reset();
 	// ラウンドが開始するまでの時間をリセット
-	mRoundTimer = towerDiffenceNS::ROUND_TIME;
+	mRoundTimer = castleDiffenderNS::ROUND_TIME;
 	// ステージ中BGM再生
 	mAudio->playCue("stage");
 }
@@ -218,7 +218,7 @@ void TowerDiffence::roundStart()
 //==========================================================
 // すべてのゲームアイテムを更新
 //==========================================================
-void TowerDiffence::update()
+void castleDiffender::update()
 {
 	if (mMenuOn)		// メニュー画面表示中
 	{
@@ -434,7 +434,7 @@ void TowerDiffence::update()
 //==========================================================
 // 人工知能
 //==========================================================
-void TowerDiffence::ai()
+void castleDiffender::ai()
 {
 	// ステージ内のゲームアイテムの人工知能
 	mStage.ai(mFrameTime);
@@ -443,7 +443,7 @@ void TowerDiffence::ai()
 //==========================================================
 // 衝突を処理
 //==========================================================
-void TowerDiffence::collisions()
+void castleDiffender::collisions()
 {
 	// ステージ内のゲームアイテムの衝突を処理
 	mStage.collisions();
@@ -453,7 +453,7 @@ void TowerDiffence::collisions()
 // ゲームアイテムをレンダー
 // プレイ中のレイヤー：マップ→黒背景→その他アイテムの順
 //==========================================================
-void TowerDiffence::render()
+void castleDiffender::render()
 {
 	// スプライトの描画を開始
 	mGraphics->spriteBegin();	
@@ -627,35 +627,35 @@ void TowerDiffence::render()
 			float initX = -fontSize * 6.0f;
 			mFontCK->setFontHeight((UINT)fontSize);
 			float T = (GAME_WIDTH - initX * 2.0f - fontSize * 6) / (2.0f * fastSpeed);
-			if (mRoundTimer > towerDiffenceNS::ROUND_TIME - T)
+			if (mRoundTimer > castleDiffenderNS::ROUND_TIME - T)
 			{
 				mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer) * fastSpeed), 303);
-				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer) * fastSpeed), 403);
+				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 303);
+				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 403);
 				mFontCK->setFontColor(graphicsNS::BLUE);
-				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer) * fastSpeed), 300);
+				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 300);
 				mFontCK->setFontColor(graphicsNS::RED);
-				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer) * fastSpeed), 400);
+				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 400);
 			}
-			else if (mRoundTimer > towerDiffenceNS::ROUND_TIME - T * 2.0f)
+			else if (mRoundTimer > castleDiffenderNS::ROUND_TIME - T * 2.0f)
 			{
 				mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 303);
-				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 403);
+				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 303);
+				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 403);
 				mFontCK->setFontColor(graphicsNS::BLUE);
-				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 300);
+				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 300);
 				mFontCK->setFontColor(graphicsNS::RED);
-				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 400);
+				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 400);
 			}
 			else
 			{
 				mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 303);
-				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 403);
+				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 303);
+				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 403);
 				mFontCK->setFontColor(graphicsNS::BLUE);
-				mFontCK->print(str1, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 300);
+				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 300);
 				mFontCK->setFontColor(graphicsNS::RED);
-				mFontCK->print(str2, (int)(initX + (towerDiffenceNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 400);
+				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 400);
 			}
 		}
 	}
@@ -749,7 +749,7 @@ void TowerDiffence::render()
 // グラフィックスデバイスをリセット可能にするため、
 // 予約されていたビデオメモリをすべて解放
 //==========================================================
-void TowerDiffence::releaseAll()
+void castleDiffender::releaseAll()
 {
 	SAFE_ON_LOST_DEVICE(mFontCK);
 	mMenuTexture.onLostDevice();
@@ -765,7 +765,7 @@ void TowerDiffence::releaseAll()
 // グラフィックスデバイスがリセットされた場合
 // すべてのサーフェイスを再作成
 //==========================================================
-void TowerDiffence::resetAll()
+void castleDiffender::resetAll()
 {
 	SAFE_ON_RESET_DEVICE(mFontCK);
 	mDashboardTextures.onLostDevice();
@@ -782,7 +782,7 @@ void TowerDiffence::resetAll()
 // コンソールコマンドを処理
 // デバッグ用
 //=============================================================================
-void TowerDiffence::consoleCommand()
+void castleDiffender::consoleCommand()
 {
 	mCommand = mConsole->getCommand();    // コンソールからのコマンドを取得
 	if (mCommand == "")                  // コマンドがない場合
@@ -869,7 +869,7 @@ void TowerDiffence::consoleCommand()
 //==========================================================
 // GameOver時に呼び出す
 //==========================================================
-void TowerDiffence::gameOver()
+void castleDiffender::gameOver()
 {
 	// ステージ中のBGMをオフ
 	mAudio->stopCue("stage");
@@ -880,7 +880,7 @@ void TowerDiffence::gameOver()
 //==========================================================
 // ステージクリア時に呼び出す
 //==========================================================
-void TowerDiffence::clearStage()
+void castleDiffender::clearStage()
 {
 	// ステージ中のBGMをオフ
 	mAudio->stopCue("stage");
@@ -903,7 +903,7 @@ void TowerDiffence::clearStage()
 //==========================================================
 // 敵のテクスチャを初期化する
 //==========================================================
-void TowerDiffence::initializeEnemiesTexture()
+void castleDiffender::initializeEnemiesTexture()
 {
 	// それぞれの敵について
 	for (int i = 0; i < mStage.getEnemyNum(); i++) {
@@ -930,7 +930,7 @@ void TowerDiffence::initializeEnemiesTexture()
 //==========================================================
 // 各ステージのハイスコアを読み込み
 //==========================================================
-void TowerDiffence::loadHighScore()
+void castleDiffender::loadHighScore()
 {
 	ifstream ifs("savedata\\highscore.csv");
 	//csvファイルを1行ずつ読み込む

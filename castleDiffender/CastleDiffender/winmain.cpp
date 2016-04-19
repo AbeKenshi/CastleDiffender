@@ -12,7 +12,7 @@
 #include "windows.h"
 #include <stdlib.h>			// メモリリークを検出するため
 #include <crtdbg.h>			// メモリリークを検出するため
-#include "towerDiffence.h"
+#include "castleDiffender.h"
 
 // 関数プロトタイプ
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
@@ -21,7 +21,7 @@ LRESULT WINAPI WinProc(HWND, UINT, WPARAM, LPARAM);
 bool AnotherInstance();
 
 // Gameポインタ
-TowerDiffence *game = NULL;
+castleDiffender *game = NULL;
 HWND hwnd = NULL;
 
 //==========================================================
@@ -42,7 +42,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInstance, LPSTR lpCmdLine,
 	MSG msg;
 
 	// Create the game, sets up message handler
-	game = new TowerDiffence;
+	game = new castleDiffender;
 	
 	// 複数のインスタンスの生成を防ぐ
 	if (AnotherInstance())
