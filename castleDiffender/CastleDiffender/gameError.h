@@ -5,13 +5,17 @@
 ///
 /// @attention  ゲームエンジンによってスローされるErrorクラス
 
+//==========================================================
 #ifndef _GAMEERROR_H            // このファイルが複数の箇所でインクルードされる場合に、
 #define _GAMEERROR_H            // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include <string>
 #include <exception>
 
+// GameErrorクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace gameErrorNS
 {
 	// エラーコード
@@ -21,13 +25,14 @@ namespace gameErrorNS
     const int WARNING = 1;
 }
 
+//==========================================================
 // GameErrorクラス。ゲームエンジンによってエラーが検知されたときにスローされます。
 // std::exceptionを継承
 class GameError : public std::exception
 {
 private:
-    int     mErrorCode;
-    std::string mMessage;
+    int     mErrorCode;		// エラーコード
+    std::string mMessage;	// エラーメッセージ
 public:
 	// デフォルトコンストラクタ
     GameError() throw() :mErrorCode(gameErrorNS::FATAL_ERROR), mMessage("Undefined Error in game.") {}

@@ -3,17 +3,20 @@
 /// @brief    TextDXクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  DXFONTベースのテキストを描画するクラスです。
 
+//==========================================================
 #ifndef _TEXTDX_H               // このファイルが複数の箇所でインクルードされる場合に、
 #define _TEXTDX_H               // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include <string>
 #include "constants.h"
 #include "graphics.h"
 
+//==========================================================
+// DXFONTベースのテキストを描画するクラスです。
 class TextDX
 {
 private:

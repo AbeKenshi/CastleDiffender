@@ -3,8 +3,10 @@
 /// @brief    attackEffect.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  攻撃時のアニメーションを表示するクラスです。
+
+//==========================================================
+
 #include "attackEffect.h"
 
 //==========================================================
@@ -28,10 +30,11 @@ AttackEffect::AttackEffect() : Image()
 
 //==========================================================
 // Update
+// アニメーションを更新する。
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //==========================================================
-void AttackEffect::update(float frameTime)
+void AttackEffect::update (const float frameTime)
 {
 	// スプライトが非表示なら何もしない
 	if (getVisible() == false)
@@ -45,9 +48,9 @@ void AttackEffect::update(float frameTime)
 
 //==========================================================
 // Attack
-// この関数が呼ばれると攻撃の衝撃波のアニメーションが発動
+// 攻撃の衝撃波のアニメーションを指定された位置に発動
 //==========================================================
-void AttackEffect::attack(float centerX, float centerY, float width, float height, characterNS::DIRECTION direction)
+void AttackEffect::attack(const float centerX, const float centerY, const float width, const float height, const characterNS::DIRECTION direction)
 {
 	// brave（プレイヤー）の向きによって表示させる位置を分岐
 	// プレイヤーの元々の画像が偏っているので、±10程度の補正をかけている

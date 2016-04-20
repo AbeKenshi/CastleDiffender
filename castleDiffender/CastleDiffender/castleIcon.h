@@ -3,14 +3,18 @@
 /// @brief    CastleIconクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  城のアイコン画像を表すクラスです。
 
+//==========================================================
 #ifndef _CASTLE_ICON_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _CASTLE_ICON_H		// 多重に定義されることを防ぎます。
+#define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include "image.h"
 #include "constants.h"
+
+//==========================================================
 
 // CastleIconクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -24,6 +28,7 @@ namespace castleIconNS
 	const int START_FRAME = 1;		// アニメーションはフレーム1から開始
 }
 
+// 勇者のアイコン画像を表すクラスです。
 class CastleIcon : public Image
 {
 public:

@@ -3,8 +3,9 @@
 /// @brief    braveAttackCollision.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention	プレイヤー（勇者）による攻撃の当たり判定用のエンティティを出現させるクラスです。
+
+//==========================================================
 
 #include "braveAttackCollision.h"
 
@@ -13,7 +14,7 @@
 //==========================================================
 BraveAttackCollision::BraveAttackCollision() : Entity()
 {
-	mActive = false;												// 攻撃はアクティブでない状態から開始
+	mActive = false;											// 攻撃はアクティブでない状態から開始
 	mVisible = false;
 	mSpriteData.width = braveAttackCollisionNS::WIDTH;			// １つの画像のサイズ
 	mSpriteData.height = braveAttackCollisionNS::HEIGHT;
@@ -29,11 +30,23 @@ BraveAttackCollision::BraveAttackCollision() : Entity()
 }
 
 //==========================================================
+// パラメータ初期化
+//==========================================================
+void BraveAttackCollision::reset()
+{
+	Entity::reset();												// エンティティを初期化
+	setVisible(false);												// エンティティは非表示
+	mAttackEffect.setCurrentFrame(mAttackEffect.getStartFrame());	// アニメーションを初期化
+	mAttackEffect.setVisible(false);								// アニメーションは最初は表示しない
+}
+
+//==========================================================
 // Update
+// 攻撃のアニメーションと自身のエンティティを更新する。
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //==========================================================
-void BraveAttackCollision::update(float frameTime)
+void BraveAttackCollision::update(const float frameTime)
 {
 	// 攻撃の衝撃派を更新
 	mAttackEffect.update(frameTime);
@@ -58,7 +71,7 @@ void BraveAttackCollision::update(float frameTime)
 // 勇者から攻撃を発動
 // 指定した位置にこのエンティティをアクティブにして出現させる
 //==========================================================
-void BraveAttackCollision::attack(float centerX, float centerY, float width, float height, characterNS::DIRECTION direction)
+void BraveAttackCollision::attack(const float centerX, const float centerY, const float width, const float height, const characterNS::DIRECTION direction)
 {
 	// 攻撃の衝撃派のアニメーションを表示
 	mAttackEffect.attack(centerX, centerY, width, height, direction);

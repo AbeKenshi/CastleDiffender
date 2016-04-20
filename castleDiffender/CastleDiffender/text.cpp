@@ -3,8 +3,7 @@
 /// @brief    text.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  スプライトテキストを描画するクラスです。
 
 
 #include "text.h"

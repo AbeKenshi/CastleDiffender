@@ -3,8 +3,10 @@
 /// @brief    barricade.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  バリケードを表すクラスです。
+///				城の周りに配置され、破壊されると城へ突破されます。
+
+//==========================================================
 #include "barricade.h"
 
 //==========================================================
@@ -30,10 +32,11 @@ Barricade::Barricade() : Entity()
 
 //==========================================================
 // Update
+// 残り体力に応じてアニメーションを更新する。
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //==========================================================
-void Barricade::update(float frameTime)
+void Barricade::update(const float frameTime)
 {
 	// 非アクティブな場合、何もしない
 	if (mActive == false)
@@ -59,10 +62,20 @@ void Barricade::update(float frameTime)
 }
 
 //==========================================================
+// パラメータリセット
+//==========================================================
+void Barricade::reset()
+{
+	Entity::reset();												// エンティティを初期化
+	hitEffect.setCurrentFrame(hitEffect.getStartFrame());			// 攻撃がヒットしたときのアニメーションを初期化
+	hitEffect.setVisible(false);									// 攻撃がヒットしたときのアニメーションは最初は表示しない
+}
+
+//==========================================================
 // ダメージ処理
 // WEAPONの種類によって受けるダメージが分岐
 //==========================================================
-void Barricade::damage(WEAPON weapon)
+void Barricade::damage(const WEAPON weapon)
 {
 	// 非アクティブな場合、ダメージは受けない
 	if (!mActive)
@@ -77,7 +90,7 @@ void Barricade::damage(WEAPON weapon)
 	case BRAVE_ATTACK:			// プレイヤーの攻撃
 	case BRAVE_SECOND_ATTACK:	// プレイヤーの攻撃
 		// バリケードを回復
-		mHealth += 20;
+		mHealth += BRAVE_RECOVERY_TO_BARRICADE;
 		// MAX100を超えた場合は100にする
 		if (mHealth > 100)
 		{
@@ -88,7 +101,7 @@ void Barricade::damage(WEAPON weapon)
 		break;
 	case ENEMY_ATTACK:
 		// バリケードにダメージ
-		mHealth -= 10 * mDamagePer;
+		mHealth -= ENEMY_ATTACK_DAMEGE_BARRICADE * mDamagePer;
 		// 攻撃がヒットしたときのアニメーションを発動
 		hitEffect.hit(getCenterX(), getCenterY());
 		// 残り体力がなくなった場合、
@@ -102,7 +115,7 @@ void Barricade::damage(WEAPON weapon)
 		break;
 	case MIDBOSS_ATTACK:
 		// バリケードにダメージ
-		mHealth -= 20 * mDamagePer;
+		mHealth -= MIDBOSS_ATTACK_DAMEGE_BARRICADE * mDamagePer;
 		// 攻撃がヒットしたときのアニメーションを発動
 		hitEffect.hit(getCenterX(), getCenterY());
 		// 残り体力がなくなった場合、

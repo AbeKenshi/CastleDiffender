@@ -3,10 +3,13 @@
 /// @brief    fire.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  プレイヤーの必殺技によって発射される炎を表すクラスです。
+
+//==========================================================
 
 #include "fire.h"
+
+//==========================================================
 
 //==========================================================
 // デフォルトコンストラクタ
@@ -49,10 +52,12 @@ void Fire::reset()
 
 //==========================================================
 // Update
+// エンティティがアクティブな場合、一定時間まっすぐ移動
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
+// 引数：frameTime　1フレームで経過した時間
 //==========================================================
-void Fire::update(float frameTime)
+void Fire::update(const float frameTime)
 {
 	mFireTimer -= frameTime;						// 発射が可能になるまでの残り時間
 	
@@ -81,7 +86,7 @@ void Fire::update(float frameTime)
 // Fire
 // Braveから炎を発射
 //==========================================================
-void Fire::fire(float centerX, float centerY, float width, float height, float scale, int& mp, characterNS::DIRECTION direction)
+void Fire::fire(const float centerX, const float centerY, const float width, const float height, const float scale, int& mp, const characterNS::DIRECTION direction)
 {
 	if (mFireTimer <= 0.0f && mp > fireNS::FIRE_MP)	// 発射可能な場合
 	{

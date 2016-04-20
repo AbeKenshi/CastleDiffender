@@ -3,18 +3,22 @@
 /// @brief    Braveクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  プレイヤーが操作する勇者を表すクラスです。
+///				プレイヤーが操作をして移動、攻撃、必殺技、ガードを駆使して敵を倒します。
 
+//==========================================================
 #ifndef _BRAVE_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _BRAVE_H		// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include "constants.h"
 #include "map.h"
 #include "fire.h"
 #include "rect.h"
 #include "braveAttackCollision.h"
+
+//==========================================================
 
 // Braveクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -61,19 +65,20 @@ namespace braveNS
 	const float DAMAGE_TIME = 1.0f;					// ダメージを受けて点滅する時間
 }
 
-// Braveクラス
+//==========================================================
+// プレイヤーが操作する勇者を表すクラスです。
 class Brave : public Character
 {
 private:
 	int mMagicPoint;							// MP、必殺技を使うと減少。
 	float mMpTimer;								// MP回復用のタイマー
-	bool mSecondAttackFlag;						// 第二段攻撃アニメーションの開始フラグ
 	float mTmpY;								// 一時的なY座標保存用
+	bool mSecondAttackFlag;						// 第二段攻撃アニメーションの開始フラグ
 	Fire mFire;									// 炎
 	BraveAttackCollision mBraveAttackCollision;	// 勇者の攻撃の当たり判定用
 	// 向いている方向とアニメーションを切り替える
 	// 内部的にのみ使用
-	void changeWithMove(float frameTime);
+	void changeWithMove(const float frameTime);
 public:
 	// コンストラクタ
 	Brave();
@@ -81,33 +86,49 @@ public:
 	//==========================================================
 	// 継承されたメンバー関数
 	//==========================================================
+
 	// Update
+	// キーボードからの入力を受け付け、それに応じて移動や攻撃などの行動を行う。
 	// 通常、フレームごとに1回呼び出す
 	// frameTimeは、移動とアニメーションの速さを制御するために使用
-	void update(float frameTime);
+	// 引数：frameTime　1フレームで経過した時間
+	void update(const float frameTime);
 	// 人工知能。NPCの行動を決定するのに使用
-	void ai(float frameTime, Entity &ent) {};
+	// 引数：frameTime　1フレームで経過した時間
+	// 引数：ent		他のエンティティ
+	void ai(const float frameTime, const Entity &ent) {};
 	// ダメージ処理
 	// WEAPONの種類によって受けるダメージが分岐
-	void damage(WEAPON);
+	// 引数：weapon	WEAPONの種類
+	void damage(const WEAPON weapon);
 	// パラメータリセット
+	// roundStart()内で呼び出される
 	void reset();
 
+	//==========================================================
 	// 新しく追加するメンバー関数
+	//==========================================================
+
 	//==========================================================
 	// getter
 	//==========================================================
+	
 	// MPを返す関数
+	// 戻り値：残りMP
 	int getMP() { return mMagicPoint; }
 	// 炎を返す
+	// 戻り値：炎オブジェクト
 	Fire& getFire() { return mFire; }
 	// 攻撃時のエンティティを返す
+	// 戻り値：攻撃の当たり判定用のエンティティ
 	BraveAttackCollision& getBraveAttackCollision() { return mBraveAttackCollision; }
 
 	//==========================================================
 	// setter
 	//==========================================================
+	
 	// MPをセットする関数
-	void setMP(int mp) { mMagicPoint = mp; }
+	// 引数：mp	残りMP
+	void setMP(const int mp) { mMagicPoint = mp; }
 };
 #endif

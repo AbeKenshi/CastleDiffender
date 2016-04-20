@@ -3,13 +3,20 @@
 /// @brief    Imageクラス
 /// @author   阿部拳之
 ///
-/// @attention  
+/// @attention  画像を描画するクラスです。
+///				ゲーム内のアイテムはすべて画像があると考えられるので、
+///				このクラスを継承することを勧めます
+
+//==========================================================
 #ifndef _IMAGE_H	//このファイルが複数の箇所でインクルードされる場合に、
 #define _IMAGE_H	// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include "textureManager.h"
 #include "constants.h"
+
+//==========================================================
 
 // Imageクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -18,6 +25,10 @@ namespace imageNS
 	enum MODE { HORIZONTAL, VERTICAL };	// 読み込んだ画像に対して横にアニメーションが流れる場合はHORIZONTAL、縦の場合はVERTICAL
 }
 
+//==========================================================
+// 画像を描画するクラスです。
+// ゲーム内のアイテムはすべて画像があると考えられるので、
+// このクラスを継承することを勧めます
 class Image
 {
 protected:
@@ -270,15 +281,15 @@ public:
 	// （image.hで、デフォルトとして白が割り当てられている）
 	// 実行前：spriteBegin()を呼び出す
 	// 実行後：spriteEnd()を呼び出す
-	virtual void draw(COLOR_ARGB color = graphicsNS::WHITE);
+	virtual void draw(const COLOR_ARGB color = graphicsNS::WHITE);
 
 	// 指定されたSpriteDataを使ってこの画像を描画
 	// 現在のSpriteData.rectを使って、テクスチャを選択
 	// 実行前：spriteBegin()を呼び出す
 	// 実行後：spriteEnd()を呼び出す
-	virtual void draw(SpriteData sd, COLOR_ARGB color = graphicsNS::WHITE, UINT textureN = 0);
+	virtual void draw(SpriteData sd, const COLOR_ARGB color = graphicsNS::WHITE, const UINT textureN = 0);
 
-	virtual void update(float frameTime);
+	virtual void update(const float frameTime);
 
 	// パラメータリセット
 	virtual void reset();

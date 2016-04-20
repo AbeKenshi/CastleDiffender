@@ -3,15 +3,19 @@
 /// @brief    MpTextImageクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  MPという文字の画像を表すクラスです。
+///				システムグラフィックスとして使用できます。
 
+//==========================================================
 #ifndef _MP_TEXT_IMAGE_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _MP_TEXT_IMAGE_H		// 多重に定義されることを防ぎます。
+#define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include "image.h"
 #include "constants.h"
 
+//==========================================================
 // MpTextImageクラスの定数
 // ゲーム内でのステータス以外をここに記述
 namespace mpTextImageNS
@@ -24,6 +28,9 @@ namespace mpTextImageNS
 	const int START_FRAME = 20;	// アニメーションはフレーム15から開始
 }
 
+//==========================================================
+// MPという文字の画像を表すクラスです。
+// システムグラフィックスとして使用できます。
 class MpTextImage : public Image
 {
 public:

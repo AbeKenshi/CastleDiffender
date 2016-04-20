@@ -3,12 +3,14 @@
 /// @brief    ダッシュボード関連のクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  ダッシュボード（棒グラフ、スイッチなど）を表すクラスです。
+///				システムグラフィックスとして使用することができます。
 
+//==========================================================
 #ifndef _DASHBOARD_H            // このファイルが複数の箇所でインクルードされる場合に、 
 #define _DASHBOARD_H            // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include <string>
 #include <sstream>
@@ -16,6 +18,8 @@
 #include "constants.h"
 #include "textureManager.h"
 #include "input.h"
+
+//==========================================================
 
 // ダッシュボードの定数
 // ゲーム内でのステータス以外をここに記述
@@ -42,6 +46,8 @@ namespace dashboardNS
     enum DialType{DIAL360, DIAL270, DIAL180};
 }
 
+// セブンセグメントを表すクラスです。
+// システムグラフィックスとして使用することができます。
 class SevenSegment : public Image
 {
 private:
@@ -52,46 +58,62 @@ public:
 	// コンストラクタ
     SevenSegment();
 	// セブンセグメント表示の初期化
-	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
-	//		   *textureM = TextureManagerオブジェクトへのポインタ
-	//		   left、top = 画面位置
-	//         scale = 倍率（ズーム）
-	//		   digits = 桁数
-	//		   color = 数字の色
-	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
-    bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
-                    float scale, UINT digits, COLOR_ARGB color);
+	// 引数：*graphics	Graphicsオブジェクトへのポインタ
+	// 引数：*textureM	TextureManagerオブジェクトへのポインタ
+	// 引数：left、top	画面位置
+	// 引数：scale		倍率（ズーム）
+	// 引数：digits		桁数
+	// 引数：color		数字の色
+	// 戻り値：成功した場合はtrue、エラーの場合はfalseを戻す
+    bool initialize(Graphics *graphics, TextureManager *textureM, const int left, const int top,
+                    const float scale, UINT digits, const COLOR_ARGB color);
 	// セブンセグメント表示に表示する数値を設定
-    void set(double value);
-    // updateをオーバーライド
-    virtual void update(float frameTime)    {}
+	// 引数：value	表示する数値
+    void set(const double value);
+	// Update
+	// 通常、フレームごとに1回呼び出す
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
+	// 引数：frameTime　1フレームで経過した時間
+    virtual void update(const float frameTime)    {}
 	// セブンセグメントの数字「0」～「9」と「-」を表示
-    void drawDigit(char n, COLOR_ARGB color);
+	// 引数：n	表示する数値
+	// 引数：color	表示する色
+    void drawDigit(const char n, const COLOR_ARGB color);
 	// 小数点を描画
-    void drawDecimal(COLOR_ARGB color);
+	// 引数：color	表示する色
+    void drawDecimal(const COLOR_ARGB color);
 	// セブンセグメント表示を描画
 	// number変数には、表示する浮動小数点数値が格納されている
-	virtual void draw(COLOR_ARGB color = graphicsNS::WHITE);
+	// 引数：color	表示する色（デフォルトでは白）
+	virtual void draw(const COLOR_ARGB color = graphicsNS::WHITE);
 };
 
+// バーを表すクラスです。
+// システムグラフィックスとして使用することができます。
 class Bar : public Image
 {
 public:
 	// Barを初期化
-	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
-	//		   *textureM = TextureManagerオブジェクトへのポインタ
-	//		   left、top = 画面位置
-	//         scale = 倍率（ズーム）
-	//		   color = バーの色
-	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
-    bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
-                    float scale, COLOR_ARGB color);
+	// 引数：*graphics	Graphicsオブジェクトへのポインタ
+	// 引数：*textureM	TextureManagerオブジェクトへのポインタ
+	// 引数：left、top	画面位置
+	// 引数：scale		倍率（ズーム）
+	// 引数：color		バーの色
+	// 戻り値：成功した場合はtrue、エラーの場合はfalseを戻す
+    bool initialize(Graphics *graphics, TextureManager *textureM, const int left, const int top,
+                    const float scale, const COLOR_ARGB color);
 	// バーのサイズを設定
+	// 引数：percentOn	バーのサイズ
     void set(float percentOn);
-	// updateをオーバーライド
-    virtual void update(float frameTime)    {}
+	// Update
+	// 通常、フレームごとに1回呼び出す
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
+	// 引数：frameTime　1フレームで経過した時間
+    virtual void update(const float frameTime)    {}
 };
 
+// 円グラフを表すクラスです。
+// システムグラフィックスとして使用することができます。
 class DialGauge : public Image
 {
 private:
@@ -99,26 +121,33 @@ private:
     dashboardNS::DialType mDialType;	// 円盤の種類
 public:
 	// DialGaugeを初期化
-	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
-	//		   *textureM = TextureManagerオブジェクトへのポインタ
-	//		   left、top = 画面位置
-	//         scale = 倍率（ズーム）
-	//		   type = 円盤の種類
-	//		   zeroAngle = 円盤のゼロの位置
-	//		   dialColor = 円盤の色
-	//		   pointColor = 数字の色
-	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
-    bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
-                    float scale, dashboardNS::DialType type, float zeroAngle,
-                    COLOR_ARGB dialColor, COLOR_ARGB pointerColor);
+	// 引数：*graphics	Graphicsオブジェクトへのポインタ
+	// 引数：*textureM	TextureManagerオブジェクトへのポインタ
+	// 引数：left、top	画面位置
+	// 引数：scale		倍率（ズーム）
+	// 引数：type		円盤の種類
+	// 引数：zeroAngle	円盤のゼロの位置
+	// 引数：dialColor	円盤の色
+	// 引数：pointColor	数字の色
+	// 戻り値：成功した場合はtrue、エラーの場合はfalseを戻す
+    bool initialize(Graphics *graphics, TextureManager *textureM, const int left, const int top,
+                    const float scale, const dashboardNS::DialType type, const float zeroAngle,
+                    const COLOR_ARGB dialColor, const COLOR_ARGB pointerColor);
 	// DialGaugeの指針を設定
+	// 引数：percentOn	指針の値
     void set(float percentOn);
-	// updateをオーバーライド
-    virtual void update(float frameTime)    {}
+	// Update
+	// 通常、フレームごとに1回呼び出す
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
+	// 引数：frameTime　1フレームで経過した時間
+    virtual void update(const float frameTime)    {}
 	// DialGaugeと指針を描画
-    virtual void draw(COLOR_ARGB color = graphicsNS::WHITE); // draw using color as filter
+	// 引数：color	表示する色（デフォルトでは白）
+    virtual void draw(const COLOR_ARGB color = graphicsNS::WHITE); // draw using color as filter
 };
 
+// ライトを表すクラスです。
+// システムグラフィックスとして使用することができます。
 class Light : public Image
 {
 private:
@@ -130,23 +159,30 @@ public:
 	// コンストラクタ
     Light();
 	// Lightを初期化
-	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
-	//		   *textureM = TextureManagerオブジェクトへのポインタ
-	//		   left、top = 画面位置
-	//         scale = 倍率（ズーム）
-	//		   flashRate = 点灯/消灯/点滅の速さ
+	// 引数：*graphics	Graphicsオブジェクトへのポインタ
+	// 引数：*textureM	TextureManagerオブジェクトへのポインタ
+	// 引数：left、top	画面位置
+	// 引数：scale		倍率（ズーム）
+	// 引数flashRate	点灯/消灯/点滅の速さ
 	//		   （<0の場合は点灯、=0の場合は消灯、>0の場合は1秒あたりの点滅の時間）
-	//		   colorOn = 点灯時のライトの色
-	//		   colorOff = 消灯時のライトの色
-	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
-    bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
-                float scale,float flashRate, COLOR_ARGB colorOn, COLOR_ARGB colorOff);
+	// 引数：colorOn	点灯時のライトの色
+	// 引数：colorOff	消灯時のライトの色
+	// 戻り値：成功した場合はtrue、エラーの場合はfalseを戻す
+    bool initialize(Graphics *graphics, TextureManager *textureM, const int left, const int top,
+                const float scale, const float flashRate, const COLOR_ARGB colorOn, const COLOR_ARGB colorOff);
 	// flashRateを設定：<0の場合は点灯、 =0の場合は消灯、>0の場合は点滅の周期
-	void set(float rate);
-	// updateをオーバーライド
-    virtual void update(float frameTime);
+	// 引数：rate	flashRate
+	void set(const float rate);
+
+	// Update
+	// ライトを更新。
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
+	// 引数：frameTime　1フレームで経過した時間
+    virtual void update(const float frameTime);
 };
 
+// トグルスイッチを表すクラスです。
+// システムグラフィックスとして使用することができます。
 class ToggleSwitch : public Image
 {
 private:
@@ -159,23 +195,30 @@ private:
     // Toggle switchコンストラクタ
     ToggleSwitch();
 	// 切り替えスイッチ（ToggleSwitch）を初期化
-	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
-	//		   *textureM = TextureManagerオブジェクトへのポインタ
-	//		   *in = Inputオブジェクトへのポインタ
-	//         hwnd = ウィンドウへのハンドル
-	//		   left、top = 画面位置
-	//		   scale = 倍率（ズーム）
+	// 引数：*graphics	Graphicsオブジェクトへのポインタ
+	// 引数：*textureM	TextureManagerオブジェクトへのポインタ
+	// 引数：*in		Inputオブジェクトへのポインタ
+	// 引数：hwnd		ウィンドウへのハンドル
+	// 引数：left、top	画面位置
+	// 引数：scale		倍率（ズーム）
 	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
-    bool initialize(Graphics *graphics, TextureManager *textureM, Input *in, HWND hwnd,
-                    int left, int top, float scale);
-	// updateをオーバーライド
-    virtual void update(float frameTime);
+    bool initialize(Graphics *graphics, TextureManager *textureM, Input *in, const HWND hwnd,
+                    const int left, const int top, const float scale);
+	// Update
+	// スイッチ上でのマウスクリックをチェック
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
+	// 引数：frameTime　1フレームで経過した時間
+    virtual void update(const float frameTime);
     // スイッチの状態を取得
+	// 戻り値：スイッチがオンかどうか
     bool getSwitchOn()   {return mSwitchOn;}
     // スイッチの状態を設定
-    void setSwitch(bool on) {mSwitchOn = on;}
+	// 引数：on	スイッチがオンかどうか
+    void setSwitch(const bool on) {mSwitchOn = on;}
 };
 
+// プッシュボタンを表すクラスです。
+// システムグラフィックスとして使用することができます。
 class PushButton : public Image
 {
 private:
@@ -189,25 +232,32 @@ public:
     // Pushbutton switchコンストラクタ
     PushButton();
 	// プッシュボタン（PushButton）を初期化
-	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
-	//		   *textureM = TextureManagerオブジェクトへのポインタ
-	//		   *in = Inputオブジェクトへのポインタ
-	//         hwnd = ウィンドウへのハンドル
-	//		   left、top = 画面位置
-	//		   scale = 倍率（ズーム）
-	//		   type = trueの場合はモーメンタリー、falseの場合はオルタネート
+	// 引数：*graphics	Graphicsオブジェクトへのポインタ
+	// 引数：*textureM	TextureManagerオブジェクトへのポインタ
+	// 引数：*in		Inputオブジェクトへのポインタ
+	// 引数：hwnd		ウィンドウへのハンドル
+	// 引数：left、top	画面位置
+	// 引数：scale		倍率（ズーム）
+	// 引数：type		trueの場合はモーメンタリー、falseの場合はオルタネート
 	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
-    bool initialize(Graphics *graphics, TextureManager *textureM, Input *in, HWND hwnd,
-                    int left, int top, float scale, bool momentary);
-	// updateをオーバーライド
-    virtual void update(float frameTime);
+    bool initialize(Graphics *graphics, TextureManager *textureM, Input *in, const HWND hwnd,
+                    const int left, const int top, const float scale, const bool momentary);
+	// Update
+	// プッシュボタン上でのマウスクリックをチェック
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
+	// 引数：frameTime　1フレームで経過した時間
+    virtual void update(const float frameTime);
 	// スイッチの状態を取得
+	// 戻り値：スイッチがオンかどうか
     bool getSwitchOn()  {return mSwitchOn;}
 	// スイッチの状態を設定
-    void setSwitch(bool on) {mSwitchOn = on;}
+	// 引数：on	スイッチがオンかどうか
+    void setSwitch(const bool on) {mSwitchOn = on;}
 };
 
-//
+
+// 棒グラフを表すクラスです。
+// システムグラフィックスとして使用することができます。
 class BarGraph : public Image
 {
 private:
@@ -217,23 +267,27 @@ public:
     // BarGraphコンストラクタ
     BarGraph();
 	// BarGraphを初期化
-	// 実行前：*graphics = Graphicsオブジェクトへのポインタ
-	//		   *textureM = TextureManagerオブジェクトへのポインタ
-	//		   left、top = 画面位置
-	//		   scale = 倍率（ズーム）
-	//		   bars = メーター内のバーの本数
-	//		   color = バーの色
+	// 引数：*graphics	Graphicsオブジェクトへのポインタ
+	// 引数：*textureM	TextureManagerオブジェクトへのポインタ
+	// 引数：left、top	画面位置
+	// 引数：scale		倍率（ズーム）
+	// 引数：bars		メーター内のバーの本数
+	// 引数：color		バーの色
 	// 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
-    bool initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
-                    float scale, UINT bars, COLOR_ARGB color);
+    bool initialize(Graphics *graphics, TextureManager *textureM, const int left, const int top,
+                    const float scale, const UINT bars, const COLOR_ARGB color);
 	// barsOnの値を、表示するバーの本数に設定
 	// パラメータpは割合（0～100）
-    void set(float percentOn);	
-	// updateをオーバーライド
-    virtual void update(float frameTime)    {}
+    void set(float percentOn);
+	// Update
+	// 通常、フレームごとに1回呼び出す
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
+	// 引数：frameTime　1フレームで経過した時間
+    virtual void update(const float frameTime)    {}
 	// BarGraphを描画
 	// barsOnは、表示するバーの本数を格納
-    virtual void draw(COLOR_ARGB color = graphicsNS::WHITE); // draw using color as filter
+	// 引数：color	表示する色（デフォルトでは白）
+    virtual void draw(const COLOR_ARGB color = graphicsNS::WHITE); // draw using color as filter
 };
 
 #endif

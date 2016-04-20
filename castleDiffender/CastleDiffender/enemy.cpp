@@ -3,11 +3,15 @@
 /// @brief    enemy.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  雑魚敵を表すクラスです。
+///				バリケードを破壊しながら城に向かって攻めてくるので、
+///				プレイヤーは勇者を操作して倒します。
+
+//==========================================================
 
 #include "enemy.h"
 #include <iostream>
+
 //==========================================================
 // デフォルトコンストラクタ
 //==========================================================
@@ -70,10 +74,12 @@ void Enemy::reset()
 
 //=============================================================================
 // Update
+// 攻撃完了直後の状態遷移や移動などの行動を行う。
+// 全体的な状態遷移については、衝突判定によって行うためstage.collisions()に記載
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //=============================================================================
-void Enemy::update(float frameTime)
+void Enemy::update(const float frameTime)
 {
 	// 非アクティブなら何もしない
 	if (!mActive)
@@ -100,25 +106,25 @@ void Enemy::update(float frameTime)
 			if (mDirection != mGoalDirection)
 				changeDirection(mMoveLeftStartFrame, mMoveLeftEndFrame);
 			// 左に移動
-			mSpriteData.x -= enemyNS::MOVE_SPEED * frameTime;
+			mSpriteData.x -= ENEMY_MOVE_SPEED * frameTime;
 			break;
 		case characterNS::RIGHT:
 			if (mDirection != mGoalDirection)
 				changeDirection(mMoveRightStartFrame, mMoveRightEndFrame);
 			// 右に移動
-			mSpriteData.x += enemyNS::MOVE_SPEED * frameTime;
+			mSpriteData.x += ENEMY_MOVE_SPEED * frameTime;
 			break;
 		case characterNS::UP:
 			if (mDirection != mGoalDirection)
 				changeDirection(mMoveUpStartFrame, mMoveUpEndFrame);
 			// 上に移動
-			mSpriteData.y -= enemyNS::MOVE_SPEED * frameTime;
+			mSpriteData.y -= ENEMY_MOVE_SPEED * frameTime;
 			break;
 		case characterNS::DOWN:
 			if (mDirection != mGoalDirection)
 				changeDirection(mMoveDownStartFrame, mMoveDownEndFrame);
 			// 左に移動
-			mSpriteData.y += enemyNS::MOVE_SPEED * frameTime;
+			mSpriteData.y += ENEMY_MOVE_SPEED * frameTime;
 			break;
 		}
 		// 攻撃直後ではないはずなのでフラグをオフ
@@ -128,7 +134,7 @@ void Enemy::update(float frameTime)
 		if (isCenterOfTile())	// タイルの中央に来たらマップを更新
 		{
 			// マップに自分の位置を追加
-			mMap->updateMapCol((float)(mTileY * mapNS::TEXTURE_SIZE), (float)(mTileX * mapNS::TEXTURE_SIZE), mMap->getMapCol(mTileY, mTileX) + 3);
+			mMap->updateMapCol((float)(mTileY * mapNS::TEXTURE_SIZE), (float)(mTileX * mapNS::TEXTURE_SIZE), mMap->getMapCol(mTileY, mTileX) + mapNS::COL_ENEMY_INCLEMENT);
 			// 移動に関しての意思決定が可能
 			mCanMakeDecesionMove = true;
 		}
@@ -241,7 +247,7 @@ void Enemy::update(float frameTime)
 // ダメージ処理
 // WEAPONの種類によって受けるダメージが分岐
 //==========================================================
-void Enemy::damage(WEAPON weapon)
+void Enemy::damage(const WEAPON weapon)
 {
 	// 敵のタイプによって、受けるダメージの割合を変化
 	if (mType == enemyNS::NORMAL)
@@ -256,19 +262,19 @@ void Enemy::damage(WEAPON weapon)
 	{
 	case FIRE:					// 炎
 		// 一定ダメージを受ける
-		mHealth -= braveFireDamage * mDamagePer;
+		mHealth -= BRAVE_FIRE_DAMAGE * mDamagePer;
 		// ダメージ状態のフラグをオン
 		mIsDamaged = true;
 		break;
 	case BRAVE_ATTACK:			// 勇者の攻撃
 		// 一定ダメージを受ける
-		mHealth -= braveAttackDamage * mDamagePer;
+		mHealth -= BRAVE_ATTACK_DAMAGE * mDamagePer;
 		// ダメージ状態のフラグをオン
 		mIsDamaged = true;
 		break;
 	case BRAVE_SECOND_ATTACK:	// 勇者の第二撃
 		// 一定ダメージを受ける
-		mHealth -= braveAttackDamage * mDamagePer;
+		mHealth -= BRAVE_ATTACK_DAMAGE * mDamagePer;
 		// ダメージ状態のフラグをオン
 		mIsDamaged = true;
 		break;
@@ -289,21 +295,14 @@ void Enemy::damage(WEAPON weapon)
 		else
 			mVelocity.x = -32.0f * 2.0;
 		mVelocity.y = -sqrt(2 * 2000.0f * 96 * 2);
-		mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - 3);
+		mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - mapNS::COL_ENEMY_INCLEMENT);
 	}
-}
-
-//==========================================================
-// 人工知能
-//==========================================================
-void Enemy::ai(float frameTime, Entity &ent)
-{
 }
 
 //==========================================================
 // 向いている方向を変更するメソッド
 //==========================================================
-void Enemy::changeDirection(int strF, int endF)
+void Enemy::changeDirection(const int strF, const int endF)
 {
 	mDirection = mGoalDirection;
 	mStartFrame = strF;
@@ -364,9 +363,9 @@ bool Enemy::checkBarricadeOnLine() {
 	// いずれかの方向について、城までの直線状になんのオブジェクトもない場合はfalseを返す
 	for (int x = mTileX; x <= mapNS::MAP_WIDTH; ++x)
 	{
-		if (mMap->getMapObj(mTileY, x) == 0 || mMap->getMapCol(mTileY, x) == 1)
+		if (mMap->getMapObj(mTileY, x) == mapNS::OBJ_BARRICADE || mMap->getMapCol(mTileY, x) == mapNS::COL_ROCK)
 			break;
-		if (mMap->getMapCol(mTileY, x) == 2)
+		if (mMap->getMapCol(mTileY, x) == mapNS::COL_CASTLE)
 		{
 			mGoalDirection = characterNS::RIGHT;
 			return false;
@@ -374,9 +373,9 @@ bool Enemy::checkBarricadeOnLine() {
 	}
 	for (int x = mTileX; x >= 0; --x)
 	{
-		if (mMap->getMapObj(mTileY, x) == 0 || mMap->getMapCol(mTileY, x) == 1)
+		if (mMap->getMapObj(mTileY, x) == mapNS::OBJ_BARRICADE || mMap->getMapCol(mTileY, x) == mapNS::COL_ROCK)
 			break;
-		if (mMap->getMapCol(mTileY, x) == 2)
+		if (mMap->getMapCol(mTileY, x) == mapNS::COL_CASTLE)
 		{
 			mGoalDirection = characterNS::LEFT;
 			return false;
@@ -384,9 +383,9 @@ bool Enemy::checkBarricadeOnLine() {
 	}
 	for (int y = mTileY; y <= mapNS::MAP_HEIGHT; ++y)
 	{
-		if (mMap->getMapObj(y, mTileX) == 0 || mMap->getMapCol(y, mTileX) == 1)
+		if (mMap->getMapObj(y, mTileX) == mapNS::OBJ_BARRICADE || mMap->getMapCol(y, mTileX) == mapNS::COL_ROCK)
 			break;
-		if (mMap->getMapCol(y, mTileX) == 2)
+		if (mMap->getMapCol(y, mTileX) == mapNS::COL_CASTLE)
 		{
 			mGoalDirection = characterNS::DOWN;
 			return false;
@@ -394,9 +393,9 @@ bool Enemy::checkBarricadeOnLine() {
 	}
 	for (int y = mTileY; y >= 0; --y)
 	{
-		if (mMap->getMapObj(y, mTileX) == 0 || mMap->getMapCol(y, mTileX) == 1)
+		if (mMap->getMapObj(y, mTileX) == mapNS::OBJ_BARRICADE || mMap->getMapCol(y, mTileX) == mapNS::COL_ROCK)
 			break;
-		if (mMap->getMapCol(y, mTileX) == 2)
+		if (mMap->getMapCol(y, mTileX) == mapNS::COL_CASTLE)
 		{
 			mGoalDirection = characterNS::UP;
 			return false;
@@ -491,7 +490,7 @@ void Enemy::changeAttack(VECTOR2 &collisionVector)
 //==========================================================
 // 攻撃モードにチェンジするときに呼び出す関数
 //==========================================================
-void Enemy::changeAttack(characterNS::DIRECTION dir)
+void Enemy::changeAttack(const characterNS::DIRECTION dir)
 {
 	// 攻撃直前モードにチェンジ
 	mLoop = false;
@@ -565,7 +564,7 @@ bool Enemy::isCenterOfTile()
 	case characterNS::RIGHT:
 		if (mSpriteData.x / 32 >= mTileX + 1)
 		{
-			mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - 3);
+			mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - mapNS::COL_ENEMY_INCLEMENT);
 			mTileX += 1;
 			isCenter = true;
 		}
@@ -573,7 +572,7 @@ bool Enemy::isCenterOfTile()
 	case characterNS::LEFT:
 		if (mSpriteData.x / 32 <= mTileX - 1)
 		{
-			mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - 3);
+			mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - mapNS::COL_ENEMY_INCLEMENT);
 			mTileX -= 1;
 			isCenter = true;
 		}
@@ -581,7 +580,7 @@ bool Enemy::isCenterOfTile()
 	case characterNS::UP:
 		if (mSpriteData.y / 32 <= mTileY - 1)
 		{
-			mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - 3);
+			mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - mapNS::COL_ENEMY_INCLEMENT);
 			mTileY -= 1;
 			isCenter = true;
 		}
@@ -589,7 +588,7 @@ bool Enemy::isCenterOfTile()
 	case characterNS::DOWN:
 		if (mSpriteData.y / 32 >= mTileY + 1)
 		{
-			mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - 3);
+			mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - mapNS::COL_ENEMY_INCLEMENT);
 			mTileY += 1;
 			isCenter = true;
 		}
@@ -601,7 +600,7 @@ bool Enemy::isCenterOfTile()
 //==========================================================
 // 指定した方向に進み始められるかどうか
 //==========================================================
-bool Enemy::canMoveTo(characterNS::DIRECTION dir)
+bool Enemy::canMoveTo(const characterNS::DIRECTION dir)
 {
 	// 指定した方向のタイルに障害物があれば移動できない
 	// なければ移動可能

@@ -3,8 +3,11 @@
 /// @brief    character.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  プレイヤーや敵クラスの基本となるクラス。
+///				継承することで使用可能です。
+///				継承なしではオブジェクトの生成はできません。
+
+//==========================================================
 
 #include "character.h"
 
@@ -45,7 +48,7 @@ void Character::reset()
 // 移動時のアップデート関数
 // アニメーション以外をアップデート
 //==========================================================
-void Character::updateMoving(float frameTime)
+void Character::updateMoving(const float frameTime)
 {
 	// アニメーションのアップデートは単独で行われるのでそれ以外をアップデート
 	Entity::updateWithoutImage(frameTime);
@@ -55,7 +58,7 @@ void Character::updateMoving(float frameTime)
 // 攻撃時のアップデート関数
 // 現状では通常のアップデート
 //==========================================================
-void Character::updateAttacking(float frameTime)
+void Character::updateAttacking(const float frameTime)
 {
 	Entity::update(frameTime);
 }
@@ -73,9 +76,8 @@ void Character::dead()
 
 //==========================================================
 // 移動可能かチェック
-// 実行前：x、y = チェックしたい位置の画面上での座標
 //==========================================================
-bool Character::checkCanMove(float x, float y)
+bool Character::checkCanMove(const float x, const float y)
 {
 	// 1マス32pixelのため32で割る
 	// -16はめり込みを防止するために半マス分引いてる
@@ -92,7 +94,7 @@ bool Character::checkCanMove(float x, float y)
 		map_y = mapNS::MAP_HEIGHT - 1;
 
 	// 進もうとするマップタイルに障害物があった場合、
-	if (mMap->getMapCol(map_y, map_x) == 1 || mMap->getMapCol(map_y, map_x) == 2)
+	if (mMap->getMapCol(map_y, map_x) == mapNS::COL_ROCK || mMap->getMapCol(map_y, map_x) == mapNS::COL_CASTLE)
 	{
 		// 移動不可
 		return false;
@@ -106,9 +108,8 @@ bool Character::checkCanMove(float x, float y)
 
 //==========================================================
 // 向いている方向をセットする
-// 実行前：dir = セットするキャラクターの向き
 //==========================================================
-void Character::setDirection(characterNS::DIRECTION dir)
+void Character::setDirection(const characterNS::DIRECTION dir)
 {
 	// セットするキャラクターの向きによって分岐
 	switch (dir)

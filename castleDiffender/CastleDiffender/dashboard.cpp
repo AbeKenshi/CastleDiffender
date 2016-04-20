@@ -3,8 +3,10 @@
 /// @brief    dashboard.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  ダッシュボード（棒グラフ、スイッチなど）を表すクラスです。
+///				システムグラフィックスとして使用することができます。
+
+//==========================================================
 
 #include "dashboard.h"
 
@@ -28,7 +30,7 @@ SevenSegment::SevenSegment()
 // 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
 //=============================================================================
 bool SevenSegment::initialize(Graphics *graphics, TextureManager *textureM,
-                   int left, int top, float scale, UINT digs, COLOR_ARGB color)
+                   const int left, const int top, const float scale, UINT digs, const COLOR_ARGB color)
 {
     try {
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
@@ -58,7 +60,7 @@ bool SevenSegment::initialize(Graphics *graphics, TextureManager *textureM,
 //=============================================================================
 // セブンセグメント表示に表示する数値を設定
 //=============================================================================
-void SevenSegment::set(double value)
+void SevenSegment::set(const double value)
 {
     mNumber = value;
 }
@@ -74,7 +76,7 @@ void SevenSegment::set(double value)
 //      |  D  |
 //       -----  
 //=============================================================================
-void SevenSegment::drawDigit(char n, COLOR_ARGB color)
+void SevenSegment::drawDigit(const char n, const COLOR_ARGB color)
 {
     float lowerY = mSpriteData.y + mSpriteData.height * mSpriteData.scale * 0.75f;
     float saveY = mSpriteData.y;
@@ -130,7 +132,7 @@ void SevenSegment::drawDigit(char n, COLOR_ARGB color)
 //=============================================================================
 // 小数点を描画
 //=============================================================================
-void SevenSegment::drawDecimal(COLOR_ARGB color)
+void SevenSegment::drawDecimal(const COLOR_ARGB color)
 {
     float saveX = mSpriteData.x;
     float saveY = mSpriteData.y;
@@ -149,7 +151,7 @@ void SevenSegment::drawDecimal(COLOR_ARGB color)
 // セブンセグメント表示を描画
 // number変数には、表示する浮動小数点数値が格納されている
 //=============================================================================
-void SevenSegment::draw(COLOR_ARGB color)
+void SevenSegment::draw(const COLOR_ARGB color)
 {
     float saveX = mSpriteData.x;
     float saveY = mSpriteData.y;
@@ -204,8 +206,8 @@ void SevenSegment::draw(COLOR_ARGB color)
 //		   color = バーの色
 // 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
 //=============================================================================
-bool Bar::initialize(Graphics *graphics, TextureManager *textureM, int left,
-                     int top, float scale, COLOR_ARGB color)
+bool Bar::initialize(Graphics *graphics, TextureManager *textureM, const int left,
+                     const int top, const float scale, COLOR_ARGB color)
 {
     try {
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
@@ -248,9 +250,9 @@ void Bar::set(float p)
 //		   pointColor = 数字の色
 // 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
 //=============================================================================
-bool DialGauge::initialize(Graphics *graphics, TextureManager *textureM, int left,
-                    int top, float scale, dashboardNS::DialType type,
-                    float zeroAngle, COLOR_ARGB dialColor, COLOR_ARGB pointerColor)
+bool DialGauge::initialize(Graphics *graphics, TextureManager *textureM, const int left,
+                    const int top, const float scale, const dashboardNS::DialType type,
+                    const float zeroAngle, const COLOR_ARGB dialColor, const COLOR_ARGB pointerColor)
 {
     try {
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
@@ -308,7 +310,7 @@ void DialGauge::set(float p)
 //=============================================================================
 // DialGaugeと指針を描画
 //=============================================================================
-void DialGauge::draw(COLOR_ARGB color)
+void DialGauge::draw(const COLOR_ARGB color)
 {
     Image::draw(color);
     float dialAngle = mSpriteData.angle;
@@ -340,8 +342,8 @@ Light::Light()
 //		   colorOff = 消灯時のライトの色
 // 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
 //=============================================================================
-bool Light::initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
-                float scale, float flashRate, COLOR_ARGB colorOn, COLOR_ARGB colorOff)
+bool Light::initialize(Graphics *graphics, TextureManager *textureM, const int left, const int top,
+                const float scale, const float flashRate, const COLOR_ARGB colorOn, const COLOR_ARGB colorOff)
 {
     try {
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
@@ -369,7 +371,7 @@ bool Light::initialize(Graphics *graphics, TextureManager *textureM, int left, i
 //=============================================================================
 // flashRateを設定：<0の場合は点灯、 =0の場合は消灯、>0の場合は点滅の周期
 //=============================================================================
-void Light::set(float flashRate)
+void Light::set(const float flashRate)
 {
     if(flashRate > 0)
         mFlashDelay = flashRate/2.0f;    // デューティー比は50%
@@ -380,7 +382,7 @@ void Light::set(float flashRate)
 //=============================================================================
 // ライトを更新
 //=============================================================================
-void Light::update(float frameTime)
+void Light::update(const float frameTime)
 {
     if(mFlashDelay > 0)  // >0の場合、ライトを点滅させる
     {
@@ -416,8 +418,8 @@ ToggleSwitch::ToggleSwitch()
 //		   scale = 倍率（ズーム）
 // 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
 //=============================================================================
-bool ToggleSwitch::initialize(Graphics *graphics, TextureManager *textureM, Input *in, HWND h,
-                    int left, int top, float scale)
+bool ToggleSwitch::initialize(Graphics *graphics, TextureManager *textureM, Input *in, const HWND h,
+                   const int left, const int top, const float scale)
 {
     try {
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
@@ -444,7 +446,7 @@ bool ToggleSwitch::initialize(Graphics *graphics, TextureManager *textureM, Inpu
 //=============================================================================
 // スイッチ上でのマウスクリックをチェック
 //=============================================================================
-void ToggleSwitch::update(float frameTime)
+void ToggleSwitch::update(const float frameTime)
 {
     if (!mInitialized || !mVisible)
         return;
@@ -498,8 +500,8 @@ PushButton::PushButton()
 //		   type = trueの場合はモーメンタリー、falseの場合はオルタネート
 // 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
 //=============================================================================
-bool PushButton::initialize(Graphics *graphics, TextureManager *textureM, Input *in, HWND h,
-                    int left, int top, float scale, bool type)
+bool PushButton::initialize(Graphics *graphics, TextureManager *textureM, Input *in, const HWND h,
+                    const int left, const int top, const float scale, const bool type)
 {
     try {
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
@@ -527,7 +529,7 @@ bool PushButton::initialize(Graphics *graphics, TextureManager *textureM, Input 
 //=============================================================================
 // プッシュボタン上でのマウスクリックをチェック
 //=============================================================================
-void PushButton::update(float frameTime)
+void PushButton::update(const float frameTime)
 {
     if (!mInitialized || !mVisible)
         return;
@@ -590,8 +592,8 @@ BarGraph::BarGraph()
 //		   color = バーの色
 // 実行後：成功した場合はtrue、エラーの場合はfalseを戻す
 //=============================================================================
-bool BarGraph::initialize(Graphics *graphics, TextureManager *textureM, int left, int top,
-                    float scale, UINT bars, COLOR_ARGB color)
+bool BarGraph::initialize(Graphics *graphics, TextureManager *textureM, const int left, const int top,
+                    const float scale, const UINT bars, const COLOR_ARGB color)
 {
     try {
         Image::initialize(graphics, dashboardNS::WIDTH, dashboardNS::HEGIHT, 
@@ -629,7 +631,7 @@ void BarGraph::set(float p)
 // BarGraphを描画
 // barsOnは、表示するバーの本数を格納
 //=============================================================================
-void BarGraph::draw(COLOR_ARGB color)
+void BarGraph::draw(const COLOR_ARGB color)
 {
     float saveX = mSpriteData.x;
 
