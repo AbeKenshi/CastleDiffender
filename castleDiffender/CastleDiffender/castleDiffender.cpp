@@ -3,8 +3,10 @@
 /// @brief    castleDiffender.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  ゲームのメインクラスです。
+///				1フレームごとの更新や描画はこのクラスで行います。
+
+//==========================================================
 
 #include "castleDiffender.h"
 
@@ -323,6 +325,8 @@ void castleDiffender::update()
 			// Xが押されたらメニュー画面に戻る
 			if (mInput->isKeyDown('X'))
 			{
+				// ゲームオーバーフラグをリセット
+				mStage.setRoundOver(false);
 				// メニュー画面オン
 				mMenuOn = true;
 				// 入力をクリア
@@ -514,14 +518,14 @@ void castleDiffender::render()
 		// マップタイルを描画
 		for (int row = 0; row < mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
 		{
-			mStage.getMap().setY((float)(row*mapNS::TEXTURE_SIZE));      // タイルのYを設定
+			mStage.getMap().setY((float)(row*mapNS::TEXTURE_SIZE));     // タイルのYを設定
 			for (int col = 0; col < mapNS::MAP_WIDTH; col++)			// マップの各列を処理
 			{
-				if (mStage.getMap().getMapData(row, col) >= 0)           // タイルが存在する場合
+				if (mStage.getMap().getMapData(row, col) >= 0)          // タイルが存在する場合（この処理はいらないと思われるが念のため）
 				{
-					mStage.getMap().setCurrentFrame(mStage.getMap().getMapData(row, col));                       // タイルのテクスチャを設定
+					mStage.getMap().setCurrentFrame(mStage.getMap().getMapData(row, col));                      // タイルのテクスチャを設定
 					mStage.getMap().setX((float)(col*mapNS::TEXTURE_SIZE));										// タイルのXを設定
-					if (mStage.getMap().getX() > -mapNS::TEXTURE_SIZE && mStage.getMap().getX() < GAME_WIDTH)     // タイルが画面上にあるかどうか
+					if (mStage.getMap().getX() > -mapNS::TEXTURE_SIZE && mStage.getMap().getX() < GAME_WIDTH)   // タイルが画面上にあるかどうか
 						mStage.getMap().draw();    // タイルを描画
 				}
 			}
@@ -812,7 +816,7 @@ void castleDiffender::consoleCommand()
 			string str = "";
 			for (int j = 0; j < mapNS::MAP_WIDTH; ++j)
 			{
-				if (mStage.getMap().getMapObj(i, j) >= 0)
+				if (mStage.getMap().getMapObj(i, j) >= mapNS::OBJ_BARRICADE)
 				{
 					str += " " + to_string(mStage.getMap().getMapObj(i, j)) + ",";
 				}

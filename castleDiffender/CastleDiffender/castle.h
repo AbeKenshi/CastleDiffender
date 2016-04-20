@@ -3,16 +3,20 @@
 /// @brief    Castleクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  城を表すクラスです。
+///				プレイヤーと同様に、城の体力が0になるとゲームーオーバーです。
 
+//==========================================================
 #ifndef _CASTLE_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _CASTLE_H		// 多重に定義されることを防ぎます。
+#define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include "entity.h"
 #include "character.h"
 #include "constants.h"
 
+//==========================================================
 
 // Castleクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -26,30 +30,48 @@ namespace castleNS
 	const int START_FRAME = 1;		// アニメーションの最初のフレーム
 }
 
+// プレイヤーと同様に、城の体力が0になるとゲームーオーバーです。
 class Castle : public Entity		// Entityクラスを継承
 {
 private:
-	bool death;						// 城が死亡時にtrue。activeをfalseにすると描画されなくなるので、代わりにこのフラグを用いる
+	bool mDeath;					// 城が死亡時にtrue。activeをfalseにすると描画されなくなるので、代わりにこのフラグを用いる
 public:
 	// コンストラクタ
 	Castle();
 
+	//==========================================================
 	// 継承されたメンバー関数
-	// update
-	void update(float frameTime);
+	//==========================================================
+	
+	// Update
+	// アニメーションの更新を行う。
+	// 通常、フレームごとに1回呼び出す
+	// frameTimeは、移動とアニメーションを制御するために使用
+	// 引数：frameTime　1フレームで経過した時間
+	void update(const float frameTime);
 	// ダメージ処理
 	// WEAPONの種類によって受けるダメージが分岐
-	void damage(WEAPON);
+	// 引数：weapon	WEAPONの種類
+	void damage(const WEAPON weapon);
 	// パラメータリセット
+	// roundStart()内で呼び出される
 	void reset();
 
+	//==========================================================
 	// getter
-	// 城が死亡しているかどうかを返す
-	bool isDeath() { return death; }
+	//==========================================================
 
+	// 城が死亡しているかどうかを返す
+	// 戻り値：城が死亡しているかどうか
+	bool isDeath() { return mDeath; }
+
+	//==========================================================
 	// setter
+	//==========================================================
+
 	// 城が死亡しているかどうかをセット
-	void setDeath(bool d) { death = d; }
+	// 引数：城が死亡しているかどうか
+	void setDeath(const bool death) { mDeath = death; }
 };
 
 #endif // !_CASTLE_H

@@ -3,12 +3,14 @@
 /// @brief    Rectクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  四角形を描画するクラスです。
+///				システムグラフィックスとして使用できます。
 
+//==========================================================
 #ifndef _RECT_H              // このファイルが複数の箇所でインクルードされる場合に、
 #define _RECT_H              // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include <string>
 #include <deque>
@@ -16,6 +18,8 @@
 #include "textDX.h"
 #include "graphics.h"
 #include "input.h"
+
+//==========================================================
 
 // Rectクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -28,7 +32,8 @@ namespace rectNS
 	const COLOR_ARGB BACK_COLOR = graphicsNS::BLACK;	// 背景の色
 }
 
-// 単純な四角形クラス
+// 四角形を描画するクラスです。
+// システムグラフィックスとして使用できます。
 class Rect
 {
 private:
@@ -62,22 +67,36 @@ public:
 
 	// パラメータリセット
 	void reset();
+
+	//==========================================================
 	// setter
+	//==========================================================
+
 	// X位置をセット
-	void setX(float nx) { mX = nx; }
+	// 引数：x	位置X
+	void setX(const float x) { mX = x; }
 	// Y位置をセット
-	void setY(float ny) { mY = ny; }
+	// 引数：y	位置Y
+	void setY(const float y) { mY = y; }
 	// 幅をセット
-	void setWidth(int w) { mWidth = w; }
+	// 引数：w	幅
+	void setWidth(const int w) { mWidth = w; }
 	// 高さをセット
-	void setHeight(int h) { mHeight = h; }
+	// 引数：h	高さ
+	void setHeight(const int h) { mHeight = h; }
 	// 背景色をセット
-	void setBackColor(COLOR_ARGB clr) { mBackColor = clr; }
+	// 引数：color	背景色
+	void setBackColor(const COLOR_ARGB color) { mBackColor = color; }
 	
+	//==========================================================
 	// getter
+	//==========================================================
+
 	// X位置を戻す
+	// 戻り値：X位置
 	float getX() { return mX; }
 	// Y位置を戻す
+	// 戻り値：Y位置
 	float getY() { return mY; }
 };
 

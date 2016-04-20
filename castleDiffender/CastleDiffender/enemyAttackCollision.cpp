@@ -3,8 +3,9 @@
 /// @brief    enemyAttackCollision.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  敵による攻撃の当たり判定用のエンティティを出現させるクラスです。
+
+//==========================================================
 
 #include "enemyAttackCollision.h"
 
@@ -30,10 +31,11 @@ EnemyCollision::EnemyCollision() : Entity()
 
 //==========================================================
 // Update
+// 攻撃のアニメーションと自身のエンティティを更新する。
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //==========================================================
-void EnemyCollision::update(float frameTime)
+void EnemyCollision::update(const float frameTime)
 {
 	// 非アクティブなら、このエンティティの更新はしない
 	if (mVisible == false)
@@ -56,7 +58,7 @@ void EnemyCollision::update(float frameTime)
 // 敵から攻撃を発動
 // 指定した位置にこのエンティティをアクティブにして出現させる
 //==========================================================
-void EnemyCollision::attack(float centerX, float centerY, float width, float height, characterNS::DIRECTION direction)
+void EnemyCollision::attack(const float centerX, const float centerY, const float width, const float height, const characterNS::DIRECTION direction)
 {
 	// 敵の向きによって出現位置を分岐
 	// 敵の画像に偏りがあるため、若干位置を修正している

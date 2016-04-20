@@ -3,8 +3,13 @@
 /// @brief    image.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  
+/// @attention  画像を描画するクラスです。
+///				ゲーム内のアイテムはすべて画像があると考えられるので、
+///				このクラスを継承することを勧めます
+
+//==========================================================
 #include "image.h"
+//==========================================================
 
 //=============================================================================
 // デフォルトコンストラクタ
@@ -106,7 +111,7 @@ bool Image::initialize(Graphics *g, int width, int height, int ncols,
 // 実行前：spriteBegin()を呼び出す
 // 実行後：spriteEnd()を呼び出す
 //=============================================================================
-void Image::draw(COLOR_ARGB color)
+void Image::draw(const COLOR_ARGB color)
 {
 	if (!mVisible || mGraphics == NULL)
 		return;
@@ -126,7 +131,7 @@ void Image::draw(COLOR_ARGB color)
 // 実行前：spriteBegin()を呼び出す
 // 実行後：spriteEnd()を呼び出す
 //=============================================================================
-void Image::draw(SpriteData sd, COLOR_ARGB color, UINT textureN)
+void Image::draw(SpriteData sd, const COLOR_ARGB color, const UINT textureN)
 {
 	if (!mVisible || mGraphics == NULL)
 		return;
@@ -145,7 +150,7 @@ void Image::draw(SpriteData sd, COLOR_ARGB color, UINT textureN)
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //=============================================================================
-void Image::update(float frameTime)
+void Image::update(const float frameTime)
 {
 	switch (mMode)
 	{

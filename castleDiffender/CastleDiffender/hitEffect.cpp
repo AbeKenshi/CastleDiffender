@@ -3,10 +3,13 @@
 /// @brief    hitEffect.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  攻撃がヒットしたときのアニメーションを表示するクラスです。
+
+//==========================================================
 
 #include "hitEffect.h"
+
+//==========================================================
 
 //==========================================================
 // デフォルトコンストラクタ
@@ -27,12 +30,13 @@ HitEffect::HitEffect() : Image()
 	mLoop = false;									// アニメーションはループさせない
 }
 
+
 //==========================================================
 // Update
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //==========================================================
-void HitEffect::update(float frameTime)
+void HitEffect::update(const float frameTime)
 {
 	// 非表示時には何もしない
 	if (mVisible == false)
@@ -48,7 +52,7 @@ void HitEffect::update(float frameTime)
 // Hit
 // この関数が呼ばれると攻撃がヒットしたときのエフェクトが発動
 //==========================================================
-void HitEffect::hit(float x, float y)
+void HitEffect::hit(const float x, const float y)
 {
 	// 指定された座標の四方にランダムに表示
 	mSpriteData.x = x - mSpriteData.width * mSpriteData.scale / 2.0f + (rand() % 2) * 20 - 10;

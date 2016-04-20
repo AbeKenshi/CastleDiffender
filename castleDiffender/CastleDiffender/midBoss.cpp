@@ -3,8 +3,8 @@
 /// @brief    midBoss.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  中ボスを表すクラスです。
+///				Enemyクラスを継承しているため、動作はほとんど雑魚敵と一緒です。
 
 #include "midBoss.h"
 
@@ -44,7 +44,7 @@ MidBoss::MidBoss() : Enemy()
 // ダメージ処理
 // WEAPONの種類によって受けるダメージが分岐
 //==========================================================
-void MidBoss::damage(WEAPON weapon)
+void MidBoss::damage(const WEAPON weapon)
 {
 	// 敵のタイプによって、受けるダメージの割合を変化
 	if (mType == enemyNS::NORMAL)
@@ -59,19 +59,19 @@ void MidBoss::damage(WEAPON weapon)
 	{
 	case FIRE:					// 炎
 		// 一定ダメージを受ける
-		mHealth -= braveFireDamage  * mDamagePer / 3;
+		mHealth -= BRAVE_FIRE_DAMAGE  * mDamagePer / 3;
 		// ダメージ状態のフラグをオン
 		mIsDamaged = true;
 		break;
 	case BRAVE_ATTACK:			// 勇者の攻撃
 		// 一定ダメージを受ける
-		mHealth -= braveAttackDamage * mDamagePer / 3;
+		mHealth -= BRAVE_ATTACK_DAMAGE * mDamagePer / 3;
 		// ダメージ状態のフラグをオン
 		mIsDamaged = true;
 		break;
 	case BRAVE_SECOND_ATTACK:	// 勇者の第二撃
 		// 一定ダメージを受ける
-		mHealth -= braveAttackDamage * mDamagePer / 3;
+		mHealth -= BRAVE_ATTACK_DAMAGE * mDamagePer / 3;
 		// ダメージ状態のフラグをオン
 		mIsDamaged = true;
 		break;
@@ -92,6 +92,6 @@ void MidBoss::damage(WEAPON weapon)
 		else
 			mVelocity.x = -32.0f * 2.0;
 		mVelocity.y = -sqrt(2 * 2000.0f * 96 * 2);
-		mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - 3);
+		mMap->updateMapCol((float)mTileY * 32, (float)mTileX * 32, mMap->getMapCol(mTileY, mTileX) - mapNS::COL_ENEMY_INCLEMENT);
 	}
 }

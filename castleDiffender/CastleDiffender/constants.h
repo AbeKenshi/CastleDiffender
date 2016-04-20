@@ -3,11 +3,14 @@
 /// @brief    ’è”ƒwƒbƒ_[
 /// @author   ˆ¢•”Œ”V
 ///
-/// @attention  ‚±‚Ìƒtƒ@ƒCƒ‹‚Ì—˜—p‚ÍA“¯«‚ÌREADME‚É‚ ‚é
-///             —˜—pğŒ‚É]‚Á‚Ä‚­‚¾‚³‚¢
+/// @attention  ƒQ[ƒ€“à‚Ìƒpƒ‰ƒ[ƒ^‚âA‰æ‘œE‰¹ºƒtƒ@ƒCƒ‹–¼‚È‚Ç‚ğ’è”‚Æ‚µ‚Ä‚Á‚Ä‚¢‚Ü‚·B
+///				‚¢‚­‚Â‚©‚Ìƒ}ƒNƒˆ—‚É‚Â‚¢‚Ä‚à‹Lq‚³‚ê‚Ä‚¢‚Ü‚·B
+
+//==========================================================
 #ifndef _CONSTANTS_H            // ‚±‚Ìƒtƒ@ƒCƒ‹‚ª•¡”‚Ì‰ÓŠ‚ÅƒCƒ“ƒNƒ‹[ƒh‚³‚ê‚éê‡‚ÉA
 #define _CONSTANTS_H            // ‘½d‚É’è‹`‚³‚ê‚é‚±‚Æ‚ğ–h‚¬‚Ü‚·B
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include <windows.h>
 
@@ -31,15 +34,19 @@ const float MAX_FRAME_TIME = 1.0f / MIN_FRAME_RATE;		// 1ƒtƒŒ[ƒ€‚É—v‚·‚éÅ‘å‚Ì
 
 // ƒQ[ƒ€“à‚Ìƒpƒ‰ƒ[ƒ^
 // —EÒŠÖŒW
-const int braveAttackDamage = 50;				// —EÒiƒvƒŒƒCƒ„[j‚ÌUŒ‚—Íiƒ_ƒ[ƒW—Êj
-const int braveFireDamage = 110;				// —EÒ‚Ìƒtƒ@ƒCƒA[i•KE‹Zj‚ÌUŒ‚—Íiƒ_ƒ[ƒW—Êj
-const int braveMpRecovery = 10;					// —EÒ‚ÌMP‰ñ•œ—ÊimpRecoveryTime•b‚²‚Æ‚É‰ñ•œj
-const float braveMpRecoveryTime = 2.0f;			// —EÒ‚ÌMP‚ª‰ñ•œ‚·‚éŠÔŠui•bj
-const float braveMoveSpeed = 150.0f;			// —EÒ‚ÌˆÚ“®‘¬“xiƒsƒNƒZƒ‹j
+const int BRAVE_ATTACK_DAMAGE = 50;					// —EÒ‚ÌUŒ‚—Íiƒ_ƒ[ƒW—Êj
+const int BRAVE_FIRE_DAMAGE = 110;					// —EÒ‚Ìƒtƒ@ƒCƒA[i•KE‹Zj‚ÌUŒ‚—Íiƒ_ƒ[ƒW—Êj
+const int BRAVE_RECOVERY_TO_BARRICADE = 20;			// —EÒ‚ÌUŒ‚‚Å‚ÌƒoƒŠƒP[ƒh‚Ì‰ñ•œ—Ê
+const int BRAVE_MP_RECOVERY = 10;					// —EÒ‚ÌMP‰ñ•œ—ÊimpRecoveryTime•b‚²‚Æ‚É‰ñ•œj
+const float BRAVE_MP_RECOVERY_TIME = 2.0f;			// —EÒ‚ÌMP‚ª‰ñ•œ‚·‚éŠÔŠui•bj
+const float BRAVE_MOVE_SPEED = 150.0f;				// —EÒ‚ÌˆÚ“®‘¬“xiƒsƒNƒZƒ‹j
 // G‹›“GŠÖŒW
-const float enemyAttackDamage = 2.5f;			// G‹›“G‚ÌUŒ‚—ÍiƒvƒŒƒCƒ„[‚Æé‚Ö‚Ìƒ_ƒ[ƒW—Êj
+const float ENEMY_ATTACK_DAMAGE = 2.5f;					// G‹›“G‚ÌUŒ‚—ÍiƒvƒŒƒCƒ„[‚Æé‚Ö‚Ìƒ_ƒ[ƒW—Êj
+const float ENEMY_ATTACK_DAMEGE_BARRICADE = 10.0f;		// G‹›“G‚ÌUŒ‚—ÍiƒoƒŠƒP[ƒh‚Ö‚Ìƒ_ƒ[ƒW—Êj
+const float ENEMY_MOVE_SPEED = 80.0f;					// ˆÚ“®‘¬“xiƒsƒNƒZƒ‹j
 // ’†ƒ{ƒXŠÖŒW
-const float midBossAttackDamage = 15.0f;		// ’†ƒ{ƒX‚ÌUŒ‚—ÍiƒvƒŒƒCƒ„[‚Æé‚Ö‚Ìƒ_ƒ[ƒW—Êj
+const float MIDBOSS_ATTACK_DAMAGE = 15.0f;				// ’†ƒ{ƒX‚ÌUŒ‚—ÍiƒvƒŒƒCƒ„[‚Æé‚Ö‚Ìƒ_ƒ[ƒW—Êj
+const float MIDBOSS_ATTACK_DAMEGE_BARRICADE = 20.0f;	// G‹›“G‚ÌUŒ‚—ÍiƒoƒŠƒP[ƒh‚Ö‚Ìƒ_ƒ[ƒW—Êj
 
 // ‰æ‘œ
 const char MENU_IMAGE[] = "pictures\\systemGraphics\\title.png";				// ƒƒjƒ…[‰æ‘œ
@@ -94,10 +101,7 @@ const UCHAR BRAVE_FIRE_KEY = 'S';			// •KE‹ZƒL[
 enum WEAPON { FIRE, BRAVE_ATTACK, BRAVE_SECOND_ATTACK, ENEMY_ATTACK , MIDBOSS_ATTACK};
 
 //=============================================================================
-// Function templates for safely dealing with pointer referenced items.
-// The functions defined by these templates may be called using a normal
-// function call syntax. The compiler will create a function that replaces T
-// with the type of the calling parameter.
+// ƒ}ƒNƒˆ—
 //=============================================================================
 // ƒ|ƒCƒ“ƒ^QÆ‚³‚ê‚éƒAƒCƒeƒ€‚ğˆÀ‘S‚É‰ğ•ú
 template <typename T>

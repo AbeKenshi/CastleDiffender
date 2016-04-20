@@ -3,8 +3,10 @@
 /// @brief    castle.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  城を表すクラスです。
+///				プレイヤーと同様に、城の体力が0になるとゲームーオーバーです。
+
+//==========================================================
 
 #include "castle.h"
 
@@ -29,7 +31,7 @@ Castle::Castle() : Entity()
 	mEdge.bottom = (LONG)(castleNS::HEIGHT / 1.8);
 	mCollisionType = entityNS::BOX;
 
-	death = false;								// 死亡していない状態からスタート
+	mDeath = false;								// 死亡していない状態からスタート
 }
 
 //==========================================================
@@ -37,17 +39,18 @@ Castle::Castle() : Entity()
 //==========================================================
 void Castle::reset()
 {
-	death = false;								// 死亡していない状態にリセット
+	mDeath = false;								// 死亡していない状態にリセット
 	// エンティティをリセット
 	Entity::reset();
 }
 
 //==========================================================
 // Update
+// アニメーションの更新を行う。
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションを制御するために使用
 //==========================================================
-void Castle::update(float frameTime)
+void Castle::update(const float frameTime)
 {
 	// 非アクティブなら、何もしない
 	if (mVisible == false)
@@ -86,7 +89,7 @@ void Castle::update(float frameTime)
 // ダメージ処理
 // WEAPONの種類によって受けるダメージが分岐
 //==========================================================
-void Castle::damage(WEAPON weapon)
+void Castle::damage(const WEAPON weapon)
 {
 	// 非アクティブな場合、ダメージは受けない
 	if (!mActive)
@@ -103,13 +106,13 @@ void Castle::damage(WEAPON weapon)
 		break;
 	case ENEMY_ATTACK:			// 雑魚敵の攻撃
 		// 一定ダメージを受ける
-		mHealth -= enemyAttackDamage * mDamagePer;
+		mHealth -= ENEMY_ATTACK_DAMAGE * mDamagePer;
 		// ダメージ状態のフラグをオン
 		mIsDamaged = true;
 		break;
 	case MIDBOSS_ATTACK:		// 中ボスの攻撃
 		// 一定ダメージを受ける
-		mHealth -= midBossAttackDamage * mDamagePer;
+		mHealth -= MIDBOSS_ATTACK_DAMAGE * mDamagePer;
 		// ダメージ状態のフラグをオン
 		mIsDamaged = true;
 		break;
@@ -118,5 +121,5 @@ void Castle::damage(WEAPON weapon)
 	}
 	// 体力が0以下になったなら、死亡
 	if (mHealth <= 0)
-		death = true;
+		mDeath = true;
 }

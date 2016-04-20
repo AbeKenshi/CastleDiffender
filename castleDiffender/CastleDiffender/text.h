@@ -3,12 +3,13 @@
 /// @brief    Textクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  スプライトテキストを描画するクラスです。
 
+//==========================================================
 #ifndef _TEXT_H                 // このファイルが複数の箇所でインクルードされる場合に、
 #define _TEXT_H                 // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 class Text;
 
@@ -16,6 +17,7 @@ class Text;
 #include "image.h"
 #include "constants.h"
 
+//==========================================================
 // Textクラスの定数
 // ゲーム内でのステータス以外をここに記述
 namespace textNS
@@ -47,7 +49,8 @@ namespace textNS
 	const int BOLD_SIZE = 4;        // 太字表示のときのシフトするピクセル数
 }
 
-
+//==========================================================
+// スプライトテキストを描画するクラスです。
 class Text : public Image
 {
 private:
@@ -83,7 +86,7 @@ public:
 	// 実行後：成功した場合はtrue、失敗した場合はfalseを戻す
 	// fontData配列は、各文字と左端と右端を格納
 	virtual bool initialize(Graphics *g, const char *file);
-	virtual void update(float frameTime) {};
+	virtual void update(const float frameTime) {};
 	virtual void onLostDevice();
 	virtual void onResetDevice();
 

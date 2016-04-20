@@ -3,15 +3,19 @@
 /// @brief    HpTextImageクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  HPという文字の画像を表すクラスです。
+///				システムグラフィックスとして使用できます。
 
+//==========================================================
 #ifndef _HP_TEXT_IMAGE_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _HP_TEXT_IMAGE_H		// 多重に定義されることを防ぎます。
+#define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include "image.h"
 #include "constants.h"
 
+//==========================================================
 // HpTextImageクラスの定数
 // ゲーム内でのステータス以外をここに記述
 namespace hpTextImageNS
@@ -24,6 +28,9 @@ namespace hpTextImageNS
 	const int START_FRAME = 15;	// アニメーションはフレーム15から開始
 }
 
+//==========================================================
+// HPという文字の画像を表すクラスです。
+// システムグラフィックスとして使用できます。
 class HpTextImage : public Image
 {
 public:

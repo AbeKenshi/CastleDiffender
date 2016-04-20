@@ -3,12 +3,14 @@
 /// @brief    Consoleクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  デバッグ用のコンソールを表すクラスです。
+///				「`」で表示され、特定のコマンドを打つことでデバッグが可能です。
 
+//==========================================================
 #ifndef _CONSOLE_H              // このファイルが複数の箇所でインクルードされる場合に、
 #define _CONSOLE_H              // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include <string>
 #include <deque>
@@ -17,6 +19,10 @@
 #include "graphics.h"
 #include "input.h"
 
+//==========================================================
+
+// Consoleクラスの定数
+// ゲーム内でのステータス以外をここに記述
 namespace consoleNS
 {
     const UINT WIDTH = 1000;										// コンソールの矩形の幅（ピクセル単位）
@@ -31,7 +37,8 @@ namespace consoleNS
     const int MAX_LINES = 256;										// テキストバッファ内の表示可能なテキストの最大行数
 }
 
-// 
+// デバッグ用のコンソールを表すクラスです。
+//「`」で表示され、特定のコマンドを打つことでデバッグが可能です。
 class Console
 {
 private:
@@ -60,6 +67,8 @@ public:
     virtual ~Console();
 
 	// コンソールを初期化
+	// 引数：g	グラフィックシステムへのポインタ
+	// 引数：in	入力システムへのポインタ
     bool initialize(Graphics *g, Input *in);
 
 	// コンソールを描画
@@ -72,6 +81,7 @@ public:
     void showHide();
 
 	// 表示/非表示を制御するプロパティの現在の状態を戻します。
+	// 戻り値：表示状態か非表示状態か
     bool getVisible() {return mVisible;}
 
 	// コンソールを表示します。
@@ -81,13 +91,16 @@ public:
     void hide() {mVisible = false;}
 
 	// コンソールディスプレイにテキスト文字列を追加します。
+	// 引数：str	コンソールディスプレイに表示したい文字列
     void print(const std::string &str);
 
 	// シングルキーのコンソールコマンドを処理します。
 	// ユーザーが入力したコマンド文字列を戻します。
+	// 戻り値：ユーザーが入力したコマンド
     std::string getCommand();
 
 	// コンソールの入力テキストを戻します
+	// 戻り値：コンソールの入力テキスト
     std::string getInput() {return mInputStr;}
 
 	// コンソールの入力テキストをクリアします

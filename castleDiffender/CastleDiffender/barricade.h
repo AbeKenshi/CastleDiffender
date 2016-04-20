@@ -3,15 +3,20 @@
 /// @brief    Barricadeクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  バリケードを表すクラスです。
+///				城の周りに配置され、破壊されると城へ突破されます。
+
+//==========================================================
 #ifndef _BARRICADE_H	// このファイルが複数の箇所でインクルードされる場合に、
 #define _BARRICADE_H	// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include "entity.h"
 #include "constants.h"
 #include "hitEffect.h"
+
+//==========================================================
 
 // Barricadeクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -24,6 +29,8 @@ namespace barricadeNS
 	const int END_FRAME = 2;		// アニメーションフレームは0、1、2
 }
 
+//==========================================================
+
 class Barricade : public Entity		// Entityクラスを継承
 {
 private:
@@ -35,13 +42,20 @@ public:
 	//==========================================================
 	// 継承されたメンバ関数
 	//==========================================================
+
 	// Update
 	// 通常、フレームごとに1回呼び出す
+	// 残り体力に応じてアニメーションを更新する。
 	// frameTimeは、移動とアニメーションの速さを制御するために使用
-	void update(float frameTime);
+	// 引数：frameTime　1フレームで経過した時間
+	void update(const float frameTime);
 	// ダメージ処理
 	// WEAPONの種類によって受けるダメージが分岐
-	void damage(WEAPON);
+	// 引数：weapon	WEAPONの種類
+	void damage(const WEAPON weapon);
+	// パラメータリセット
+	// roundStart()内で呼び出される
+	virtual void reset();
 
 	//==========================================================
 	// 新しく追加するメンバー関数
@@ -50,13 +64,17 @@ public:
 	//==========================================================
 	// setter
 	//==========================================================
+	
 	// ダメージを受けるときの倍率をセット
-	void setDamagerPer(float per) { mDamagePer = per; }
+	// 引数：damagePer	ダメージを受けるときの倍率
+	void setDamagerPer(const float damagePer) { mDamagePer = damagePer; }
 	
 	//==========================================================
 	// getter
 	//==========================================================
+
 	// 攻撃がヒットしたときのアニメーション画像を戻す
+	// 戻り値：攻撃がヒットしたときのアニメーション画像
 	HitEffect& getHitEffect() { return hitEffect; }
 
 };

@@ -3,18 +3,17 @@
 /// @brief    Graphicsクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  スプライトなどを描画するための情報を扱うクラスです。
 
+//==========================================================
 #ifndef _GRAPHICS_H             // このファイルが複数の箇所でインクルードされる場合に、
 #define _GRAPHICS_H             // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #ifdef _DEBUG
 #define D3D_DEBUG_INFO
 #endif
-
-class Graphics;
 
 #include <d3d9.h>
 #include <d3dx9.h>
@@ -40,6 +39,7 @@ class Graphics;
 #define SETCOLOR_ARGB(a,r,g,b) \
     ((COLOR_ARGB)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
+//==========================================================・
 
 // Graphicsクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -79,6 +79,7 @@ namespace graphicsNS
 	enum DISPLAY_MODE { TOGGLE, FULLSCREEN, WINDOW };
 }
 
+// 頂点データ構造体
 struct VertexC              // 頂点データ（座標と色）
 {
 	float x, y, z;          // 座標値
@@ -106,6 +107,7 @@ struct SpriteData
 	bool        flipVertical;   // スプライトを垂直方向に反転する場合、true
 };
 
+// スプライトなどを描画するための情報を扱うクラスです。
 class Graphics
 {
 private:

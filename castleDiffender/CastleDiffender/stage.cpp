@@ -3,8 +3,8 @@
 /// @brief    stage.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  ステージ情報を管理するクラスです。
+///				勇者、敵、マップ情報、バリケード、城などステージに関する情報はここで管理します。
 
 #include "stage.h"
 
@@ -76,20 +76,20 @@ void Stage::roundStart()
 	int count = 0;  // バリケードの数数える用
 	for (int row = 0; row<mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
 	{
-		mMap.setY((float)(row*mapNS::TEXTURE_SIZE));       // タイルのYを設定
+		mMap.setY((float)(row*mapNS::TEXTURE_SIZE));      // タイルのYを設定
 		for (int col = 0; col<mapNS::MAP_WIDTH; col++)    // マップの各列を処理
 		{
-			if (mMap.getMapData(row, col) >= 0)            // タイルが存在する場合
+			if (mMap.getMapData(row, col) >= 0)           // タイルが存在する場合（この処理はいらないと思われるが念のため）
 			{
-				mMap.setCurrentFrame(mMap.getMapData(row, col));                       // タイルのテクスチャを設定
+				mMap.setCurrentFrame(mMap.getMapData(row, col));                // タイルのテクスチャを設定
 				mMap.setX((float)(col*mapNS::TEXTURE_SIZE));                    // タイルのXを設定
 			}
-			if (mMap.getMapObj(row, col) == 0)
+			if (mMap.getMapObj(row, col) == mapNS::OBJ_BARRICADE)
 			{
-				mBarricades[count].setX((float)(col*mapNS::TEXTURE_SIZE));								// オブジェクトのXを設定
-				mBarricades[count].setY((float)(row*mapNS::TEXTURE_SIZE));										// オブジェクトのYを設定
+				mBarricades[count].setX((float)(col*mapNS::TEXTURE_SIZE));		// オブジェクトのXを設定
+				mBarricades[count].setY((float)(row*mapNS::TEXTURE_SIZE));		// オブジェクトのYを設定
 				mBarricades[count].setTileX(col);								// オブジェクトのXを設定
-				mBarricades[count].setTileY(row);										// オブジェクトのYを設定
+				mBarricades[count].setTileY(row);								// オブジェクトのYを設定
 				if (mBarricades[count].getX() > -mapNS::TEXTURE_SIZE && mBarricades[count].getX() < GAME_WIDTH)	// オブジェクトが画面上にあるかどうか
 				{
 					count++;
@@ -163,6 +163,19 @@ void Stage::runStage(float frameTime)
 
 //==========================================================
 // 衝突を処理
+// 処理する衝突は以下の通り：
+// 勇者の攻撃と各敵との衝突
+// 各敵の攻撃と勇者や城、バリケードとの衝突
+// 勇者の必殺技（炎）と各敵の衝突
+// 各敵と勇者の衝突
+// 勇者の攻撃とバリケードとの衝突
+// 各敵とほかのエンティティとの衝突状況によって、敵の状態を分岐
+// ①攻撃中はそのまま攻撃
+// ②勇者と衝突している場合は勇者に対しての攻撃状態に遷移
+// ③城と衝突している場合は城に対しての攻撃状態に遷移
+// ④最近接のバリケードに衝突している場合はバリケードに対しての攻撃状態に遷移
+// ⑤いずれかのマップタイルの中央まで移動した場合、
+//   最近接のバリケードに向かって移動状態に遷移（1/3くらいの確率で方向をランダムに決めるようにしている）
 //==========================================================
 void Stage::collisions()
 {
@@ -246,26 +259,26 @@ void Stage::collisions()
 				if (!mBarricades[mEnemy[i]->getNearBarricadeIndex()].getActive())
 				{
 					// マップデータを更新
-					mMap.updateMapObjInt(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getTileY(), mBarricades[mEnemy[i]->getNearBarricadeIndex()].getTileX(), -1);
-					if (mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 0
-						&& mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != 1)
+					mMap.updateMapObjInt(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getTileY(), mBarricades[mEnemy[i]->getNearBarricadeIndex()].getTileX(), mapNS::OBJ_NONE);
+					if (mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != mapNS::OBJ_BARRICADE
+						&& mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 + 1) != mapNS::OBJ_NEAR_CASTLE)
 					{
-						mMap.updateMapObj(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY(), mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() + 32, -1);
+						mMap.updateMapObj(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY(), mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() + 32, mapNS::OBJ_NONE);
 					}
-					if (mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != 0
-						&& mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != 1)
+					if (mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != mapNS::OBJ_BARRICADE
+						&& mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 - 1) != mapNS::OBJ_NEAR_CASTLE)
 					{
-						mMap.updateMapObj(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY(), mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() - 32, -1);
+						mMap.updateMapObj(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY(), mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() - 32, mapNS::OBJ_NONE);
 					}
-					if (mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32) != 0
-						&& mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32) != 1)
+					if (mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32) != mapNS::OBJ_BARRICADE
+						&& mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 + 1, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32) != mapNS::OBJ_NEAR_CASTLE)
 					{
-						mMap.updateMapObj(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() + 32, mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX(), -1);
+						mMap.updateMapObj(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() + 32, mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX(), mapNS::OBJ_NONE);
 					}
-					if (mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32) != 0
-						&& mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32) != 0)
+					if (mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32) != mapNS::OBJ_BARRICADE
+						&& mMap.getMapObj((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 - 1, (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32) != mapNS::OBJ_NEAR_CASTLE)
 					{
-						mMap.updateMapObj(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() - 32, mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX(), -1);
+						mMap.updateMapObj(mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() - 32, mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX(), mapNS::OBJ_NONE);
 					}
 				}
 			}
@@ -288,27 +301,27 @@ void Stage::collisions()
 			// 勇者がいる方向に応じて攻撃する方向を変更
 			mEnemy[i]->changeAttack(collisionVector);
 		}
-		else if (mMap.getMapObj(mEnemy[i]->getTileY(), mEnemy[i]->getTileX()) == 1)	// 雑魚敵と城が衝突していたら攻撃、
+		else if (mMap.getMapObj(mEnemy[i]->getTileY(), mEnemy[i]->getTileX()) == mapNS::OBJ_NEAR_CASTLE)	// 雑魚敵と城が衝突していたら攻撃、
 		{
 			// 城がある方向に応じて攻撃する方向を変更
-			if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() + 1) == 2)
+			if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() + 1) == mapNS::COL_CASTLE)
 			{
 				mEnemy[i]->changeAttack(characterNS::RIGHT);
 			}
-			else if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() - 1) == 2)
+			else if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() - 1) == mapNS::COL_CASTLE)
 			{
 				mEnemy[i]->changeAttack(characterNS::LEFT);
 			}
-			else if (mMap.getMapCol(mEnemy[i]->getTileY() + 1, mEnemy[i]->getTileX()) == 2)
+			else if (mMap.getMapCol(mEnemy[i]->getTileY() + 1, mEnemy[i]->getTileX()) == mapNS::COL_CASTLE)
 			{
 				mEnemy[i]->changeAttack(characterNS::DOWN);
 			}
-			else if (mMap.getMapCol(mEnemy[i]->getTileY() - 1, mEnemy[i]->getTileX()) == 2)
+			else if (mMap.getMapCol(mEnemy[i]->getTileY() - 1, mEnemy[i]->getTileX()) == mapNS::COL_CASTLE)
 			{
 				mEnemy[i]->changeAttack(characterNS::UP);
 			}
 		}
-		else if (mMap.getMapObj(mEnemy[i]->getTileY(), mEnemy[i]->getTileX()) == -2)	// 最近接のバリケードに衝突していたら攻撃
+		else if (mMap.getMapObj(mEnemy[i]->getTileY(), mEnemy[i]->getTileX()) == mapNS::OBJ_NEAR_BARRICADE)	// 最近接のバリケードに衝突していたら攻撃
 		{
 			// バリケードがある方向に応じて攻撃する方向を変更
 			if (mEnemy[i]->getTileX() < (int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32)
@@ -332,25 +345,25 @@ void Stage::collisions()
 				switch (mEnemy[i]->getGoalDirection())
 				{
 				case characterNS::LEFT:
-					if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() - 1) >= 1)
+					if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() - 1) >= mapNS::COL_ROCK)
 					{
 						changeGoalDirectionFlag = true;
 					}
 					break;
 				case characterNS::RIGHT:
-					if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() + 1) >= 1)
+					if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() + 1) >= mapNS::COL_ROCK)
 					{
 						changeGoalDirectionFlag = true;
 					}
 					break;
 				case characterNS::UP:
-					if (mMap.getMapCol(mEnemy[i]->getTileY() - 1, mEnemy[i]->getTileX()) >= 1)
+					if (mMap.getMapCol(mEnemy[i]->getTileY() - 1, mEnemy[i]->getTileX()) >= mapNS::COL_ROCK)
 					{
 						changeGoalDirectionFlag = true;
 					}
 					break;
 				case characterNS::DOWN:
-					if (mMap.getMapCol(mEnemy[i]->getTileY() + 1, mEnemy[i]->getTileX()) >= 1)
+					if (mMap.getMapCol(mEnemy[i]->getTileY() + 1, mEnemy[i]->getTileX()) >= mapNS::COL_ROCK)
 					{
 						changeGoalDirectionFlag = true;
 					}
@@ -384,25 +397,25 @@ void Stage::collisions()
 					switch (mEnemy[i]->getGoalDirection())
 					{
 					case characterNS::LEFT:
-						if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() - 1) >= 1)
+						if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() - 1) >= mapNS::COL_ROCK)
 						{
 							changeGoalDirectionFlag = true;
 						}
 						break;
 					case characterNS::RIGHT:
-						if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() + 1) >= 1)
+						if (mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() + 1) >= mapNS::COL_ROCK)
 						{
 							changeGoalDirectionFlag = true;
 						}
 						break;
 					case characterNS::UP:
-						if (mMap.getMapCol(mEnemy[i]->getTileY() - 1, mEnemy[i]->getTileX()) >= 1)
+						if (mMap.getMapCol(mEnemy[i]->getTileY() - 1, mEnemy[i]->getTileX()) >= mapNS::COL_ROCK)
 						{
 							changeGoalDirectionFlag = true;
 						}
 						break;
 					case characterNS::DOWN:
-						if (mMap.getMapCol(mEnemy[i]->getTileY() + 1, mEnemy[i]->getTileX()) >= 1)
+						if (mMap.getMapCol(mEnemy[i]->getTileY() + 1, mEnemy[i]->getTileX()) >= mapNS::COL_ROCK)
 						{
 							changeGoalDirectionFlag = true;
 						}
@@ -420,7 +433,7 @@ void Stage::collisions()
 					characterNS::DIRECTION yDirection;
 					if ((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 < mEnemy[i]->getTileX())
 					{
-						if (!(mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() - 1) >= 1))
+						if (!(mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() - 1) >= mapNS::COL_ROCK))
 						{
 							xDirection = characterNS::LEFT;
 							mEnemy[i]->setGoalDirection(characterNS::LEFT);
@@ -431,7 +444,7 @@ void Stage::collisions()
 					}
 					else if ((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getX() / 32 > mEnemy[i]->getTileX())
 					{
-						if (!(mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() + 1) >= 1))
+						if (!(mMap.getMapCol(mEnemy[i]->getTileY(), mEnemy[i]->getTileX() + 1) >= mapNS::COL_ROCK))
 						{
 							xDirection = characterNS::RIGHT;
 							mEnemy[i]->setGoalDirection(characterNS::RIGHT);
@@ -442,7 +455,7 @@ void Stage::collisions()
 					}
 					if ((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 < mEnemy[i]->getTileY())
 					{
-						if (!(mMap.getMapCol(mEnemy[i]->getTileY() - 1, mEnemy[i]->getTileX()) >= 1))
+						if (!(mMap.getMapCol(mEnemy[i]->getTileY() - 1, mEnemy[i]->getTileX()) >= mapNS::COL_ROCK))
 						{
 							yDirection = characterNS::UP;
 							mEnemy[i]->setGoalDirection(characterNS::UP);
@@ -453,7 +466,7 @@ void Stage::collisions()
 					}
 					else if ((int)mBarricades[mEnemy[i]->getNearBarricadeIndex()].getY() / 32 > mEnemy[i]->getTileY())
 					{
-						if (!(mMap.getMapCol(mEnemy[i]->getTileY() + 1, mEnemy[i]->getTileX()) >= 1))
+						if (!(mMap.getMapCol(mEnemy[i]->getTileY() + 1, mEnemy[i]->getTileX()) >= mapNS::COL_ROCK))
 						{
 							yDirection = characterNS::DOWN;
 							mEnemy[i]->setGoalDirection(characterNS::DOWN);

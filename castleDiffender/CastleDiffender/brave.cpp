@@ -3,8 +3,10 @@
 /// @brief    brave.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  プレイヤーが操作する勇者を表すクラスです。
+///				プレイヤーが操作をして移動、攻撃、必殺技、ガードを駆使して敵を倒します。
+
+//==========================================================
 
 #include "brave.h"
 
@@ -63,18 +65,20 @@ void Brave::reset()
 	mFrameDelay = braveNS::ANIMATION_DELAY;						// アニメーションのフレーム間の間隔（秒）
 	mStartFrame = braveNS::MOVE_UP_START_FRAME;					// アニメーションの最初のフレーム
 	mEndFrame = braveNS::MOVE_UP_END_FRAME;						// アニメーションの最後のフレーム
-	mCurrentFrame = mStartFrame;									// 現在のフレームはアニメーションの最初のフレームに設定
+	mCurrentFrame = mStartFrame;								// 現在のフレームはアニメーションの最初のフレームに設定
 	mSecondAttackFlag = false;									// 二連撃目の攻撃フラグはオフ
 	mFire.reset();												// 炎を初期化
+	mBraveAttackCollision.reset();								// 攻撃エンティティを初期化
 	Character::reset();
 }
 
 //=============================================================================
 // Update
+// キーボードからの入力を受け付け、それに応じて移動や攻撃などの行動を行う。
 // 通常、フレームごとに1回呼び出す
 // frameTimeは、移動とアニメーションの速さを制御するために使用
 //=============================================================================	
-void Brave::update(float frameTime)
+void Brave::update(const float frameTime)
 {
 	// エンティティが非アクティブなら、何もしない
 	if (!mActive)
@@ -302,10 +306,10 @@ void Brave::update(float frameTime)
 
 	// MPを一定時間ごとに回復
 	mMpTimer += frameTime;
-	if (mMpTimer > braveMpRecoveryTime)
+	if (mMpTimer > BRAVE_MP_RECOVERY_TIME)
 	{
 		mMpTimer = 0.0f;
-		mMagicPoint += braveMpRecovery;
+		mMagicPoint += BRAVE_MP_RECOVERY;
 		// MAX100を超えたら、100にする
 		if (mMagicPoint > 100)
 			mMagicPoint = 100;
@@ -339,7 +343,7 @@ void Brave::update(float frameTime)
 // ダメージ処理
 // WEAPONの種類によって受けるダメージが分岐
 //==========================================================
-void Brave::damage(WEAPON weapon)
+void Brave::damage(const WEAPON weapon)
 {
 	// 非アクティブな場合、ダメージは受けない
 	if (!mActive)
@@ -361,7 +365,7 @@ void Brave::damage(WEAPON weapon)
 		else  // ガード中でないなら、
 		{
 			// 一定ダメージを受ける
-			mHealth -= enemyAttackDamage * mDamagePer;
+			mHealth -= ENEMY_ATTACK_DAMAGE * mDamagePer;
 			// ダメージ状態のフラグをオン
 			mIsDamaged = true;
 		}
@@ -373,7 +377,7 @@ void Brave::damage(WEAPON weapon)
 		else  // ガード中でないなら、
 		{
 			// 一定ダメージを受ける
-			mHealth -= midBossAttackDamage * mDamagePer;
+			mHealth -= MIDBOSS_ATTACK_DAMAGE * mDamagePer;
 			// ダメージ状態のフラグをオン
 			mIsDamaged = true;
 		}
@@ -390,7 +394,7 @@ void Brave::damage(WEAPON weapon)
 // 向いている方向とアニメーションを切り替える
 // 内部的にのみ使用
 //==========================================================
-void Brave::changeWithMove(float frameTime)
+void Brave::changeWithMove(const float frameTime)
 {
 	float r = 1.0f;
 	if (mState == BRAVE_ATTACK)
@@ -401,9 +405,9 @@ void Brave::changeWithMove(float frameTime)
 		// 向いている方向を左に
 		setDirection(characterNS::LEFT);
 		// 移動可能だったら
-		if (checkCanMove(mSpriteData.x - braveMoveSpeed * frameTime, mSpriteData.y)) {
+		if (checkCanMove(mSpriteData.x - BRAVE_MOVE_SPEED * frameTime, mSpriteData.y)) {
 			// 左に移動
-			mSpriteData.x -= braveMoveSpeed / r * frameTime;
+			mSpriteData.x -= BRAVE_MOVE_SPEED / r * frameTime;
 		}
 	}
 	// 右キーが入力された場合、
@@ -412,9 +416,9 @@ void Brave::changeWithMove(float frameTime)
 		// 向いている方向を右に
 		setDirection(characterNS::RIGHT);
 		// 移動可能だったら
-		if (checkCanMove(mSpriteData.x + braveMoveSpeed * frameTime, mSpriteData.y)) {
+		if (checkCanMove(mSpriteData.x + BRAVE_MOVE_SPEED * frameTime, mSpriteData.y)) {
 			// 右に移動
-			mSpriteData.x += braveMoveSpeed / r * frameTime;
+			mSpriteData.x += BRAVE_MOVE_SPEED / r * frameTime;
 		}
 	}
 	// 上キーが入力された場合、
@@ -423,9 +427,9 @@ void Brave::changeWithMove(float frameTime)
 		// 向いている方向を上に
 		setDirection(characterNS::UP);
 		// 移動可能だったら
-		if (checkCanMove(mSpriteData.x, mSpriteData.y - braveMoveSpeed * frameTime)) {
+		if (checkCanMove(mSpriteData.x, mSpriteData.y - BRAVE_MOVE_SPEED * frameTime)) {
 			// 上に移動
-			mSpriteData.y -= braveMoveSpeed / r * frameTime;
+			mSpriteData.y -= BRAVE_MOVE_SPEED / r * frameTime;
 		}
 	}
 	// 下キーが入力された場合、
@@ -434,9 +438,9 @@ void Brave::changeWithMove(float frameTime)
 		// 向いている方向を下に
 		setDirection(characterNS::DOWN);
 		// 移動可能だったら
-		if (checkCanMove(mSpriteData.x, mSpriteData.y + braveMoveSpeed * frameTime)) {
+		if (checkCanMove(mSpriteData.x, mSpriteData.y + BRAVE_MOVE_SPEED * frameTime)) {
 			// 下に移動
-			mSpriteData.y += braveMoveSpeed / r * frameTime;
+			mSpriteData.y += BRAVE_MOVE_SPEED / r * frameTime;
 		}
 	}
 	// アニメーションのみ更新（エンティティは更新しない）

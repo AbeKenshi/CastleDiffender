@@ -3,8 +3,8 @@
 /// @brief    メインクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  メインループを実行するクラスです。
+///				最も上の階層のクラスで、Gameを継承したオブジェクトはこのクラスが管理します。
 
 #define _CRTDBG_MAP_ALLOC	// メモリリークを検出するため
 #define WIN32_LEAN_AND_MEAN

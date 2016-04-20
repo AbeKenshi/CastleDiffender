@@ -3,10 +3,11 @@
 /// @brief    map.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  ステージ内のマップ情報を保持するクラスです。
 
+//==========================================================
 #include "map.h"
+//==========================================================
 
 //==========================================================
 // デフォルトコンストラクタ
@@ -23,18 +24,10 @@ void Map::draw()
 	Image::draw();
 }
 
-////========================================================
-// 1フレーム毎に呼び出し
-//==========================================================
-void Map::update(float frameTime)
-{
-
-}
-
 //==========================================================
 // マップデータの更新　引き数は更新したい座標値と更新する値
 //==========================================================
-void Map::updateMapData(float x, float y, int val)
+void Map::updateMapData(const float x, const float y, const int val)
 {
 	// 座標をインデックスに変更
 	int px = (int)(x / 32);
@@ -48,7 +41,7 @@ void Map::updateMapData(float x, float y, int val)
 // マップ当たり判定の更新 引き数は更新したい座標値と更新する値
 // val -> 0 : 判定なし　val -> 1 : 判定あり/
 //==========================================================
-void Map::updateMapCol(float x, float y, int val)
+void Map::updateMapCol(const float x, const float y, const int val)
 {
 	if (x < 0 || x >= mapNS::MAP_HEIGHT * 32 || y < 0 || y >= mapNS::MAP_WIDTH * 32) { return; }
 
@@ -63,7 +56,7 @@ void Map::updateMapCol(float x, float y, int val)
 //==========================================================
 // マップ上のオブジェクトデータ更新　引き数は更新したい座標値と更新する値
 //==========================================================
-void Map::updateMapObj(float x, float y, int val)
+void Map::updateMapObj(const float x, const float y, const int val)
 {
 	// 座標値をインデックスに変更
 	int px = (int)(x / 32);
@@ -76,7 +69,7 @@ void Map::updateMapObj(float x, float y, int val)
 //==========================================================
 // マップ上のオブジェクトデータ更新　引き数は更新したい座標値と更新する値
 //==========================================================
-void Map::updateMapObjInt(int y, int x, int val)
+void Map::updateMapObjInt(const int y, const int x, const int val)
 {
 	// 座標値を更新
 	mObjData[y][x] = val;
@@ -85,7 +78,7 @@ void Map::updateMapObjInt(int y, int x, int val)
 //==========================================================
 // 指定されたステージのマップデータを読み込む
 //==========================================================
-void Map::readMapFile(int stageNum)
+void Map::readMapFile(const int stageNum)
 {
 	string mapDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\mapdata.csv";
 	string colDataFilename = "stageData\\stage" + std::to_string(stageNum) + "\\coldata.csv";

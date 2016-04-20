@@ -3,11 +3,14 @@
 /// @brief    TextureManagerクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  テクスチャを扱うクラスです。
+///				画像ファイルの読み込みなどを行います。
+
+//==========================================================
 #ifndef _TEXTUREMANAGER_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _TEXTUREMANAGER_H		// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include <vector>
 #include <string>
@@ -15,6 +18,9 @@
 #include "graphics.h"
 #include "constants.h"
 
+//==========================================================
+// テクスチャを扱うクラスです。
+// 画像ファイルの読み込みなどを行います。
 class TextureManager
 {
 private:

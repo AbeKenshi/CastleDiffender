@@ -3,12 +3,14 @@
 /// @brief    CastleDiffenceクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  ゲームのメインクラスです。
+///				1フレームごとの更新や描画はこのクラスで行います。
 
+//==========================================================
 #ifndef _CASTLE_DIFFENDER_H	// このファイルが複数の箇所でインクルードされる場合に、
 #define _CASTLE_DIFFENDER_H	// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include "game.h"
 #include "text.h"
@@ -34,29 +36,26 @@
 #include <string>
 #include "stage.h"
 
+//==========================================================
+
 // CastleDiffenderクラスの定数
 // ゲーム内でのステータス以外をここに記述
 namespace castleDiffenderNS
 {
-	const char FONT[] = "Arial Bold";	// フォント
 	const int FONT_BIG_SIZE = 256;		// フォントの高さ
-	const int FONT_SCORE_SIZE = 48;
-	// 体力バーの位置
-	const int BRAVE_HEALTH_BAR_X = 100;
-	const int BRAVE_HEALTH_BAR_Y = 0;
-	const int BRAVE_MP_BAR_X = BRAVE_HEALTH_BAR_X;
-	const int BRAVE_MP_BAR_Y = 25;
-	const int CASTLE_HEALTH_BAR_X = 830;
-	const int CASTLE_HEALTH_BAR_Y = 0;
-	const int COUNT_DOWN_X = GAME_WIDTH / 2 - FONT_BIG_SIZE / 4;
-	const int COUNT_DOWN_Y = GAME_HEIGHT / 2 - FONT_BIG_SIZE / 2;
+	const int BRAVE_HEALTH_BAR_X = 100;	// 勇者の体力バーの位置X
+	const int BRAVE_HEALTH_BAR_Y = 0;	// 勇者の体力バーの位置Y
+	const int BRAVE_MP_BAR_X = BRAVE_HEALTH_BAR_X;	// 勇者のMPバーの位置X
+	const int BRAVE_MP_BAR_Y = 25;		// 勇者のMPバーの位置Y
+	const int CASTLE_HEALTH_BAR_X = 830;// 城の体力バーの位置X
+	const int CASTLE_HEALTH_BAR_Y = 0;	// 城の体力バーの位置Y
 	const int ROUND_TIME = 3;           // 新しいラウンドが開始するまでの時間
-	const int ENEMY_NUM = 10;  // 雑魚敵の数
 }
 
 //==========================================================
 // Gameクラスを継承してCastleDiffenderクラスを作成
-//==========================================================
+// ゲームのメインクラスです。
+// 1フレームごとの更新や描画はこのクラスで行います。
 class castleDiffender : public Game
 {
 private:
@@ -113,7 +112,10 @@ public:
 	// エラー時にGameErrorをスロー
 	void initialize(HWND hwnd);
 
+	//==========================================================
 	// Gameからの純粋仮想関数をオーバーライドする必要がある
+	//==========================================================
+
 	// すべてのゲームアイテムを更新
 	void update();
 	// 人工知能
@@ -150,7 +152,7 @@ public:
 	// 敵のテクスチャを初期化する
 	void initializeEnemiesTexture();
 	
-	//
+	// 各ステージのハイスコアを読み込む
 	void loadHighScore();
 };
 #endif

@@ -3,14 +3,13 @@
 /// @brief    Inputクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  ユーザーの入力（マウスやキーボード）を処理するクラスです。
 
+//==========================================================
 #ifndef _INPUT_H                // このファイルが複数の箇所でインクルードされる場合に、 
 #define _INPUT_H                // 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
-
-class Input;
+//==========================================================
 
 #include <windows.h>
 #include <WindowsX.h>
@@ -18,7 +17,6 @@ class Input;
 #include <XInput.h>
 #include "constants.h"
 #include "gameError.h"
-
 
 // for high-definition mouse
 #ifndef HID_USAGE_PAGE_GENERIC
@@ -29,6 +27,7 @@ class Input;
 #endif
 //--------------------------
 
+//==========================================================
 // Inputクラスの定数
 // ゲーム内でのステータス以外をここに記述
 namespace inputNS
@@ -72,6 +71,7 @@ struct ControllerState
 	bool                connected;
 };
 
+// ユーザーの入力（マウスやキーボード）を処理するクラスです。
 class Input
 {
 private:

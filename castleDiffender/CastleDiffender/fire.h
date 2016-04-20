@@ -3,17 +3,19 @@
 /// @brief    Fireクラス
 /// @author   阿部拳之
 ///
-/// @attention  このファイルの利用は、同梱のREADMEにある
-///             利用条件に従ってください
+/// @attention  プレイヤーの必殺技によって発射される炎を表すクラスです。
 
+//==========================================================
 #ifndef _FIRE_H		// このファイルが複数の箇所でインクルードされる場合に、
 #define _FIRE_H		// 多重に定義されることを防ぎます。
 #define WIN32_LEAN_AND_MEAN
+//==========================================================
 
 #include "entity.h"
 #include "character.h"
 #include "constants.h"
 
+//==========================================================
 
 // Fireクラスの定数
 // ゲーム内でのステータス以外をここに記述
@@ -31,6 +33,7 @@ namespace fireNS
 	const int FIRE_MP = 20;							// 必殺技に使用するMP
 }
 
+// プレイヤーの必殺技によって発射される炎を表すクラスです。
 class Fire : public Entity							// Entityクラスを継承
 {
 private:
@@ -39,13 +42,30 @@ public:
 	// コンストラクタ
 	Fire();
 
+	//==========================================================
 	// 継承されたメンバー関数
-	void update(float frameTime);
+	//==========================================================
+
+	// Update
+	// エンティティがアクティブな場合、一定時間まっすぐ移動
+	// 通常、フレームごとに1回呼び出す
+	// frameTimeは、移動とアニメーションの速さを制御するために使用
+	// 引数：frameTime　1フレームで経過した時間
+	void update(const float frameTime);
+	// パラメータリセット
+	// roundStart()内で呼び出される
 	void reset();
 
 	// 新しいメンバー関数
 	// 勇者から炎を発射
 	// 指定した位置にこのエンティティをアクティブにして出現させる
-	void fire(float centerX, float centerY, float width, float height, float scale, int& mp, characterNS::DIRECTION direction);
+	// 引数：centerX	攻撃を行ったエンティティの中心のX方向の位置
+	// 引数：centerY	攻撃を行ったエンティティの中心のY方向の位置
+	// 引数：width		攻撃を行ったエンティティの幅
+	// 引数：height		攻撃を行ったエンティティの高さ
+	// 引数：scale		攻撃を行ったエンティティのスケール
+	// 引数：mp			攻撃を行ったエンティティの残りMP
+	// 引数：direction	攻撃を行ったエンティティが向いている方向
+	void fire(const float centerX, const float centerY, const float width, const float height, const float scale, int& mp, const characterNS::DIRECTION direction);
 };
 #endif
