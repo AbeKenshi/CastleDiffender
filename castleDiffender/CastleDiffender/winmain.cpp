@@ -48,6 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInstance, LPSTR lpCmdLine,
 	if (AnotherInstance())
 		return false;
 
+	nCmdShow = SW_MAXIMIZE;	// ウィンドウを最大化して表示するのがデフォルト
 	// ウィンドウを作成
 	if (!CreateMainWindow(hwnd, hInstance, nCmdShow))
 		return 1;

@@ -301,12 +301,12 @@ void Game::run(HWND hwnd)
 	mAudio->run();                  // サウンドエンジンの周期的タスクを実行
 
 	// Alt+Enterでフルスクリーンモードとウィンドウモードを切り替え
-	if (mInput->isKeyDown(ALT_KEY) && mInput->wasKeyPressed(ENTER_KEY))
-		setDisplayMode(graphicsNS::TOGGLE); // フルスクリーンモードとウィンドウモードを切り替え
+//	if (mInput->isKeyDown(ALT_KEY) && mInput->wasKeyPressed(ENTER_KEY))
+//		setDisplayMode(graphicsNS::TOGGLE); // フルスクリーンモードとウィンドウモードを切り替え
 
 	// Escキーでウィンドウモードに設定
-	if (mInput->isKeyDown(ESC_KEY))
-		setDisplayMode(graphicsNS::WINDOW); // ウィンドウモードに設定
+//	if (mInput->isKeyDown(ESC_KEY))
+//		setDisplayMode(graphicsNS::WINDOW); // ウィンドウモードに設定
 
 	// ポーズキーが押された場合、一時停止
 	if (mInput->wasKeyPressed(VK_PAUSE))
