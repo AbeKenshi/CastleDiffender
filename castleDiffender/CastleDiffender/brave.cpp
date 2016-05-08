@@ -24,7 +24,7 @@ Brave::Brave() : Character()
 	mFrameDelay = braveNS::ANIMATION_DELAY;						// アニメーションの各フレームの間隔
 	mStartFrame = braveNS::MOVE_UP_START_FRAME;					// アニメーションの最初のフレーム
 	mEndFrame = braveNS::MOVE_UP_END_FRAME;						// アニメーションの最後のフレーム
-	mCurrentFrame = mStartFrame;									// 現在のフレームはアニメーションの最初のフレームに設定
+	mCurrentFrame = mStartFrame;								// 現在のフレームはアニメーションの最初のフレームに設定
 	// Boxの衝突判定用
 	mEdge.left = (LONG)(-braveNS::WIDTH * mSpriteData.scale / 2.0);
 	mEdge.right = (LONG)(braveNS::WIDTH * mSpriteData.scale / 2.0);

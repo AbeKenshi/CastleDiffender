@@ -3,7 +3,7 @@
 /// @brief    graphics.hの実装
 /// @author   阿部拳之
 ///
-/// @attention  スプライトなどを描画するための情報を扱うクラスです。
+/// @attention  スプライトなどを描画するための情報を扱ったり、描画処理を行うクラスです。
 
 
 #include "graphics.h"
