@@ -13,7 +13,7 @@
 //==========================================================
 // コンストラクタ
 //==========================================================
-castleDiffender::castleDiffender()
+CastleDiffender::CastleDiffender()
 {
 	mInitialized = false;	// ゲームが初期化された場合、trueになる
 	mFontCK = new Text();	// スプライトフォント
@@ -26,7 +26,7 @@ castleDiffender::castleDiffender()
 //==========================================================
 // デストラクタ
 //==========================================================
-castleDiffender::~castleDiffender()
+CastleDiffender::~CastleDiffender()
 {
 	safeDelete(mRect);		// システムグラフィックス用の四角形のメモリを解放
 	safeDelete(mFontCK);		// スプライトフォントのメモリを解放
@@ -37,7 +37,7 @@ castleDiffender::~castleDiffender()
 // ゲームを初期化
 // エラー時にGameErrorをスロー
 //==========================================================
-void castleDiffender::initialize(HWND hwnd)
+void CastleDiffender::initialize(HWND hwnd)
 {
 	Game::initialize(hwnd);	// GameErrorをスロー
 
@@ -201,7 +201,7 @@ void castleDiffender::initialize(HWND hwnd)
 //==========================================================
 // プレイの新しいラウンドを開始
 //==========================================================
-void castleDiffender::roundStart()
+void CastleDiffender::roundStart()
 {
 	// 現在のステージ番号でゲーム開始
 	mStage.roundStart();
@@ -220,7 +220,7 @@ void castleDiffender::roundStart()
 //==========================================================
 // すべてのゲームアイテムを更新
 //==========================================================
-void castleDiffender::update()
+void CastleDiffender::update()
 {
 	if (mMenuOn)		// メニュー画面表示中
 	{
@@ -438,7 +438,7 @@ void castleDiffender::update()
 //==========================================================
 // 人工知能
 //==========================================================
-void castleDiffender::ai()
+void CastleDiffender::ai()
 {
 	// ステージ内のゲームアイテムの人工知能
 	mStage.ai(mFrameTime);
@@ -447,7 +447,7 @@ void castleDiffender::ai()
 //==========================================================
 // 衝突を処理
 //==========================================================
-void castleDiffender::collisions()
+void CastleDiffender::collisions()
 {
 	// ステージ内のゲームアイテムの衝突を処理
 	mStage.collisions();
@@ -457,295 +457,350 @@ void castleDiffender::collisions()
 // ゲームアイテムをレンダー
 // プレイ中のレイヤー：マップ→黒背景→その他アイテムの順
 //==========================================================
-void castleDiffender::render()
+void CastleDiffender::render()
 {
 	// スプライトの描画を開始
 	mGraphics->spriteBegin();	
 	if (mMenuOn)	// メニュー画面オンの場合、
 	{
-		// メニュー画面を描画
-		mMenu.draw();
-		// システムグラフィックスを描画
-		char str[128] = "PUSH Z KEY : STAGE SELECT";
-		char str2[128] = "PUSH X KEY : OPERATION DESCRIPTION";
-		char str3[128] = "PUSH E KEY : EXIT";
-		mFontCK->setFontHeight(35);
-		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-		mFontCK->print(str, 273, 353);
-		mFontCK->print(str2, 273, 453);
-		mFontCK->print(str3, 273, 553);
-		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
-		mFontCK->print(str, 273, 350);
-		mFontCK->print(str2, 273, 450);
-		mFontCK->print(str3, 273, 550);
+		// メニュー画面描画
+		drawMenu();
 	}
 	else if (mStageSelectOn)	// ステージ選択画面オンの場合、
 	{
-		// ステージ選択画面を描画
-		mStageSelect.draw();
-		// スプライトの描画を終了
-		mGraphics->spriteEnd();	
-		// システムグラフィックス用の四角形を描画
-		mRect->draw();
-		// スプライトの描画を開始
-		mGraphics->spriteBegin();
-		// システムグラフィックスを描画
-		char str[128] = "PUSH Z KEY : START STAGE!";
-		mFontCK->setFontHeight(35);
-		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-		mFontCK->print(str, 353, 653);
-		mFontCK->setFontHeight(35);
-		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
-		mFontCK->print(str, 350, 650);
-		for (int i = 0; i < 3; ++i)
-		{
-			char str2[128] = "HIGH SCORE IS ";
-			char time[5] = { 0 };
-			sprintf_s(time, "%04d", (int)mHighScores[i]);
-			strcat_s(str2, time);
-			mFontCK->setFontHeight(20);
-			mFontCK->setFontColor(graphicsNS::ORANGE);
-			mFontCK->print(str2, 505, 3 + 50 + i * 240);
-		}
+		// ステージ選択画面描画
+		drawStageSelect();
 	}
 	else if (mDescriptionOn)	// 操作説明画面オンの場合、
 	{
-		// 操作説明画面をオン
-		mDescription.draw();
+		// 操作説明画面描画
+		drawDescription();
 	}
 	else // ステージ中の場合、
 	{
-		// マップタイルを描画
-		for (int row = 0; row < mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
-		{
-			mStage.getMap().setY((float)(row*mapNS::TEXTURE_SIZE));     // タイルのYを設定
-			for (int col = 0; col < mapNS::MAP_WIDTH; col++)			// マップの各列を処理
-			{
-				if (mStage.getMap().getMapData(row, col) >= 0)          // タイルが存在する場合（この処理はいらないと思われるが念のため）
-				{
-					mStage.getMap().setCurrentFrame(mStage.getMap().getMapData(row, col));                      // タイルのテクスチャを設定
-					mStage.getMap().setX((float)(col*mapNS::TEXTURE_SIZE));										// タイルのXを設定
-					if (mStage.getMap().getX() > -mapNS::TEXTURE_SIZE && mStage.getMap().getX() < GAME_WIDTH)   // タイルが画面上にあるかどうか
-						mStage.getMap().draw();    // タイルを描画
-				}
-			}
-		}
-		// バリケードを描画
-		for (int i = 0; i < 8; ++i)
-		{
-			mStage.getBarricade(i).draw();				// オブジェクトを描画
-			mStage.getBarricade(i).getHitEffect().draw();// バリケードに攻撃がヒットしたときのアニメーションを描画
-		}
-
-		// スプライトの描画を終了
-		mGraphics->spriteEnd();
-		// システムグラフィックス用の四角形を描画
-		mRect->draw();
-		// スプライトの描画を開始
-		mGraphics->spriteBegin();
-
-		// 敵を描画
-		for (int i = 0; i < mStage.getEnemyNum(); i++) {
-			// 画像に偏りがあるため、位置を修正
-			float tmpX = mStage.getEnemy(i).getX();
-			float tmpY = mStage.getEnemy(i).getY();
-			mStage.getEnemy(i).setX((float)(tmpX - mStage.getEnemy(i).getWidth() * (mStage.getEnemy(i).getScale() - 1) / 2.0));
-			mStage.getEnemy(i).setY((float)(tmpY - mStage.getEnemy(i).getHeight() * (mStage.getEnemy(i).getScale() - 1) / 2.0 - 10.0));
-			// 敵の種類に応じてカラーフィルターを設定
-			// 敵を描画
-			switch (mStage.getEnemy(i).getEnemyType())
-			{
-			case enemyNS::RED:
-				mStage.getEnemy(i).draw(graphicsNS::RED);
-				break;
-			case enemyNS::BLUE:
-				mStage.getEnemy(i).draw(graphicsNS::BLUE);
-				break;
-			default:
-				mStage.getEnemy(i).draw(graphicsNS::WHITE);
-				break;
-			}
-			// 敵の攻撃判定用のエンティティを描画（デバッグ用に色を付けて表示できるようにしている）
-			mStage.getEnemy(i).getAttackCollision().draw();
-			// 位置をもとに戻す
-			mStage.getEnemy(i).setX(tmpX);
-			mStage.getEnemy(i).setY(tmpY);
-		}
-		// プレイヤーのアイコンを描画
-		mBraveIcon.draw();
-		// 城のアイコンを描画
-		mCastleIcon.draw();
-		// 城を描画
-		mStage.getCastle().draw();
-		// プレイヤーの炎を描画
-		mStage.getBrave().getFire().draw();
-		// プレイヤーを描画
-		// 画像に偏りがあるため、位置を修正
-		float tmpX = mStage.getBrave().getX();
-		float tmpY = mStage.getBrave().getY();
-		mStage.getBrave().setX((float)(tmpX - mStage.getBrave().getWidth() * (mStage.getBrave().getScale() - 1) / 2.0));
-		mStage.getBrave().setY((float)(tmpY - mStage.getBrave().getHeight() * (mStage.getBrave().getScale() - 1) / 2.0 - 10));
-		mStage.getBrave().draw(graphicsNS::WHITE);
-		mStage.getBrave().setX(tmpX);
-		mStage.getBrave().setY(tmpY);
-		// プレイヤーの攻撃判定用のエンティティを描画（デバッグ用に色を付けて表示できるようにしている）
-		mStage.getBrave().getBraveAttackCollision().draw();
-		// プレイヤーの攻撃の衝撃派を描画
-		mStage.getBrave().getBraveAttackCollision().getAttackEffect().draw();
-		// プレイヤーのHPを棒グラフで描画
-		mBraveHealthBar.set(mStage.getBrave().getHealth());
-		mBraveHealthBar.draw(graphicsNS::FILTER);
-		// プレイヤーのMPを棒グラフで描画
-		mBraveMpBar.set((float)mStage.getBrave().getMP());
-		mBraveMpBar.draw(graphicsNS::FILTER);
-		// 城のHPを棒グラフで描画
-		mCastleHealthBar.set(mStage.getCastle().getHealth());
-		mCastleHealthBar.draw(graphicsNS::FILTER);
-
-		// システムグラフィックスを描画
-		// 勇者用のHPテキストを描画
-		mBraveHpText.draw();
-		// 勇者用のMPテキストを描画
-		mBraveMpText.draw();
-		// 城用のHPテキストを描画
-		mCastleHpText.draw();
-		// システムテキストを描画
-		char str[128] = "TIME-";
-		char time[5] = { 0 };
-		sprintf_s(time, "%04d", (int)mStage.getRemainingTime());
-		strcat_s(str, time);
-		mFontCK->setFontHeight(40);
-		mFontCK->setFontColor(SETCOLOR_ARGB(128, 128, 128, 128));  // shadow grey
-		mFontCK->print(str, 512, 10);
-		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
-		mFontCK->print(str, 505, 7);
-		mFontCK->setFontHeight(14);
-		if (mRoundTimer > 0.0f)
-		{
-			// ラウンドが開始するまでは、「STAGE START!」と一定時間表示させる
-			string str1 = "STAGE" + to_string(mStage.getStageNum() + 1);
-			char str2[128] = "START!";
-			float fontSize = 60.0f;
-			float fastSpeed = 900.0f;
-			float secondSpeed = 50.0f;
-			float initX = -fontSize * 6.0f;
-			mFontCK->setFontHeight((UINT)fontSize);
-			float T = (GAME_WIDTH - initX * 2.0f - fontSize * 6) / (2.0f * fastSpeed);
-			if (mRoundTimer > castleDiffenderNS::ROUND_TIME - T)
-			{
-				mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 303);
-				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 403);
-				mFontCK->setFontColor(graphicsNS::BLUE);
-				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 300);
-				mFontCK->setFontColor(graphicsNS::RED);
-				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 400);
-			}
-			else if (mRoundTimer > castleDiffenderNS::ROUND_TIME - T * 2.0f)
-			{
-				mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 303);
-				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 403);
-				mFontCK->setFontColor(graphicsNS::BLUE);
-				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 300);
-				mFontCK->setFontColor(graphicsNS::RED);
-				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 400);
-			}
-			else
-			{
-				mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 303);
-				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 403);
-				mFontCK->setFontColor(graphicsNS::BLUE);
-				mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 300);
-				mFontCK->setFontColor(graphicsNS::RED);
-				mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 400);
-			}
-		}
+		// ステージ画面を描画
+		// ステージプレイ中は通常ここで描画される
+		drawOnStage();
 	}
 
 	// ゲームオーバー画面とステージクリア画面はゲーム画面の一部に表示されるため、ゲーム画面と重ねて表示
 	if (mStage.getRoundOver())	// ゲームオーバーの場合、
 	{
 		// ゲームオーバー画面を描画
-		mResult.draw();
-		// リザルト画面が一定以上降下したら
-		if (mResult.getY() > 50)
-		{
-			// システムグラフィックスのテキストを表示
-			char str[128] = "CONTINUE?";
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mResult.getHeight() + mResult.getY()));
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mResult.getHeight() + mResult.getY() - 3));
-			char str2[128] = "PUSH Z KEY : RETRY STAGE";
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() + 55));
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() - 3 + 55));
-			char str3[128] = "PUSH X KEY : RETURN TITLE";
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() + 55 * 2));
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() - 3 + 55 * 2));
-			char str4[128] = "PUSH E KEY : EXIT";
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() + 55 * 3));
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() - 3 + 55 * 3));
-		}
+		drawOnRoundOver();
 	}
 	else if (mStage.getClearedStage())	// ステージクリアの場合、
 	{
 		// ステージクリア画面を描画
-		mStageClear.draw();
-		// ステージクリア画面が一定以上上昇したら
-		if (mStageClear.getY() < 250)
-		{
-			// システムグラフィックスのテキストを表示
-			char str[128] = "YOUR SCORE IS ";
-			char time[5] = { 0 };
-			sprintf_s(time, "%04d", (int)mStage.getRemainingTime());
-			strcat_s(str, time);
-			mFontCK->setFontHeight(45);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 45 * 16 / 2), (int)(mStageClear.getHeight() + mStageClear.getY()));
-			mFontCK->setFontHeight(45);
-			mFontCK->setFontColor(graphicsNS::RED);
-			mFontCK->print(str, (int)(GAME_WIDTH / 2 - 45 * 16 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3));
-			char str2[128] = "PUSH Z KEY : RETRY STAGE";
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() + 55));
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3 + 55));
-			char str3[128] = "PUSH X KEY : RETURN TITLE";
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() + 55 * 2));
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3 + 55 * 2));
-			char str4[128] = "PUSH E KEY : EXIT";
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
-			mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() + 55 * 3));
-			mFontCK->setFontHeight(35);
-			mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
-			mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3 + 55 * 3));
-		}
+		drawOnClearedStage();
 	}
 	// スプライトの描画を開始
 	mGraphics->spriteEnd();
+}
+
+//==========================================================
+// メニュー画面時の描画
+//==========================================================
+void CastleDiffender::drawMenu()
+{
+	// メニュー画面を描画
+	mMenu.draw();
+	// システムグラフィックスを描画
+	char str[128] = "PUSH Z KEY : STAGE SELECT";
+	char str2[128] = "PUSH X KEY : OPERATION DESCRIPTION";
+	char str3[128] = "PUSH E KEY : EXIT";
+	mFontCK->setFontHeight(35);
+	mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+	mFontCK->print(str, 273, 353);
+	mFontCK->print(str2, 273, 453);
+	mFontCK->print(str3, 273, 553);
+	mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+	mFontCK->print(str, 273, 350);
+	mFontCK->print(str2, 273, 450);
+	mFontCK->print(str3, 273, 550);
+}
+
+//==========================================================
+// ステージ選択画面時の描画
+//==========================================================
+void CastleDiffender::drawStageSelect()
+{
+	// ステージ選択画面を描画
+	mStageSelect.draw();
+	// スプライトの描画を終了
+	mGraphics->spriteEnd();
+	// システムグラフィックス用の四角形を描画
+	mRect->draw();
+	// スプライトの描画を開始
+	mGraphics->spriteBegin();
+	// システムグラフィックスを描画
+	char str[128] = "PUSH Z KEY : START STAGE!";
+	mFontCK->setFontHeight(35);
+	mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+	mFontCK->print(str, 353, 653);
+	mFontCK->setFontHeight(35);
+	mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+	mFontCK->print(str, 350, 650);
+	for (int i = 0; i < 3; ++i)
+	{
+		char str2[128] = "HIGH SCORE IS ";
+		char time[5] = { 0 };
+		sprintf_s(time, "%04d", (int)mHighScores[i]);
+		strcat_s(str2, time);
+		mFontCK->setFontHeight(20);
+		mFontCK->setFontColor(graphicsNS::ORANGE);
+		mFontCK->print(str2, 505, 3 + 50 + i * 240);
+	}
+}
+
+//==========================================================
+// 操作説明画面時の描画
+//==========================================================
+void CastleDiffender::drawDescription()
+{
+	// 操作説明画面をオン
+	mDescription.draw();
+}
+
+//==========================================================
+// ステージ中の描画
+//==========================================================
+void CastleDiffender::drawOnStage()
+{
+	// マップタイルを描画
+	for (int row = 0; row < mapNS::MAP_HEIGHT; row++)       // マップの各行を処理
+	{
+		mStage.getMap().setY((float)(row*mapNS::TEXTURE_SIZE));     // タイルのYを設定
+		for (int col = 0; col < mapNS::MAP_WIDTH; col++)			// マップの各列を処理
+		{
+			if (mStage.getMap().getMapData(row, col) >= 0)          // タイルが存在する場合（この処理はいらないと思われるが念のため）
+			{
+				mStage.getMap().setCurrentFrame(mStage.getMap().getMapData(row, col));                      // タイルのテクスチャを設定
+				mStage.getMap().setX((float)(col*mapNS::TEXTURE_SIZE));										// タイルのXを設定
+				if (mStage.getMap().getX() > -mapNS::TEXTURE_SIZE && mStage.getMap().getX() < GAME_WIDTH)   // タイルが画面上にあるかどうか
+					mStage.getMap().draw();    // タイルを描画
+			}
+		}
+	}
+	// バリケードを描画
+	for (int i = 0; i < 8; ++i)
+	{
+		mStage.getBarricade(i).draw();				// オブジェクトを描画
+		mStage.getBarricade(i).getHitEffect().draw();// バリケードに攻撃がヒットしたときのアニメーションを描画
+	}
+
+	// スプライトの描画を終了
+	mGraphics->spriteEnd();
+	// システムグラフィックス用の四角形を描画
+	mRect->draw();
+	// スプライトの描画を開始
+	mGraphics->spriteBegin();
+
+	// 敵を描画
+	for (int i = 0; i < mStage.getEnemyNum(); i++) {
+		// 画像に偏りがあるため、位置を修正
+		float tmpX = mStage.getEnemy(i).getX();
+		float tmpY = mStage.getEnemy(i).getY();
+		mStage.getEnemy(i).setX((float)(tmpX - mStage.getEnemy(i).getWidth() * (mStage.getEnemy(i).getScale() - 1) / 2.0));
+		mStage.getEnemy(i).setY((float)(tmpY - mStage.getEnemy(i).getHeight() * (mStage.getEnemy(i).getScale() - 1) / 2.0 - 10.0));
+		// 敵の種類に応じてカラーフィルターを設定
+		// 敵を描画
+		switch (mStage.getEnemy(i).getEnemyType())
+		{
+		case enemyNS::RED:
+			mStage.getEnemy(i).draw(graphicsNS::RED);
+			break;
+		case enemyNS::BLUE:
+			mStage.getEnemy(i).draw(graphicsNS::BLUE);
+			break;
+		default:
+			mStage.getEnemy(i).draw(graphicsNS::WHITE);
+			break;
+		}
+		// 敵の攻撃判定用のエンティティを描画（デバッグ用に色を付けて表示できるようにしている）
+		mStage.getEnemy(i).getAttackCollision().draw();
+		// 位置をもとに戻す
+		mStage.getEnemy(i).setX(tmpX);
+		mStage.getEnemy(i).setY(tmpY);
+	}
+	// プレイヤーのアイコンを描画
+	mBraveIcon.draw();
+	// 城のアイコンを描画
+	mCastleIcon.draw();
+	// 城を描画
+	mStage.getCastle().draw();
+	// プレイヤーの炎を描画
+	mStage.getBrave().getFire().draw();
+	// プレイヤーを描画
+	// 画像に偏りがあるため、位置を修正
+	float tmpX = mStage.getBrave().getX();
+	float tmpY = mStage.getBrave().getY();
+	mStage.getBrave().setX((float)(tmpX - mStage.getBrave().getWidth() * (mStage.getBrave().getScale() - 1) / 2.0));
+	mStage.getBrave().setY((float)(tmpY - mStage.getBrave().getHeight() * (mStage.getBrave().getScale() - 1) / 2.0 - 10));
+	mStage.getBrave().draw(graphicsNS::WHITE);
+	mStage.getBrave().setX(tmpX);
+	mStage.getBrave().setY(tmpY);
+	// プレイヤーの攻撃判定用のエンティティを描画（デバッグ用に色を付けて表示できるようにしている）
+	mStage.getBrave().getBraveAttackCollision().draw();
+	// プレイヤーの攻撃の衝撃派を描画
+	mStage.getBrave().getBraveAttackCollision().getAttackEffect().draw();
+	// プレイヤーのHPを棒グラフで描画
+	mBraveHealthBar.set(mStage.getBrave().getHealth());
+	mBraveHealthBar.draw(graphicsNS::FILTER);
+	// プレイヤーのMPを棒グラフで描画
+	mBraveMpBar.set((float)mStage.getBrave().getMP());
+	mBraveMpBar.draw(graphicsNS::FILTER);
+	// 城のHPを棒グラフで描画
+	mCastleHealthBar.set(mStage.getCastle().getHealth());
+	mCastleHealthBar.draw(graphicsNS::FILTER);
+
+	// システムグラフィックスを描画
+	// 勇者用のHPテキストを描画
+	mBraveHpText.draw();
+	// 勇者用のMPテキストを描画
+	mBraveMpText.draw();
+	// 城用のHPテキストを描画
+	mCastleHpText.draw();
+	// システムテキストを描画
+	char str[128] = "TIME-";
+	char time[5] = { 0 };
+	sprintf_s(time, "%04d", (int)mStage.getRemainingTime());
+	strcat_s(str, time);
+	mFontCK->setFontHeight(40);
+	mFontCK->setFontColor(SETCOLOR_ARGB(128, 128, 128, 128));  // shadow grey
+	mFontCK->print(str, 512, 10);
+	mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 255));
+	mFontCK->print(str, 505, 7);
+	mFontCK->setFontHeight(14);
+	if (mRoundTimer > 0.0f)
+	{
+		// ラウンドが開始するまでは、「STAGE START!」と一定時間表示させる
+		string str1 = "STAGE" + to_string(mStage.getStageNum() + 1);
+		char str2[128] = "START!";
+		float fontSize = 60.0f;
+		float fastSpeed = 900.0f;
+		float secondSpeed = 50.0f;
+		float initX = -fontSize * 6.0f;
+		mFontCK->setFontHeight((UINT)fontSize);
+		float T = (GAME_WIDTH - initX * 2.0f - fontSize * 6) / (2.0f * fastSpeed);
+		if (mRoundTimer > castleDiffenderNS::ROUND_TIME - T)
+		{
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 303);
+			mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 403);
+			mFontCK->setFontColor(graphicsNS::BLUE);
+			mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 300);
+			mFontCK->setFontColor(graphicsNS::RED);
+			mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer) * fastSpeed), 400);
+		}
+		else if (mRoundTimer > castleDiffenderNS::ROUND_TIME - T * 2.0f)
+		{
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 303);
+			mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 403);
+			mFontCK->setFontColor(graphicsNS::BLUE);
+			mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 300);
+			mFontCK->setFontColor(graphicsNS::RED);
+			mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T) * secondSpeed + fastSpeed * T), 400);
+		}
+		else
+		{
+			mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+			mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 303);
+			mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 403);
+			mFontCK->setFontColor(graphicsNS::BLUE);
+			mFontCK->print(str1, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 300);
+			mFontCK->setFontColor(graphicsNS::RED);
+			mFontCK->print(str2, (int)(initX + (castleDiffenderNS::ROUND_TIME - mRoundTimer - T * 2.0f) * fastSpeed + (fastSpeed + secondSpeed) * T), 400);
+		}
+	}
+}
+
+//==========================================================
+// ゲームオーバー時の描画
+//==========================================================
+void CastleDiffender::drawOnRoundOver()
+{
+	// ゲームオーバー画面を描画
+	mResult.draw();
+	// リザルト画面が一定以上降下したら
+	if (mResult.getY() > 50)
+	{
+		// システムグラフィックスのテキストを表示
+		char str[128] = "CONTINUE?";
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mResult.getHeight() + mResult.getY()));
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+		mFontCK->print(str, (int)(GAME_WIDTH / 2 - 35 * 9 / 2), (int)(mResult.getHeight() + mResult.getY() - 3));
+		char str2[128] = "PUSH Z KEY : RETRY STAGE";
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() + 55));
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+		mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() - 3 + 55));
+		char str3[128] = "PUSH X KEY : RETURN TITLE";
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() + 55 * 2));
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+		mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() - 3 + 55 * 2));
+		char str4[128] = "PUSH E KEY : EXIT";
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() + 55 * 3));
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+		mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mResult.getHeight() + mResult.getY() - 3 + 55 * 3));
+	}
+}
+
+//==========================================================
+// ステージクリア時の描画
+//==========================================================
+void CastleDiffender::drawOnClearedStage()
+{
+	// ステージクリア画面を描画
+	mStageClear.draw();
+	// ステージクリア画面が一定以上上昇したら
+	if (mStageClear.getY() < 250)
+	{
+		// システムグラフィックスのテキストを表示
+		char str[128] = "YOUR SCORE IS ";
+		char time[5] = { 0 };
+		sprintf_s(time, "%04d", (int)mStage.getRemainingTime());
+		strcat_s(str, time);
+		mFontCK->setFontHeight(45);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str, (int)(GAME_WIDTH / 2 - 45 * 16 / 2), (int)(mStageClear.getHeight() + mStageClear.getY()));
+		mFontCK->setFontHeight(45);
+		mFontCK->setFontColor(graphicsNS::RED);
+		mFontCK->print(str, (int)(GAME_WIDTH / 2 - 45 * 16 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3));
+		char str2[128] = "PUSH Z KEY : RETRY STAGE";
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() + 55));
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+		mFontCK->print(str2, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3 + 55));
+		char str3[128] = "PUSH X KEY : RETURN TITLE";
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() + 55 * 2));
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+		mFontCK->print(str3, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3 + 55 * 2));
+		char str4[128] = "PUSH E KEY : EXIT";
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 0, 0, 0));  // 影
+		mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() + 55 * 3));
+		mFontCK->setFontHeight(35);
+		mFontCK->setFontColor(SETCOLOR_ARGB(255, 255, 255, 50));
+		mFontCK->print(str4, (int)(GAME_WIDTH / 2 - 35 * 20 / 2), (int)(mStageClear.getHeight() + mStageClear.getY() - 3 + 55 * 3));
+	}
 }
 
 //==========================================================
@@ -753,7 +808,7 @@ void castleDiffender::render()
 // グラフィックスデバイスをリセット可能にするため、
 // 予約されていたビデオメモリをすべて解放
 //==========================================================
-void castleDiffender::releaseAll()
+void CastleDiffender::releaseAll()
 {
 	SAFE_ON_LOST_DEVICE(mFontCK);
 	mMenuTexture.onLostDevice();
@@ -769,7 +824,7 @@ void castleDiffender::releaseAll()
 // グラフィックスデバイスがリセットされた場合
 // すべてのサーフェイスを再作成
 //==========================================================
-void castleDiffender::resetAll()
+void CastleDiffender::resetAll()
 {
 	SAFE_ON_RESET_DEVICE(mFontCK);
 	mDashboardTextures.onLostDevice();
@@ -786,7 +841,7 @@ void castleDiffender::resetAll()
 // コンソールコマンドを処理
 // デバッグ用
 //=============================================================================
-void castleDiffender::consoleCommand()
+void CastleDiffender::consoleCommand()
 {
 	mCommand = mConsole->getCommand();    // コンソールからのコマンドを取得
 	if (mCommand == "")                  // コマンドがない場合
@@ -873,7 +928,7 @@ void castleDiffender::consoleCommand()
 //==========================================================
 // GameOver時に呼び出す
 //==========================================================
-void castleDiffender::gameOver()
+void CastleDiffender::gameOver()
 {
 	// ステージ中のBGMをオフ
 	mAudio->stopCue("stage");
@@ -884,7 +939,7 @@ void castleDiffender::gameOver()
 //==========================================================
 // ステージクリア時に呼び出す
 //==========================================================
-void castleDiffender::clearStage()
+void CastleDiffender::clearStage()
 {
 	// ステージ中のBGMをオフ
 	mAudio->stopCue("stage");
@@ -907,7 +962,7 @@ void castleDiffender::clearStage()
 //==========================================================
 // 敵のテクスチャを初期化する
 //==========================================================
-void castleDiffender::initializeEnemiesTexture()
+void CastleDiffender::initializeEnemiesTexture()
 {
 	// それぞれの敵について
 	for (int i = 0; i < mStage.getEnemyNum(); i++) {
@@ -934,7 +989,7 @@ void castleDiffender::initializeEnemiesTexture()
 //==========================================================
 // 各ステージのハイスコアを読み込み
 //==========================================================
-void castleDiffender::loadHighScore()
+void CastleDiffender::loadHighScore()
 {
 	ifstream ifs("savedata\\highscore.csv");
 	//csvファイルを1行ずつ読み込む

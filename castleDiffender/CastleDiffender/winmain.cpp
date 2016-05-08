@@ -21,7 +21,7 @@ LRESULT WINAPI WinProc(HWND, UINT, WPARAM, LPARAM);
 bool AnotherInstance();
 
 // Gameポインタ
-castleDiffender *game = NULL;
+CastleDiffender *game = NULL;
 HWND hwnd = NULL;
 
 //==========================================================
@@ -41,8 +41,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPreInstance, LPSTR lpCmdLine,
 
 	MSG msg;
 
-	// Create the game, sets up message handler
-	game = new castleDiffender;
+	// ゲームを生成、メッセージハンドラをセット
+	game = new CastleDiffender;
 	
 	// 複数のインスタンスの生成を防ぐ
 	if (AnotherInstance())
