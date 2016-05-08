@@ -56,7 +56,7 @@ namespace castleDiffenderNS
 // Gameクラスを継承してCastleDiffenderクラスを作成
 // ゲームのメインクラスです。
 // 1フレームごとの更新や描画はこのクラスで行います。
-class castleDiffender : public Game
+class CastleDiffender : public Game
 {
 private:
 	// ゲームアイテム
@@ -101,12 +101,35 @@ private:
 	bool mDescriptionOn;                                // 操作説明フラグ
 	float   mRoundTimer;								// 新しいラウンドが開始するまでの時間
 	int mHighScores[3];									// 各ステージのハイスコア
+
+	//==========================================================
+	// 内部的にのみ使用する関数
+	//==========================================================
+	
+	// メニュー画面時の描画
+	void drawMenu();
+
+	// ステージ選択画面時の描画
+	void drawStageSelect();
+
+	// 操作説明画面時の描画
+	void drawDescription();
+
+	// ステージ中の描画
+	void drawOnStage();
+
+	// ゲームオーバー時の描画
+	void drawOnRoundOver();
+
+	// ステージクリア時の描画
+	void drawOnClearedStage();
+
 public:
 	// コンストラクタ
-	castleDiffender();
+	CastleDiffender();
 
 	// デストラクタ
-	virtual ~castleDiffender();
+	virtual ~CastleDiffender();
 
 	// ゲームを初期化
 	// エラー時にGameErrorをスロー
@@ -154,5 +177,6 @@ public:
 	
 	// 各ステージのハイスコアを読み込む
 	void loadHighScore();
+
 };
 #endif
