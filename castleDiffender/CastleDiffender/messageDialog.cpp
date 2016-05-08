@@ -20,7 +20,7 @@ MessageDialog::MessageDialog()
     mBackColor = messageDialogNS::BACK_COLOR;
     mButtonColor = messageDialogNS::BUTTON_COLOR;
     mButtonFontColor = messageDialogNS::BUTTON_FONT_COLOR;
-    mX = messageDialogNS::X;                // 開始位置
+    mX = messageDialogNS::X;             // 開始位置
     mY = messageDialogNS::Y;
     mHeight = messageDialogNS::HEIGHT;
     mWidth = messageDialogNS::WIDTH;
@@ -218,7 +218,7 @@ const void MessageDialog::draw()
     mGraphics->drawQuad(mButtonVerts);        // ボタンを描画
     mGraphics->drawQuad(mButton2Verts);       // ボタン2を描画
 
-    mGraphics->spriteBegin();                // スプライトの描画を開始
+    mGraphics->spriteBegin();				  // スプライトの描画を開始
 
     if(mText.size() == 0)
         return;
@@ -307,7 +307,7 @@ void MessageDialog::print(const std::string &str)
     mHeight = mTextRect.bottom - (int)mY + messageDialogNS::BORDER + messageDialogNS::MARGIN;
 
     prepareVerts();                 // 頂点バッファを準備
-    mButtonClicked = 0;              // buttonClickedクリア
+    mButtonClicked = 0;             // buttonClickedクリア
     mVisible = true;
 }
 

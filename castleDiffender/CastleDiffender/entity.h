@@ -309,6 +309,7 @@ public:
 	virtual void damage(const int weapon);
 
 	// 他のエンティティとの衝突後の跳ね返り
+	// 必要に応じて使用する
 	// 引数：collisionVector	他のエンティティへのベクトル（衝突した場合のみセット）
 	// 引数：ent				他のエンティティ
 	void bounce(VECTOR2 &collisionVector, Entity &ent);

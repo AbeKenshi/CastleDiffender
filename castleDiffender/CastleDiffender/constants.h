@@ -113,7 +113,7 @@ inline void safeRelease(T& ptr)
 		ptr = NULL;
 	}
 }
-#define SAFE_RELEASE safeRelease            // for backward compatiblility
+#define SAFE_RELEASE safeRelease            // 下位互換性を維持するため
 
 // ポインタ参照されるアイテムを安全に削除
 template <typename T>
@@ -125,9 +125,9 @@ inline void safeDelete(T& ptr)
 		ptr = NULL;
 	}
 }
-#define SAFE_DELETE safeDelete              // for backward compatiblility
+#define SAFE_DELETE safeDelete              // 下位互換性を維持するため
 
-// Safely delete pointer referenced array
+// ポインタ参照される配列を安全に削除
 template <typename T>
 inline void safeDeleteArray(T& ptr)
 {
@@ -137,24 +137,24 @@ inline void safeDeleteArray(T& ptr)
 		ptr = NULL;
 	}
 }
-#define SAFE_DELETE_ARRAY safeDeleteArray   // for backward compatiblility
+#define SAFE_DELETE_ARRAY safeDeleteArray   // 下位互換性を維持するため
 
-// Safely call onLostDevice
+// onLostDeviceを安全に呼び出し
 template <typename T>
 inline void safeOnLostDevice(T& ptr)
 {
 	if (ptr)
 		ptr->onLostDevice();
 }
-#define SAFE_ON_LOST_DEVICE safeOnLostDevice    // for backward compatiblility
+#define SAFE_ON_LOST_DEVICE safeOnLostDevice    // 下位互換性を維持するため
 
-// Safely call onResetDevice
+// onResetDeviceを安全に呼び出し
 template <typename T>
 inline void safeOnResetDevice(T& ptr)
 {
 	if (ptr)
 		ptr->onResetDevice();
 }
-#define SAFE_ON_RESET_DEVICE safeOnResetDevice  // for backward compatiblility
+#define SAFE_ON_RESET_DEVICE safeOnResetDevice  // 下位互換性を維持するため
 
 #endif

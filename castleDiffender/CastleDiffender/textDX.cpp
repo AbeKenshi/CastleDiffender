@@ -12,9 +12,9 @@
 //=============================================================================
 TextDX::TextDX()
 {
-    mColor = SETCOLOR_ARGB(255,255,255,255); // default to white font
+    mColor = SETCOLOR_ARGB(255,255,255,255); // デフォルトは白文字
 
-    // set font position
+	// フォントの位置をセット
     mFontRect.top = 0;
     mFontRect.left = 0;
     mFontRect.right = GAME_WIDTH;

@@ -73,8 +73,8 @@ namespace graphicsNS
 	const COLOR_ARGB ALPHA25 = D3DCOLOR_ARGB(64, 255, 255, 255);
 	// 色とANDを実行して、50%アルファを取得
 	const COLOR_ARGB ALPHA50 = D3DCOLOR_ARGB(128, 255, 255, 255);
-	const COLOR_ARGB BACK_COLOR = NAVY;                         // background color of game
-	const COLOR_ARGB TRANSCOLOR = MAGENTA;                      // transparent color
+	const COLOR_ARGB BACK_COLOR = NAVY;                         // ゲームの背景色
+	const COLOR_ARGB TRANSCOLOR = MAGENTA;                      // 透明色用の色
 
 	enum DISPLAY_MODE { TOGGLE, FULLSCREEN, WINDOW };
 }

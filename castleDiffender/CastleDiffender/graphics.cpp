@@ -57,7 +57,7 @@ void Graphics::initialize(HWND hw, int w, int h, bool full)
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error initializing Direct3D"));
 
 	initD3Dpp();        // D3Dプレゼンテーションパラメータを初期化
-	if (mFullscreen)      // 全画面表示モードの場合
+	if (mFullscreen)    // 全画面表示モードの場合
 	{
 		if (isAdapterCompatible())   // アダプターが対応しているか
 			// 対応しているリフレッシュレートを設定
@@ -99,7 +99,7 @@ void Graphics::initialize(HWND hw, int w, int h, bool full)
 	if (FAILED(mResult))
 		throw(GameError(gameErrorNS::FATAL_ERROR, "Error creating Direct3D sprite"));
 
-	// Configure for alpha blend of primitives
+	// プリミティブのアルファブレンド用の構成
 	mDevice3d->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
 	mDevice3d->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	mDevice3d->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
@@ -111,12 +111,12 @@ void Graphics::initialize(HWND hw, int w, int h, bool full)
 void Graphics::initD3Dpp()
 {
 	try {
-		ZeroMemory(&mD3dpp, sizeof(mD3dpp));              // 構造体に0を設定
+		ZeroMemory(&mD3dpp, sizeof(mD3dpp));            // 構造体に0を設定
 		// 必要なパラメータを設定
 		mD3dpp.BackBufferWidth = mWidth;
 		mD3dpp.BackBufferHeight = mHeight;
-		if (mFullscreen)                                 // 全画面表示の場合
-			mD3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;  // 24ビットカラー
+		if (mFullscreen)                                // 全画面表示の場合
+			mD3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;	// 24ビットカラー
 		else
 			mD3dpp.BackBufferFormat = D3DFMT_UNKNOWN;   // デスクトップ設定を使用
 		mD3dpp.BackBufferCount = 1;
@@ -125,7 +125,7 @@ void Graphics::initD3Dpp()
 		mD3dpp.Windowed = (!mFullscreen);
 		mD3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
 		mD3dpp.EnableAutoDepthStencil = true;
-		mD3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;    // Depth 24, Stencil 8
+		mD3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;   // Depth 24, Stencil 8
 	}
 	catch (...)
 	{
@@ -167,7 +167,7 @@ HRESULT Graphics::loadTexture(const char *filename, COLOR_ARGB transcolor,
 
 		// ファイルを読み込んで、新しいテクスチャを作成
 		mResult = D3DXCreateTextureFromFileEx(
-			mDevice3d,           // 3Dデバイス
+			mDevice3d,          // 3Dデバイス
 			filename,           // 画像ファイルの名前
 			info.Width,         // テクスチャの幅
 			info.Height,        // テクスチャの高さ
@@ -223,7 +223,7 @@ HRESULT Graphics::loadTextureSystemMem(const char *filename, COLOR_ARGB transcol
 
 		// ビットマップ画像ファイルを読み込んで、新しいテクスチャを作成
 		mResult = D3DXCreateTextureFromFileEx(
-			mDevice3d,           // 3Dデバイス
+			mDevice3d,          // 3Dデバイス
 			filename,           // ビットマップファイルの名前
 			info.Width,         // ビットマップ画像の幅
 			info.Height,        // ビットマップ画像の高さ
@@ -410,55 +410,55 @@ void Graphics::changeDisplayMode(graphicsNS::DISPLAY_MODE mode)
 		switch (mode)
 		{
 		case graphicsNS::FULLSCREEN:
-			if (mFullscreen)      // if already in fullscreen mode
+			if (mFullscreen)			// すでにフルスクリーンモードだった場合は何もしない
 				return;
 			mFullscreen = true; break;
 		case graphicsNS::WINDOW:
-			if (mFullscreen == false) // if already in window mode
+			if (mFullscreen == false)	// すでにウィンドウモードだった場合は何もしない
 				return;
 			mFullscreen = false; break;
-		default:        // default to toggle window/fullscreen
+		default:			// デフォルトではフルスクリーンモードとウィンドウモードを切り替える
 			mFullscreen = !mFullscreen;
 		}
 		reset();
-		if (mFullscreen)  // fullscreen
+		if (mFullscreen)	// フルスクリーンモード
 		{
 			SetWindowLong(mHwnd, GWL_STYLE, WS_EX_TOPMOST | WS_VISIBLE | WS_POPUP);
 		}
-		else            // windowed
+		else				// ウィンドウモード
 		{
 			SetWindowLong(mHwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 			SetWindowPos(mHwnd, HWND_TOP, 0, 0, GAME_WIDTH, GAME_HEIGHT,
 				SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 
-			// Adjust window size so client area is GAME_WIDTH x GAME_HEIGHT
+			// クライアント領域がGAME_WIDTH×GAME_HEIGHTとなるようにウィンドウサイズを調整
 			RECT clientRect;
-			GetClientRect(mHwnd, &clientRect);   // get size of client area of window
+			GetClientRect(mHwnd, &clientRect);   // ウィンドウのクライアント領域のサイズを確保
 			MoveWindow(mHwnd,
-				0,                                           // Left
-				0,                                           // Top
-				GAME_WIDTH + (GAME_WIDTH - clientRect.right),    // Right
-				GAME_HEIGHT + (GAME_HEIGHT - clientRect.bottom), // Bottom
-				TRUE);                                       // Repaint the window
+				0,                                           // 左
+				0,                                           // 上
+				GAME_WIDTH + (GAME_WIDTH - clientRect.right),    // 右
+				GAME_HEIGHT + (GAME_HEIGHT - clientRect.bottom), // 下
+				TRUE);                                       // ウィンドウの再描画
 		}
 
 	}
 	catch (...)
 	{
-		// An error occured, try windowed mode 
+		// エラーが発生した場合、ウィンドウモードに切り替えようとする
 		SetWindowLong(mHwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
 		SetWindowPos(mHwnd, HWND_TOP, 0, 0, GAME_WIDTH, GAME_HEIGHT,
 			SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 
-		// Adjust window size so client area is GAME_WIDTH x GAME_HEIGHT
+		// クライアント領域がGAME_WIDTH×GAME_HEIGHTとなるようにウィンドウサイズを調整
 		RECT clientRect;
-		GetClientRect(mHwnd, &clientRect);   // get size of client area of window
+		GetClientRect(mHwnd, &clientRect);   // ウィンドウのクライアント領域のサイズを確保
 		MoveWindow(mHwnd,
-			0,                                           // Left
-			0,                                           // Top
-			GAME_WIDTH + (GAME_WIDTH - clientRect.right),    // Right
-			GAME_HEIGHT + (GAME_HEIGHT - clientRect.bottom), // Bottom
-			TRUE);                                       // Repaint the window
+			0,                                           // 左
+			0,                                           // 上
+			GAME_WIDTH + (GAME_WIDTH - clientRect.right),    // 右
+			GAME_HEIGHT + (GAME_HEIGHT - clientRect.bottom), // 下
+			TRUE);                                       // ウィンドウの再描画
 	}
 }
 
@@ -479,8 +479,8 @@ HRESULT Graphics::getDeviceState()
 //=============================================================================
 HRESULT Graphics::reset()
 {
-	initD3Dpp();                        // D3Dプレゼンテーションパラメータを初期化
-	mSprite->OnLostDevice();             // release sprite
+	initD3Dpp();						 // D3Dプレゼンテーションパラメータを初期化
+	mSprite->OnLostDevice();             // スプライトを解放
 	// グラフィックスデバイスのリセットを試みる
 	mResult = mDevice3d->Reset(&mD3dpp);
 
@@ -489,6 +489,6 @@ HRESULT Graphics::reset()
 	mDevice3d->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	mDevice3d->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-	mSprite->OnResetDevice();            // recreate sprite
+	mSprite->OnResetDevice();            // スプライトを再確保
 	return mResult;
 }

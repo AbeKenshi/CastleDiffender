@@ -143,7 +143,7 @@ public:
     virtual void update(const float frameTime)    {}
 	// DialGaugeと指針を描画
 	// 引数：color	表示する色（デフォルトでは白）
-    virtual void draw(const COLOR_ARGB color = graphicsNS::WHITE); // draw using color as filter
+    virtual void draw(const COLOR_ARGB color = graphicsNS::WHITE); // フィルターとしてcolorを使用して描画
 };
 
 // ライトを表すクラスです。
@@ -287,7 +287,7 @@ public:
 	// BarGraphを描画
 	// barsOnは、表示するバーの本数を格納
 	// 引数：color	表示する色（デフォルトでは白）
-    virtual void draw(const COLOR_ARGB color = graphicsNS::WHITE); // draw using color as filter
+    virtual void draw(const COLOR_ARGB color = graphicsNS::WHITE); // フィルターとしてcolorを使用して描画
 };
 
 #endif

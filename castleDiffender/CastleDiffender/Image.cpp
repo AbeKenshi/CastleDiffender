@@ -16,18 +16,18 @@
 //=============================================================================
 Image::Image()
 {
-	mInitialized = false;            // set true when successfully initialized
+	mInitialized = false;            // 初期化に成功した場合、trueとなる
 	mSpriteData.width = 2;
 	mSpriteData.height = 2;
 	mSpriteData.x = 0.0;
 	mSpriteData.y = 0.0;
 	mSpriteData.scale = 1.0;
 	mSpriteData.angle = 0.0;
-	mSpriteData.rect.left = 0;       // used to select one frame from multi-frame image
+	mSpriteData.rect.left = 0;       // 複数のフレームを持つ画像から１つのフレームを選択するために使用
 	mSpriteData.rect.top = 0;
 	mSpriteData.rect.right = mSpriteData.width;
 	mSpriteData.rect.bottom = mSpriteData.height;
-	mSpriteData.texture = NULL;      // the sprite texture (picture)
+	mSpriteData.texture = NULL;      // スプライトテクスチャ（画像）
 	mSpriteData.flipHorizontal = false;
 	mSpriteData.flipVertical = false;
 	mCols = 1;
@@ -35,14 +35,14 @@ Image::Image()
 	mStartFrame = 0;
 	mEndFrame = 0;
 	mCurrentFrame = 0;
-	mFrameDelay = 1.0;               // default to 1 second per frame of animation
+	mFrameDelay = 1.0;					// デフォルトでは1秒に1フレーム分アニメーションが進む
 	mAnimTimer = 0.0;
-	mVisible = true;                 // the image is visible
-	mLoop = true;                    // loop frames
+	mVisible = true;					// 画像は表示状態がデフォルト
+	mLoop = true;						// アニメーションをループさせるのがデフォルト
 	mAnimComplete = false;
-	mGraphics = NULL;                // link to graphics system
-	mColorFilter = graphicsNS::WHITE; // WHITE for no change
-	mMode = imageNS::MODE::HORIZONTAL;		// 通常は水平でアニメーションが進む
+	mGraphics = NULL;					// グラフィックシステムへのリンク
+	mColorFilter = graphicsNS::WHITE;	// カラーフィルターなしの場合、WHITE
+	mMode = imageNS::MODE::HORIZONTAL;	// 通常は水平でアニメーションが進む
 }
 
 //==========================================================
@@ -80,7 +80,7 @@ bool Image::initialize(Graphics *g, int width, int height, int ncols,
 		mTextureManager = textureM;	// テクスチャオブジェクトへのポインタ
 		mSpriteData.texture = mTextureManager->getTexture();
 		if (width == 0)
-			width = mTextureManager->getWidth();		// 全体の幅を使用
+			width = mTextureManager->getWidth();	// 全体の幅を使用
 		mSpriteData.width = width;
 		if (height == 0)
 			height = mTextureManager->getHeight();	// 全体の高さを使用
@@ -140,7 +140,7 @@ void Image::draw(SpriteData sd, const COLOR_ARGB color, const UINT textureN)
 	// onReset()が呼び出されたときに新しいテクスチャを取得
 	sd.texture = mTextureManager->getTexture(textureN);
 	if (color == graphicsNS::FILTER)			// フィルタを使って描画する場合
-		mGraphics->drawSprite(sd, mColorFilter);	// colorFilterを使用
+		mGraphics->drawSprite(sd, mColorFilter);// colorFilterを使用
 	else
 		mGraphics->drawSprite(sd, color);
 }
@@ -155,21 +155,21 @@ void Image::update(const float frameTime)
 	switch (mMode)
 	{
 	case imageNS::HORIZONTAL:					// 読み込んだ画像ファイルに対して水平方向にアニメーションが進む場合、
-		if (mEndFrame - mStartFrame > 0)          // アニメーション化するスプライトの場合
+		if (mEndFrame - mStartFrame > 0)        // アニメーション化するスプライトの場合
 		{
-			mAnimTimer += frameTime;             // 合計の経過時間
+			mAnimTimer += frameTime;            // 合計の経過時間
 			if (mAnimTimer > mFrameDelay)
 			{
 				mAnimTimer -= mFrameDelay;
 				mCurrentFrame++;
 				if (mCurrentFrame < mStartFrame || mCurrentFrame > mEndFrame)
 				{
-					if (mLoop == true)           // ループするアニメーションの場合
+					if (mLoop == true)          // ループするアニメーションの場合
 						mCurrentFrame = mStartFrame;
 					else                        // ループしないアニメーションの場合
 					{
 						mCurrentFrame = mEndFrame;
-						mAnimComplete = true;    // アニメーションの完了
+						mAnimComplete = true;   // アニメーションの完了
 					}
 				}
 				setRect();                      // spriteData.rectを設定
@@ -177,21 +177,21 @@ void Image::update(const float frameTime)
 		}
 		break;
 	case imageNS::VERTICAL:						// 読み込んだ画像ファイルに対して水平方向にアニメーションが進む場合、
-		if (mEndFrame - mStartFrame > 0)          // アニメーション化するスプライトの場合
+		if (mEndFrame - mStartFrame > 0)        // アニメーション化するスプライトの場合
 		{
-			mAnimTimer += frameTime;             // 合計の経過時間
+			mAnimTimer += frameTime;            // 合計の経過時間
 			if (mAnimTimer > mFrameDelay)
 			{
 				mAnimTimer -= mFrameDelay;
 				mCurrentFrame += mCols;
 				if (mCurrentFrame < mStartFrame || mCurrentFrame > mEndFrame)
 				{
-					if (mLoop == true)           // ループするアニメーションの場合
+					if (mLoop == true)          // ループするアニメーションの場合
 						mCurrentFrame = mStartFrame;
 					else                        // ループしないアニメーションの場合
 					{
 						mCurrentFrame = mEndFrame;
-						mAnimComplete = true;    // アニメーションの完了
+						mAnimComplete = true;   // アニメーションの完了
 					}
 				}
 				setRect();                      // spriteData.rectを設定
@@ -216,10 +216,11 @@ void Image::setCurrentFrame(int c)
 }
 
 //=============================================================================
-//  Set spriteData.rect to draw currentFrame
+//  spriteData.rectを現在のフレームを描画するために設定
 //=============================================================================
 inline void Image::setRect()
 {
+	// spriteData.rectを現在のフレームを描画するために再構成
 	// configure spriteData.rect to draw currentFrame
 	mSpriteData.rect.left = (mCurrentFrame % mCols) * mSpriteData.width;
 	// right edge + 1

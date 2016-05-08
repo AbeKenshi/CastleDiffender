@@ -71,31 +71,31 @@ LRESULT Game::messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			return 0;
 		case WM_LBUTTONDOWN:                    // 左マウスボタンが押された
 			mInput->setMouseLButton(true);
-			mInput->mouseIn(lParam);             // マウスの位置
+			mInput->mouseIn(lParam);            // マウスの位置
 			return 0;
 		case WM_LBUTTONUP:                      // 左マウスボタンが離された
 			mInput->setMouseLButton(false);
-			mInput->mouseIn(lParam);             // マウスの位置
+			mInput->mouseIn(lParam);            // マウスの位置
 			return 0;
 		case WM_MBUTTONDOWN:                    // 中央マウスボタンが押された
 			mInput->setMouseMButton(true);
-			mInput->mouseIn(lParam);             // マウスの位置
+			mInput->mouseIn(lParam);            // マウスの位置
 			return 0;
 		case WM_MBUTTONUP:                      // 中央マウスボタンが離された
 			mInput->setMouseMButton(false);
-			mInput->mouseIn(lParam);             // マウスの位置
+			mInput->mouseIn(lParam);            // マウスの位置
 			return 0;
 		case WM_RBUTTONDOWN:                    // 右マウスボタンが押された
 			mInput->setMouseRButton(true);
-			mInput->mouseIn(lParam);             // マウスの位置
+			mInput->mouseIn(lParam);            // マウスの位置
 			return 0;
 		case WM_RBUTTONUP:                      // 右マウスボタンが離された
 			mInput->setMouseRButton(false);
-			mInput->mouseIn(lParam);             // マウスの位置
+			mInput->mouseIn(lParam);            // マウスの位置
 			return 0;
 		case WM_XBUTTONDOWN: case WM_XBUTTONUP:	// マウスのXボタンが押された/離された
 			mInput->setMouseXButton(wParam);
-			mInput->mouseIn(lParam);             // マウスの位置
+			mInput->mouseIn(lParam);            // マウスの位置
 			return 0;
 		case WM_MOUSEWHEEL:                     // マウスホイールが動いた
 			mInput->mouseWheelIn(wParam);
@@ -115,7 +115,7 @@ LRESULT Game::messageHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //=============================================================================
 void Game::initialize(HWND hw)
 {
-	mHwnd = hw;                                  // ウィンドウハンドルを保存
+	mHwnd = hw;									// ウィンドウハンドルを保存
 
 	// グラフィックスを初期化
 	mGraphics = new Graphics();
@@ -123,11 +123,11 @@ void Game::initialize(HWND hw)
 	mGraphics->initialize(mHwnd, GAME_WIDTH, GAME_HEIGHT, FULLSCREEN);
 
 	// 入力を初期化、マウスをキャプチャしない
-	mInput->initialize(mHwnd, false);             // GameErrorをスロー
+	mInput->initialize(mHwnd, false);           // GameErrorをスロー
 
 	// コンソールを初期化
 	mConsole = new Console();
-	mConsole->initialize(mGraphics, mInput);       // コンソールを準備
+	mConsole->initialize(mGraphics, mInput);    // コンソールを準備
 	mConsole->print("---Console---");
 
 	// messageDialogを初期化
@@ -182,7 +182,7 @@ void Game::renderGame()
 		render();	// 派生クラスのrenderを呼び出す
 
 		mGraphics->spriteBegin();    // スプライトの描画を開始
-		if (mFpsOn)           // フレームレートの表示が要求されている場合
+		if (mFpsOn)					 // フレームレートの表示が要求されている場合
 		{
 			// fpsを文字列に変換
 			_snprintf_s(buffer, BUF_SIZE, "fps %d ", (int)mFps);
@@ -190,9 +190,9 @@ void Game::renderGame()
 		}
 		mGraphics->spriteEnd();      // スプライトの描画を終了
 
-		mConsole->draw();    // コンソールは、ゲームの前面に表示されるようにここで描画
-		mMessageDialog->draw();  // ダイアログを前面に描画
-		mInputDialog->draw();    // dialog is drawn on top
+		mConsole->draw();			// コンソールは、ゲームの前面に表示されるようにここで描画
+		mMessageDialog->draw();		// メッセージダイアログを前面に描画
+		mInputDialog->draw();		// 入力用ダイアログをさらに前面に描画
 
 		// レンダリングを終了
 		mGraphics->endScene();
@@ -210,25 +210,25 @@ void Game::handleLostGraphicsDevice()
 {
 	// デバイスの消失をテストし、それに応じて処理を実行
 	mHr = mGraphics->getDeviceState();
-	if (FAILED(mHr))                  // グラフィックスデバイスが有効な状態でない場合
+	if (FAILED(mHr))					// グラフィックスデバイスが有効な状態でない場合
 	{
 		// デバイスが消失しており、リセットできる状態にない場合
 		if (mHr == D3DERR_DEVICELOST)
 		{
-			Sleep(100);             // CPU時間を明け渡す（100ミリ秒）
+			Sleep(100);					// CPU時間を明け渡す（100ミリ秒）
 			return;
 		}
 		// デバイスが消失しているが、リセットできる状態にある場合
 		else if (mHr == D3DERR_DEVICENOTRESET)
 		{
 			releaseAll();
-			mHr = mGraphics->reset(); // グラフィックスデバイスのリセットを試みる
-			if (FAILED(mHr))          // リセットが失敗した場合
+			mHr = mGraphics->reset();	// グラフィックスデバイスのリセットを試みる
+			if (FAILED(mHr))			// リセットが失敗した場合
 				return;
 			resetAll();
 		}
 		else
-			return;                 // 他のデバイスエラー
+			return;						// 他のデバイスエラー
 	}
 }
 
@@ -262,15 +262,15 @@ void Game::run(HWND hwnd)
 	{
 		mSleepTime = (DWORD)((MIN_FRAME_TIME - mFrameTime) * 1000);
 		timeBeginPeriod(1);         // 1ミリ秒の分解能をWindowsタイマーに要求
-		Sleep(mSleepTime);           // sleepTimeの間、CPUを解放
+		Sleep(mSleepTime);          // sleepTimeの間、CPUを解放
 		timeEndPeriod(1);           // 1ミリ秒のタイマー分解能を終了
 		return;
 	}
 
 	if (mFrameTime > 0.0)
 		mFps = (mFps*0.99f) + (0.01f / mFrameTime);	// 平均fps
-	if (mFrameTime > MAX_FRAME_TIME)					// フレームレートが非常に遅い場合
-		mFrameTime = MAX_FRAME_TIME;					// 最大frameTimeを制限
+	if (mFrameTime > MAX_FRAME_TIME)				// フレームレートが非常に遅い場合
+		mFrameTime = MAX_FRAME_TIME;				// 最大frameTimeを制限
 	mTimeStart = mTimeEnd;
 
 	// update()、ai()、collisions()は純粋仮想関数です。
@@ -298,7 +298,7 @@ void Game::run(HWND hwnd)
 	mMessageDialog->update();		// ボタンクリックをチェック
 	mInputDialog->update();
 
-	mAudio->run();                   // サウンドエンジンの周期的タスクを実行
+	mAudio->run();                  // サウンドエンジンの周期的タスクを実行
 
 	// Alt+Enterでフルスクリーンモードとウィンドウモードを切り替え
 	if (mInput->isKeyDown(ALT_KEY) && mInput->wasKeyPressed(ENTER_KEY))
@@ -324,8 +324,8 @@ void Game::run(HWND hwnd)
 //=============================================================================
 void Game::consoleCommand()
 {
-	mCommand = mConsole->getCommand();    // コンソールからのコマンドを取得
-	if (mCommand == "")                   // コマンドがない場合
+	mCommand = mConsole->getCommand();   // コンソールからのコマンドを取得
+	if (mCommand == "")                  // コマンドがない場合
 		return;
 
 	if (mCommand == "help")              // 「help」コマンドの場合
@@ -337,7 +337,7 @@ void Game::consoleCommand()
 
 	if (mCommand == "fps")
 	{
-		mFpsOn = !mFpsOn;                 // フレームレートの表示を切り替える
+		mFpsOn = !mFpsOn;                // フレームレートの表示を切り替える
 		if (mFpsOn)
 			mConsole->print("fps On");
 		else

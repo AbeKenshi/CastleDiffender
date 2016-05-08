@@ -43,8 +43,8 @@ Input::Input()
 		mControllers[i].vibrateTimeLeft = 0;
 		mControllers[i].vibrateTimeRight = 0;
 	}
-	mThumbstickDeadzone = GAMEPAD_THUMBSTICK_DEADZONE;    // default
-	mTriggerDeadzone = GAMEPAD_TRIGGER_DEADZONE;          // default
+	mThumbstickDeadzone = GAMEPAD_THUMBSTICK_DEADZONE;    // デフォルト
+	mTriggerDeadzone = GAMEPAD_TRIGGER_DEADZONE;          // デフォルト
 }
 
 //=============================================================================
@@ -120,7 +120,7 @@ void Input::keyUp(WPARAM wParam)
 //=============================================================================
 void Input::keyIn(WPARAM wParam)
 {
-	if (mNewLine)                            // 新しい行の開始の場合
+	if (mNewLine)                           // 新しい行の開始の場合
 	{
 		mTextIn.clear();
 		mNewLine = false;
@@ -128,17 +128,17 @@ void Input::keyIn(WPARAM wParam)
 
 	if (wParam == '\b')                     // バックスペースキーの場合
 	{
-		if (mTextIn.length() > 0)             // 文字が存在する場合
+		if (mTextIn.length() > 0)           // 文字が存在する場合
 			mTextIn.erase(mTextIn.size() - 1);  // 最後に入力された文字を消去
 	}
 	else
 	{
-		mTextIn += wParam;                   // 文字をtextInに追加
-		mCharIn = wParam;                    // 最後の入力された文字を保存
+		mTextIn += wParam;                  // 文字をtextInに追加
+		mCharIn = wParam;                   // 最後の入力された文字を保存
 	}
 
 	if ((char)wParam == '\r')               // リターンキーの場合
-		mNewLine = true;                     // 新しい行を開始
+		mNewLine = true;                    // 新しい行を開始
 }
 
 //=============================================================================
@@ -250,9 +250,9 @@ void Input::mouseRawIn(LPARAM lParam)
 }
 
 //=============================================================================
-// Reads mouse wheel movement expressed in multiples of WHEEL_DELTA, which
-// is 120. A positive value indicates that the wheel was rotated away from the
-// user, a negative value indicates that the wheel was rotated toward the user.
+// WHEEL_DELTA（120）の倍数で表現されるマウスホイールの動きを読み取る。
+// 正の値はホイールがユーザーから離れる方向に回転されたことを示し、
+// 負の値はホイールがユーザーに向かって回転されたことを示す。
 //=============================================================================
 void Input::mouseWheelIn(WPARAM wParam)
 {
@@ -260,7 +260,7 @@ void Input::mouseWheelIn(WPARAM wParam)
 }
 
 //=============================================================================
-// Check for connected controllers
+// 接続されたコントローラーをチェック
 //=============================================================================
 void Input::checkControllers()
 {
@@ -293,120 +293,120 @@ void Input::readControllers()
 }
 
 //=============================================================================
-// Return value of controller n Left Trigger (0 through 255).
-// Trigger movement less than triggerDeadzone returns 0.
-// Return value is scaled to 0 through 255
+// コントローラーnの左トリガーの値を返す（0から255）。
+// トリガーの動きがtriggerDeadzoneより小さい場合0を返す。
+// 戻り値は0から255の間に調整されて返される。
 //=============================================================================
 BYTE Input::getGamepadLeftTrigger(UINT n)
 {
 	BYTE value = getGamepadLeftTriggerUndead(n);
-	if (value > mTriggerDeadzone)             // if > dead zone
-											 //adjust magnitude relative to the end of the dead zone
+	if (value > mTriggerDeadzone)            // デッドゾーンより大きい場合
+											 // デッドゾーンの大きさに対して相対的に値を調整
 		value = (value - mTriggerDeadzone) * 255 /
 		(255 - mTriggerDeadzone);
-	else                                    // else, < dead zone
+	else									 // デッドゾーンより小さい場合
 		value = 0;
 	return value;
 }
 
 //=============================================================================
-// Return value of controller n Right Trigger (0 through 255).
-// Trigger movement less than triggerDeadzone returns 0.
-// Return value is scaled to 0 through 255
+// コントローラーnの右トリガーの値を返す（0から255）。
+// トリガーの動きがtriggerDeadzoneより小さい場合0を返す。
+// 戻り値は0から255の間に調整されて返される。
 //=============================================================================
 BYTE Input::getGamepadRightTrigger(UINT n)
 {
 	BYTE value = getGamepadRightTriggerUndead(n);
-	if (value > mTriggerDeadzone)    // if > dead zone
-									//adjust magnitude relative to the end of the dead zone
+	if (value > mTriggerDeadzone)            // デッドゾーンより大きい場合
+											 // デッドゾーンの大きさに対して相対的に値を調整
 		value = (value - mTriggerDeadzone) * 255 /
 		(255 - mTriggerDeadzone);
-	else                                    // else, < dead zone
+	else									 // デッドゾーンより小さい場合
 		value = 0;
 	return value;
 }
 
 //=============================================================================
-// Return value of controller n Left Thumbstick X (-32767 through 32767).
-// Stick movement less than thumbstickDeadzone returns 0.
-// Return value is scaled to -32768 through 32767
+// コントローラーnの左スティックXの値を返す（-32767から32767）。
+// スティックの動きがthumstickDeadzoneより小さい場合0を返す。
+// 戻り値は-32767から32767の間に調整されて返される。
 //=============================================================================
 SHORT Input::getGamepadThumbLX(UINT n)
 {
 	int x = getGamepadThumbLXUndead(n);
-	if (x > mThumbstickDeadzone) // if +x outside dead zone
-								//adjust x relative to the deadzone and scale to 0 through 32767
+	if (x > mThumbstickDeadzone)		// デッドゾーンから+xだけはみ出ている場合
+										// デッドゾーンに対して相対的に、0から32767の範囲になるように調整
 		x = (x - mThumbstickDeadzone) * 32767 /
 		(32767 - mThumbstickDeadzone);
-	else if (x < -mThumbstickDeadzone)   // if -x outside dead zone
-										//adjust y relative to the deadzone and scale to 0 through -32767
+	else if (x < -mThumbstickDeadzone)  // デッドゾーンから-xだけはみ出ている場合
+										// デッドゾーンに対して相対的に、0から-32767の範囲になるように調整
 		x = (x + mThumbstickDeadzone) * 32767 /
 		(32767 - mThumbstickDeadzone);
-	else        // else, x inside dead zone
-		x = 0;  // return 0
+	else        // デッドゾーンの中にある場合
+		x = 0;  // 0を返す
 	return static_cast<SHORT>(x);
 }
 
 //=============================================================================
-// Return value of controller n Left Thumbstick Y (-32768 through 32767).
-// Stick movement less than thumbstickDeadzone returns 0.
-// Return value is scaled to -32768 through 32767
+// コントローラーnの左スティックYの値を返す（-32767から32767）。
+// スティックの動きがthumstickDeadzoneより小さい場合0を返す。
+// 戻り値は-32767から32767の間に調整されて返される。
 //=============================================================================
 SHORT Input::getGamepadThumbLY(UINT n)
 {
 	int y = getGamepadThumbLYUndead(n);
-	if (y > mThumbstickDeadzone) // if +y outside dead zone
-								//adjust magnitude relative to the end of the dead zone
+	if (y > mThumbstickDeadzone)		// デッドゾーンから+yだけはみ出ている場合
+										// デッドゾーンに対して相対的に、0から32767の範囲になるように調整
 		y = (y - mThumbstickDeadzone) * 32767 /
 		(32767 - mThumbstickDeadzone);
-	else if (y < -mThumbstickDeadzone)   // if -y outside dead zone
-										//adjust magnitude relative to the end of the dead zone
+	else if (y < -mThumbstickDeadzone)  // デッドゾーンから-yだけはみ出ている場合
+										// デッドゾーンに対して相対的に、0から-32767の範囲になるように調整
 		y = (y + mThumbstickDeadzone) * 32767 /
 		(32767 - mThumbstickDeadzone);
-	else        // else, y inside dead zone
-		y = 0;  // return 0
+	else        // デッドゾーンの中にある場合
+		y = 0;  // 0を返す
 	return static_cast<SHORT>(y);
 }
 
 //=============================================================================
-// Return value of controller n Right Thumbstick X (-32768 through 32767).
-// Stick movement less than thumbstickDeadzone returns 0.
-// Return value is scaled to -32768 through 32767
+// コントローラーnの右スティックXの値を返す（-32767から32767）。
+// スティックの動きがthumstickDeadzoneより小さい場合0を返す。
+// 戻り値は-32767から32767の間に調整されて返される。
 //=============================================================================
 SHORT Input::getGamepadThumbRX(UINT n)
 {
 	int x = getGamepadThumbRXUndead(n);
-	if (x > mThumbstickDeadzone) // if +x outside dead zone
-								//adjust magnitude relative to the end of the dead zone
+	if (x > mThumbstickDeadzone)		// デッドゾーンから+xだけはみ出ている場合
+										// デッドゾーンに対して相対的に、0から32767の範囲になるように調整
 		x = (x - mThumbstickDeadzone) * 32767 /
 		(32767 - mThumbstickDeadzone);
-	else if (x < -mThumbstickDeadzone)   // if -x outside dead zone
-										//adjust magnitude relative to the end of the dead zone
+	else if (x < -mThumbstickDeadzone)  // デッドゾーンから-xだけはみ出ている場合
+										// デッドゾーンに対して相対的に、0から-32767の範囲になるように調整
 		x = (x + mThumbstickDeadzone) * 32767 /
 		(32767 - mThumbstickDeadzone);
-	else        // else, x inside dead zone
-		x = 0;  // return 0
+	else        // デッドゾーンの中にある場合
+		x = 0;  // 0を返す
 	return static_cast<SHORT>(x);
 }
 
 //=============================================================================
-// Return value of controller n Right Thumbstick Y (-32768 through 32767).
-// Stick movement less than thumbstickDeadzone returns 0.
-// Return value is scaled to -32768 through 32767
+// コントローラーnの右スティックYの値を返す（-32767から32767）。
+// スティックの動きがthumstickDeadzoneより小さい場合0を返す。
+// 戻り値は-32767から32767の間に調整されて返される。
 //=============================================================================
 SHORT Input::getGamepadThumbRY(UINT n)
 {
 	int y = getGamepadThumbRYUndead(n);
-	if (y > mThumbstickDeadzone) // if +y outside dead zone
-								//adjust magnitude relative to the end of the dead zone
+	if (y > mThumbstickDeadzone)		// デッドゾーンから+yだけはみ出ている場合
+										// デッドゾーンに対して相対的に、0から32767の範囲になるように調整
 		y = (y - mThumbstickDeadzone) * 32767 /
 		(32767 - mThumbstickDeadzone);
-	else if (y < -mThumbstickDeadzone)   // if -y outside dead zone
-										//adjust magnitude relative to the end of the dead zone
+	else if (y < -mThumbstickDeadzone)  // デッドゾーンから-yだけはみ出ている場合
+										// デッドゾーンに対して相対的に、0から-32767の範囲になるように調整
 		y = (y + mThumbstickDeadzone) * 32767 /
 		(32767 - mThumbstickDeadzone);
-	else        // else, y inside dead zone
-		y = 0;  // return 0
+	else        // デッドゾーンの中にある場合
+		y = 0;  // 0を返す
 	return static_cast<SHORT>(y);
 }
 
