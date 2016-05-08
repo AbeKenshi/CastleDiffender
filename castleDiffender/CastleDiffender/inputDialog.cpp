@@ -36,25 +36,25 @@ void InputDialog::prepareVerts()
     MessageDialog::prepareVerts();  // 基本クラスのprepareVertsを呼び出す
     SAFE_RELEASE(mInTextVerts);
 
-    // inText top left
+    // inTextの左上
     mVtx[0].x = mX + messageDialogNS::BORDER*2;
     mVtx[0].y = mY + mHeight - messageDialogNS::BORDER - messageDialogNS::MARGIN - messageDialogNS::BUTTON_HEIGHT*2.5f;
     mVtx[0].z = 0.0f;
     mVtx[0].rhw = 1.0f;
     mVtx[0].color = mTextBackColor;
-    // inText top right
+    // inTextの右上
     mVtx[1].x = mX + mWidth - messageDialogNS::BORDER*2;
     mVtx[1].y = mVtx[0].y;
     mVtx[1].z = 0.0f;
     mVtx[1].rhw = 1.0f;
     mVtx[1].color = mTextBackColor;
-    // inText bottom right
+    // inText右下
     mVtx[2].x =  mVtx[1].x;
     mVtx[2].y = mVtx[0].y + messageDialogNS::BUTTON_HEIGHT;
     mVtx[2].z = 0.0f;
     mVtx[2].rhw = 1.0f;
     mVtx[2].color = mTextBackColor;
-    // inText bottom left
+    // inText左下
     mVtx[3].x = mVtx[0].x;
     mVtx[3].y = mVtx[2].y;
     mVtx[3].z = 0.0f;
@@ -62,7 +62,7 @@ void InputDialog::prepareVerts()
     mVtx[3].color = mTextBackColor;
     mGraphics->createVertexBuffer(mVtx, sizeof mVtx, mInTextVerts);
 
-    // set inTextRect
+    // inTextRectを設定
     mInTextRect.left   = (long)mVtx[0].x;
     mInTextRect.right  = (long)mVtx[1].x;
     mInTextRect.top    = (long)mVtx[0].y;
@@ -77,36 +77,36 @@ const void InputDialog::draw()
     if (!mVisible || mGraphics == NULL || !mInitialized)
         return;
 
-    mGraphics->drawQuad(mBorderVerts);        // draw border
-    mGraphics->drawQuad(mDialogVerts);        // draw backdrop
-    mGraphics->drawQuad(mButtonVerts);        // draw button
-    mGraphics->drawQuad(mButton2Verts);       // draw button2
-    mGraphics->drawQuad(mInTextVerts);        // draw input text area
+    mGraphics->drawQuad(mBorderVerts);       // 境界の描画
+    mGraphics->drawQuad(mDialogVerts);       // 背景の描画
+    mGraphics->drawQuad(mButtonVerts);       // ボタンの描画
+    mGraphics->drawQuad(mButton2Verts);      // ボタン2の描画
+    mGraphics->drawQuad(mInTextVerts);       // テキスト入力領域の描画
 
-    mGraphics->spriteBegin();                // begin drawing sprites
+    mGraphics->spriteBegin();				 // スプライト描画開始
 
     if(mText.size() == 0)
         return;
-    // display text on MessageDialog
+	// メッセージダイアログ上のテキストを表示
     mDxFont.setFontColor(mFontColor);
     mDxFont.print(mText,mTextRect,DT_CENTER|DT_WORDBREAK);
 
-    // display text on buttons
+	// ボタン上のテキストを描画
     mDxFont.setFontColor(mButtonFontColor);
     mDxFont.print(messageDialogNS::BUTTON1_TEXT[mButtonType],mButtonRect,DT_SINGLELINE|DT_CENTER|DT_VCENTER);
     mDxFont.print(messageDialogNS::BUTTON2_TEXT[mButtonType],mButton2Rect,DT_SINGLELINE|DT_CENTER|DT_VCENTER);
 
-    // display input text
+	// 入力されたテキストを描画
     mDxFont.setFontColor(mTextFontColor);
-    mTempRect = mInTextRect;      // save
-    // No text is printed with DT_CALDRECT option. It moves RECT.right
+    mTempRect = mInTextRect;      // 保存
+	// DT_CALCRECTオプションが指定されるとテキストは表示されない。RECT.rightを移動
     mDxFont.print(mInText,mTempRect,DT_SINGLELINE|DT_LEFT|DT_VCENTER|DT_CALCRECT);
-    if(mTempRect.right > mInTextRect.right)   // if text too long, right justify
+    if(mTempRect.right > mInTextRect.right)   // テキストが長すぎる場合、右側を調整
         mDxFont.print(mInText,mInTextRect,DT_SINGLELINE|DT_RIGHT|DT_VCENTER);
-    else    // else, left justify
+    else    // それ以外の場合、左側を調整
         mDxFont.print(mInText,mInTextRect,DT_SINGLELINE|DT_LEFT|DT_VCENTER);
 
-    mGraphics->spriteEnd();                  // end drawing sprites
+    mGraphics->spriteEnd();                  // スプライト描画終了
 }
 
 //=============================================================================
@@ -114,14 +114,14 @@ const void InputDialog::draw()
 //=============================================================================
 void InputDialog::update()
 {
-    MessageDialog::update();        // call update in base class
+    MessageDialog::update();        // スーパークラスのupdateを呼び出し
     if (!mInitialized || !mVisible)
     {
-        if(mButtonClicked == 2)      // if Cancel button
-            mInText = "";            // clear input text
+        if(mButtonClicked == 2)     // キャンセルボタンが押されたら
+            mInText = "";           // 入力テキストをクリア
         return;
     }
-    mInText = mInput->getTextIn();    // get input text
+    mInText = mInput->getTextIn();  // 入力テキストを確保
 }
 
 //=============================================================================
@@ -129,25 +129,25 @@ void InputDialog::update()
 //=============================================================================
 void InputDialog::print(const std::string &str)         
 {
-    if (!mInitialized || mVisible)    // if not initialized or already in use
+    if (!mInitialized || mVisible)  // 初期化がされていない、または使用中の場合
         return;
-    mText = str + "\n\n\n\n\n";   // leave some room for input text and buttons
+    mText = str + "\n\n\n\n\n";		// 入力テキストやボタンの余白を残す
 
-    // Set textRect to text area of dialog
+	// ダイアログのテキスト領域用のtextRectをセット
     mTextRect.left   = (long)(mX + messageDialogNS::MARGIN);
     mTextRect.right  = (long)(mX + messageDialogNS::WIDTH - messageDialogNS::MARGIN);
     mTextRect.top    = (long)(mY + messageDialogNS::MARGIN);
     mTextRect.bottom = (long)(mY + messageDialogNS::HEIGHT - messageDialogNS::MARGIN);
 
-    // Set textRect.bottom to precise height required for text
-    // No text is printed with DT_CALDRECT option.
+	// テキストに必要とされる高さにtextRect.bottomをセット
+	// DT_CALCRECTオプションが指定されるとテキストは表示されない。
     mDxFont.print(mText,mTextRect,DT_CENTER|DT_WORDBREAK|DT_CALCRECT);
     mHeight = mTextRect.bottom - (int)mY + messageDialogNS::BORDER + messageDialogNS::MARGIN;
 
-    prepareVerts();                 // prepare the vertex buffers
-    mInText = "";                    // clear old input
+    prepareVerts();                 // 頂点バッファを準備
+    mInText = "";                   // 古い入力をクリア
     mInput->clearTextIn();
-    mButtonClicked = 0;              // clear buttonClicked
+    mButtonClicked = 0;             // buttonClickedをクリア
     mVisible = true;
 }
 

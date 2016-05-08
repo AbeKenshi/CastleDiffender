@@ -18,7 +18,7 @@
 #include "constants.h"
 #include "gameError.h"
 
-// for high-definition mouse
+// 高精細マウス用
 #ifndef HID_USAGE_PAGE_GENERIC
 #define HID_USAGE_PAGE_GENERIC      ((USHORT) 0x01)
 #endif
@@ -34,7 +34,7 @@ namespace inputNS
 {
 	const int KEYS_ARRAY_LEN = 256;     // キー配列の長さ
 
-	// what values for clear(), bit flag
+	// clear()用の値、ビットフラグ
 	const UCHAR KEYS_DOWN = 1;
 	const UCHAR KEYS_PRESSED = 2;
 	const UCHAR MOUSE = 4;
@@ -42,11 +42,11 @@ namespace inputNS
 	const UCHAR KEYS_MOUSE_TEXT = KEYS_DOWN + KEYS_PRESSED + MOUSE + TEXT_IN;
 }
 
-const short GAMEPAD_THUMBSTICK_DEADZONE = (short)(0.20f * 0X7FFF);    // デッドゾーンとして範囲の20%をデフォルトとする
-const short GAMEPAD_TRIGGER_DEADZONE = 20;                      // トリガーの範囲は0から255まで
-const DWORD MAX_CONTROLLERS = 4;                                // Maximum number of controllers supported by XInput
+const short GAMEPAD_THUMBSTICK_DEADZONE = (short)(0.20f * 0X7FFF);  // デッドゾーンとして範囲の20%をデフォルトとする
+const short GAMEPAD_TRIGGER_DEADZONE = 20;							// トリガーの範囲は0から255まで
+const DWORD MAX_CONTROLLERS = 4;									// XInputによってさぼーとされるコントローラーの最大数
 
-																// Bit corresponding to gamepad button in state.Gamepad.wButtons
+// ビットはstate.Gamepad.wButtonsのゲームパッドのボタンに対応
 const DWORD GAMEPAD_DPAD_UP = 0x0001;
 const DWORD GAMEPAD_DPAD_DOWN = 0x0002;
 const DWORD GAMEPAD_DPAD_LEFT = 0x0004;
@@ -66,8 +66,8 @@ struct ControllerState
 {
 	XINPUT_STATE        state;
 	XINPUT_VIBRATION    vibration;
-	float               vibrateTimeLeft;    // mSec
-	float               vibrateTimeRight;   // mSec
+	float               vibrateTimeLeft;    // ミリ秒
+	float               vibrateTimeRight;   // ミリ秒
 	bool                connected;
 };
 
@@ -97,44 +97,48 @@ private:
 	short mTriggerDeadzone;
 
 public:
-	// Constructor
+	// コンストラクタ
 	Input();
 
-	// Destructor
+	// デストラクタ
 	virtual ~Input();
 
-	// Initialize mouse and controller input.
-	// Throws GameError
-	// Pre: hwnd = window handle
-	//      capture = true to capture mouse.
+	// マウスとコントローラーの入力を初期化
+	// マウスをキャプチャする場合、capture=trueを設定
+	// GameErrorをスロー
+	// 引数：hwnd　		ウィンドウハンドル
+	// 引数：capture	マウスをキャプチャするかどうか
 	void initialize(HWND hwnd, bool capture);
 
-	// Save key down state
+	// このキーについて、keysDown配列とkeyPressed配列にtrueを設定
+	// 実行前：wParamに、仮想キーコード（0~255）が格納されている
 	void keyDown(WPARAM);
 
-	// Save key up state
+	// このキーについて、keysDown配列にfalseを設定
+	// 実行前：wParamに、仮想キーコード（0~255）が格納されている
 	void keyUp(WPARAM);
 
-	// Save the char just entered in textIn string
+	// 入力された文字をtextIn文字列に保存
+	// 実行前：wParamに、文字が格納されている
 	void keyIn(WPARAM);
 
-	// Returns true if the specified VIRTUAL KEY is down, otherwise false.
+	// 指定された仮想キーが押されている場合はtrue、それ以外の場合はfalseを戻す
 	bool isKeyDown(UCHAR vkey) const;
 
-	// Return true if the specified VIRTUAL KEY has been pressed in the most recent frame.
-	// Key presses are erased at the end of each frame.
+	// 直近フレームにおいて、指定の仮想キーが押されたことがある場合、trueを戻します。
+	// キーの押し下げの状態は、各フレームの終了時に消去されます。
 	bool wasKeyPressed(UCHAR vkey) const;
 
-	// Return true if any key was pressed in the most recent frame.
-	// Key presses are erased at the end of each frame.
+	// 直近のフレームにおいて、何らかのキーが押された場合、trueを戻します。
+	// キーの押し下げの状態は、各フレームの終了時に消去されます。
 	bool anyKeyPressed() const;
 
-	// Clear the specified key press
+	// 指定されたキーの押し下げをクリア
 	void clearKeyPress(UCHAR vkey);
 
-	// Clear specified input buffers where what is any combination of
-	// KEYS_DOWN, KEYS_PRESSED, MOUSE, TEXT_IN or KEYS_MOUSE_TEXT.
-	// Use OR '|' operator to combine parameters.
+	// KEYS_DOWN、KEYS_PRESSED、MOUSE、TEXT_INもしくはKEYS_MOUSE_TEXT
+	// の任意の組み合わせである指定の入力バッファをクリア
+	// OR '|'オペレータの使用はパラメータを組み合わせを意味する
 	void clear(UCHAR what);
 
 	// キー、マウス、テキスト入力バッファをクリア
@@ -143,26 +147,28 @@ public:
 	// テキスト入力バッファをクリア
 	void clearTextIn() { mTextIn.clear(); }
 
-	// Clear last character entered
+	// 最後に入力された文字をクリア
 	void clearCharIn() { mCharIn = 0; }
 
-	// Return text input as a string
+	// stringとして入力されたテキストを返す
 	std::string getTextIn() { return mTextIn; }
 
-	// Set text input string
+	// テキストをstringとして入力
 	void setTextIn(std::string str) { mTextIn = str; }
 
-	// Return last character entered
+	// 最後に入力された文字を返す
 	char getCharIn() { return mCharIn; }
 
-	// Reads mouse screen position into mouseX, mouseY
+	// マウスの画面位置を読み取り、mouseXとmouseYに保存
 	void mouseIn(LPARAM);
 
-	// Reads raw mouse data into mouseRawX, mouseRawY
-	// This routine is compatible with a high-definition mouse
+	// マウスからのローデータを読み取り、mouseRawXとmouseRawYに保存
+	// このルーチンは、高精細マウスに対応しています。
 	void mouseRawIn(LPARAM);
 
-	// Reads mouse wheel movement.
+	// WHEEL_DELTA（120）の倍数で表現されるマウスホイールの動きを読み取る。
+	// 正の値はホイールがユーザーから離れる方向に回転されたことを示し、
+	// 負の値はホイールがユーザーに向かって回転されたことを示す。
 	void mouseWheelIn(WPARAM);
 
 	// 左マウスボタンの状態を保存
@@ -204,8 +210,10 @@ public:
 		return rawY;
 	}
 
-	// Return mouse wheel movement relative to previous position.
-	// Forward is >0, Backward is <0, movement is in multiples of WHEEL_DATA (120).
+	// 前の位置からのマウスホイールの相対的な動きを返す。
+	// 正の値はホイールがユーザーから離れる方向に回転されたことを示し、
+	// 負の値はホイールがユーザーに向かって回転されたことを示す。
+	// 移動量はWHEEL_DELTA（120）の倍数で表現される。
 	int  getMouseWheel()
 	{
 		int wheel = mMouseWheel;
@@ -228,22 +236,22 @@ public:
 	// X2マウスボタンの状態を戻す
 	bool getMouseX2Button() const { return mMouseX2Button; }
 
-	// Update connection status of game controllers.
+	// 接続されたコントローラーの状態をチェックし更新
 	void checkControllers();
 
-	// Save input from connected game controllers.
+	// 接続されているコントローラーの状態を読み取る
 	void readControllers();
 
-	// Set thumbstick deadzone
+	// スティックのデッドゾーンをセット
 	void setThumbstickDeadzone(short dz) { mThumbstickDeadzone = abs(dz); }
 
-	// Set trigger deadzone
+	// トリガーのデッドゾーンをセット
 	void setTriggerDeadzone(BYTE dz) { mTriggerDeadzone = dz; }
 
-	// Get thumbstick deadzone
+	// スティックのデッドゾーンを返す
 	short getThumbstickDeadzone() { return mThumbstickDeadzone; }
 
-	// Get trigger deadzone
+	// トリガーのデッドゾーンを返す
 	BYTE getTriggerDeadzone() { return static_cast<BYTE>(mTriggerDeadzone); }
 
 	// 指定のゲームコントローラーの状態を戻す
@@ -254,7 +262,7 @@ public:
 		return &mControllers[n];
 	}
 
-	// Return connection state of specified game controller
+	// 指定のコントローラーが接続されているかどうかを返す
 	bool getGamepadConnected(UINT n)
 	{
 		if (n > MAX_CONTROLLERS - 1)
@@ -382,11 +390,11 @@ public:
 		return bool((mControllers[n].state.Gamepad.wButtons&GAMEPAD_Y) != 0);
 	}
 
-	// コントローラーnの左トリガーの値を戻します。
+	// コントローラーnの左トリガーの値を返す（0から255）。
 	BYTE getGamepadLeftTrigger(UINT n);
 
-	// Return value of controller n Left Trigger (0 through 255).
-	// Deadzone is not applied.
+	// コントローラーnの左トリガーの値を返す（0から255）。
+	// デッドゾーンを使用しない。
 	BYTE getGamepadLeftTriggerUndead(UINT n)
 	{
 		if (n > MAX_CONTROLLERS - 1)
@@ -394,11 +402,11 @@ public:
 		return mControllers[n].state.Gamepad.bLeftTrigger;
 	}
 
-	// コントローラーnの右トリガーの値を戻します。
+	// コントローラーnの右トリガーの値を返す（0から255）。
 	BYTE getGamepadRightTrigger(UINT n);
 
-	// Return value of controller n Right Trigger (0 through 255).
-	// Deadzone is not applied.
+	// コントローラーnの右トリガーの値を返す（0から255）。
+	// デッドゾーンを使用しない。
 	BYTE getGamepadRightTriggerUndead(UINT n)
 	{
 		if (n > MAX_CONTROLLERS - 1)
@@ -406,11 +414,11 @@ public:
 		return mControllers[n].state.Gamepad.bRightTrigger;
 	}
 
-	// コントローラーnの左サムスティック、Xの値を戻します。
+	// コントローラーnの左スティックXの値を返す（-32767から32767）。
 	SHORT getGamepadThumbLX(UINT n);
 
-	// Return value of controller n Left Thumbstick X (-32767 through 32767).
-	// Deadzone is not applied.
+	// コントローラーnの左スティックXの値を返す（-32767から32767）。
+	// デッドゾーンを使用しない。
 	SHORT getGamepadThumbLXUndead(UINT n)
 	{
 		if (n > MAX_CONTROLLERS - 1)
@@ -418,11 +426,11 @@ public:
 		return mControllers[n].state.Gamepad.sThumbLX;
 	}
 
-	// コントローラーnの左サムスティック、Yの値を戻します。
+	// コントローラーnの左スティックYの値を返す（-32767から32767）。
 	SHORT getGamepadThumbLY(UINT n);
 
-	// Return value of controller n Left Thumbstick Y (-32768 through 32767).
-	// Deadzone is not applied.
+	// コントローラーnの左スティックYの値を返す（-32767から32767）。
+	// デッドゾーンを使用しない。
 	SHORT getGamepadThumbLYUndead(UINT n)
 	{
 		if (n > MAX_CONTROLLERS - 1)
@@ -430,11 +438,11 @@ public:
 		return mControllers[n].state.Gamepad.sThumbLY;
 	}
 
-	// コントローラーnの右サムスティック、Xの値を戻します。
+	// コントローラーnの右スティックXの値を返す（-32767から32767）。
 	SHORT getGamepadThumbRX(UINT n);
 
-	// Return value of controller n Right Thumbstick X (-32768 through 32767).
-	// Deadzone is not applied.
+	// コントローラーnの右スティックXの値を返す（-32767から32767）。
+	// デッドゾーンを使用しない。
 	SHORT getGamepadThumbRXUndead(UINT n)
 	{
 		if (n > MAX_CONTROLLERS - 1)   // if invalid controller number
@@ -442,11 +450,11 @@ public:
 		return mControllers[n].state.Gamepad.sThumbRX;
 	}
 
-	// コントローラーnの右サムスティック、Yの値を戻します。
+	// コントローラーnの右スティックYの値を返す（-32767から32767）。
 	SHORT getGamepadThumbRY(UINT n);
 
-	// Return value of controller n Right Thumbstick Y (-32768 through 32767).
-	// Deadzone is not applied.
+	// コントローラーnの右スティックYの値を返す（-32767から32767）。
+	// デッドゾーンを使用しない。
 	SHORT getGamepadThumbRYUndead(UINT n)
 	{
 		if (n > MAX_CONTROLLERS - 1)

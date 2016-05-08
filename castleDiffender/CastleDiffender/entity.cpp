@@ -25,11 +25,11 @@ Entity::Entity() : Image()
     mEdge.right = 1;
     mEdge.bottom = 1;
 
-    mMass = 1.0;							// 質量
+    mMass = 1.0;						// 質量
     mVelocity.x = 0.0;					// x速度
     mVelocity.y = 0.0;					// y速度
-    mDeltaV.x = 0.0;						// x加速度
-    mDeltaV.y = 0.0;						// y加速度
+    mDeltaV.x = 0.0;					// x加速度
+    mDeltaV.y = 0.0;					// y加速度
     mActive = true;						// エンティティはアクティブ
     mRotatedBoxReady = false;			// 回転の衝突判定のフラグ
     mCollisionType = entityNS::CIRCLE;	// 衝突判定はデフォルトでは円
@@ -50,8 +50,8 @@ void Entity::reset()
 {
 	mVelocity.x = 0.0;					// x速度
 	mVelocity.y = 0.0;					// y速度
-	mDeltaV.x = 0.0;						// x加速度
-	mDeltaV.y = 0.0;						// y加速度
+	mDeltaV.x = 0.0;					// x加速度
+	mDeltaV.y = 0.0;					// y加速度
 	mRotatedBoxReady = false;			// 回転の衝突判定のフラグ
 	mActive = true;						// エンティティはアクティブ
 	mHealth = 100;						// 体力（MAX100）
@@ -174,10 +174,10 @@ bool Entity::collidesWith(Entity &ent, VECTOR2 &collisionVector)
 		// このエンティティがCIRCLE衝突を使用する場合
         if (mCollisionType == entityNS::CIRCLE)
         {
-            // Check for collision from other box with our circle
+			// 他のボックスからの衝突をチェック
             bool collide = ent.collideRotatedBoxCircle(*this, collisionVector); 
-            // Put the collision vector in the proper direction
-            collisionVector *= -1;              // reverse collision vector
+			// 適切な方向に衝突ベクトルをセット
+            collisionVector *= -1;              // 衝突ベクトルを反転
             return collide;
         }
         else    // もう一方のエンティティがCIRCLE衝突を使用する場合
@@ -195,7 +195,7 @@ bool Entity::collideCircle(Entity &ent, VECTOR2 &collisionVector)
 {
 	// 中心と中心の間の差
     mDistSquared = *getCenter() - *ent.getCenter();
-    mDistSquared.x = mDistSquared.x * mDistSquared.x;      // 差を2乗
+    mDistSquared.x = mDistSquared.x * mDistSquared.x;     // 差を2乗
     mDistSquared.y = mDistSquared.y * mDistSquared.y;
 
 	// 半径の合計を計算（拡大縮小の倍率を調整）
@@ -253,10 +253,10 @@ bool Entity::collideRotatedBox(Entity &entB, VECTOR2 &collisionVector)
     entB.computeRotatedBox();               // 回転するボックスを準備
     if (projectionsOverlap(entB, collisionVector) && entB.projectionsOverlap(*this, collisionVector))
     {
-        // If we get to here the entities are colliding. The edge with the
-        // smallest overlapping section is the edge where the collision is
-        // occuring. The collision vector is created perpendicular to the
-        // collision edge. The projection edges are 01 and 03.
+		// ここに到達した場合、エンティティは衝突している。
+		// 最小の重複部分のエッジが衝突が発生しているエッジ。
+		// 衝突ベクトルは衝突が発生したエッジに垂直に生成される。
+		// 投影エッジは01と03。
         //
         //                    entA01min
         //                   /     entB01min
@@ -274,23 +274,23 @@ bool Entity::collideRotatedBox(Entity &entB, VECTOR2 &collisionVector)
         //            3
         //            
 
-        if (mEntA01min < mEntB01min)   // if A left of B
+        if (mEntA01min < mEntB01min)   // AのほうがBより左
         {
             overlap01 = mEntA01max - mEntB01min;
             collisionVector = mCorners[1] - mCorners[0];
         }
-        else    // else, A right of B
+        else    // AのほうがBより右
         {
             overlap01 = mEntB01max - mEntA01min;
             collisionVector = mCorners[0] - mCorners[1];
         }
-        if (mEntA03min < mEntB03min)   // if A above B
+        if (mEntA03min < mEntB03min)   // AのほうがBより上
         {
             overlap03 = mEntA03max - mEntB03min;
             if (overlap03 < overlap01)
                 collisionVector = mCorners[3] - mCorners[0];
         }
-        else    // else, A below B
+        else    // AのほうがBより下
         {
             overlap03 = mEntB03max - mEntA03min;
             if (overlap03 < overlap01)
@@ -408,10 +408,10 @@ bool Entity::collideRotatedBoxCircle(Entity &entB, VECTOR2 &collisionVector)
     if(center01 < mEntA01min && center03 > mEntA03max)
         return collideCornerCircle(mCorners[3], entB, collisionVector);
 
-    // Circle not in voronoi region so it is colliding with edge of box.
-    // The edge with the smallest overlapping section is the edge where the
-    // collision is occuring. The collision vector is created perpendicular
-    // to the collision edge. The projection edges are 01 and 03.
+	// 円が衝突ボックスのボロノイ領域にないので、ボックスのエッジと衝突。
+	// 最小の重複部分のエッジが衝突が発生しているエッジ。
+	// 衝突ベクトルは衝突が発生したエッジに垂直に生成される。
+	// 投影エッジは01と03。
     //
     //                    entA01min
     //                   /   entB01min
@@ -429,23 +429,23 @@ bool Entity::collideRotatedBoxCircle(Entity &entB, VECTOR2 &collisionVector)
     //            |   
     //            3
     //            
-    if (mEntA01min < mEntB01min)   // if A left of B
+    if (mEntA01min < mEntB01min)   // AのほうがBより左
     {
         overlap01 = mEntA01max - mEntB01min;
         collisionVector = mCorners[1] - mCorners[0];
     }
-    else    // else, A right of B
+    else    // AのほうがBより右
     {
         overlap01 = mEntB01max - mEntA01min;
         collisionVector = mCorners[0] - mCorners[1];
     }
-    if (mEntA03min < mEntB03min)   // if A above B
+    if (mEntA03min < mEntB03min)   // AのほうがBより上
     {
         overlap03 = mEntA03max - mEntB03min;
         if (overlap03 < overlap01)
             collisionVector = mCorners[3] - mCorners[0];
     }
-    else    // else, A below B
+    else    // AのほうがBより下
     {
         overlap03 = mEntB03max - mEntA03min;
         if (overlap03 < overlap01)
@@ -559,18 +559,18 @@ void Entity::damage(const int weapon)
 
 //=============================================================================
 // 他のエンティティとの衝突後の跳ね返り
+// 必要に応じて使用する
 //=============================================================================
 void Entity::bounce(VECTOR2 &collisionVector, Entity &ent)
 {
     float cUVdotVdiff;
-    VECTOR2 Vdiff = ent.getVelocity() - mVelocity;
-    VECTOR2 cUV = collisionVector;              // 衝突単位ベクトル
+    VECTOR2 Vdiff = ent.getVelocity() - mVelocity;	// 速度ベクトルの差ベクトル
+    VECTOR2 cUV = collisionVector;					// 衝突単位ベクトル
     Graphics::Vector2Normalize(&cUV);
-    if(mCollisionType == entityNS::ROTATED_BOX)  // if ROTATED_BOX collision
-        // The collision vector is perpendicular to the edge. 
-        cUVdotVdiff = 1.0f;                 // do not change velocity
+    if(mCollisionType == entityNS::ROTATED_BOX)		// このエンティティがROTATED_BOX衝突の場合
+        cUVdotVdiff = 1.0f;							// 速度は変化させない
     else
-        cUVdotVdiff = Graphics::Vector2Dot(&cUV, &Vdiff);   // use velocity difference
+        cUVdotVdiff = Graphics::Vector2Dot(&cUV, &Vdiff);   // 速度の差を用いる
     float massRatio = 2.0f;
     if (getMass() != 0)
         massRatio *= (ent.getMass() / (getMass() + ent.getMass()));
@@ -579,7 +579,7 @@ void Entity::bounce(VECTOR2 &collisionVector, Entity &ent)
 
 	// エンティティをcollisionVectorに沿って離れる方向に移動
     VECTOR2 cv;
-    int count=10;   // loop limit
+    int count=10;   // 最大ループ回数
     do
     {
         setX(getX() - cUV.x);
@@ -588,7 +588,7 @@ void Entity::bounce(VECTOR2 &collisionVector, Entity &ent)
         count--;
     } while( this->collidesWith(ent, cv) && count);
 
-    // bounce
+    // 跳ね返り
     mDeltaV += ((massRatio * cUVdotVdiff) * cUV);
 }
 

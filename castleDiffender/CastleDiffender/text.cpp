@@ -13,21 +13,21 @@
 //=============================================================================
 Text::Text() : Image()
 {
-	mFile = NULL;                        // font texture
-	mGraphics = NULL;                    // pointer to graphics
-	mColor = graphicsNS::WHITE;          // default to white font
-	mBackColor = graphicsNS::TRANSCOLOR; // default to transparent (no) fill
+	mFile = NULL;                        // フォントのテクスチャファイル名
+	mGraphics = NULL;                    // グラフィックシステムへのポインタ
+	mColor = graphicsNS::WHITE;          // デフォルトは白文字
+	mBackColor = graphicsNS::TRANSCOLOR; // デフォルトは透明色
 	mAlign = textNS::LEFT;
-	mWidth = textNS::GRID_WIDTH - 3;     // -2 for transparent border and -1 for divider line
+	mWidth = textNS::GRID_WIDTH - 3;     // 透明な境界のために-2、区切り線のために-1
 	mHeight = textNS::GRID_HEIGHT - 3;
 	mFontHeight = textNS::FONT_HEIGHT;
 	mSpriteData.width = 0;
 	mSpriteData.height = 0;
-	mSpriteData.rect.bottom = 1;         // rectangle to select parts of an image
+	mSpriteData.rect.bottom = 1;         // 画像の一部を選択するための四角形
 	mSpriteData.rect.right = 1;
-	for (int row = 0; row<textNS::ROWS; row++)         // for each row of characters in font
+	for (int row = 0; row < textNS::ROWS; row++)         // フォント画像の各行の文字について
 	{
-		for (int col = 0; col<textNS::COLUMNS; col++)  // for each col of characters in font
+		for (int col = 0; col < textNS::COLUMNS; col++)  // フォント画像の各列の文字について
 		{
 			mFontData[row][col].left = MAXINT;
 			mFontData[row][col].right = 0;
@@ -475,7 +475,7 @@ void Text::drawChar(UCHAR ch)
 		mSpriteData.rect.left = (textNS::SOLID - textNS::MIN_CHAR) % textNS::COLUMNS * textNS::GRID_WIDTH + 1;
 		mSpriteData.rect.right = mSpriteData.rect.left + mWidth;
 		draw(mBackColor);				// backColorを描画
-		mSpriteData.rect = sd2.rect;     // 文字の矩形を復元
+		mSpriteData.rect = sd2.rect;    // 文字の矩形を復元
 	}
 
 	// 下線を表示
@@ -486,7 +486,7 @@ void Text::drawChar(UCHAR ch)
 		mSpriteData.rect.left = (textNS::UNDERLINE - textNS::MIN_CHAR) % textNS::COLUMNS * textNS::GRID_WIDTH + 1;
 		mSpriteData.rect.right = mSpriteData.rect.left + mWidth;
 		draw(mColor);
-		mSpriteData.rect = sd2.rect;     // 文字の矩形を復元
+		mSpriteData.rect = sd2.rect;   // 文字の矩形を復元
 	}
 
 	// 文字を表示

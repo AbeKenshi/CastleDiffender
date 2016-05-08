@@ -21,7 +21,7 @@ TextureManager::TextureManager()
 //=============================================================================
 TextureManager::~TextureManager()
 {
-	for (UINT i = 0; i<mTexture.size(); i++)
+	for (UINT i = 0; i < mTexture.size(); i++)
 		safeReleaseTexture(mTexture[i]);
 }
 
@@ -33,40 +33,40 @@ bool TextureManager::initialize(Graphics *g, std::string file)
 {
 	bool success = true;
 	try {
-		mGraphics = g;                       // graphicsオブジェクト
-		for (UINT i = 0; i<file.size(); i++)    // convert to lowercase
+		mGraphics = g;								// graphicsオブジェクト
+		for (UINT i = 0; i < file.size(); i++)		// 小文字に変換
 			file.at(i) = tolower(file.at(i));
-		if (file.rfind(".txt") == file.size() - 4) // if .txt extension
+		if (file.rfind(".txt") == file.size() - 4)	// .txt拡張子の場合
 		{
-			// open file containing individual texture names
+			// それぞれのテクスチャ名を含むファイルを開く
 			std::ifstream infile(file.c_str());
-			if (!infile)                     // if open failed
+			if (!infile)                     // 開くのに失敗した場合
 				return false;
 			std::string name;
 			while (getline(infile, name))
 			{
-				mFileNames.push_back(name);  // add to files
-				mWidth.push_back(0);         // make room for width
-				mHeight.push_back(0);        // make room for height
-				mTexture.push_back(NULL);    // make room for texture
+				mFileNames.push_back(name);  // ファイル名を追加
+				mWidth.push_back(0);         // テクスチャの幅に余白を作成
+				mHeight.push_back(0);        // テクスチャの高さに余白を作成
+				mTexture.push_back(NULL);    // テクスチャに余白を作成
 			}
 			infile.close();
 		}
-		else    // not .txt file so file contains name of one texture
+		else    // .txtファイルでなく、１つのテクスチャ名がファイルに含まれている
 		{
-			mFileNames.push_back(file);      // put one file name in files
-			mWidth.push_back(0);         // make room for width
-			mHeight.push_back(0);        // make room for height
-			mTexture.push_back(NULL);    // make room for texture
+			mFileNames.push_back(file);  //ファイル名を追加
+			mWidth.push_back(0);         // テクスチャの幅に余白を作成
+			mHeight.push_back(0);        // テクスチャの高さに余白を作成
+			mTexture.push_back(NULL);    // テクスチャに余白を作成
 		}
 
-		// load texture files
-		for (UINT i = 0; i<mFileNames.size(); i++)
+		// テクスチャファイルの読み込み
+		for (UINT i = 0; i < mFileNames.size(); i++)
 		{
 			mHr = mGraphics->loadTexture(mFileNames[i].c_str(),
 				graphicsNS::TRANSCOLOR, mWidth[i], mHeight[i], mTexture[i]);
 			if (FAILED(mHr))
-				success = false;    // at least one texture failed to load
+				success = false;    // 最低でも１つのテクスチャの読み込みに失敗
 		}
 	}
 	catch (...) { return false; }
