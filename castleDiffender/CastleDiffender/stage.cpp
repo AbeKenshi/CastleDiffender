@@ -117,7 +117,7 @@ void Stage::roundStart()
 	mClearedStage = false;
 
 	// —”‚ÌƒV[ƒh‚ğİ’è
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 }
 
 //==========================================================
