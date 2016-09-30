@@ -71,11 +71,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir)Library\directx\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Library\directx\Lib\\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)Library\directx\Lib\86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)Library\directx\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Library\direcrx\Lib\x86;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)Library\directx\Lib\86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(DXSDK_DIR)\Include;$(IncludePath)</IncludePath>
