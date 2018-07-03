@@ -247,7 +247,10 @@
 -----------------------------------------------------------------------
 参考
 -----------------------------------------------------------------------
-* 音声ファイル元：PANICPUMPKIN」
+* 音声ファイル元：PANICPUMPKIN
+
 url：http://pansound.com/panicpumpkin/index.html
-* 画像ファイル元：VIPRPG素材保管@wiki」
+
+* 画像ファイル元：VIPRPG素材保管@wiki
+
 url：http://www54.atwiki.jp/viprpg_sozai/pages/1.html
